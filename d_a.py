@@ -154,7 +154,7 @@ def eq_d_c2(d3,a2,clk,x2,x3,x4):
 	return eq_logic	
 d_instance = eq_d(d3,a2,clk,x2,x3,x4)
 d_c1_instance = eq_d_c1(d3,a2,clk,x2,x3,x4)
-d_c1_instance = eq_d_c2(d3,a2,clk,x2,x3,x4)
+d_c2_instance = eq_d_c2(d3,a2,clk,x2,x3,x4)
 
 
 toVerilog(eq_d,d3,a2,clk,x2,x3,x4)
