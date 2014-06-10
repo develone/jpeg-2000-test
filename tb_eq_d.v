@@ -1,11 +1,11 @@
 module tb_eq_d;
 
-wire [9:0] d3;
-wire [9:0] a2;
+wire [18:0] d3;
+wire [18:0] a2;
 reg clk;
-reg [9:0] x2;
-reg [9:0] x3;
-reg [9:0] x4;
+reg [18:0] x2;
+reg [18:0] x3;
+reg [18:0] x4;
 
 initial begin
     $from_myhdl(
