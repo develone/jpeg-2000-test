@@ -117,8 +117,46 @@ def eq_d(d3,a2,clk,x2,x3,x4):
 		 
 		 
 	return eq_logic
-	
+def eq_d_c1(d3,a2,clk,x2,x3,x4):
+	t1 = intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)
+	t2 = intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)	
+	t3 = intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)
+	@always(clk.posedge)
+	def eq_logic():
+		t1 = x2 + x4
+		t1 = t1 >> 1
+		t2 = x3 - t1
+		t1 = x4 >> 2
+		t3 = x2 + t1 + t2
+		
+		d3.next = t2
+		a2.next = t3
+		 
+		 
+	return eq_logic	
+
+def eq_d_c2(d3,a2,clk,x2,x3,x4):
+	t1 = intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)
+	t2 = intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)	
+	t3 = intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)
+	@always(clk.posedge)
+	def eq_logic():
+		t1 = x2 + x4
+		t1 = t1 >> 1
+		t2 = x3 - t1
+		t1 = x4 >> 2
+		t3 = x2 + t1 + t2
+		
+		d3.next = t2
+		a2.next = t3
+		 
+		 
+	return eq_logic	
 d_instance = eq_d(d3,a2,clk,x2,x3,x4)
+d_c1_instance = eq_d_c1(d3,a2,clk,x2,x3,x4)
+d_c1_instance = eq_d_c2(d3,a2,clk,x2,x3,x4)
 
 
 toVerilog(eq_d,d3,a2,clk,x2,x3,x4)
+toVerilog(eq_d_c1,d3,a2,clk,x2,x3,x4)
+toVerilog(eq_d_c2,d3,a2,clk,x2,x3,x4)
