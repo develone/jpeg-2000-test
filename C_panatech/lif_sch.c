@@ -14,6 +14,8 @@ int Adr[128][128];
 
 int Input[128][128];
 
+int InputImage[128][128];
+
 int Ad[128][128];
 
 int Even[128][64];
@@ -484,7 +486,7 @@ for( i=0;i<128;i++)
 
                                                             Input[i][j]=InputImage[i][j];
 
-                                                            //                     xil_printf("%d\n",Input[i][j]);                                                       
+                                                            //                     //xil_printf("%d\n",Input[i][j]);                                                       
 
  
 
@@ -630,7 +632,7 @@ reversedwt();
 
                                                             {
 
-                                                                                    xil_printf("%d\n",Output[i][j]);
+                                                                                    //xil_printf("%d\n",Output[i][j]);
 
                                                                         //wavedecode[i][j]=Output[i][j];
 
@@ -649,4 +651,3 @@ reversedwt();
 }
 
  
-- See more at: https://www.pantechsolutions.net/spartan-3-edk-sourcecode/implementation-of-lifting-dwt-technique#sthash.7gNYbjQy.dpuf
