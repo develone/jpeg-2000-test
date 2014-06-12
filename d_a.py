@@ -157,24 +157,53 @@ def fwt97_int(s, width, height):
         ''' Lifting is done on the cols. '''
         
         # Predict 1. y1
+        # odd pass 1
+        # i starts at 1 and increments by 2 until (height -1)
+        # for a height of 128 i goes 1, 3, 5...125
+        # for a height of 256 i goes 1, 3, 5...253
+        # for a height of 512 i goes 1, 3, 5...509
         for row in range(1, height-1, 2):
             s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
         s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
-        
+        # this is working on sample at the end
+		#  for height 256 works on sample 255 using 2*a1* sample 254
+		
         # Update 1. y0
+        # even pass1
+        # i starts at 1 and increments by 2 until (height -1)
+        # for a height of 128 i goes 2, 4, 6...126
+        # for a height of 256 i goes 2, 4, 6...254
+        # for a height of 512 i goes 2, 4, 6...510
+
         for row in range(2, height, 2):
             s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
         s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
-        
+		# this is working on sample at the beginning
+		# for for height 256 works on sample 0 using 2*a2* sample 1
+			
         # Predict 2.
+        # odd pass2
+        # i starts at 1 and increments by 2 until (height -1)
+        # for a height of 128 i goes 1, 3, 5...125
+        # for a height of 256 i goes 1, 3, 5...253
+        # for a height of 512 i goes 1, 3, 5...509        
         for row in range(1, height-1, 2):
             s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
-        s[height-1][col] += 2 * a3 * s[height-2][col]
-        
+        s[height-1][col] += 2 * a3 * s[height-2][col]# Symmetric extension
+        # this is working on sample at the end
+		#  for height 256 works on sample 255 using 2*a3* sample 254  
+		      
         # Update 2.
+        # even pass2
+        # i starts at 1 and increments by 2 until (height -1)
+        # for a height of 128 i goes 2, 4, 6...126
+        # for a height of 256 i goes 2, 4, 6...254
+        # for a height of 512 i goes 2, 4, 6...510
         for row in range(2, height, 2):
             s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
-        s[0][col] += 2 * a4 * s[1][col]
+        s[0][col] += 2 * a4 * s[1][col]# Symmetric extension
+		# this is working on sample at the beginning
+		# for for height 256 works on sample 0 using 2*a4* sample 1
                 
     # de-interleave
     temp_bank = [[0]*width for i in range(height)]
@@ -193,11 +222,18 @@ def fwt97_int(s, width, height):
             s[row][col] = temp_bank[row][col]
                 
     return s
+def seq_to_img(m, pix):
+    ''' Copy matrix m to pixel buffer pix.
+    Assumes m has the same number of rows and cols as pix. '''
+    for row in range(len(m)):
+        for col in range(len(m[row])):
+            pix[col,row] = m[row][col]
+                
 #im is an instance provided by PIL
 #im is 2-d im[0] & im[1] are the sizes
 #Using PIL to read image
-im = wavelet97lift.Image.open("python_dwt/test1_512.png")
-#im = wavelet97lift.Image.open("lena_256.pgm")
+#im = wavelet97lift.Image.open("python_dwt/test1_512.png")
+im = wavelet97lift.Image.open("lena_256.pgm")
 
 # Create an image buffer object for fast access.
 pix = im.load()
@@ -217,15 +253,12 @@ m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
 #		m[row][col] = float(m[row][col])
 		
 # Perform a forward CDF 9/7 transform on the image:
-m = fwt97_2d_int(m, 3)		
-		
-		
-		
-		
-		
-		
-		
-		
+m = fwt97_2d_int(m, 1)	
+ 	 
+#pix[col,row] = m[row][col]	
+#seq_to_img(m, pix) # Convert the list of lists matrix to an image.		
+#im.save("iwt.png") # Save the inverse transformation.
+  		
 		
 		
 		
