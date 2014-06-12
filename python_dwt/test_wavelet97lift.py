@@ -10,7 +10,7 @@ for row in range(0, len(m)):
 		m[row][col] = float(m[row][col])
                 
 # Perform a forward CDF 9/7 transform on the image:
-m = wavelet97lift.fwt97_2d(m, 3)
+m = wavelet97lift.fwt97_2d(m, 1)
     
 wavelet97lift.seq_to_img(m, pix) # Convert the list of lists matrix to an image.
 im.save("test1_512_fwt.png") # Save the transformed image.
