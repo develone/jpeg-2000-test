@@ -150,8 +150,17 @@ def fwt97_int(s, width, height):
     # Scale coeff:
     k1 = 0.81289306611596146 # 1/1.230174104914
     k2 = 0.61508705245700002 # 1.230174104914/2
+    
     # Another k used by P. Getreuer is 1.1496043988602418
-        
+    #a set of results for odd and even pass 1 of lena_256.pgm
+    #r0  r1  r2  r3   r4  r5 r6  r7      r255
+    #156 156 164 164 164 164 156 164 ... 172
+	#odd
+	#r1             r3           r5             r255
+	#-83.436957352 -96.126032088 -104.126032088 -545.630213648
+	#even
+	# r0            r2             r4           r6
+	#-16.5297969845 155.735101508 155.311260559 155.311260559    
     for col in range(width): # Do the 1D transform on all cols:
         ''' Core 1D lifting process in this loop. '''
         ''' Lifting is done on the cols. '''
@@ -178,10 +187,9 @@ def fwt97_int(s, width, height):
         for row in range(2, height, 2):
             s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
         s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
-		# this is working on sample at the beginning
+ 		# this is working on sample at the beginning
 		# for for height 256 works on sample 0 using 2*a2* sample 1
-			
-        # Predict 2.
+		# Predict 2.
         # odd pass2
         # i starts at 1 and increments by 2 until (height -1)
         # for a height of 128 i goes 1, 3, 5...125
@@ -204,9 +212,14 @@ def fwt97_int(s, width, height):
         s[0][col] += 2 * a4 * s[1][col]# Symmetric extension
 		# this is working on sample at the beginning
 		# for for height 256 works on sample 0 using 2*a4* sample 1
-                
+          
     # de-interleave
     temp_bank = [[0]*width for i in range(height)]
+    #returns a lists of height elements 
+    #if height is 256 temp_bank is 256 col by 256 row
+    #scales the elements of s while storing the odd elements of row
+    #0,2,4,6,8 even 1,3,5,7 are the odd
+    #stores even on left and odd on right
     for row in range(height):
         for col in range(width):
             # k1 and k2 scale the vals
@@ -217,6 +230,7 @@ def fwt97_int(s, width, height):
                 temp_bank[col][row/2 + height/2] = k2 * s[row][col]
                 
     # write temp_bank to s:
+    # replaces the new values of s left and right back in s
     for row in range(width):
         for col in range(height):
             s[row][col] = temp_bank[row][col]
@@ -246,6 +260,7 @@ m = list(im.getdata())
 #m is a list 
 # Convert the 2d image to a 1d sequence:
 m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
+ 
 
 # Cast every item in the list to a float:
 #for row in range(0, len(m)):
@@ -254,7 +269,7 @@ m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
 		
 # Perform a forward CDF 9/7 transform on the image:
 m = fwt97_2d_int(m, 1)	
- 	 
+    	 
 #pix[col,row] = m[row][col]	
 #seq_to_img(m, pix) # Convert the list of lists matrix to an image.		
 #im.save("iwt.png") # Save the inverse transformation.
