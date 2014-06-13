@@ -228,7 +228,7 @@ def fwt97_int(s, width, height):
         for col in range(width):
             # k1 and k2 scale the vals
             # simultaneously transpose the matrix when deinterleaving
-            if row % 2 == 0: # even
+            if row % 2 == 1: # even
                 #temp_bank[col][row/2] = k1 * s[row][col]
                 temp_bank[col][row/2] = s[row][col]
             else:            # odd
@@ -241,6 +241,78 @@ def fwt97_int(s, width, height):
             s[row][col] = temp_bank[row][col]
                 
     return s
+def iwt97_2d(m, nlevels=1):
+    ''' Inverse CDF 9/7 transform on a 2D matrix signal m.
+        nlevels must be the same as the nlevels used to perform the fwt.
+    '''
+    
+    w = len(m[0])
+    h = len(m)
+
+    # Find starting size of m:
+    for i in range(nlevels-1):
+        h /= 2
+        w /= 2
+        
+    for i in range(nlevels):
+        m = iwt97(m, w, h) # rows
+        m = iwt97(m, w, h) # cols
+        h *= 2
+        w *= 2
+    
+    return m
+def iwt97(s, width, height):
+    ''' Inverse CDF 9/7. '''
+    
+    # 9/7 inverse coefficients:
+    a1 = 1.586134342
+    a2 = 0.05298011854
+    a3 = -0.8829110762
+    a4 = -0.4435068522
+    
+    # Inverse scale coeffs:
+    k1 = 1.230174104914
+    k2 = 1.6257861322319229
+    
+    # Interleave:
+    temp_bank = [[0]*width for i in range(height)]
+    for col in range(width/2):
+        for row in range(height):
+            # k1 and k2 scale the vals
+            # simultaneously transpose the matrix when interleaving
+            temp_bank[col * 2][row] = k1 * s[row][col]
+            temp_bank[col * 2 + 1][row] = k2 * s[row][col + width/2]
+                
+    # write temp_bank to s:
+    for row in range(width):
+        for col in range(height):
+            s[row][col] = temp_bank[row][col]
+
+                
+    for col in range(width): # Do the 1D transform on all cols:
+        ''' Perform the inverse 1D transform. '''
+        
+        # Inverse update 2.
+        for row in range(2, height, 2):
+            s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
+        s[0][col] += 2 * a4 * s[1][col]
+        
+        # Inverse predict 2.
+        for row in range(1, height-1, 2):
+            s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
+        s[height-1][col] += 2 * a3 * s[height-2][col]
+
+        # Inverse update 1.
+        for row in range(2, height, 2):
+            s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
+        s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
+        
+        # Inverse predict 1.
+        for row in range(1, height-1, 2):
+            s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
+        s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
+                
+    return s
 def seq_to_img(m, pix):
     ''' Copy matrix m to pixel buffer pix.
     Assumes m has the same number of rows and cols as pix. '''
@@ -251,9 +323,9 @@ def seq_to_img(m, pix):
 #im is an instance provided by PIL
 #im is 2-d im[0] & im[1] are the sizes
 #Using PIL to read image
-im = wavelet97lift.Image.open("python_dwt/test1_512.png")
-#im = wavelet97lift.Image.open("lena_256.pgm")
-
+#im = wavelet97lift.Image.open("python_dwt/test1_512.png")
+im = wavelet97lift.Image.open("lena_256.png")
+print im.mode, im.format
 # Create an image buffer object for fast access.
 pix = im.load()
 
@@ -268,9 +340,9 @@ m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
  
 
 # Cast every item in the list to a float:
-#for row in range(0, len(m)):
-#	for col in range(0, len(m[0])):
-#		m[row][col] = float(m[row][col])
+for row in range(0, len(m)):
+	for col in range(0, len(m[0])):
+		m[row][col] = float(m[row][col])
 		
 # Perform a forward CDF 9/7 transform on the image:
 m = fwt97_2d_int(m, 1)	
@@ -279,8 +351,10 @@ m = fwt97_2d_int(m, 1)
 seq_to_img(m, pix) # Convert the list of lists matrix to an image.		
 im.save("fwt.png") # Save the inverse transformation.
   		
-		
-		
+m = iwt97_2d(m, 1)		
+seq_to_img(m, pix) # Convert the inverse list of lists matrix to an image.
+im.save("lena_256_iwt.png") # Save the inverse transformation.
+    		
 		
 		
 		
