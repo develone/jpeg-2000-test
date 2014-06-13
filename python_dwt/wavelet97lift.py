@@ -179,7 +179,7 @@ def seq_to_img(m, pix):
             
 if __name__ == "__main__":
     # Load image.
-    im = Image.open("test1_512.png") # Must be a single band image! (grey)
+    im = Image.open("lena_256.png") # Must be a single band image! (grey)
 
     # Create an image buffer object for fast access.
     pix = im.load()
@@ -200,11 +200,11 @@ if __name__ == "__main__":
     m = fwt97_2d(m, 3)
     
     seq_to_img(m, pix) # Convert the list of lists matrix to an image.
-    im.save("test1_512_fwt.png") # Save the transformed image.
+    im.save("lena_256_fwt.png") # Save the transformed image.
     
     # Perform an inverse transform:
     m = iwt97_2d(m, 3)
     
     seq_to_img(m, pix) # Convert the inverse list of lists matrix to an image.
-    im.save("test1_512_iwt.png") # Save the inverse transformation.
+    im.save("lena_256_iwt.png") # Save the inverse transformation.
     

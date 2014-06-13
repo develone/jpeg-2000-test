@@ -1,6 +1,6 @@
 
 import  wavelet97lift
-im = wavelet97lift.Image.open("lena_256.png")
+im = wavelet97lift.Image.open("../lena_512.png")
 pix = im.load()
 m = list(im.getdata())
 m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]

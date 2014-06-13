@@ -172,8 +172,9 @@ def fwt97_int(s, width, height):
         # for a height of 256 i goes 1, 3, 5...253
         # for a height of 512 i goes 1, 3, 5...509
         for row in range(1, height-1, 2):
-            s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
-        s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
+            #s[row][col] += a1 * (s[row-1][col] + s[row+1][col]) 
+            s[row][col] += s[row][col] - (0.5 * ((s[row-1][col] + s[row+1][col])))  
+        #s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
         # this is working on sample at the end
 		#  for height 256 works on sample 255 using 2*a1* sample 254
 		
@@ -185,8 +186,9 @@ def fwt97_int(s, width, height):
         # for a height of 512 i goes 2, 4, 6...510
 
         for row in range(2, height, 2):
-            s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
-        s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
+            #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
+            s[row][col] += s[row][col] + .25* (s[row-1][col] + s[row+1][col])
+        #s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
  		# this is working on sample at the beginning
 		# for for height 256 works on sample 0 using 2*a2* sample 1
 		# Predict 2.
@@ -196,8 +198,9 @@ def fwt97_int(s, width, height):
         # for a height of 256 i goes 1, 3, 5...253
         # for a height of 512 i goes 1, 3, 5...509        
         for row in range(1, height-1, 2):
-            s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
-        s[height-1][col] += 2 * a3 * s[height-2][col]# Symmetric extension
+            #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
+            s[row][col] += s[row][col] - (0.5 * ((s[row-1][col] + s[row+1][col])))
+        #s[height-1][col] += 2 * a3 * s[height-2][col]# Symmetric extension
         # this is working on sample at the end
 		#  for height 256 works on sample 255 using 2*a3* sample 254  
 		      
@@ -208,8 +211,9 @@ def fwt97_int(s, width, height):
         # for a height of 256 i goes 2, 4, 6...254
         # for a height of 512 i goes 2, 4, 6...510
         for row in range(2, height, 2):
-            s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
-        s[0][col] += 2 * a4 * s[1][col]# Symmetric extension
+            #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
+            s[row][col] += s[row][col] + .25* (s[row-1][col] + s[row+1][col])
+        #s[0][col] += 2 * a4 * s[1][col]# Symmetric extension
 		# this is working on sample at the beginning
 		# for for height 256 works on sample 0 using 2*a4* sample 1
           
@@ -225,10 +229,11 @@ def fwt97_int(s, width, height):
             # k1 and k2 scale the vals
             # simultaneously transpose the matrix when deinterleaving
             if row % 2 == 0: # even
-                temp_bank[col][row/2] = k1 * s[row][col]
+                #temp_bank[col][row/2] = k1 * s[row][col]
+                temp_bank[col][row/2] = s[row][col]
             else:            # odd
-                temp_bank[col][row/2 + height/2] = k2 * s[row][col]
-                
+                #temp_bank[col][row/2 + height/2] = k2 * s[row][col]
+                temp_bank[col][row/2 + height/2] = s[row][col]
     # write temp_bank to s:
     # replaces the new values of s left and right back in s
     for row in range(width):
@@ -246,8 +251,8 @@ def seq_to_img(m, pix):
 #im is an instance provided by PIL
 #im is 2-d im[0] & im[1] are the sizes
 #Using PIL to read image
-#im = wavelet97lift.Image.open("python_dwt/test1_512.png")
-im = wavelet97lift.Image.open("lena_256.pgm")
+im = wavelet97lift.Image.open("python_dwt/test1_512.png")
+#im = wavelet97lift.Image.open("lena_256.pgm")
 
 # Create an image buffer object for fast access.
 pix = im.load()
@@ -271,8 +276,8 @@ m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
 m = fwt97_2d_int(m, 1)	
     	 
 #pix[col,row] = m[row][col]	
-#seq_to_img(m, pix) # Convert the list of lists matrix to an image.		
-#im.save("iwt.png") # Save the inverse transformation.
+seq_to_img(m, pix) # Convert the list of lists matrix to an image.		
+im.save("fwt.png") # Save the inverse transformation.
   		
 		
 		
