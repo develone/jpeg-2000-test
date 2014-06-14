@@ -122,124 +122,97 @@ def eq_d_c2(d3,a2,clk,x2,x3,x4):
 def fwt97_2d_int(m, nlevels=1):
     ''' Perform the CDF 9/7 transform on a 2D matrix signal m.
     nlevel is the desired number of times to recursively transform the 
-    signal. '''
+    signal. When flag is 0 processing done on rows '''
     
     w = len(m[0])
     h = len(m)
+    flag = 0
     for i in range(nlevels):
-        m = fwt97_int(m, w, h) # cols
-        m = fwt97_int(m, w, h) # rows
+        m = fwt97_int(m, w, h,flag)
+         
+        flag = 1
+        m = fwt97_int(m, w, h,flag) 
         w /= 2
         h /= 2
     
     return m
 
-def fwt97_int(s, width, height):
-    ''' Forward Cohen-Daubechies-Feauveau 9 tap / 7 tap wavelet transform   
-    performed on all columns of the 2D n*n matrix signal s via lifting.
-    The returned result is s, the modified input matrix.
-    The highpass and lowpass results are stored on the left half and right
-    half of s respectively, after the matrix is transposed. '''
-        
-    # 9/7 Coefficients:
-    a1 = -1.586134342
-    a2 = -0.05298011854
-    a3 = 0.8829110762
-    a4 = 0.4435068522
-    
-    # Scale coeff:
-    k1 = 0.81289306611596146 # 1/1.230174104914
-    k2 = 0.61508705245700002 # 1.230174104914/2
-    
-    # Another k used by P. Getreuer is 1.1496043988602418
-    #a set of results for odd and even pass 1 of lena_256.pgm
-    #r0  r1  r2  r3   r4  r5 r6  r7      r255
-    #156 156 164 164 164 164 156 164 ... 172
-	#odd
-	#r1             r3           r5             r255
-	#-83.436957352 -96.126032088 -104.126032088 -545.630213648
-	#even
-	# r0            r2             r4           r6
-	#-16.5297969845 155.735101508 155.311260559 155.311260559    
-    for col in range(width): # Do the 1D transform on all cols:
-        ''' Core 1D lifting process in this loop. '''
-        ''' Lifting is done on the cols. '''
-        # Predict 1. y1
-        # odd pass 1
-        # i starts at 1 and increments by 2 until (height -1)
-        # for a height of 128 i goes 1, 3, 5...125
-        # for a height of 256 i goes 1, 3, 5...253
-        # for a height of 512 i goes 1, 3, 5...509
-        for row in range(1, height-3, 2):
-            #s[row][col] += a1 * (s[row-1][col] + s[row+1][col]) 
-            s[row+2][col] += s[row+2][col] + (-0.5 * ((s[row+1][col] + s[row+3][col])))  
-        #s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
-        # this is working on sample at the end
-		#  for height 256 works on sample 255 using 2*a1* sample 254
+def fwt97_int(s, width, height,flag):
+	if flag == 0:   
+		for col in range(width): # Do the 1D transform on all cols:
+			''' Core 1D lifting process in this loop. '''
+			''' Lifting is done on the rows. '''
+			# Predict 1. y1
+			# odd pass 1
+			# i starts at 1 and increments by 2 until (height -1)
+			# for a height of 128 i goes 1, 3, 5...125
+			# for a height of 256 i goes 1, 3, 5...253
+			# for a height of 512 i goes 1, 3, 5...509
+			for row in range(1, height-3, 2):
+				#details coefficients  
+				s[row+2][col] += s[row+2][col] + (-0.5 * ((s[row+1][col] + s[row+3][col])))  
+				#s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
+				# this is working on sample at the end
+				#  for height 256 works on sample 255 using 2*a1* sample 254
 		
-        # Update 1. y0
-        # even pass1
-        # i starts at 1 and increments by 2 until (height -1)
-        # for a height of 128 i goes 2, 4, 6...126
-        # for a height of 256 i goes 2, 4, 6...254
-        # for a height of 512 i goes 2, 4, 6...510
+			# Update 1. y0
+			# even pass1
+			# i starts at 1 and increments by 2 until (height -1)
+			# for a height of 128 i goes 2, 4, 6...126
+			# for a height of 256 i goes 2, 4, 6...254
+			# for a height of 512 i goes 2, 4, 6...510
 
-        for row in range(2, height-2, 2):
-            #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
-            s[row+2][col] += s[row+2][col] + .25* (s[row+1][col] + s[row+3][col])
-        #s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
- 		# this is working on sample at the beginning
-		# for for height 256 works on sample 0 using 2*a2* sample 1
-		# Predict 2.
-        # odd pass2
-        # i starts at 1 and increments by 2 until (height -1)
-        # for a height of 128 i goes 1, 3, 5...125
-        # for a height of 256 i goes 1, 3, 5...253
-        # for a height of 512 i goes 1, 3, 5...509        
-        for row in range(1, height-3, 2):
-            #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
-            s[row+2][col] += s[row+2][col] + (-0.5 * ((s[row+1][col] + s[row+3][col])))
-        #s[height-1][col] += 2 * a3 * s[height-2][col]# Symmetric extension
-        # this is working on sample at the end
-		#  for height 256 works on sample 255 using 2*a3* sample 254  
-		      
-        # Update 2.
-        # even pass2
-        # i starts at 1 and increments by 2 until (height -1)
-        # for a height of 128 i goes 2, 4, 6...126
-        # for a height of 256 i goes 2, 4, 6...254
-        # for a height of 512 i goes 2, 4, 6...510
-        for row in range(2, height-2, 2):
-            #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
-            s[row+2][col] += s[row+2][col] + .25* (s[row+2][col] + s[row+3][col])
-        #s[0][col] += 2 * a4 * s[1][col]# Symmetric extension
-		# this is working on sample at the beginning
-		# for for height 256 works on sample 0 using 2*a4* sample 1
-          
-    # de-interleave
-    temp_bank = [[0]*width for i in range(height)]
-    #returns a lists of height elements 
-    #if height is 256 temp_bank is 256 col by 256 row
-    #scales the elements of s while storing the odd elements of row
-    #0,2,4,6,8 even 1,3,5,7 are the odd
-    #stores even on left and odd on right
-    for row in range(height):
-        for col in range(width):
-            # k1 and k2 scale the vals
-            # simultaneously transpose the matrix when deinterleaving
-            if row % 2 == 0: # even
-                #temp_bank[col][row/2] = k1 * s[row][col]
-                temp_bank[col][row/2] = s[row][col]
-            else:            # odd
-                #temp_bank[col][row/2 + height/2] = k2 * s[row][col]
-                temp_bank[col][row/2 + height/2] = s[row][col]
-    # write temp_bank to s:
-    # replaces the new values of s left and right back in s
-    for row in range(width):
-        for col in range(height):
-            s[row][col] = temp_bank[row][col]
-                
-    return s
+			for row in range(2, height-2, 2):
+				#approximations coefficients. 
+				s[row+2][col] += s[row+2][col] + .25* (s[row+1][col] + s[row+3][col])
+				#s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
+				# this is working on sample at the beginning
+				# for for height 256 works on sample 0 using 2*a2* sample 1
+	else:
+		for row in range(height): # Do the 1D transform on all cols:
+			''' Core 1D lifting process in this loop. '''
+			''' Lifting is done on the cols. '''
+			# Predict 1. y1
+			# odd pass 1
+			# i starts at 1 and increments by 2 until (height -1)
+			# for a height of 128 i goes 1, 3, 5...125
+			# for a height of 256 i goes 1, 3, 5...253
+			# for a height of 512 i goes 1, 3, 5...509
+			for col in range(1, height-3, 2):
+				#details coefficients 
+				s[row][col+2] += s[row][col+2] + (-0.5 * ((s[row][col+1] + s[row][col+3])))  
+				#s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
+				# this is working on sample at the end
+				#  for height 256 works on sample 255 using 2*a1* sample 254
+		
+			# Update 1. y0
+			# even pass1
+			# i starts at 1 and increments by 2 until (height -1)
+			# for a height of 128 i goes 2, 4, 6...126
+			# for a height of 256 i goes 2, 4, 6...254
+			# for a height of 512 i goes 2, 4, 6...510
+
+			for col in range(2, height-2, 2):
+				#approximations coefficients.
+				s[row][col+2] += s[row][col+2] + .25* (s[row][col+1] + s[row][col+3])
+				#s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
+				# this is working on sample at the beginning
+				# for for height 256 works on sample 0 using 2*a2* sample 1
+	temp_bank = [[0]*width for i in range(height)]
+	for row in range(height):
+		for col in range(width):
+             
+			if row % 2 == 0: # even
+                 
+				temp_bank[col][row/2] = s[row][col]
+			else:            # odd
+					 
+				temp_bank[col][row/2 + height/2] = s[row][col]
+	# write temp_bank to s:
+	for row in range(width):
+		for col in range(height):
+			s[row][col] = temp_bank[row][col]
+	return s
 def iwt97_2d(m, nlevels=1):
     ''' Inverse CDF 9/7 transform on a 2D matrix signal m.
         nlevels must be the same as the nlevels used to perform the fwt.
@@ -324,7 +297,7 @@ def seq_to_img(m, pix):
 #Using PIL to read image
 #im = wavelet97lift.Image.open("python_dwt/test1_512.png")
 im = wavelet97lift.Image.open("lena_256.png")
-print im.mode, im.format
+#print im.mode, im.format
 # Create an image buffer object for fast access.
 pix = im.load()
 
@@ -339,9 +312,9 @@ m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
  
 
 # Cast every item in the list to a float:
-for row in range(0, len(m)):
-	for col in range(0, len(m[0])):
-		m[row][col] = float(m[row][col])
+#for row in range(0, len(m)):
+#	for col in range(0, len(m[0])):
+#		m[row][col] = float(m[row][col])
 		
 # Perform a forward CDF 9/7 transform on the image:
 m = fwt97_2d_int(m, 1)	
@@ -350,9 +323,9 @@ m = fwt97_2d_int(m, 1)
 seq_to_img(m, pix) # Convert the list of lists matrix to an image.		
 im.save("fwt.png") # Save the inverse transformation.
   		
-m = iwt97_2d(m, 1)		
-seq_to_img(m, pix) # Convert the inverse list of lists matrix to an image.
-im.save("lena_256_iwt.png") # Save the inverse transformation.
+#m = iwt97_2d(m, 1)		
+#seq_to_img(m, pix) # Convert the inverse list of lists matrix to an image.
+#im.save("lena_256_iwt.png") # Save the inverse transformation.
     		
 		
 		
