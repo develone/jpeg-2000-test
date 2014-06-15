@@ -150,7 +150,7 @@ def fwt97_int(s, width, height,flag):
 			# for a height of 512 i goes 1, 3, 5...509
 			for row in range(1, height-3, 2):
 				#details coefficients  
-				s[row+2][col] += s[row+2][col] + (-0.5 * ((s[row+1][col] + s[row+3][col])))  
+				s[row+2][col] += s[row+2][col] + (-0.5 * ((s[row+1][col] + s[row+4][col])))  
 				#s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
 				# this is working on sample at the end
 				#  for height 256 works on sample 255 using 2*a1* sample 254
@@ -180,7 +180,7 @@ def fwt97_int(s, width, height,flag):
 			# for a height of 512 i goes 1, 3, 5...509
 			for col in range(1, height-3, 2):
 				#details coefficients 
-				s[row][col+2] += s[row][col+2] + (-0.5 * ((s[row][col+1] + s[row][col+3])))  
+				s[row][col+2] += s[row][col+2] + (-0.5 * ((s[row][col+1] + s[row][col+4])))  
 				#s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
 				# this is working on sample at the end
 				#  for height 256 works on sample 255 using 2*a1* sample 254
