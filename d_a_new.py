@@ -130,10 +130,11 @@ def fwt97_2d_int(m, nlevels=1):
     for i in range(nlevels):
         m = fwt97_int(m, w, h,flag)
          
-        flag = 1
-        m = fwt97_int(m, w, h,flag) 
-        w /= 2
-        h /= 2
+        #flag = 1
+        #m = fwt97_int(m, w, h,flag) 
+        
+        #w /= 2
+        #h /= 2
     
     return m
 
@@ -150,7 +151,8 @@ def fwt97_int(s, width, height,flag):
 			# for a height of 512 i goes 1, 3, 5...509
 			for row in range(1, height-3, 2):
 				#details coefficients  
-				s[row+2][col] += s[row+2][col] + (-0.5 * ((s[row+1][col] + s[row+4][col])))  
+				s[row+2][col] += s[row+2][col] + (-0.5 * ((s[row+1][col] + s[row+4][col]))) 
+				 
 				#s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
 				# this is working on sample at the end
 				#  for height 256 works on sample 255 using 2*a1* sample 254
