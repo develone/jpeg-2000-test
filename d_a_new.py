@@ -204,16 +204,16 @@ def fwt97_int(s, width, height,flag):
 	for row in range(height):
 		for col in range(width):
              
-			if row % 2 == 0: # even
+			if row % 2 == 1: # odd
                  
 				temp_bank[col][row/2] = s[row][col]
-			else:            # odd
+			else:            # even
 					 
 				temp_bank[col][row/2 + height/2] = s[row][col]
 	# write temp_bank to s:
 	for row in range(width):
 		for col in range(height):
-			s[row][col] = temp_bank[row][col]
+			s[col][row] = temp_bank[row][col]
 	return s
 def iwt97_2d(m, nlevels=1):
     ''' Inverse CDF 9/7 transform on a 2D matrix signal m.
