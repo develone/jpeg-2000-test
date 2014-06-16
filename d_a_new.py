@@ -324,11 +324,13 @@ m = fwt97_2d_int(m, 1)
 #pix[col,row] = m[row][col]	
 seq_to_img(m, pix) # Convert the list of lists matrix to an image.		
 im.save("fwt.png") # Save the inverse transformation.
-  		
-#m = iwt97_2d(m, 1)		
-#seq_to_img(m, pix) # Convert the inverse list of lists matrix to an image.
-#im.save("lena_256_iwt.png") # Save the inverse transformation.
-    		
+
+
+im1=im.crop((0,0,256,128))
+im2 = im1.resize((128,128))
+im2.save("fwt1.png") 
+
+ 
 		
 		
 		
