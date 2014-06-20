@@ -298,7 +298,7 @@ def seq_to_img(m, pix):
 #im is 2-d im[0] & im[1] are the sizes
 #Using PIL to read image
 #im = wavelet97lift.Image.open("python_dwt/test1_512.png")
-im = wavelet97lift.Image.open("lena_256.png")
+im = wavelet97lift.Image.open("lena_512.png")
 #print im.mode, im.format
 # Create an image buffer object for fast access.
 pix = im.load()
@@ -326,8 +326,8 @@ seq_to_img(m, pix) # Convert the list of lists matrix to an image.
 im.save("fwt.png") # Save the inverse transformation.
 
 
-im1=im.crop((0,0,256,128))
-im2 = im1.resize((128,128))
+im1=im.crop((0,0,512,256))
+im2 = im1.resize((256,256))
 im2.save("fwt1.png") 
 
  
