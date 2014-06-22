@@ -1,3 +1,8 @@
+from add_mul_sim import add_mul_sim
+from myhdl import fixbv
+DATA_WIDTH = 262144
+d3 = fixbv(0, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
+a2 = fixbv(0, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
 '''
 2D CDF 9/7 Wavelet Forward and Inverse Transform (lifting implementation)
 
@@ -60,13 +65,18 @@ def fwt97(s, width, height):
     The returned result is s, the modified input matrix.
     The highpass and lowpass results are stored on the left half and right
     half of s respectively, after the matrix is transposed. '''
-        
+    
+	    
     # 9/7 Coefficients:
     a1 = -1.586134342
+    ca1 = -1.586134342
     a2 = -0.05298011854
+    ca2 = -0.05298011854
     a3 = 0.8829110762
+    ca3 = 0.8829110762
     a4 = 0.4435068522
-    
+    ca4 = 0.4435068522
+
     # Scale coeff:
     k1 = 0.81289306611596146 # 1/1.230174104914
     k2 = 0.61508705245700002 # 1.230174104914/2
@@ -75,26 +85,46 @@ def fwt97(s, width, height):
     for col in range(width): # Do the 1D transform on all cols:
         ''' Core 1D lifting process in this loop. '''
         ''' Lifting is done on the cols. '''
-        
         # Predict 1. y1
         for row in range(1, height-1, 2):
-            s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
-        s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
-        
+			odd_even = bool(1)
+			p = bool(0)
+
+			x2 = fixbv(s[row-1][col], min = -DATA_WIDTH, max = DATA_WIDTH)
+			x3 = fixbv(s[row+1][col], min = -DATA_WIDTH, max = DATA_WIDTH)
+			x4 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			x5 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			print row, float(x2), float(x3),odd_even,p
+			d_instance= add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even)
+			print row, float(d_instance[0]),float(x2), float(x3),odd_even,p
+			s[row][col] += d_instance[0]
+            #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
+        s[height-1][col] += 2 * ca1 * s[height-2][col] # Symmetric extension
+
         # Update 1. y0
         for row in range(2, height, 2):
-            s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
-        s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
+			odd_even = bool(0)
+			p= bool(0)
+			x2 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			x3 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			x4 = fixbv(s[row-1][col], min = -DATA_WIDTH, max = DATA_WIDTH)
+			x5 = fixbv(s[row+1][col], min = -DATA_WIDTH, max = DATA_WIDTH)
+			print row, float(x4), float(x5),odd_even,p
+			d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even)
+			print row, float(d_instance[1]), float(x4), float(x5),odd_even,p
+			s[row][col] += d_instance[1]
+            #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
+        s[0][col] +=  2 * ca2 * s[1][col] # Symmetric extension
         
         # Predict 2.
         for row in range(1, height-1, 2):
             s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
-        s[height-1][col] += 2 * a3 * s[height-2][col]
+        s[height-1][col] += 2 * cca3 * s[height-2][col]
         
         # Update 2.
         for row in range(2, height, 2):
             s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
-        s[0][col] += 2 * a4 * s[1][col]
+        s[0][col] += 2 * ca4 * s[1][col]
                 
     # de-interleave
     temp_bank = [[0]*width for i in range(height)]
