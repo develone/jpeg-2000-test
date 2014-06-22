@@ -16,6 +16,7 @@ Currently pip can not be used to install myhdl_tools or myhdl_09dev_fixbv.
 
     >> hg clone https://bitbucket.org/cfelton/myhdl_09dev_fixbv
     >> cd myhdl_09dev_fixbv
+    >> hg checkout 0.9-dev
     >> As root or sudo 
     >> python setup.py install
 
