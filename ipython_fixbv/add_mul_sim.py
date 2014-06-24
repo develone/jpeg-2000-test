@@ -10,20 +10,28 @@ def add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even):
 		
 		if odd_even:
 			ca1 = fixbv(-1.586134342, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
-			t = (x2+x3) * ca1
+			x2 = x2/10.0
+			x3 = x3/10.0
+			t = (x2+x3) * ca1 * 10.0
 		else: 
 			ca2 = fixbv(-0.05298011854, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
-			t1 = (x4+x5) * ca2					
+			x4 = x4/10.0
+			x5 = x5/10.0
+			t1 = (x4+x5) * ca2 * 10.0					
 		d3 = t
 		a2 = t1                 
 	else:
 		 
 		if odd_even:
 			ca3 = fixbv(0.8829110762, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
-			t = (x2+x3) * ca3
+			x2 = x2/10.0
+			x3 = x3/10.0			
+			t = (x2+x3) * ca3 * 10
 		else: 
 			ca4 = fixbv(0.4435068522, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
-			t1 = (x4+x5) * ca4                 
+			x4 = x4/10.0
+			x5 = x5/10.0			
+			t1 = (x4+x5) * ca4 * 10.0                 
  		d3 = t
 		a2 = t1                 
                 
