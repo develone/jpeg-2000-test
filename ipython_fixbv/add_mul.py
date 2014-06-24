@@ -30,26 +30,24 @@ def add_mul(d3,a2,clk,x2,x3,x4,x5,p,odd_even):
 		
 			if odd_even:
 				ca1 = fixbv(-1.586134342, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
-				xx2 = x2//10.0
-				xx3 = x3//10.0
-				t = (xx2+xx3) * ca1 * 10.0
+				
+				t = (x2+x3) * ca1
 			else:
 				ca2 = fixbv(-0.05298011854, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
-				xx4 = x4//10.0
-				xx5 = x5//10.0
-				t1 = (xx4+xx5) * ca2 * 10.0					          
+				 
+				t1 = (x4+x5) * ca2 					          
 		else:
 		 
 			if odd_even:
 				ca3 = fixbv(0.8829110762, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
-				xx2 = x2//10.0
-				xx3 = x3//10.0
-				t = (x2+x3) * ca3 * 10.0
+				
+				
+				t = (x2+x3) * ca3 
 			else: 
 				ca4 = fixbv(0.4435068522, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
-				xx4 = x4//10.0
-				xx5 = x5//10.0
-				t1 = (x4+x5) * ca4 * 10.0                 
+				
+				
+				t1 = (x4+x5) * ca4                  
 	d3.next = t
 	a2.next = t1  
                  
