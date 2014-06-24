@@ -119,7 +119,7 @@ def fwt97(s, width, height):
         # Predict 2.
         for row in range(1, height-1, 2):
             s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
-        s[height-1][col] += 2 * cca3 * s[height-2][col]
+        s[height-1][col] += 2 * ca3 * s[height-2][col]
         
         # Update 2.
         for row in range(2, height, 2):
