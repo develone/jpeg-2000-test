@@ -94,11 +94,11 @@ def fwt97(s, width, height):
 			x3 = fixbv(s[row+1][col])[20,10]
 			x4 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
 			x5 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
-			print row, float(x2), float(x3),p,odd_even,s[row][col]
+			#print row, float(x2), float(x3),p,odd_even,s[row][col]
 			d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even)
 			#print row, float(d_instance[0]),float(x2), float(x3),odd_even,p
 			s[row][col] += float(d_instance[0])
-			print float(d_instance[0]),s[row][col]
+			#print float(d_instance[0]),s[row][col]
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
         s[height-1][col] += 2 * ca1 * s[height-2][col] # Symmetric extension
 
@@ -110,11 +110,11 @@ def fwt97(s, width, height):
 			x3 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
 			x4 = fixbv(s[row-1][col])[20,10]
 			x5 = fixbv(s[row+1][col])[20,10]
-			print row, float(x4), float(x5),p,odd_even,s[row][col]
+			#print row, float(x4), float(x5),p,odd_even,s[row][col]
 			d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even)
 			#print row, float(d_instance[1]), float(x4), float(x5),odd_even,p
 			s[row][col] += float(d_instance[1])
-			print s[row][col]
+			#print s[row][col]
             #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
         s[0][col] +=  2 * ca2 * s[1][col] # Symmetric extension
         
