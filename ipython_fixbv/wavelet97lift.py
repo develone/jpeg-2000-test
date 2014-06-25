@@ -1,6 +1,7 @@
 from add_mul_sim import add_mul_sim
 from myhdl import fixbv
 DATA_WIDTH = 262144
+ww = (24,14)
 d3 = fixbv(0, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
 a2 = fixbv(0, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
 '''
@@ -90,8 +91,8 @@ def fwt97(s, width, height):
 			odd_even = bool(1)
 			p = bool(0)
 
-			x2 = fixbv(s[row-1][col])[20,10]
-			x3 = fixbv(s[row+1][col])[20,10]
+			x2 = fixbv(s[row-1][col])[ww]
+			x3 = fixbv(s[row+1][col])[ww]
 			x4 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
 			x5 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
 			#print row, float(x2), float(x3),p,odd_even,s[row][col]
@@ -108,8 +109,8 @@ def fwt97(s, width, height):
 			p= bool(0)
 			x2 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
 			x3 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
-			x4 = fixbv(s[row-1][col])[20,10]
-			x5 = fixbv(s[row+1][col])[20,10]
+			x4 = fixbv(s[row-1][col])[ww]
+			x5 = fixbv(s[row+1][col])[ww]
 			#print row, float(x4), float(x5),p,odd_even,s[row][col]
 			d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even)
 			#print row, float(d_instance[1]), float(x4), float(x5),odd_even,p
