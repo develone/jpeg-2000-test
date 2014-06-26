@@ -1,7 +1,7 @@
 from add_mul_sim import add_mul_sim
 from myhdl import fixbv
 DATA_WIDTH = 262144
-ww = (24,14)
+ww = (18,12)
 d3 = fixbv(0, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
 a2 = fixbv(0, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
 '''
@@ -90,13 +90,13 @@ def fwt97(s, width, height):
         for row in range(1, height-1, 2):
 			odd_even = bool(1)
 			p = bool(0)
-
+			fwd_res = bool(1)
 			x2 = fixbv(s[row-1][col])[ww]
 			x3 = fixbv(s[row+1][col])[ww]
 			x4 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
 			x5 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
 			#print row, float(x2), float(x3),p,odd_even,s[row][col]
-			d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even)
+			d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even,fwd_res)
 			#print row, float(d_instance[0]),float(x2), float(x3),odd_even,p
 			s[row][col] += float(d_instance[0])
 			#print float(d_instance[0]),s[row][col]
@@ -107,12 +107,13 @@ def fwt97(s, width, height):
         for row in range(2, height, 2):
 			odd_even = bool(0)
 			p= bool(0)
+			fwd_res = bool(1)
 			x2 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
 			x3 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
 			x4 = fixbv(s[row-1][col])[ww]
 			x5 = fixbv(s[row+1][col])[ww]
 			#print row, float(x4), float(x5),p,odd_even,s[row][col]
-			d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even)
+			d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even,fwd_res)
 			#print row, float(d_instance[1]), float(x4), float(x5),odd_even,p
 			s[row][col] += float(d_instance[1])
 			#print s[row][col]
@@ -121,12 +122,33 @@ def fwt97(s, width, height):
         
         # Predict 2.
         for row in range(1, height-1, 2):
-            s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
+			odd_even = bool(1)
+			p = bool(1)
+			fwd_res = bool(1)
+			x2 = fixbv(s[row-1][col])[ww]
+			x3 = fixbv(s[row+1][col])[ww]
+			x4 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			x5 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			#print row, float(x2), float(x3),p,odd_even,s[row][col]
+			d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even,fwd_res)
+			s[row][col] += float(d_instance[0])
+            #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
         s[height-1][col] += 2 * ca3 * s[height-2][col]
         
         # Update 2.
         for row in range(2, height, 2):
-            s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
+			odd_even = bool(0)
+			p = bool(1)
+			fwd_res = bool(1)
+
+			x2 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			x3 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			x4 = fixbv(s[row-1][col])[ww]
+			x5 = fixbv(s[row+1][col])[ww]
+			#print row, float(x4), float(x5),p,odd_even,s[row][col]
+			d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even,fwd_res)
+			s[row][col] += float(d_instance[1])
+            #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
         s[0][col] += 2 * ca4 * s[1][col]
                
     # de-interleave
@@ -153,10 +175,13 @@ def iwt97(s, width, height):
     
     # 9/7 inverse coefficients:
     a1 = 1.586134342
+    ra1 = 1.586134342
     a2 = 0.05298011854
+    ra2 = 0.05298011854
     a3 = -0.8829110762
+    ra3 = -0.8829110762
     a4 = -0.4435068522
-    
+    a4 = -0.4435068522
     # Inverse scale coeffs:
     k1 = 1.230174104914
     k2 = 1.6257861322319229
@@ -181,22 +206,62 @@ def iwt97(s, width, height):
         
         # Inverse update 2.
         for row in range(2, height, 2):
-            s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
+			odd_even = bool(1)
+			p = bool(0)
+			fwd_res = bool(0)
+			x4 = fixbv(s[row-1][col])[ww]
+			x5 = fixbv(s[row+1][col])[ww]
+			x2 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			x3 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			#print row, float(x2), float(x3),p,odd_even,s[row][col]
+			d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even,fwd_res)
+			s[row][col] += float(d_instance[1])
+            #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
         s[0][col] += 2 * a4 * s[1][col]
         
         # Inverse predict 2.
         for row in range(1, height-1, 2):
-            s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
+			odd_even = bool(0)
+			p = bool(0)
+			fwd_res = bool(0)
+			x2 = fixbv(s[row-1][col])[ww]
+			x3 = fixbv(s[row+1][col])[ww]
+			x4 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			x5 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			#print row, float(x2), float(x3),p,odd_even,s[row][col]
+			d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even,fwd_res)
+			s[row][col] += float(d_instance[0])
+            #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
         s[height-1][col] += 2 * a3 * s[height-2][col]
 
         # Inverse update 1.
         for row in range(2, height, 2):
-            s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
+			odd_even = bool(1)
+			p = bool(1)
+			fwd_res = bool(0)
+			x4 = fixbv(s[row-1][col])[ww]
+			x5 = fixbv(s[row+1][col])[ww]
+			x2 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			x3 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			#print row, float(x2), float(x3),p,odd_even,s[row][col]
+			d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even,fwd_res)
+			s[row][col] += float(d_instance[1])
+            #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
         s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
         
         # Inverse predict 1.
         for row in range(1, height-1, 2):
-            s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
+			odd_even = bool(0)
+			p = bool(1)
+			fwd_res = bool(0)
+			x2 = fixbv(s[row-1][col])[ww]
+			x3 = fixbv(s[row+1][col])[ww]
+			x4 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			x5 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
+			#print row, float(x2), float(x3),p,odd_even,s[row][col]
+			d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even,fwd_res)
+			s[row][col] += float(d_instance[0])
+            #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
         s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
                 
     return s

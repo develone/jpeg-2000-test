@@ -1,5 +1,5 @@
 from myhdl import *
-def add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even):
+def add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even,fwd_res):
 
 	t = fixbv(0, min = -DATA_WIDTH, max = DATA_WIDTH,res=1e-5)
 	t1 = fixbv(0, min = -DATA_WIDTH, max = DATA_WIDTH,res=1e-5)
@@ -10,12 +10,20 @@ def add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even):
 		if odd_even:
 			#print 'p = ',p,'odd_even = ',odd_even,'x2 = ',x2,'x3 = ',x3
 			ca1 = fixbv(-1.586134342, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
-			t = (x2+x3) * ca1
+			ra4 = fixbv(-0.4435068522, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
 			
+			if fwd_res:
+				t = (x2+x3) * ca1
+			else:
+				t1 = (x4+x5) * ra4 
 		else:
 			#print 'p = ',p,'odd_even = ',odd_even,'x4 = ',x4,'x5 = ',x5
 			ca2 = fixbv(-0.05298011854, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
-			t1 = (x4+x5) * ca2					
+			ra3 = fixbv(-0.8829110762, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
+			if fwd_res:
+				t1 = (x4+x5) * ca2
+			else:
+				t = (x2+x3) * ra3
 		d3 = t
 		a2 = t1                 
 	else:
@@ -23,11 +31,19 @@ def add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even):
 		if odd_even:
 			#print 'p = ',p,'odd_even = ',odd_even,'x2 = ',x2,'x3 = ',x3
 			ca3 = fixbv(0.8829110762, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)		
-			t = (x2+x3) * ca3
+			ra2 = fixbv(0.05298011854, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)		
+			if fwd_res:
+				t = (x2+x3) * ca3
+			else:
+				t1 = (x4+x5) * ra2
 		else:
 			#print 'p = ',p,'odd_even = ',odd_even,'x4 = ',x4,'x5 = ',x5 
 			ca4 = fixbv(0.4435068522, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)		
-			t1 = (x4+x5) * ca4                
+			ra1 = fixbv(1.586134342, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
+			if fwd_res:
+				t1 = (x4+x5) * ca4
+			else:
+				t = (x2+x3) * ra1
 		d3 = t
 		a2 = t1                 
 
