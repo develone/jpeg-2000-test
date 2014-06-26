@@ -21,49 +21,67 @@ odd_even = Signal(bool(0))
 p = Signal(bool(0))
 fwd_res = Signal(bool(0))         
 def add_mul(d3,a2,clk,x2,x3,x4,x5,p,odd_even,fwd_res):
-
-
-	t = fixbv(0)
-	t1 = fixbv(0)
+	ca1 = Signal(fixbv(-1.586134342, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
+	ca2 = Signal(fixbv(-0.05298011854, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
+	ca3 = Signal(fixbv(0.8829110762, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
+	ca4 = Signal(fixbv(0.4435068522, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
+	ra1 = Signal(fixbv(1.586134342, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
+	ra2 = Signal(fixbv(0.05298011854, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
+	ra3 = Signal(fixbv(-0.8829110762, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
+	ra4 = Signal(fixbv(-0.4435068522, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
+	t = Signal(fixbv(0, min = -DATA_WIDTH, max = DATA_WIDTH,res=1e-5))
+	t1 = Signal(fixbv(0, min = -DATA_WIDTH, max = DATA_WIDTH,res=1e-5))
 	@always(clk.posedge)
 	def rtl():
+
 		if not p:
 		
 			if odd_even:
-				ca1 = fixbv(-1.586134342,min = -DATA_WIDTH, max= DATA_WIDTH,res=1e-5)
-				ra4 = fixbv(-0.4435068522, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
+				
 			
 				if fwd_res:
+					 
 					t = (x2+x3) * ca1
+					d3.next = t
+			
 				else:
+					 
 					t1 = (x4+x5) * ra4 				
-				
+					a2.next = t1	
 			else:
-				ca2 = fixbv(-0.05298011854,min = -DATA_WIDTH, max= DATA_WIDTH,res=1e-5)
-				ra3 = fixbv(-0.8829110762, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
+				
 				if fwd_res:
+					 
 					t1 = (x4+x5) * ca2
+					a2.next = t1
+					
 				else:
-					t = (x2+x3) * ra3				  					          
+					t = (x2+x3) * ra3
+					d3.next = t
+			
+			  
+
+									  					          
 		else:
 		 
 			if odd_even:
-				ca3 = fixbv(0.8829110762,min = -DATA_WIDTH, max= DATA_WIDTH,res=1e-5)
-				ra2 = fixbv(0.05298011854, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)		
+						
 				if fwd_res:
 					t = (x2+x3) * ca3
+					d3.next = t
 				else:
-					t1 = (x4+x5) * ra2				 
+					t1 = (x4+x5) * ra2
+					a2.next = t1			 
 			else: 
-				ca4 = fixbv(0.4435068522, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)		
-				ra1 = fixbv(1.586134342, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
+				
 				if fwd_res:
 					t1 = (x4+x5) * ca4
+					a2.next = t1
 				else:
-					t = (x2+x3) * ra1                  
-	d3.next = t
-	a2.next = t1  
-                 
+					t = (x2+x3) * ra1
+					d3.next = t
+					                 
+    
                  
 	return rtl
         
