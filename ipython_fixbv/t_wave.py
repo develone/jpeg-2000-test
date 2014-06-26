@@ -1,4 +1,4 @@
-import wavelet97lift as dwt
+import waveletsim as dwt
 
 im = dwt.Image.open("../lena_256.png")
 pix = im.load()
