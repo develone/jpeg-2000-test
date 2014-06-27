@@ -1,5 +1,5 @@
 from myhdl import *
-def add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even,fwd_res):
+def add_mul_sim(d3,a2,x2,x3,x4,x5,p,even_odd,fwd_inv):
 
 	t = fixbv(0, min = -DATA_WIDTH, max = DATA_WIDTH,res=1e-5)
 	t1 = fixbv(0, min = -DATA_WIDTH, max = DATA_WIDTH,res=1e-5)
@@ -7,20 +7,20 @@ def add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even,fwd_res):
 	
 	if not p:
 		
-		if odd_even:
-			#print 'p = ',p,'odd_even = ',odd_even,'x2 = ',x2,'x3 = ',x3
+		if even_odd:
+			#print 'p = ',p,'even_odd = ',even_odd,'x2 = ',x2,'x3 = ',x3
 			ca1 = fixbv(-1.586134342, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
 			ra4 = fixbv(-0.4435068522, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
 			
-			if fwd_res:
+			if fwd_inv:
 				t = (x2+x3) * ca1
 			else:
 				t1 = (x4+x5) * ra4 
 		else:
-			#print 'p = ',p,'odd_even = ',odd_even,'x4 = ',x4,'x5 = ',x5
+			#print 'p = ',p,'even_odd = ',even_odd,'x4 = ',x4,'x5 = ',x5
 			ca2 = fixbv(-0.05298011854, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
 			ra3 = fixbv(-0.8829110762, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
-			if fwd_res:
+			if fwd_inv:
 				t1 = (x4+x5) * ca2
 			else:
 				t = (x2+x3) * ra3
@@ -28,19 +28,19 @@ def add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even,fwd_res):
 		a2 = t1                 
 	else:
 		 
-		if odd_even:
-			#print 'p = ',p,'odd_even = ',odd_even,'x2 = ',x2,'x3 = ',x3
+		if even_odd:
+			#print 'p = ',p,'even_odd = ',even_odd,'x2 = ',x2,'x3 = ',x3
 			ca3 = fixbv(0.8829110762, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)		
 			ra2 = fixbv(0.05298011854, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)		
-			if fwd_res:
+			if fwd_inv:
 				t = (x2+x3) * ca3
 			else:
 				t1 = (x4+x5) * ra2
 		else:
-			#print 'p = ',p,'odd_even = ',odd_even,'x4 = ',x4,'x5 = ',x5 
+			#print 'p = ',p,'even_odd = ',even_odd,'x4 = ',x4,'x5 = ',x5 
 			ca4 = fixbv(0.4435068522, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)		
 			ra1 = fixbv(1.586134342, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
-			if fwd_res:
+			if fwd_inv:
 				t1 = (x4+x5) * ca4
 			else:
 				t = (x2+x3) * ra1
@@ -67,12 +67,12 @@ DATA_WIDTH = 262144
 #x4 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
 #x5 = fixbv(156, min = -DATA_WIDTH, max = DATA_WIDTH)
 
-#odd_even = bool(0) 
+#even_odd = bool(0) 
 
 #p = bool(0)        
 
-#print p, odd_even, x1,x2,x3,x4,x5        
-#d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,odd_even)
+#print p, even_odd, x1,x2,x3,x4,x5        
+#d_instance = add_mul_sim(d3,a2,x2,x3,x4,x5,p,even_odd)
 #print d_instance
 
  
