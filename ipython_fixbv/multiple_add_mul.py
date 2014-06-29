@@ -29,5 +29,5 @@ def top_level(d3,a2,clk,x2,x3,x4,x5,p,even_odd,fwd_inv,n=8):
 #print dir(add_mul)
 mult_inst = top_level(d3,a2,clk,x2,x3,x4,x5,p,even_odd,fwd_inv)
 
-
+print len(mult_inst),type(mult_inst)
 
