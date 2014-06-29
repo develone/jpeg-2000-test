@@ -1,7 +1,7 @@
 from myhdl import *
 
 
-DATA_WIDTH =  262144
+
 # 9/7 Coefficients:
 #a1 = -1.586134342
 #a2 = -0.05298011854
@@ -20,17 +20,19 @@ clk = Signal(bool(0))
 even_odd = Signal(bool(0)) 
 p = Signal(bool(0))
 fwd_inv = Signal(bool(0))         
+
+
 def add_mul(d3,a2,clk,x2,x3,x4,x5,p,even_odd,fwd_inv):
-	ca1 = Signal(fixbv(-1.586134342, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
-	ca2 = Signal(fixbv(-0.05298011854, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
-	ca3 = Signal(fixbv(0.8829110762, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
-	ca4 = Signal(fixbv(0.4435068522, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
-	ra1 = Signal(fixbv(1.586134342, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
-	ra2 = Signal(fixbv(0.05298011854, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
-	ra3 = Signal(fixbv(-0.8829110762, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
-	ra4 = Signal(fixbv(-0.4435068522, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5))
-	t = Signal(fixbv(0, min = -DATA_WIDTH, max = DATA_WIDTH,res=1e-5))
-	t1 = Signal(fixbv(0, min = -DATA_WIDTH, max = DATA_WIDTH,res=1e-5))
+	ca1 = Signal(fixbv(-1.586134342)[ww])
+	ca2 = Signal(fixbv(-0.05298011854)[ww])
+	ca3 = Signal(fixbv(0.8829110762)[ww])
+	ca4 = Signal(fixbv(0.4435068522)[ww])
+	ra1 = Signal(fixbv(1.586134342)[ww])
+	ra2 = Signal(fixbv(0.05298011854)[ww])
+	ra3 = Signal(fixbv(-0.8829110762)[ww])
+	ra4 = Signal(fixbv(-0.4435068522)[ww])
+	t = Signal(fixbv(0)[ww])
+	t1 = Signal(fixbv(0)[ww])
 	@always(clk.posedge)
 	def rtl():
 
@@ -84,9 +86,17 @@ def add_mul(d3,a2,clk,x2,x3,x4,x5,p,even_odd,fwd_inv):
     
                  
 	return rtl
-        
-d_instance = add_mul(d3,a2,clk,x2,x3,x4,x5,p,even_odd,fwd_inv)
-
-
-toVerilog(add_mul,d3,a2,clk,x2,x3,x4,x5,p,even_odd,fwd_inv)
-toVHDL(add_mul,d3,a2,clk,x2,x3,x4,x5,p,even_odd,fwd_inv)
+def convert(ver,both=False):
+	
+	d_instance = add_mul(d3,a2,clk,x2,x3,x4,x5,p,even_odd,fwd_inv)
+		 
+	
+	if ver:
+		toVerilog(add_mul,d3,a2,clk,x2,x3,x4,x5,p,even_odd,fwd_inv)
+		if both:
+			toVHDL(add_mul,d3,a2,clk,x2,x3,x4,x5,p,even_odd,fwd_inv)		
+	else:
+		toVHDL(add_mul,d3,a2,clk,x2,x3,x4,x5,p,even_odd,fwd_inv)
+#convert(True,True)
+#convert(True)
+#convert(False)
