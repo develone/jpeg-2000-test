@@ -117,7 +117,7 @@ def m_ex1(clk, p, even_odd, fwd_inv, pix):
 					pix.a2_2.next = (pix.x4_2 + pix.x5_2)*ca2
 					pix.a2_3.next = (pix.x4_3 + pix.x5_3)*ca2
 				else:
-					"""p false 1st pass even_odd false fwd_inv False (x2+x3) * ra3 """	
+					"""p false 1st pass even_odd false fwd_inv False (x2+x3) * ra3 """
 					pix.d3.next = (pix.x2 + pix.x3)*ra3	 
 					pix.d3_1.next = (pix.x2_1 + pix.x3_1)*ra3	 
 					pix.d3_2.next = (pix.x2_2 + pix.x3_2)*ra3	 
@@ -157,10 +157,13 @@ def m_ex1(clk, p, even_odd, fwd_inv, pix):
 def testbench():
 	fwd_inv, even_odd, p, clk = set_ctl()
 	pix = MyObj()
-	print pix, type(pix)
-	d_instance = (m_ex1, clk, p,even_odd, fwd_inv, pix)
-	print 
-	print d_instance, type(d_instance)  
+	print 'pix', pix, type(pix)
+	t = m_ex1(clk, p, even_odd, fwd_inv, pix)
+	print 't' , t, type(t)
+	d_instance = (t,clk, p,even_odd, fwd_inv, pix)
+	#d_instance = (m_ex1, clk, p,even_odd, fwd_inv, pix)
+	#print 
+	#print d_instance, type(d_instance)  
 	
 	
 	
@@ -196,7 +199,7 @@ def testbench():
 
 fwd_inv, even_odd, p, clk = set_ctl()
 
-pix = MyObj()
+#pix = MyObj()
 
 def convert():
 	toVerilog(m_ex1, clk, p, even_odd,fwd_inv, pix)
@@ -215,9 +218,8 @@ def convert():
 #pix.disSig_x2()
 #pix.setSig_x3(2)
 #pix.disSig_x3()
-convert()
-tb = testbench()
-print type(tb)
-tb_fsm = traceSignals(tb)
+#convert()
+
+tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
 sim.run()

@@ -92,7 +92,8 @@ def testbench():
 	x5 = Signal(fixbv(156)[ww])	 
 	
 	d_instance = add_mul(d3,a2,clk,x2,x3,x4,x5,p,even_odd,fwd_inv)
-	
+	print d_instance 
+	print type(d_instance)
 	@always(delay(10))
 	def clkgen():
 		clk.next = not clk
