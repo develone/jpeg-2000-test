@@ -11,10 +11,10 @@ from myhdl import *
 def set_ctl():
 	
 	""" Configuring single signals """
-	fwd_inv = Signal(False)
-	even_odd = Signal(False)
-	p = Signal(False)
-	clk = Signal(False)
+	fwd_inv = Signal(bool(False))
+	even_odd = Signal(bool(False))
+	p = Signal(bool(False))
+	clk = Signal(bool(False))
 	return fwd_inv, even_odd,p,clk
 
 class MyObj(object):
@@ -155,21 +155,14 @@ def m_ex1(clk, p, even_odd, fwd_inv, pix):
 	return hdl
 
 def testbench():
-	p = Signal(bool(0))
-	even_odd = Signal(bool(0))
-	fwd_inv = Signal(bool(0))
-	clk = Signal(bool(0))
-
-	d3 = Signal(fixbv(0)[ww])
-	a2 = Signal(fixbv(0)[ww])
- 
-	x2 = Signal(fixbv(156)[ww])
-	x3 = Signal(fixbv(164)[ww]) 
-	#from prev operation
-	x4 = Signal(fixbv(156)[ww])
-	x5 = Signal(fixbv(156)[ww])	 
+	fwd_inv, even_odd, p, clk = set_ctl()
+	pix = MyObj()
+	print pix, type(pix)
+	d_instance = (m_ex1, clk, p,even_odd, fwd_inv, pix)
+	print 
+	print d_instance, type(d_instance)  
 	
-	d_instance = add_mul(d3,a2,clk,x2,x3,x4,x5,p,even_odd,fwd_inv)
+	
 	
 	@always(delay(10))
 	def clkgen():
@@ -180,51 +173,51 @@ def testbench():
 		for i in range(3):
 			yield clk.posedge
 		for n in (12, 8, 8, 4):
-			even_odd.next = 1
-			fwd_inv.next = 1
-			p.next = 1
-			x2.next = 80
-			x3.next = 100
-			x4.next = 200
-			x5.next = 132
+			even_odd.next = True
+			fwd_inv.next = True
+			p.next = True
+			 
 			for i in range(5):
 				yield clk.posedge
-			even_odd.next = 0
+			even_odd.next = False
 
-
-			x4.next = 210
-			x5.next = 142
-
+ 
 			for i in range(3):
 				yield clk.posedge
-			fwd_inv.next = 0
+			fwd_inv.next = False
 			for i in range(2):
 				yield clk.posedge
-			p.next = 0
-			x2.next = 90
-			x3.next = 110
+				p.next = False
+	 
 			for i in range(n-1):
 				yield clk.posedge
 		raise StopSimulation
 	return d_instance, clkgen, stimulus
 
 fwd_inv, even_odd, p, clk = set_ctl()
+
 pix = MyObj()
 
 def convert():
 	toVerilog(m_ex1, clk, p, even_odd,fwd_inv, pix)
 	toVHDL(m_ex1, clk, p,even_odd, fwd_inv, pix)
 
+
+
+#pix.disSig_x2()
+#pix.disSig_x3()
+#pix.disSig_x4()
+#pix.disSig_x5()
+#pix.disSig_d3()
+#pix.disSig_a2()
+
+#pix.setSig_x2(3)
+#pix.disSig_x2()
+#pix.setSig_x3(2)
+#pix.disSig_x3()
 convert()
-
-pix.disSig_x2()
-pix.disSig_x3()
-pix.disSig_x4()
-pix.disSig_x5()
-pix.disSig_d3()
-pix.disSig_a2()
-
-pix.setSig_x2(3)
-pix.disSig_x2()
-pix.setSig_x3(2)
-pix.disSig_x3()
+tb = testbench()
+print type(tb)
+tb_fsm = traceSignals(tb)
+sim = Simulation(tb_fsm)
+sim.run()
