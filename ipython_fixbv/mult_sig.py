@@ -8,6 +8,15 @@ from myhdl import *
 #from prev operation
 #x4 x4,x4_1,x4_2,x4_3
 #x5 x5,x5_1,x5_2,x5_3
+def set_ctl():
+	
+	""" Configuring single signals """
+	fwd_inv = Signal(False)
+	even_odd = Signal(False)
+	p = Signal(False)
+	clk = Signal(False)
+	return fwd_inv, even_odd,p,clk
+
 class MyObj(object):
 	
 	def __init__(self):
@@ -44,32 +53,33 @@ class MyObj(object):
 	"""Display variables x2,x3,x4,x5,d3, and a1"""
 	
 	def disSig_x2(self):
-		print "Signal : ", self.x2
+		print "Signal x2: ", self.x2
 	def disSig_x4(self):
-		print "Signal : ", self.x4
+		print "Signal x4: ", self.x4
 	def disSig_d3(self):
-		print "Signal : ", self.d3
+		print "Signal d3: ", self.d3
 	def disSig_x3(self):
-		print "Signal : ", self.x3
+		print "Signal x3: ", self.x3
 	def disSig_x5(self):
-		print "Signal : ", self.x5
-	def disSig_a1(self):
-		print "Signal : ", self.a1	
+		print "Signal x5: ", self.x5
+	def disSig_a2(self):
+		print "Signal a2: ", self.a2	
 				
 	"""Set variables x2,x3,x4,x5"""
 	
 	def setSig_x2(self,val): 
 		ww = (32,8)   
 		self.x2 = Signal(fixbv(val)[ww]) 
-	def setSig_y(self,val):
+	def setSig_x3(self,val):
 		ww = (32,8)    
-		self.y = Signal(fixbv(val)[ww])
-	def setSig_x3(self,val): 
+		self.x3 = Signal(fixbv(val)[ww])
+	def setSig_x4(self,val): 
 		ww = (32,8)   
-		self.x3 = Signal(fixbv(val)[ww]) 
-	def setSig_y(self,val):
+		self.x4 = Signal(fixbv(val)[ww]) 
+	def setSig_x5(self,val):
 		ww = (32,8)    
 		self.x5 = Signal(fixbv(val)[ww])		     
+
 def m_ex1(clk, p, even_odd, fwd_inv, pix):
 	ww = (32,8)
 	ca1 = Signal(fixbv(-1.586134342)[ww])
@@ -80,31 +90,34 @@ def m_ex1(clk, p, even_odd, fwd_inv, pix):
 	ra2 = Signal(fixbv(0.05298011854)[ww])
 	ra3 = Signal(fixbv(-0.8829110762)[ww])
 	ra4 = Signal(fixbv(-0.4435068522)[ww])
-	t = Signal(fixbv(0)[ww])
-	t1 = Signal(fixbv(0)[ww])
 	
 	@always(clk.posedge)
 	def hdl():
 		if not p:
 			if even_odd:
+				
 				if fwd_inv:
+					"""p false 1st pass even_odd True fwd_inv True (x2+x3) * ca1 """
 					pix.d3.next = (pix.x2 + pix.x3)*ca1
 					pix.d3_1.next = (pix.x2_1 + pix.x3_1)*ca1
 					pix.d3_2.next = (pix.x2_2 + pix.x3_2)*ca1
 					pix.d3_3.next = (pix.x2_2 + pix.x3_2)*ca1
 				else:
+					"""p false 1st pass even_odd True fwd_inv False (x4+x5) * ra4 """	
 					pix.a2.next = (pix.x4 + pix.x5)*ra4
 					pix.a2_1.next = (pix.x4_1 + pix.x5_1)*ra4
 					pix.a2_2.next = (pix.x4_2 + pix.x5_2)*ra4
 					pix.a2_3.next = (pix.x4_3 + pix.x5_3)*ra4
 			else:
+					
 				if fwd_inv:
+					"""p false 1st pass even_odd false fwd_inv True (x4+x5) * ca2 """
 					pix.a2.next = (pix.x4 + pix.x5)*ca2
 					pix.a2_1.next = (pix.x4_1 + pix.x5_1)*ca2
 					pix.a2_2.next = (pix.x4_2 + pix.x5_2)*ca2
 					pix.a2_3.next = (pix.x4_3 + pix.x5_3)*ca2
-
 				else:
+					"""p false 1st pass even_odd false fwd_inv False (x2+x3) * ra3 """	
 					pix.d3.next = (pix.x2 + pix.x3)*ra3	 
 					pix.d3_1.next = (pix.x2_1 + pix.x3_1)*ra3	 
 					pix.d3_2.next = (pix.x2_2 + pix.x3_2)*ra3	 
@@ -112,47 +125,106 @@ def m_ex1(clk, p, even_odd, fwd_inv, pix):
 		else:
 			if even_odd:
 				if fwd_inv:
+					"""p True 2nd pass even_odd True fwd_inv True (x2+x3) * ca3 """
 					pix.d3.next = (pix.x2 + pix.x3)*ca3
 					pix.d3_1.next = (pix.x2_1 + pix.x3_1)*ca3
 					pix.d3_2.next = (pix.x2_2 + pix.x3_2)*ca3
 					pix.d3_3.next = (pix.x2_3 + pix.x3_3)*ca3
 				else:
+					"""p True 2nd pass even_odd True fwd_inv False (x4+x5) * ra2 """
 					pix.a2.next = (pix.x4 + pix.x5)*ra2
 					pix.a2_1.next = (pix.x4_1 + pix.x5_1)*ra2
 					pix.a2_2.next = (pix.x4_2 + pix.x5_2)*ra2
 					pix.a2_3.next = (pix.x4_3 + pix.x5_3)*ra2
 
-
-
 			else:
 		
 				if fwd_inv:
+					"""p True 2nd pass even_odd False fwd_inv True (x2+x3) * ca4 """
 					pix.a2.next = (pix.x4 + pix.x5)*ca4
 					pix.a2_1.next = (pix.x4_1 + pix.x5_1)*ca4
 					pix.a2_2.next = (pix.x4_2 + pix.x5_2)*ca4
 					pix.a2_3.next = (pix.x4_3 + pix.x5_3)*ca4
 				else:
+					"""p True 2nd pass even_odd False fwd_inv False (x2+x3) * ra1 """
 					pix.d3.next = (pix.x2 + pix.x3)*ra1
 					pix.d3_1.next = (pix.x2_1 + pix.x3_1)*ra1
 					pix.d3_2.next = (pix.x2_2 + pix.x3_2)*ra1
 					pix.d3_3.next = (pix.x2_3 + pix.x3_3)*ra1
 	
 	return hdl
-fwd_inv = Signal(False)
-even_odd = Signal(False)
-p = Signal(False)
-clk = Signal(False)
+
+def testbench():
+	p = Signal(bool(0))
+	even_odd = Signal(bool(0))
+	fwd_inv = Signal(bool(0))
+	clk = Signal(bool(0))
+
+	d3 = Signal(fixbv(0)[ww])
+	a2 = Signal(fixbv(0)[ww])
+ 
+	x2 = Signal(fixbv(156)[ww])
+	x3 = Signal(fixbv(164)[ww]) 
+	#from prev operation
+	x4 = Signal(fixbv(156)[ww])
+	x5 = Signal(fixbv(156)[ww])	 
+	
+	d_instance = add_mul(d3,a2,clk,x2,x3,x4,x5,p,even_odd,fwd_inv)
+	
+	@always(delay(10))
+	def clkgen():
+		clk.next = not clk
+	
+	@instance
+	def stimulus():
+		for i in range(3):
+			yield clk.posedge
+		for n in (12, 8, 8, 4):
+			even_odd.next = 1
+			fwd_inv.next = 1
+			p.next = 1
+			x2.next = 80
+			x3.next = 100
+			x4.next = 200
+			x5.next = 132
+			for i in range(5):
+				yield clk.posedge
+			even_odd.next = 0
+
+
+			x4.next = 210
+			x5.next = 142
+
+			for i in range(3):
+				yield clk.posedge
+			fwd_inv.next = 0
+			for i in range(2):
+				yield clk.posedge
+			p.next = 0
+			x2.next = 90
+			x3.next = 110
+			for i in range(n-1):
+				yield clk.posedge
+		raise StopSimulation
+	return d_instance, clkgen, stimulus
+
+fwd_inv, even_odd, p, clk = set_ctl()
 pix = MyObj()
+
+def convert():
+	toVerilog(m_ex1, clk, p, even_odd,fwd_inv, pix)
+	toVHDL(m_ex1, clk, p,even_odd, fwd_inv, pix)
+
+convert()
+
 pix.disSig_x2()
 pix.disSig_x3()
+pix.disSig_x4()
+pix.disSig_x5()
+pix.disSig_d3()
+pix.disSig_a2()
 
 pix.setSig_x2(3)
 pix.disSig_x2()
-
 pix.setSig_x3(2)
 pix.disSig_x3()
-
-pix.disSig_d3()
-#m_ex1(clk,pix)
-toVerilog(m_ex1, clk, p, even_odd,fwd_inv, pix)
-toVHDL(m_ex1, clk, p,even_odd, fwd_inv, pix)
