@@ -81,19 +81,19 @@ class MyObj(object):
 		self.x5 = Signal(fixbv(val)[ww])		     
 
 def m_ex1(clk, p, even_odd, fwd_inv, pix):
-
-	
+	ww = (40,24)
+	ca1 = fixbv(-1.586134342)[ww]
+	ca2 = fixbv(-0.05298011854)[ww]
+	ca3 = fixbv(0.8829110762)[ww]
+	ca4 = fixbv(0.4435068522)[ww]
+	ra1 = fixbv(1.586134342)[ww]
+	ra2 = fixbv(0.05298011854)[ww]
+	ra3 = fixbv(-0.8829110762)[ww]
+	ra4 = fixbv(-0.4435068522)[ww]
 	@always(clk.posedge)
 	def hdl():
-		ww = (40,24)
-		ca1 = fixbv(-1.586134342)[ww]
-		ca2 = fixbv(-0.05298011854)[ww]
-		ca3 = fixbv(0.8829110762)[ww]
-		ca4 = fixbv(0.4435068522)[ww]
-		ra1 = fixbv(1.586134342)[ww]
-		ra2 = fixbv(0.05298011854)[ww]
-		ra3 = fixbv(-0.8829110762)[ww]
-		ra4 = fixbv(-0.4435068522)[ww]
+		
+		
 		if not p:
 			if even_odd:
 				
@@ -158,13 +158,9 @@ def m_ex1(clk, p, even_odd, fwd_inv, pix):
 def testbench():
 	fwd_inv, even_odd, p, clk = set_ctl()
 	pix = MyObj()
-	print 'pix', pix, type(pix)
-	#t = m_ex1(clk, p, even_odd, fwd_inv, pix)
-	#print 't' , t, type(t)
-	#d_instance = (t,clk, p,even_odd, fwd_inv, pix)
+	
 	d_instance = m_ex1( clk, p,even_odd, fwd_inv, pix)
-	#print 
-	#print d_instance, type(d_instance)  
+   
 	
 	
 	
@@ -198,28 +194,39 @@ def testbench():
 		raise StopSimulation
 	return d_instance, clkgen, stimulus
 
+
+
+def convert(ver,both=False):
+	if ver:
+		toVerilog(m_ex1, clk, p, even_odd,fwd_inv, pix)
+		if both:
+			toVHDL(m_ex1, clk, p,even_odd, fwd_inv, pix)
+		else:
+			toVHDL(m_ex1, clk, p,even_odd, fwd_inv, pix)
 fwd_inv, even_odd, p, clk = set_ctl()
 
-#pix = MyObj()
+pix = MyObj()
+ver = 1
+both = 1
+convert(ver,both)
+pix.disSig_x2()
+pix.disSig_x3()
+pix.disSig_x4()
+pix.disSig_x5()
+pix.disSig_d3()
+pix.disSig_a2()
 
-def convert():
-	toVerilog(m_ex1, clk, p, even_odd,fwd_inv, pix)
-	toVHDL(m_ex1, clk, p,even_odd, fwd_inv, pix)
+pix.setSig_x2(140)
+pix.disSig_x2()
+pix.setSig_x3(120)
+pix.disSig_x3()
+
+pix.setSig_x4(160)
+pix.disSig_x4()
+pix.setSig_x5(130)
+pix.disSig_x5()
 
 
-
-#pix.disSig_x2()
-#pix.disSig_x3()
-#pix.disSig_x4()
-#pix.disSig_x5()
-#pix.disSig_d3()
-#pix.disSig_a2()
-
-#pix.setSig_x2(3)
-#pix.disSig_x2()
-#pix.setSig_x3(2)
-#pix.disSig_x3()
-#convert()
 
 tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
