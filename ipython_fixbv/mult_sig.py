@@ -68,16 +68,16 @@ class MyObj(object):
 	"""Set variables x2,x3,x4,x5"""
 	
 	def setSig_x2(self,val): 
-		ww = (32,8)   
+		ww = (40,24)   
 		self.x2 = Signal(fixbv(val)[ww]) 
 	def setSig_x3(self,val):
-		ww = (32,8)    
+		ww = (40,24)    
 		self.x3 = Signal(fixbv(val)[ww])
 	def setSig_x4(self,val): 
-		ww = (32,8)   
+		ww = (40,24)   
 		self.x4 = Signal(fixbv(val)[ww]) 
 	def setSig_x5(self,val):
-		ww = (32,8)    
+		ww = (40,24)    
 		self.x5 = Signal(fixbv(val)[ww])		     
 
 def m_ex1(clk, p, even_odd, fwd_inv, pix):
