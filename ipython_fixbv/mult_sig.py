@@ -20,26 +20,26 @@ def set_ctl():
 class MyObj(object):
 	
 	def __init__(self):
-		ww = (32,8)
-		self.x2 = Signal(fixbv(0)[ww])
-		self.x3 = Signal(fixbv(0)[ww])
-		self.x4 = Signal(fixbv(0)[ww])
-		self.x5 = Signal(fixbv(0)[ww])
+		ww = (40,24)
+		self.x2 = Signal(fixbv(164)[ww])
+		self.x3 = Signal(fixbv(164)[ww])
+		self.x4 = Signal(fixbv(164)[ww])
+		self.x5 = Signal(fixbv(164)[ww])
 		
-		self.x2_1 = Signal(fixbv(0)[ww])
-		self.x3_1 = Signal(fixbv(0)[ww])
-		self.x4_1 = Signal(fixbv(0)[ww])
-		self.x5_1 = Signal(fixbv(0)[ww])
+		self.x2_1 = Signal(fixbv(164)[ww])
+		self.x3_1 = Signal(fixbv(164)[ww])
+		self.x4_1 = Signal(fixbv(164)[ww])
+		self.x5_1 = Signal(fixbv(164)[ww])
 		
-		self.x2_2 = Signal(fixbv(0)[ww])
-		self.x3_2 = Signal(fixbv(0)[ww])
-		self.x4_2 = Signal(fixbv(0)[ww])
-		self.x5_2 = Signal(fixbv(0)[ww])
+		self.x2_2 = Signal(fixbv(164)[ww])
+		self.x3_2 = Signal(fixbv(164)[ww])
+		self.x4_2 = Signal(fixbv(164)[ww])
+		self.x5_2 = Signal(fixbv(164)[ww])
 
-		self.x2_3 = Signal(fixbv(0)[ww])
-		self.x3_3 = Signal(fixbv(0)[ww])
-		self.x4_3 = Signal(fixbv(0)[ww])
-		self.x5_3 = Signal(fixbv(0)[ww])
+		self.x2_3 = Signal(fixbv(120)[ww])
+		self.x3_3 = Signal(fixbv(156)[ww])
+		self.x4_3 = Signal(fixbv(156)[ww])
+		self.x5_3 = Signal(fixbv(156)[ww])
 
 		self.d3 = Signal(fixbv(0)[ww])
 		self.a2 = Signal(fixbv(0)[ww])
@@ -81,18 +81,19 @@ class MyObj(object):
 		self.x5 = Signal(fixbv(val)[ww])		     
 
 def m_ex1(clk, p, even_odd, fwd_inv, pix):
-	ww = (32,8)
-	ca1 = Signal(fixbv(-1.586134342)[ww])
-	ca2 = Signal(fixbv(-0.05298011854)[ww])
-	ca3 = Signal(fixbv(0.8829110762)[ww])
-	ca4 = Signal(fixbv(0.4435068522)[ww])
-	ra1 = Signal(fixbv(1.586134342)[ww])
-	ra2 = Signal(fixbv(0.05298011854)[ww])
-	ra3 = Signal(fixbv(-0.8829110762)[ww])
-	ra4 = Signal(fixbv(-0.4435068522)[ww])
+
 	
 	@always(clk.posedge)
 	def hdl():
+		ww = (40,24)
+		ca1 = fixbv(-1.586134342)[ww]
+		ca2 = fixbv(-0.05298011854)[ww]
+		ca3 = fixbv(0.8829110762)[ww]
+		ca4 = fixbv(0.4435068522)[ww]
+		ra1 = fixbv(1.586134342)[ww]
+		ra2 = fixbv(0.05298011854)[ww]
+		ra3 = fixbv(-0.8829110762)[ww]
+		ra4 = fixbv(-0.4435068522)[ww]
 		if not p:
 			if even_odd:
 				
@@ -158,10 +159,10 @@ def testbench():
 	fwd_inv, even_odd, p, clk = set_ctl()
 	pix = MyObj()
 	print 'pix', pix, type(pix)
-	t = m_ex1(clk, p, even_odd, fwd_inv, pix)
-	print 't' , t, type(t)
-	d_instance = (t,clk, p,even_odd, fwd_inv, pix)
-	#d_instance = (m_ex1, clk, p,even_odd, fwd_inv, pix)
+	#t = m_ex1(clk, p, even_odd, fwd_inv, pix)
+	#print 't' , t, type(t)
+	#d_instance = (t,clk, p,even_odd, fwd_inv, pix)
+	d_instance = m_ex1( clk, p,even_odd, fwd_inv, pix)
 	#print 
 	#print d_instance, type(d_instance)  
 	
