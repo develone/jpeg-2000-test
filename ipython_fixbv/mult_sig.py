@@ -197,6 +197,25 @@ def testbench():
 
 
 def convert(ver,both=False):
+	fwd_inv, even_odd, p, clk = set_ctl()
+	pix = MyObj()
+	pix.disSig_x2()
+	pix.disSig_x3()
+	pix.disSig_x4()
+	pix.disSig_x5()
+	pix.disSig_d3()
+	pix.disSig_a2()
+
+	pix.setSig_x2(140)
+	pix.disSig_x2()
+	pix.setSig_x3(120)
+	pix.disSig_x3()
+
+	pix.setSig_x4(160)
+	pix.disSig_x4()
+	pix.setSig_x5(130)
+	pix.disSig_x5()
+	
 	if ver:
 		toVerilog(m_ex1, clk, p, even_odd,fwd_inv, pix)
 		if both:
@@ -205,26 +224,8 @@ def convert(ver,both=False):
 			toVHDL(m_ex1, clk, p,even_odd, fwd_inv, pix)
 fwd_inv, even_odd, p, clk = set_ctl()
 
-pix = MyObj()
-ver = 1
-both = 1
-convert(ver,both)
-pix.disSig_x2()
-pix.disSig_x3()
-pix.disSig_x4()
-pix.disSig_x5()
-pix.disSig_d3()
-pix.disSig_a2()
 
-pix.setSig_x2(140)
-pix.disSig_x2()
-pix.setSig_x3(120)
-pix.disSig_x3()
-
-pix.setSig_x4(160)
-pix.disSig_x4()
-pix.setSig_x5(130)
-pix.disSig_x5()
+convert(1,1)
 
 
 
