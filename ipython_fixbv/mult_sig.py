@@ -21,25 +21,25 @@ class MyObj(object):
 	
 	def __init__(self):
 		ww = (26,18)
-		self.x2 = Signal(fixbv(1)[ww])
-		self.x3 = Signal(fixbv(2)[ww])
-		self.x4 = Signal(fixbv(3)[ww])
-		self.x5 = Signal(fixbv(4)[ww])
+		self.x2 = Signal(fixbv(0)[ww])
+		self.x3 = Signal(fixbv(0)[ww])
+		self.x4 = Signal(fixbv(0)[ww])
+		self.x5 = Signal(fixbv(0)[ww])
 		
-		self.x2_1 = Signal(fixbv(164)[ww])
-		self.x3_1 = Signal(fixbv(164)[ww])
-		self.x4_1 = Signal(fixbv(164)[ww])
-		self.x5_1 = Signal(fixbv(164)[ww])
+		self.x2_1 = Signal(fixbv(0)[ww])
+		self.x3_1 = Signal(fixbv(0)[ww])
+		self.x4_1 = Signal(fixbv(0)[ww])
+		self.x5_1 = Signal(fixbv(0)[ww])
 		
-		self.x2_2 = Signal(fixbv(164)[ww])
-		self.x3_2 = Signal(fixbv(164)[ww])
-		self.x4_2 = Signal(fixbv(164)[ww])
-		self.x5_2 = Signal(fixbv(164)[ww])
+		self.x2_2 = Signal(fixbv(0)[ww])
+		self.x3_2 = Signal(fixbv(0)[ww])
+		self.x4_2 = Signal(fixbv(0)[ww])
+		self.x5_2 = Signal(fixbv(0)[ww])
 
-		self.x2_3 = Signal(fixbv(120)[ww])
-		self.x3_3 = Signal(fixbv(156)[ww])
-		self.x4_3 = Signal(fixbv(156)[ww])
-		self.x5_3 = Signal(fixbv(156)[ww])
+		self.x2_3 = Signal(fixbv(0)[ww])
+		self.x3_3 = Signal(fixbv(0)[ww])
+		self.x4_3 = Signal(fixbv(0)[ww])
+		self.x5_3 = Signal(fixbv(0)[ww])
 
 		self.d3 = Signal(fixbv(0)[ww])
 		self.a2 = Signal(fixbv(0)[ww])
@@ -69,17 +69,56 @@ class MyObj(object):
 	
 	def setSig_x2(self,val): 
 		ww = (26,18)   
-		self.x2 = Signal(fixbv(val)[ww]) 
+		self.x2.next = Signal(fixbv(val)[ww]) 
 	def setSig_x3(self,val):
 		ww = (26,18)    
-		self.x3 = Signal(fixbv(val)[ww])
+		self.x3.next = Signal(fixbv(val)[ww])
 	def setSig_x4(self,val): 
 		ww = (26,18)   
-		self.x4 = Signal(fixbv(val)[ww]) 
+		self.x4.next = Signal(fixbv(val)[ww]) 
 	def setSig_x5(self,val):
 		ww = (26,18)    
-		self.x5 = Signal(fixbv(val)[ww])		     
+		self.x5.next = Signal(fixbv(val)[ww])		     
 
+	def setSig_x2_1(self,val): 
+		ww = (26,18)   
+		self.x2_1.next = Signal(fixbv(val)[ww]) 
+	def setSig_x3_1(self,val):
+		ww = (26,18)    
+		self.x3_1.next = Signal(fixbv(val)[ww])
+	def setSig_x4_1(self,val): 
+		ww = (26,18)   
+		self.x4_1.next = Signal(fixbv(val)[ww]) 
+	def setSig_x5_1(self,val):
+		ww = (26,18)    
+		self.x5_1.next = Signal(fixbv(val)[ww])
+	
+	def setSig_x2_2(self,val): 
+		ww = (26,18)   
+		self.x2_2.next = Signal(fixbv(val)[ww]) 
+	def setSig_x3_2(self,val):
+		ww = (26,18)    
+		self.x3_2.next = Signal(fixbv(val)[ww])
+	def setSig_x4_2(self,val): 
+		ww = (26,18)   
+		self.x4_2.next = Signal(fixbv(val)[ww]) 
+	def setSig_x5_2(self,val):
+		ww = (26,18)    
+		self.x5_2.next = Signal(fixbv(val)[ww])
+	
+	def setSig_x2_3(self,val): 
+		ww = (26,18)   
+		self.x2_3.next = Signal(fixbv(val)[ww]) 
+	def setSig_x3_3(self,val):
+		ww = (26,18)    
+		self.x3_3.next = Signal(fixbv(val)[ww])
+	def setSig_x4_3(self,val): 
+		ww = (26,18)   
+		self.x4_3.next = Signal(fixbv(val)[ww]) 
+	def setSig_x5_3(self,val):
+		ww = (26,18)    
+		self.x5_3.next = Signal(fixbv(val)[ww])
+					
 	"""Get variables d3,d3_1,d3_2,d3_3
 	Get variables a2,a2_1,a2_2,a2_3"""
     
@@ -192,18 +231,60 @@ def testbench():
 	def stimulus():
 		for i in range(3):
 			yield clk.posedge
-		for n in (12, 8, 8, 4):
+		for n in (18, 8, 8, 4):
 			even_odd.next = True
 			fwd_inv.next = True
 			p.next = True
-			 
-			for i in range(5):
-				yield clk.posedge
-			even_odd.next = False
+			pix.setSig_x2(100)
+			pix.setSig_x3(110)
+			pix.setSig_x4(120)
+			pix.setSig_x5(130)
 
- 
+			pix.setSig_x2_1(100)
+			pix.setSig_x3_1(110)
+			pix.setSig_x4_1(120)
+			pix.setSig_x5_1(130)
+
+			pix.setSig_x2_2(100)
+			pix.setSig_x3_2(110)
+			pix.setSig_x4_2(120)
+			pix.setSig_x5_2(130)
+			
+			pix.setSig_x2_3(100)
+			pix.setSig_x3_3(110)
+			pix.setSig_x4_3(120)
+			pix.setSig_x5_3(130)
+  			
+    
+			for i in range(2):
+				yield clk.posedge
+				
+				pix.setSig_x2(101)
+				pix.setSig_x3(111)
+				pix.setSig_x4(121)
+				pix.setSig_x5(131)
+				
+				pix.setSig_x2_1(101)
+				pix.setSig_x3_1(111)
+				pix.setSig_x4_1(121)
+				pix.setSig_x5_1(131)
+
+				
+  
 			for i in range(3):
 				yield clk.posedge
+				even_odd.next = False
+				pix.setSig_x2(102)
+				pix.setSig_x3(112)
+				pix.setSig_x4(122)
+				pix.setSig_x5(132)
+				
+				pix.setSig_x2_1(102)
+				pix.setSig_x3_1(112)
+				pix.setSig_x4_1(122)
+				pix.setSig_x5_1(132)
+
+ 
 			fwd_inv.next = False
 			for i in range(2):
 				yield clk.posedge
@@ -246,7 +327,6 @@ fwd_inv, even_odd, p, clk = set_ctl()
 
 
 convert(1,1)
-
 
 
 tb_fsm = traceSignals(testbench)
