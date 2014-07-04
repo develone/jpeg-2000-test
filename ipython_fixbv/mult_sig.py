@@ -80,6 +80,26 @@ class MyObj(object):
 		ww = (26,18)    
 		self.x5 = Signal(fixbv(val)[ww])		     
 
+	"""Get variables d3,d3_1,d3_2,d3_3
+	Get variables a2,a2_1,a2_2,a2_3"""
+    
+	def get_d3(self):
+		return self.d3
+	def get_d3_1(self):
+		return self.d3_1			     
+	def get_d3_2(self):
+		return self.d3_2
+	def get_d3_3(self):
+		return self.d3_3
+	def get_a2(self):
+		return self.a2
+	def get_a2_1(self):
+		return self.a2_1			     
+	def get_a2_2(self):
+		return self.a2_2
+	def get_a2_3(self):
+		return self.a2_3
+		
 def m_ex1(clk, p, even_odd, fwd_inv, pix):
 	ww = (26,18)
 	ca1 = fixbv(-1.586134342)[ww]
