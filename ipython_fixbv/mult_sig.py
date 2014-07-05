@@ -17,7 +17,7 @@ def set_ctl():
 	clk = Signal(bool(False))
 	return fwd_inv, even_odd,p,clk
 
-class MyObj(object):
+class Mult_sig_top(object):
 	
 	def __init__(self):
 		ww = (26,18)
@@ -139,7 +139,7 @@ class MyObj(object):
 	def get_a2_3(self):
 		return self.a2_3
 		
-def m_ex1(clk, p, even_odd, fwd_inv, pix):
+def mult_mul_add(clk, p, even_odd, fwd_inv, pix):
 	ww = (26,18)
 	ca1 = fixbv(-1.586134342)[ww]
 	ca2 = fixbv(-0.05298011854)[ww]
@@ -216,9 +216,9 @@ def m_ex1(clk, p, even_odd, fwd_inv, pix):
 
 def testbench():
 	fwd_inv, even_odd, p, clk = set_ctl()
-	pix = MyObj()
+	pix = Mult_sig_top()
 	
-	d_instance = m_ex1( clk, p,even_odd, fwd_inv, pix)
+	d_instance = mult_mul_add( clk, p,even_odd, fwd_inv, pix)
    
 	
 	
@@ -299,7 +299,7 @@ def testbench():
 
 def convert(ver,both=False):
 	fwd_inv, even_odd, p, clk = set_ctl()
-	pix = MyObj()
+	pix = Mult_sig_top()
 	pix.disSig_x2()
 	pix.disSig_x3()
 	pix.disSig_x4()
@@ -318,11 +318,11 @@ def convert(ver,both=False):
 	pix.disSig_x5()
 	
 	if ver:
-		toVerilog(m_ex1, clk, p, even_odd,fwd_inv, pix)
+		toVerilog(mult_mul_add, clk, p, even_odd,fwd_inv, pix)
 		if both:
-			toVHDL(m_ex1, clk, p,even_odd, fwd_inv, pix)
+			toVHDL(mult_mul_add, clk, p,even_odd, fwd_inv, pix)
 		else:
-			toVHDL(m_ex1, clk, p,even_odd, fwd_inv, pix)
+			toVHDL(mult_mul_add, clk, p,even_odd, fwd_inv, pix)
 fwd_inv, even_odd, p, clk = set_ctl()
 
 
