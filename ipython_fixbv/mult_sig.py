@@ -200,7 +200,7 @@ def m_ex1(clk, p, even_odd, fwd_inv, pix):
 			else:
 		
 				if fwd_inv:
-					"""p True 2nd pass even_odd False fwd_inv True (x2+x3) * ca4 """
+					"""p True 2nd pass even_odd False fwd_inv True (x4+x5) * ca4 """
 					pix.a2.next = (pix.x4 + pix.x5)*ca4
 					pix.a2_1.next = (pix.x4_1 + pix.x5_1)*ca4
 					pix.a2_2.next = (pix.x4_2 + pix.x5_2)*ca4
