@@ -57,5 +57,5 @@ y = toTwosComplement( z)
 print 'TwosComplement ',y
 print x5._W._fwl
 print x5._W._iwl
-print xx + x5
+#print xx + x5
  
