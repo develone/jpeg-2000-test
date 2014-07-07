@@ -20,7 +20,7 @@ class Add_mul_top(object):
 
 		self.din_r = Signal(fixbv(0)[ww])
 		self.dout_r = Signal(fixbv(0)[ww])
-		self.we_r = Signal(bool(0))
+		self.we_r = Signal(bool(1))
 		self.addr_r = Signal(intbv(0)[7:])
 
 	def setSig_we_odd(self,val):   
@@ -41,13 +41,17 @@ class Add_mul_top(object):
 	def setSig_addr_r(self,val):   
 		self.addr_r.next = Signal(intbv(val))
 
+	def setSig_din_odd(self,val):   
+		ww = (26,18)
+		self.din_odd.next = Signal(fixbv(val)[ww])		
+
 	def setSig_din_l(self,val):   
 		ww = (26,18)
 		self.din_l.next = Signal(fixbv(val)[ww])
 
 	def setSig_din_r(self,val):
 		ww = (26,18)
-		self.din_r.next = Signal(fixbv(val))
+		self.din_r.next = Signal(fixbv(val)[ww])
 		
 def mult_mul_add(clk, pix):
 	ww = (26,18)
@@ -63,11 +67,12 @@ def mult_mul_add(clk, pix):
 	
              
  
-
+	
 
 	@always(clk.posedge)
 	def hdl():
-		pix.dout_odd.next = (pix.dout_l + pix.dout_r)*ca1
+		 		
+		pix.din_odd.next = (pix.dout_l + pix.dout_r)*ca1
 	 
 	return hdl
 	
@@ -140,16 +145,7 @@ def testbench():
  
 	clk = Signal(bool(0))
 	pix = Add_mul_top()
-	pix.setSig_addr_l(0)
-	pix.setSig_addr_r(2)
-	pix.setSig_addr_odd(1)
-	pix.setSig_we_l(1)
-	pix.setSig_we_r(1)
-	pix.setSig_we_odd(1)
 
-	pix.setSig_din_l(100)
-
-	pix.setSig_din_r(110)
 
 	d_inst = ram_r(pix, clk)
 	d_inst1 = ram_l(pix, clk)
@@ -164,11 +160,38 @@ def testbench():
 	def stimulus():
 		for i in range(3):
 			yield clk.posedge
-		for n in (18, 8, 8, 4):
+			pix.setSig_we_l(1)
+			pix.setSig_we_r(1)
+			pix.setSig_we_odd(1)
+			pix.setSig_addr_odd(1)
+			pix.setSig_addr_l(0)
+			pix.setSig_din_l(100)
+			pix.setSig_addr_r(0)
+			pix.setSig_din_r(110)
+			
+ 		for n in (18, 8, 8, 4):
 			for i in range(2):
+				pix.setSig_addr_l(1)
+				pix.setSig_addr_r(1)
+				pix.setSig_addr_odd(2)
+				pix.setSig_we_l(1)
+				pix.setSig_we_r(1)
+				pix.setSig_we_odd(1)
+				pix.setSig_din_l(101)
+				pix.setSig_din_r(111)
+				yield clk.posedge
+			for i in range(3):
+				pix.setSig_addr_odd(3)
+				pix.setSig_we_l(1)
+				pix.setSig_we_r(1)
+				pix.setSig_we_odd(1)
+				pix.setSig_addr_l(2)
+				pix.setSig_din_l(102)
+				pix.setSig_addr_r(2)
+				pix.setSig_din_r(112)
 				yield clk.posedge
 			for i in range(n-1):
-				yield clk.posedge 
+			 	yield clk.posedge
 		raise StopSimulation
 	return d_inst, d_inst1, d_inst2, d_inst3, stimulus, clkgen
  
