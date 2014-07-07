@@ -13,6 +13,11 @@ class Add_mul_top(object):
 		self.we_odd = Signal(bool(0))
 		self.addr_odd = Signal(intbv(0)[7:])
 
+		self.din_even = Signal(fixbv(0)[ww])
+		self.dout_even = Signal(fixbv(0)[ww])
+		self.we_even = Signal(bool(0))
+		self.addr_even = Signal(intbv(0)[7:])
+
 		self.din_l = Signal(fixbv(0)[ww])
 		self.dout_l = Signal(fixbv(0)[ww])
 		self.we_l = Signal(bool(0))
@@ -25,6 +30,9 @@ class Add_mul_top(object):
 
 	def setSig_we_odd(self,val):   
 		self.we_odd.next = Signal(bool(val))
+		
+	def setSig_we_even(self,val):   
+		self.we_even.next = Signal(bool(val))
 	
  	def setSig_we_l(self,val):   
 		self.we_l.next = Signal(bool(val))
@@ -34,6 +42,9 @@ class Add_mul_top(object):
 	
  	def setSig_addr_odd(self,val):   
 		self.addr_odd.next = Signal(intbv(val))
+
+ 	def setSig_addr_even(self,val):   
+		self.addr_even.next = Signal(intbv(val))
 
 	def setSig_addr_l(self,val):   
 		self.addr_l.next = Signal(intbv(val))
@@ -67,7 +78,6 @@ def mult_mul_add(clk, pix):
 	
              
  
-	
 
 	@always(clk.posedge)
 	def hdl():
@@ -90,6 +100,21 @@ def ram_odd(pix, clk, depth = 128):
 		pix.dout_odd.next = mem_odd[pix.addr_odd]
 
 	return write_odd, read_odd
+
+def ram_even(pix, clk, depth = 128):
+	"""  Ram model """
+	ww = (26,18)
+	mem_even = [Signal(fixbv(0)[ww]) for i in range(128)]
+	@always(clk.posedge)
+	def write_even():
+		if pix.we_even:
+			mem_even[pix.addr_even].next = pix.din_even
+                
+	@always_comb
+	def read_even():
+		pix.dout_even.next = mem_even[pix.addr_even]
+
+	return write_even, read_even
 
 
 def ram_l(pix, clk, depth = 128):
@@ -136,7 +161,7 @@ def convert():
 	toVerilog(ram_r, pix, clk)
 	toVerilog(ram_l, pix, clk)
 	toVerilog(ram_odd, pix, clk)
-
+	toVerilog(ram_even, pix, clk)
 
 	 
 def testbench():
@@ -149,7 +174,9 @@ def testbench():
 
 	d_inst = ram_r(pix, clk)
 	d_inst1 = ram_l(pix, clk)
-	d_inst2 = ram_odd(pix, clk)
+	d_instodd = ram_odd(pix, clk)
+	d_insteven = ram_even(pix, clk)
+
 	d_inst3 = mult_mul_add(clk, pix)
 	
 	@always(delay(10))
@@ -193,7 +220,7 @@ def testbench():
 			for i in range(n-1):
 			 	yield clk.posedge
 		raise StopSimulation
-	return d_inst, d_inst1, d_inst2, d_inst3, stimulus, clkgen
+	return d_inst, d_inst1, d_instodd, d_insteven, d_inst3, stimulus, clkgen
  
 convert()
 
