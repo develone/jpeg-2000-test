@@ -13,7 +13,7 @@ class Add_mul_top(object):
 		self.we_d = Signal(bool(0))
 		self.addr_d = Signal(intbv(0)[7:])
 
-		self.din_l = Signal(fixbv(0)[25:])
+		self.din_l = Signal(fixbv(0)[ww])
 		self.dout_l = Signal(fixbv(0)[ww])
 		self.we_l = Signal(bool(0))
 		self.addr_l = Signal(intbv(0)[7:])
@@ -68,10 +68,10 @@ def mult_mul_add(clk, pix):
 	 
 	return hdl
 	
-def ram_d(clk, pix, depth=128):
+def ram_d(pix, clk, depth=128):
 	"""  Ram model """
-    
-	mem = [Signal(fixbv(0)[25:]) for i in range(depth)]
+	ww = (26,18)
+	mem = [Signal(fixbv(0)[ww]) for i in range(depth)]
     
 	@always(clk.posedge)
 	def write_d():
@@ -85,11 +85,11 @@ def ram_d(clk, pix, depth=128):
 	return write_d, read_d
 
 
-def ram_l(clk, pix, depth=128):
+def ram_l(pix, clk, depth=128):
 	"""  Ram model """
 	ww = (26,18)
-	mem = [Signal(fixbv(0)[25:]) for i in range(depth)]
-    
+	mem = [Signal(fixbv(0)[26,18]) for i in range(depth)]
+ 
 	@always(clk.posedge)
 	def write_l():
 		if pix.we_l:
@@ -101,10 +101,10 @@ def ram_l(clk, pix, depth=128):
 
 	return write_l, read_l
 
-def ram_r(clk,pix, depth=128):
+def ram_r(pix, clk, depth=128):
 	"""  Ram model """
-    
-	mem = [Signal(fixbv(0)[25:]) for i in range(depth)]
+	ww = (26,18)
+	mem = [Signal(fixbv(0)[ww]) for i in range(depth)]
     
 	@always(clk.posedge)
 	def write_r():
@@ -124,9 +124,9 @@ def convert():
  	
 	toVerilog(mult_mul_add,clk, pix)
 	
-	toVerilog(ram_r, clk, pix)
-	toVerilog(ram_l, clk, pix)
-	toVerilog(ram_d, clk, pix)
+	toVerilog(ram_r, pix, clk)
+	toVerilog(ram_l, pix, clk)
+	toVerilog(ram_d, pix, clk)
 
 
 	 
@@ -145,7 +145,7 @@ def testbench():
 
 	pix.setSig_din_r(110)
 
-	#d_instance = ram_l(ram_l, clk, pix)
+	#d_instance = ram_l(ram_l, pix, clk)
 	
 	@always(delay(10))
 	def clkgen():
