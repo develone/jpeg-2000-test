@@ -28,50 +28,56 @@ def toTwosComplement(binarySequence):
 
     return ''.join(str(x) for x in convertedSequence)
 ww = (26,18)
-x2 = fixbv(100)[ww]
-x3 = fixbv(110)[ww]
-
+x2 = fixbv(100.0)[ww]
+x3 = fixbv(110.0)[ww]
+a1 = -1.586134342 
+a2 = 0.05298011854
 ca1 = fixbv(-1.586134342)[ww]
 ca2 = fixbv(-0.05298011854)[ww]
 ca3 = fixbv(0.8829110762)[ww]
 ca4 = fixbv(0.4435068522)[ww]
-d3 = (x2 + x3) * ca3
-print d3  
-print hex(x2),hex(x3),hex(d3)
-
-#z = bin(d3)
-#print z
-#print toTwosComplement(z)
-
-x2 = fixbv(101)[ww]
-x3 = fixbv(111)[ww] 
-
-d3 = (x2 + x3) * ca3
-print d3  
-print hex(x2),hex(x3),hex(d3)
-
-#z = bin(d3)
-#print z
-#print toTwosComplement(z)
-
-x2 = fixbv(102)[ww]
-x3 = fixbv(112)[ww] 
-
+ra2 = fixbv(0.05298011854)[ww]
 d3 = (x2 + x3) * ca1
-print d3  
+d = (100 +110)*a1
+res = fixbv(d)[ww]
+print hex(res)
+z = bin(res)
+print z 
+print toTwosComplement(z)
+print d3, 'ca1 is mul', a1 
+
+z = bin(d3)
+ 
+print d 
+print (x2),(x3)
 print hex(x2),hex(x3),hex(d3)
 
 z = bin(d3)
 print z
 print toTwosComplement(z)
 
-x4 = fixbv(122)[ww]
-x5 = fixbv(132)[ww] 
-
-a2 = (x4 + x5) * ca4
-print a2  
-print hex(x4),hex(x5),hex(a2)
-
- 
+print
 
 
+x2 = fixbv(100)[ww]
+x3 = fixbv(110)[ww] 
+
+d3 = (x2 + x3) * ca2
+print d3, 'ca2 is mul', ca2 
+print (x2),(x3)
+print hex(x2),hex(x3),hex(d3)
+
+z = bin(d3)
+print z
+print toTwosComplement(z)
+print
+
+x2 = fixbv(102)[ww]
+x3 = fixbv(112)[ww] 
+
+d3 = (x2 + x3) * ra2
+print d3, 'a2 is mul', a2
+print (x2),(x3)
+print hex(x2),hex(x3),hex(d3)
+
+  

@@ -8,6 +8,11 @@ class Add_mul_top(object):
 
 	def __init__(self):
 		ww = (26,18)
+		self.even_odd = Signal(bool(0))
+		self.fwd_inv = Signal(bool(0))
+		self.p = Signal(bool(0))
+		self.left = Signal(fixbv(0)[ww])
+		self.right = Signal(fixbv(0)[ww])
 		self.din_odd = Signal(fixbv(0)[ww])
 		self.dout_odd = Signal(fixbv(0)[ww])
 		self.we_odd = Signal(bool(0))
@@ -63,8 +68,19 @@ class Add_mul_top(object):
 	def setSig_din_r(self,val):
 		ww = (26,18)
 		self.din_r.next = Signal(fixbv(val)[ww])
-		
-def mult_mul_add(clk, pix):
+	def setSig_left(self,val):   
+		ww = (26,18)
+		self.left.next = Signal(fixbv(val)[ww])	
+	def setSig_right(self,val):   
+		ww = (26,18)
+		self.right.next = Signal(fixbv(val)[ww])
+	def setSig_even_odd(self,val):   
+		self.even_odd.next = Signal(bool(val))
+	def setSig_fwd_inv(self,val):   
+		self.fwd_inv.next = Signal(bool(val))	
+	def setSig_p(self,val):   
+		self.p.next = Signal(bool(val))									
+def add_mul_ram(clk, pix):
 	ww = (26,18)
  
 	ca1 = fixbv(-1.586134342)[ww]
@@ -81,9 +97,33 @@ def mult_mul_add(clk, pix):
 
 	@always(clk.posedge)
 	def hdl():
-		 		
-		pix.din_odd.next = (pix.dout_l + pix.dout_r)*ca1
-	 
+		if not pix.p:
+			"""p False 1st pass even_odd True fwd_inv True * ca2 """
+			if pix.even_odd:
+				if pix.fwd_inv:
+					pix.din_even.next = (pix.left + pix.right)*ca2
+				else:
+					pix.din_even.next = (pix.left + pix.right)*ra4
+		
+			else:
+				if pix.fwd_inv:
+					pix.din_odd.next = (pix.left + pix.right)*ca1
+				else:
+					pix.din_odd.next = (pix.left + pix.right)*ra3
+		else:
+			"""p True 2nd pass even_odd True fwd_inv True * ca4 """
+			if pix.even_odd:
+				if pix.fwd_inv:
+					pix.din_even.next = (pix.left + pix.right)*ca4
+				else:
+					pix.din_even.next = (pix.left + pix.right)*ra2
+					
+			else:
+				if pix.fwd_inv:
+					pix.din_odd.next = (pix.left + pix.right)*ca3
+				else:
+					pix.din_odd.next = (pix.left + pix.right)*ra1			
+			
 	return hdl
 	
 def ram_odd(pix, clk, depth = 128):
@@ -156,7 +196,7 @@ def convert():
 	
 	
  	
-	toVerilog(mult_mul_add, clk, pix)
+	toVerilog(add_mul_ram, clk, pix)
 	
 	toVerilog(ram_r, pix, clk)
 	toVerilog(ram_l, pix, clk)
@@ -177,7 +217,7 @@ def testbench():
 	d_instodd = ram_odd(pix, clk)
 	d_insteven = ram_even(pix, clk)
 
-	d_inst3 = mult_mul_add(clk, pix)
+	d_inst3 = add_mul_ram(clk, pix)
 	
 	@always(delay(10))
 	def clkgen():
@@ -187,35 +227,48 @@ def testbench():
 	def stimulus():
 		for i in range(3):
 			yield clk.posedge
-			pix.setSig_we_l(1)
-			pix.setSig_we_r(1)
+			pix.setSig_p(0)
+			pix.setSig_even_odd(0)
+			pix.setSig_fwd_inv(1)
+			pix.setSig_left(100)
+			pix.setSig_right(110)
+
 			pix.setSig_we_odd(1)
 			pix.setSig_addr_odd(1)
-			pix.setSig_addr_l(0)
-			pix.setSig_din_l(100)
-			pix.setSig_addr_r(0)
-			pix.setSig_din_r(110)
+			
 			
  		for n in (18, 8, 8, 4):
 			for i in range(2):
-				pix.setSig_addr_l(1)
-				pix.setSig_addr_r(1)
-				pix.setSig_addr_odd(2)
-				pix.setSig_we_l(1)
-				pix.setSig_we_r(1)
-				pix.setSig_we_odd(1)
-				pix.setSig_din_l(101)
-				pix.setSig_din_r(111)
-				yield clk.posedge
-			for i in range(3):
+				pix.setSig_even_odd(1)
+				pix.setSig_fwd_inv(0)
+				pix.setSig_addr_even(2)
+				pix.setSig_we_even(1)
+				pix.setSig_we_odd(0)
+ 				yield clk.posedge
+			for i in range(2):
 				pix.setSig_addr_odd(3)
-				pix.setSig_we_l(1)
-				pix.setSig_we_r(1)
+				pix.setSig_p(1) 
 				pix.setSig_we_odd(1)
-				pix.setSig_addr_l(2)
-				pix.setSig_din_l(102)
-				pix.setSig_addr_r(2)
-				pix.setSig_din_r(112)
+				 
+				pix.setSig_left(102)
+				
+				pix.setSig_right(112)
+				yield clk.posedge
+			for i in range(2):
+				pix.setSig_addr_even(4)
+				pix.setSig_even_odd(0)
+				 
+				pix.setSig_we_odd(1)
+				 
+				pix.setSig_left(104)
+				
+				pix.setSig_right(114)
+				yield clk.posedge	
+			for i in range(2):
+				pix.setSig_left(106)
+				
+				pix.setSig_right(116)
+				pix.setSig_addr_odd(5)	
 				yield clk.posedge
 			for i in range(n-1):
 			 	yield clk.posedge
