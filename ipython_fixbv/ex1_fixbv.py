@@ -37,27 +37,25 @@ ca3 = fixbv(0.8829110762)[ww]
 ca4 = fixbv(0.4435068522)[ww]
 ra2 = fixbv(0.05298011854)[ww]
 
-x2 = fixbv(100.0)[ww]
-x3 = fixbv(110.0)[ww]
-d3 = (x2 + x3) * ca1
+x2 = fixbv(102.0)[ww]
+x3 = fixbv(112.0)[ww]
+d3 = (x2 + x3) * ra2
 
 print (x2),(x3)
 print hex(x2),hex(x3),hex(d3)
 
-x = 0x3a42000
+x = 0x0028200
 print 'simulation results', hex(x)
-z = bin(x)
-print z
-print '2s complement of simulation results', toTwosComplement(z)
+ 
 
 print
 
 
 
 print
-x2 = fixbv(104.0)[ww]
-x3 = fixbv(114.0)[ww]
-d3 = (x2 + x3) * ca1
+x2 = fixbv(255.0)[ww]
+x3 = fixbv(255.0)[ww]
+d3 = (x2 + x3) * ra2
 
 z = bin(d3)
 print z 
@@ -69,13 +67,10 @@ z = bin(d3)
 print (x2),(x3)
 print hex(x2),hex(x3),hex(d3)
 
-x = 0x3a0a000
+x = 0x005FA00
 print 'simulations', hex(x)
-z = bin(x)
-print z
-print '2s complement of simulation results', toTwosComplement(z)
-
-x2 = fixbv(100.0)[ww]
-x3 = fixbv(110.0)[ww]
+ 
+x2 = fixbv(255.0)[ww]
+x3 = fixbv(255.0)[ww]
 d3 = (x2 + x3) * ca1
 
