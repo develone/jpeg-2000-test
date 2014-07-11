@@ -7,7 +7,7 @@ from myhdl import *
 class Add_mul_top(object):
 
 	def __init__(self):
-		ww = (26,18)
+		ww = (20,16)
 		self.even_odd = Signal(bool(0))
 		self.fwd_inv = Signal(bool(0))
 		self.p = Signal(bool(0))
@@ -60,27 +60,27 @@ class Add_mul_top(object):
 		self.addr_even1.next = Signal(intbv(val))
 
 	def setSig_din_odd(self,val):   
-		ww = (26,18)
+		ww = (20,16)
 		self.din_odd.next = Signal(fixbv(val)[ww])		
 
 	def setSig_din_odd1(self,val):   
-		ww = (26,18)
+		ww = (20,16)
 		self.din_odd1.next = Signal(fixbv(val)[ww])
 
 	def setSig_din_even1(self,val):
-		ww = (26,18)
+		ww = (20,16)
 		self.din_even1.next = Signal(fixbv(val)[ww])
 	def setSig_left(self,val):   
-		ww = (26,18)
+		ww = (20,16)
 		self.left.next = Signal(fixbv(val)[ww])	
 	def setSig_right(self,val):   
-		ww = (26,18)
+		ww = (20,16)
 		self.right.next = Signal(fixbv(val)[ww])
 	def setSig_left1(self,val):   
-		ww = (26,18)
+		ww = (20,16)
 		self.left1.next = Signal(fixbv(val)[ww])	
 	def setSig_right1(self,val):   
-		ww = (26,18)
+		ww = (20,16)
 		self.right1.next = Signal(fixbv(val)[ww])
 	def setSig_even_odd(self,val):   
 		self.even_odd.next = Signal(bool(val))
@@ -89,16 +89,24 @@ class Add_mul_top(object):
 	def setSig_p(self,val):   
 		self.p.next = Signal(bool(val))									
 def add_mul_ram(clk, pix):
-	ww = (26,18)
- 
-	ca1 = fixbv(-1.586134342)[ww]
-	ca2 = fixbv(-0.05298011854)[ww]
-	ca3 = fixbv(0.8829110762)[ww]
-	ca4 = fixbv(0.4435068522)[ww]
-	ra1 = fixbv(1.586134342)[ww]
-	ra2 = fixbv(0.05298011854)[ww]
-	ra3 = fixbv(-0.8829110762)[ww]
-	ra4 = fixbv(-0.4435068522)[ww]
+	DATA_WIDTH = 524292
+	ww = (20,16)
+	ca1 = fixbv(-1.586134342, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
+	ra4 = fixbv(-0.4435068522, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
+	ca2 = fixbv(-0.05298011854, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
+	ra3 = fixbv(-0.8829110762, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
+	ca3 = fixbv(0.8829110762, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)		
+	ra2 = fixbv(0.05298011854, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)
+	ca4 = fixbv(0.4435068522, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)		
+	ra1 = fixbv(1.586134342, min = -DATA_WIDTH, max = DATA_WIDTH, res=1e-5)		 
+	#ca1 = fixbv(-1.586134342)[ww]
+	#ca2 = fixbv(-0.05298011854)[ww]
+	#ca3 = fixbv(0.8829110762)[ww]
+	#ca4 = fixbv(0.4435068522)[ww]
+	#ra1 = fixbv(1.586134342)[ww]
+	#ra2 = fixbv(0.05298011854)[ww]
+	#ra3 = fixbv(-0.8829110762)[ww]
+	#ra4 = fixbv(-0.4435068522)[ww]
 	
              
  
@@ -129,15 +137,15 @@ def add_mul_ram(clk, pix):
 			"""
 			if pix.even_odd: 
 				if pix.fwd_inv:
-					pix.din_even.next = (pix.left + pix.right)*ca2
-					pix.din_even1.next = (pix.left1 + pix.right1)*ca2
+					pix.din_even.next = (pix.left + pix.right)*ca1
+					pix.din_even1.next = (pix.left1 + pix.right1)*ca1
 				else:
 					pix.din_even.next = (pix.left + pix.right)*ra4
 					pix.din_even1.next = (pix.left1 + pix.right1)*ra4
  			else:
 				if pix.fwd_inv:
-					pix.din_odd.next = (pix.left + pix.right)*ca1
-					pix.din_odd1.next = (pix.left1 + pix.right1)*ca1
+					pix.din_odd.next = (pix.left + pix.right)*ca2
+					pix.din_odd1.next = (pix.left1 + pix.right1)*ca2
 				else:
 					pix.din_odd.next = (pix.left + pix.right)*ra3
 					pix.din_odd1.next = (pix.left1 + pix.right1)*ra3
@@ -165,16 +173,16 @@ def add_mul_ram(clk, pix):
 			"""			
  			if pix.even_odd:
 				if pix.fwd_inv:
-					pix.din_even.next = (pix.left + pix.right)*ca4
-					pix.din_even1.next = (pix.left1 + pix.right1)*ca4
+					pix.din_even.next = (pix.left + pix.right)*ca3
+					pix.din_even1.next = (pix.left1 + pix.right1)*ca3
 				else:
 					pix.din_even.next = (pix.left + pix.right)*ra2
 					pix.din_even1.next = (pix.left1 + pix.right1)*ra2
 					
 			else:
 				if pix.fwd_inv:
-					pix.din_odd.next = (pix.left + pix.right)*ca3
-					pix.din_odd1.next = (pix.left1 + pix.right1)*ca3
+					pix.din_odd.next = (pix.left + pix.right)*ca4
+					pix.din_odd1.next = (pix.left1 + pix.right1)*ca4
 				else:
 					pix.din_odd.next = (pix.left + pix.right)*ra1
 					pix.din_odd1.next = (pix.left1 + pix.right1)*ra1			
@@ -183,7 +191,7 @@ def add_mul_ram(clk, pix):
 	
 def ram_odd(pix, clk, depth = 128):
 	"""  Ram model """
-	ww = (26,18)
+	ww = (20,16)
 	mem_odd = [Signal(fixbv(0)[ww]) for i in range(128)]    
 	@always(clk.posedge)
 	def write_odd():
@@ -198,7 +206,7 @@ def ram_odd(pix, clk, depth = 128):
 
 def ram_even(pix, clk, depth = 128):
 	"""  Ram model """
-	ww = (26,18)
+	ww = (20,16)
 	mem_even = [Signal(fixbv(0)[ww]) for i in range(128)]
 	@always(clk.posedge)
 	def write_even():
@@ -214,7 +222,7 @@ def ram_even(pix, clk, depth = 128):
 
 def ram_odd1(pix, clk, depth = 128):
 	"""  Ram model """
-	ww = (26,18)
+	ww = (20,16)
 	mem_odd1 = [Signal(fixbv(0)[ww]) for i in range(128)]
 	@always(clk.posedge)
 	def write_odd1():
@@ -229,7 +237,7 @@ def ram_odd1(pix, clk, depth = 128):
 
 def ram_even1(pix, clk, depth = 128):
 	"""  Ram model """
-	ww = (26,18)
+	ww = (20,16)
 	mem_even1 = [Signal(fixbv(0)[ww]) for i in range(128)]
     
 	@always(clk.posedge)
@@ -244,7 +252,7 @@ def ram_even1(pix, clk, depth = 128):
 	return write_even1, read_even1
 
 def convert():
-	ww = (26,18)
+	ww = (20,16)
 	clk = Signal(bool(0))
 	pix = Add_mul_top()
 	
@@ -260,7 +268,7 @@ def convert():
 
 	 
 def testbench():
-	ww = (26,0)
+	ww = (20,16)
  
  
 	clk = Signal(bool(0))

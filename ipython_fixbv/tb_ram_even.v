@@ -1,29 +1,29 @@
 module tb_ram_even;
 
 reg clk;
-wire [25:0] pix_dout_even1;
-reg [25:0] pix_right;
-reg [25:0] pix_left1;
+wire [19:0] pix_dout_even1;
+reg [19:0] pix_right;
+reg [19:0] pix_left1;
 reg [6:0] pix_addr_odd1;
 reg [6:0] pix_addr_even1;
 reg pix_we_even;
 reg [6:0] pix_addr_even;
-reg [25:0] pix_right1;
-wire [25:0] pix_dout_odd1;
-reg [25:0] pix_din_even1;
-wire [25:0] pix_dout_odd;
-reg [25:0] pix_din_odd;
+reg [19:0] pix_right1;
+wire [19:0] pix_dout_odd1;
+reg [19:0] pix_din_even1;
+wire [19:0] pix_dout_odd;
+reg [19:0] pix_din_odd;
 reg pix_even_odd;
 reg pix_we_even1;
-reg [25:0] pix_din_odd1;
+reg [19:0] pix_din_odd1;
 reg pix_fwd_inv;
-reg [25:0] pix_din_even;
-wire [25:0] pix_dout_even;
+reg [19:0] pix_din_even;
+wire [19:0] pix_dout_even;
 reg pix_we_odd1;
 reg pix_p;
 reg [6:0] pix_addr_odd;
 reg pix_we_odd;
-reg [25:0] pix_left;
+reg [19:0] pix_left;
 
 initial begin
     $from_myhdl(
