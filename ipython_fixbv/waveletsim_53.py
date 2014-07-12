@@ -1,5 +1,5 @@
-from add_mul_sim import *
-from myhdl import fixbv
+from add_mul_sim_53 import *
+from myhdl import *
  
 '''
 2D CDF 9/7 Wavelet Forward and Inverse Transform (lifting implementation)
@@ -78,8 +78,10 @@ def fwt97(s, width, height):
      
 
     # Scale coeff:
-    k1 = 0.81289306611596146 # 1/1.230174104914
-    k2 = 0.61508705245700002 # 1.230174104914/2
+    k1 = 0.4
+    k2 = 0.15
+    #k1 = 0.81289306611596146 # 1/1.230174104914
+    #k2 = 0.61508705245700002 # 1.230174104914/2
     # Another k used by P. Getreuer is 1.1496043988602418
         
     for col in range(width): # Do the 1D transform on all cols:
@@ -91,15 +93,13 @@ def fwt97(s, width, height):
 			pix.setSig_p(0)
 			pix.setSig_even_odd(1)
 			pix.setSig_fwd_inv(1)
-			pix.setSig_left(s[row-1][col])
+			pix.setSig_left(int(s[row-1][col]))
 			 	
-			pix.setSig_right(s[row+1][col])
+ 
+			even,  odd = add_mul_ram(pix)
 			 
-			even, even1, odd, odd1 = add_mul_ram(pix)
-			#print row,even, even1, odd, odd1
  			s[row][col] += float(even)
-			 
-			#print float(d_instance[0]),s[row][col]
+ 
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
         ##s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
 
@@ -108,15 +108,13 @@ def fwt97(s, width, height):
 			pix.setSig_p(0)
 			pix.setSig_even_odd(0)
 			pix.setSig_fwd_inv(1)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
-			 
-			 
+			pix.setSig_left(int(s[row-1][col]))
+			pix.setSig_right(int(s[row+1][col]))
+			 		 
 			even,   odd  = add_mul_ram(pix)
-			#print row, even, even1, odd, odd1	
+			 
 			s[row][col] += float(odd)
 			 
-			#print s[row][col]
             #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
         ##s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
         
@@ -125,14 +123,14 @@ def fwt97(s, width, height):
 			pix.setSig_p(1)
 			pix.setSig_even_odd(1)
 			pix.setSig_fwd_inv(1)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
+			pix.setSig_left(int(s[row-1][col]))
+			pix.setSig_right(int(s[row+1][col]))
 			 
 			 
 			even,   odd  = add_mul_ram(pix)
-			#print row, even, even1, odd, odd1	
+			 	
 			s[row][col] += float(even)
-			 
+			
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
         ##s[height-1][col] += 2 * a3 * s[height-2][col]
         
@@ -141,12 +139,12 @@ def fwt97(s, width, height):
 			pix.setSig_p(1)
 			pix.setSig_even_odd(0)
 			pix.setSig_fwd_inv(1)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
+			pix.setSig_left(int(s[row-1][col]))
+			pix.setSig_right(int(s[row+1][col]))
 			 
 			 
 			even,   odd  = add_mul_ram(pix)
-			#print row, even, even1, odd, odd1	
+			 
 			s[row][col] += float(odd)
 			 
  
@@ -161,9 +159,10 @@ def fwt97(s, width, height):
             # simultaneously transpose the matrix when deinterleaving
             if row % 2 == 0: # even
                 #temp_bank[col][row/2] = k1 * s[row][col]
+                temp_bank[col][row/2] = k1*s[row][col]
             else:            # odd
                 #temp_bank[col][row/2 + height/2] = k2 * s[row][col]
-                
+                temp_bank[col][row/2 + height/2] = k2 * s[row][col]
     # write temp_bank to s:
     for row in range(width):
         for col in range(height):
@@ -196,6 +195,8 @@ def iwt97(s, width, height):
             # simultaneously transpose the matrix when interleaving
             #temp_bank[col * 2][row] = k1 * s[row][col]
             #temp_bank[col * 2 + 1][row] = k2 * s[row][col + width/2]
+            temp_bank[col * 2][row] = k1*s[row][col]
+            temp_bank[col * 2 + 1][row] = k2* s[row][col + width/2]
                 
     # write temp_bank to s:
     for row in range(width):
@@ -211,8 +212,8 @@ def iwt97(s, width, height):
 			pix.setSig_p(0)
 			pix.setSig_even_odd(1)
 			pix.setSig_fwd_inv(0)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
+			pix.setSig_left(int(s[row-1][col]))
+			pix.setSig_right(int(s[row+1][col]))
 			 
 			 
 			even, odd = add_mul_ram(pix)			
@@ -226,13 +227,13 @@ def iwt97(s, width, height):
 			pix.setSig_p(0)
 			pix.setSig_even_odd(0)
 			pix.setSig_fwd_inv(0)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
+			pix.setSig_left(int(s[row-1][col]))
+			pix.setSig_right(int(s[row+1][col]))
 			 
 			 
 			even, odd = add_mul_ram(pix)			
 			s[row][col] += float(odd)
-			s[row+2][col] += float(odd1)
+
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
         #s[height-1][col] += 2 * a3 * s[height-2][col]
 
@@ -241,13 +242,13 @@ def iwt97(s, width, height):
 			pix.setSig_p(1)
 			pix.setSig_even_odd(1)
 			pix.setSig_fwd_inv(0)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
+			pix.setSig_left(int(s[row-1][col]))
+			pix.setSig_right(int(s[row+1][col]))
 			 
 			 
 			even, odd = add_mul_ram(pix)			
 			s[row][col] += float(even)
-			s[row+2][col] += float(even1)
+		
             #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
         #s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
         
@@ -256,12 +257,12 @@ def iwt97(s, width, height):
 			pix.setSig_p(1)
 			pix.setSig_even_odd(0)
 			pix.setSig_fwd_inv(0)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
+			pix.setSig_left(int(s[row-1][col]))
+			pix.setSig_right(int(s[row+1][col]))
 			 
 			even, odd = add_mul_ram(pix)			
 			s[row][col] += float(odd)
-			s[row+2][col] += float(odd1)
+	
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
         #s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
                 

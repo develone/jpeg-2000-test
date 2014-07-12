@@ -1,4 +1,4 @@
-import waveletsim as dwt
+import waveletsim_53 as dwt
 
 im = dwt.Image.open("../lena_256.png")
 pix = im.load()
@@ -10,11 +10,11 @@ for row in range(0, len(m)):
                 m[row][col] = float(m[row][col])
                 
 # Perform a forward CDF 9/7 transform on the image:
-m = dwt.fwt97_2d(m, 3)
+m = dwt.fwt97_2d(m, 1)
 # Convert the list of lists matrix to an image.    
 dwt.seq_to_img(m, pix) 
 # Save the transformed image.
 im.save("test1_256_fwt.png")
-mm = dwt.iwt97_2d(m, 3)
+mm = dwt.iwt97_2d(m, 1)
 dwt.seq_to_img(mm, pix)
 im.save("test1_256_iwt.png")
