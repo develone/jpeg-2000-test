@@ -69,13 +69,13 @@ def fwt97(s, width, height):
 	    
     # 9/7 Coefficients:
     a1 = -1.586134342
-    ca1 = -1.586134342
+     
     a2 = -0.05298011854
-    ca2 = -0.05298011854
+     
     a3 = 0.8829110762
-    ca3 = 0.8829110762
+     
     a4 = 0.4435068522
-    ca4 = 0.4435068522
+     
 
     # Scale coeff:
     k1 = 0.81289306611596146 # 1/1.230174104914
@@ -101,7 +101,7 @@ def fwt97(s, width, height):
 			s[row+2][col] += float(even1)
 			#print float(d_instance[0]),s[row][col]
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
-        s[height-1][col] += 2 * ca1 * s[height-2][col] # Symmetric extension
+        s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
 
         # Update 1. y0
         for row in range(2, height-2, 4):
@@ -118,7 +118,7 @@ def fwt97(s, width, height):
 			s[row+2][col] += float(odd1)
 			#print s[row][col]
             #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
-        s[0][col] +=  2 * ca2 * s[1][col] # Symmetric extension
+        s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
         
         # Predict 2.
         for row in range(1, height-3, 4):
@@ -134,7 +134,7 @@ def fwt97(s, width, height):
 			s[row][col] += float(even)
 			s[row+2][col] += float(even1)
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
-        s[height-1][col] += 2 * ca3 * s[height-2][col]
+        s[height-1][col] += 2 * a3 * s[height-2][col]
         
         # Update 2.
         for row in range(2, height-2, 4):
@@ -151,7 +151,7 @@ def fwt97(s, width, height):
 			s[row+2][col] += float(odd1)
  
             #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
-        s[0][col] += 2 * ca4 * s[1][col]
+        s[0][col] += 2 * a4 * s[1][col]
                
     # de-interleave
     temp_bank = [[0]*width for i in range(height)]
@@ -177,13 +177,13 @@ def iwt97(s, width, height):
     
     # 9/7 inverse coefficients:
     a1 = 1.586134342
-    ra1 = 1.586134342
+     
     a2 = 0.05298011854
-    ra2 = 0.05298011854
+     
     a3 = -0.8829110762
-    ra3 = -0.8829110762
+     
     a4 = -0.4435068522
-    a4 = -0.4435068522
+    
     # Inverse scale coeffs:
     k1 = 1.230174104914
     k2 = 1.6257861322319229
