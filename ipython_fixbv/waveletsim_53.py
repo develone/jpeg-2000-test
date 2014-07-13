@@ -78,8 +78,9 @@ def fwt97(s, width, height):
      
 
     # Scale coeff:
-    k1 = 0.4
-    k2 = 0.15
+
+    k1 = 0.15
+    k2 = 0.4
     #k1 = 0.81289306611596146 # 1/1.230174104914
     #k2 = 0.61508705245700002 # 1.230174104914/2
     # Another k used by P. Getreuer is 1.1496043988602418
@@ -94,8 +95,7 @@ def fwt97(s, width, height):
 			pix.setSig_even_odd(1)
 			pix.setSig_fwd_inv(1)
 			pix.setSig_left(int(s[row-1][col]))
-			 	
- 
+			pix.setSig_right(int(s[row+1][col]))
 			even,  odd = add_mul_ram(pix)
 			 
  			s[row][col] += float(even)
@@ -184,8 +184,10 @@ def iwt97(s, width, height):
     a4 = -0.4435068522
     
     # Inverse scale coeffs:
-    k1 = 1.230174104914
-    k2 = 1.6257861322319229
+    k1 = 2.5
+    k2 = 6.66666666667
+    #k1 = 1.230174104914
+    #k2 = 1.6257861322319229
     
     # Interleave:
     temp_bank = [[0]*width for i in range(height)]

@@ -75,14 +75,14 @@ def add_mul_ram( pix):
 			if pix.fwd_inv:
 				pix.din_even = pix.right - (pix.left>>1 + pix.right>>1)
 			else:
-				pix.din_odd = (pix.left + pix.right + 2)>>2
+				pix.din_even = (pix.left + pix.right + 2)>>2
 				 
 		else:
 			if pix.fwd_inv:
 				pix.din_odd = (pix.left + pix.right + 2)>>2
 				 
 			else:
-				pix.din_even = pix.right - (pix.left>>1 + pix.right>>1)
+				pix.din_odd = pix.right - (pix.left>>1 + pix.right>>1)
 				 
 	else:
  
@@ -91,7 +91,7 @@ def add_mul_ram( pix):
 				pix.din_even = pix.right - (pix.left>>1 + pix.right>>1)
 				 
 			else:
-				pix.din_odd = (pix.left + pix.right + 2)>>2
+				pix.din_even = (pix.left + pix.right + 2)>>2
 				 
 					
 		else:
@@ -99,7 +99,7 @@ def add_mul_ram( pix):
 				pix.din_odd = (pix.left + pix.right + 2)>>2
 				 
 			else:
-				pix.din_even = pix.right - (pix.left>>1 + pix.right>>1)	 		
+				pix.din_odd = pix.right - (pix.left>>1 + pix.right>>1)	 		
 			
 	
 	return pix.din_even, pix.din_odd 
