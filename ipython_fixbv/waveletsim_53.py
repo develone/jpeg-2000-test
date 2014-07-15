@@ -79,8 +79,8 @@ def fwt97(s, width, height):
 
     # Scale coeff:
 
-    k1 = .29
-    k2 = 0.13
+    k1 = .22
+    k2 = 0.065
     #k1 = 0.81289306611596146 # 1/1.230174104914
     #k2 = 0.61508705245700002 # 1.230174104914/2
     # Another k used by P. Getreuer is 1.1496043988602418
@@ -99,7 +99,7 @@ def fwt97(s, width, height):
 			pix.setSig_sam(int(s[row][col]))
 			even,  odd = add_mul_ram(pix)
 			 
- 			s[row][col] += float(even)
+ 			s[row][col] += (even)
  
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
         ##s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
@@ -115,7 +115,7 @@ def fwt97(s, width, height):
 			pix.setSig_sam(int(s[row][col])) 		 
 			even,   odd  = add_mul_ram(pix)
 			 
-			s[row][col] += float(odd)
+			s[row][col] += (odd)
 			 
             #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
         ##s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
@@ -131,7 +131,7 @@ def fwt97(s, width, height):
 			pix.setSig_sam(int(s[row][col])) 
 			even,   odd  = add_mul_ram(pix)
 			 	
-			s[row][col] += float(even)
+			s[row][col] += (even)
 			
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
         ##s[height-1][col] += 2 * a3 * s[height-2][col]
@@ -147,7 +147,7 @@ def fwt97(s, width, height):
 			pix.setSig_sam(int(s[row][col])) 
 			even,   odd  = add_mul_ram(pix)
 			 
-			s[row][col] += float(odd)
+			s[row][col] += (odd)
 			 
  
             #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
@@ -185,8 +185,10 @@ def iwt97(s, width, height):
     a4 = -0.4435068522
     
     # Inverse scale coeffs:
-    k1 = 3.44827586207
-    k2 = 7.69230769231
+    k1 = 4.54545454545
+    #k1 = 3.44827586207
+    #k2 = 7.69230769231
+    k2 = 15.3846153846
     #k1 = 1.44827586207
     #k2 = 4.69230769231
     #k1 = 1.230174104914
@@ -223,7 +225,7 @@ def iwt97(s, width, height):
 			 
 			pix.setSig_sam(int(s[row][col])) 
 			even, odd = add_mul_ram(pix)			
-			s[row][col] += float(even)
+			s[row][col] += (even)
 			 
             #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
         #s[0][col] += 2 * a4 * s[1][col]
@@ -238,7 +240,7 @@ def iwt97(s, width, height):
 			 
 			pix.setSig_sam(int(s[row][col])) 
 			even, odd = add_mul_ram(pix)			
-			s[row][col] += float(odd)
+			s[row][col] += (odd)
 
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
         #s[height-1][col] += 2 * a3 * s[height-2][col]
@@ -254,7 +256,7 @@ def iwt97(s, width, height):
 			 
 			pix.setSig_sam(int(s[row][col])) 
 			even, odd = add_mul_ram(pix)			
-			s[row][col] += float(even)
+			s[row][col] += (even)
 		
             #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
         #s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
@@ -268,7 +270,7 @@ def iwt97(s, width, height):
 			pix.setSig_right(int(s[row+1][col]))
 			pix.setSig_sam(int(s[row][col])) 
 			even, odd = add_mul_ram(pix)			
-			s[row][col] += float(odd)
+			s[row][col] += (odd)
 	
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
         #s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
