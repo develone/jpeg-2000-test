@@ -6,7 +6,7 @@ from myhdl import *
 class Add_mul_top(object):
 	
 	def __init__(self):
-		DATA_WIDTH = 1024 
+		DATA_WIDTH = 4194304 
 		self.even_odd = (bool(0))
 		self.fwd_inv = (bool(0))
 		self.p = (bool(0))
@@ -26,14 +26,14 @@ class Add_mul_top(object):
  
 
  	def setSig_left(self,val): 
-		DATA_WIDTH = 1024  
+		DATA_WIDTH = 4194304  
 		self.left = (intbv(val, min = -DATA_WIDTH*4, max = DATA_WIDTH*4))	
 	
 	def setSig_right(self,val): 
-		DATA_WIDTH = 1024  
+		DATA_WIDTH = 4194304  
 		self.right = (intbv(val, min = -DATA_WIDTH*4, max = DATA_WIDTH*4))
 	def setSig_sam(self,val): 
-		DATA_WIDTH = 1024  
+		DATA_WIDTH = 4194304  
 		self.sam = (intbv(val, min = -DATA_WIDTH*4, max = DATA_WIDTH*4))	
 		
  	def setSig_even_odd(self,val):   

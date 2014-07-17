@@ -99,7 +99,9 @@ def fwt97(s, width, height):
 			pix.setSig_sam(int(s[row][col]))
 			even,  odd = add_mul_ram(pix)
 			s[row][col] += float(even)
-
+			pix.setSig_fwd_inv(0)
+			even,  odd = add_mul_ram(pix)
+			s[row][col] += float(even)
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
         ##s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
 		
@@ -114,8 +116,11 @@ def fwt97(s, width, height):
 			pix.setSig_sam(int(s[row][col])) 		 
 			even,   odd  = add_mul_ram(pix)
 			s[row][col] += float(odd)
- 
- 
+			even,   odd  = add_mul_ram(pix)
+			s[row][col] += float(odd)
+			pix.setSig_fwd_inv(0)
+			even,   odd  = add_mul_ram(pix)
+			s[row][col] += float(odd) 
             #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
         ##s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
         
@@ -129,7 +134,9 @@ def fwt97(s, width, height):
 			pix.setSig_sam(int(s[row][col])) 
 			even,   odd  = add_mul_ram(pix)
 			s[row][col] += float(even)
- 
+			pix.setSig_fwd_inv(0)
+			even,   odd  = add_mul_ram(pix)
+			s[row][col] += float(even)
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
         ##s[height-1][col] += 2 * a3 * s[height-2][col]
         
@@ -143,7 +150,9 @@ def fwt97(s, width, height):
 			pix.setSig_sam(int(s[row][col])) 
 			even,   odd  = add_mul_ram(pix)
 			s[row][col] += float(odd)
- 		 
+			pix.setSig_fwd_inv(0)
+			even,   odd  = add_mul_ram(pix)
+			s[row][col] += float(odd)			 
  
             #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
         ##s[0][col] += 2 * a4 * s[1][col]
