@@ -131,7 +131,7 @@ def fwt97(s, width, height):
                 temp_bank[row][col/2] = k1 * s[row][col]
             else:            # odd
                 #temp_bank[col][row/2 + height/2] = k2 * s[row][col]
-                temp_bank[row][row/2 + height/2] = k2 * s[row][col]
+                temp_bank[row][col/2 + height/2] = k2 * s[row][col]
     # write temp_bank to s:
     for row in range(width):
         for col in range(height):
