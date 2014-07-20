@@ -110,7 +110,7 @@ def fwt97(s, width, height):
 			s[row][col] += float(even)
 
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
-        ##s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
+         
 		
         # Update 1. y0
         
@@ -123,6 +123,7 @@ def fwt97(s, width, height):
 			pix.setSig_sam(int(s[row][col])) 		 
 			even,   odd  = add_mul_ram(pix)
 			s[row][col] += float(odd)
+
     s = de_interleave(s,k1,k2,orien,height,width)                  
     return s
 
@@ -142,8 +143,8 @@ def iwt97(s, width, height):
     # Inverse scale coeffs:
     #k1 = 2.02839756592
     #k2 = 9.04977375566
-    k1 = 3.44827586207
-    k2 = 7.69230769231
+    k1 = 2.4
+    k2 = 60.0
     #k1 = 1.44827586207
     #k2 = 4.69230769231
     #k1 = 1.230174104914
