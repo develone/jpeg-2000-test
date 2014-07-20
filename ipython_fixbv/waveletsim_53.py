@@ -18,7 +18,29 @@ mat4x4 = [
          [12, 13, 14, 15], # Row 4
          ]                 # We don't do anything with this matrix.
                            # It's just here for clarification.
-                           
+def de_interleave(s,k1,k2,orien,height,width):
+	# de-interleave
+	temp_bank = [[0]*width for i in range(height)]
+	for row in range(width):
+		for col in range(width):
+            # k1 and k2 scale the vals
+            # simultaneously transpose the matrix when deinterleaving
+			if row % 2 == 0:
+				if orien == 0:
+					temp_bank[row][col/2] = k1 * s[row][col]
+				else:
+					temp_bank[col][row/2] = k1 * s[row][col]
+			else:
+				if orien == 0:
+					temp_bank[row][col/2 + height/2] = k2 * s[row][col]
+				else:
+					temp_bank[col][row/2 + height/2] = k2 * s[row][col]
+    # write temp_bank to s:
+	for row in range(width):
+		for col in range(height):
+			s[row][col] = temp_bank[row][col]
+	return s
+	
 def fwt97_2d(m, nlevels=1):
     ''' Perform the CDF 9/7 transform on a 2D matrix signal m.
     nlevel is the desired number of times to recursively transform the 
@@ -28,7 +50,7 @@ def fwt97_2d(m, nlevels=1):
     h = len(m)
     for i in range(nlevels):
         m = fwt97(m, w, h) # cols
-        #m = fwt97(m, w, h) # rows
+        m = fwt97(m, w, h) # rows
         w /= 2
         h /= 2
     
@@ -63,27 +85,14 @@ def fwt97(s, width, height):
     The returned result is s, the modified input matrix.
     The highpass and lowpass results are stored on the left half and right
     half of s respectively, after the matrix is transposed. '''
-  
-
-
-	    
-    # 9/7 Coefficients:
-    a1 = -1.586134342
-     
-    a2 = -0.05298011854
-     
-    a3 = 0.8829110762
-     
-    a4 = 0.4435068522
-     
-
-    # Scale coeff:
 
     k1 = 0.493
     k2 = 0.1105
-    #k1 = 0.81289306611596146 # 1/1.230174104914
-    #k2 = 0.61508705245700002 # 1.230174104914/2
-    # Another k used by P. Getreuer is 1.1496043988602418
+    orien = 0
+    k1 = 0.9
+    k2 = 0.013
+    orien = 1
+
         
     for col in range(width): # Do the 1D transform on all cols:
         ''' Core 1D lifting process in this loop. '''
@@ -114,28 +123,7 @@ def fwt97(s, width, height):
 			pix.setSig_sam(int(s[row][col])) 		 
 			even,   odd  = add_mul_ram(pix)
 			s[row][col] += float(odd)
- 
- 
-            #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
-        ##s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
-        
-        # Predict 2.
-   # de-interleave
-    temp_bank = [[0]*width for i in range(height)]
-    for row in range(height):
-        for col in range(width):
-            # k1 and k2 scale the vals
-            # simultaneously transpose the matrix when deinterleaving
-            if row % 2 == 0: # even
-                #temp_bank[col][row/2] = k1 * s[row][col]
-                temp_bank[row][col/2] = k1 * s[row][col]
-            else:            # odd
-                #temp_bank[col][row/2 + height/2] = k2 * s[row][col]
-                temp_bank[row][col/2 + height/2] = k2 * s[row][col]
-    # write temp_bank to s:
-    for row in range(width):
-        for col in range(height):
-            s[row][col] = temp_bank[row][col]                      
+    s = de_interleave(s,k1,k2,orien,height,width)                  
     return s
 
 
@@ -152,8 +140,10 @@ def iwt97(s, width, height):
     a4 = -0.4435068522
     
     # Inverse scale coeffs:
-    k1 = 2.02839756592
-    k2 = 9.04977375566
+    #k1 = 2.02839756592
+    #k2 = 9.04977375566
+    k1 = 3.44827586207
+    k2 = 7.69230769231
     #k1 = 1.44827586207
     #k2 = 4.69230769231
     #k1 = 1.230174104914
@@ -167,9 +157,10 @@ def iwt97(s, width, height):
             # simultaneously transpose the matrix when interleaving
             #temp_bank[col * 2][row] = k1 * s[row][col]
             #temp_bank[col * 2 + 1][row] = k2 * s[row][col + width/2]
-            temp_bank[col * 2][row] = s[row][col]
-            temp_bank[col * 2 + 1][row] =  s[row][col + width/2]
-                
+            #temp_bank[col * 2][row] = s[row][col]
+            #temp_bank[col * 2 + 1][row] =  s[row][col + width/2]
+			temp_bank[col * 2][row] = s[row][col]
+			temp_bank[col * 2 + 1][row] =  s[row][col + width/2]            
     # write temp_bank to s:
     for row in range(width):
         for col in range(height):
@@ -211,7 +202,37 @@ def iwt97(s, width, height):
         #s[height-1][col] += 2 * a3 * s[height-2][col]
 
         # Inverse update 1.
-       
+        # Inverse update 2.
+        for row in range(2, height, 2):
+			pix.setSig_p(1)
+			pix.setSig_even_odd(1)
+			pix.setSig_fwd_inv(0)
+			pix.setSig_left(int(s[row-1][col]))
+			pix.setSig_right(int(s[row+1][col]))
+			 
+			pix.setSig_sam(int(s[row][col])) 
+			even, odd = add_mul_ram(pix)			
+			s[row][col] += float(odd)
+			 
+            #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
+        #s[0][col] += 2 * a4 * s[1][col]
+        
+        # Inverse predict 2.
+        for row in range(1, height-1, 2):
+			pix.setSig_p(1)
+			pix.setSig_even_odd(0)
+			pix.setSig_fwd_inv(0)
+			pix.setSig_left(int(s[row-1][col]))
+			pix.setSig_right(int(s[row+1][col]))
+			 
+			pix.setSig_sam(int(s[row][col])) 
+			even, odd = add_mul_ram(pix)			
+			s[row][col] += float(even)
+
+            #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
+        #s[height-1][col] += 2 * a3 * s[height-2][col]
+
+        # Inverse update 1.       
                 
     return s
 
