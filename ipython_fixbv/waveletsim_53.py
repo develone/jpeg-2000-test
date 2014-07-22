@@ -27,14 +27,18 @@ def de_interleave(s,k1,k2,orien,height,width):
             # simultaneously transpose the matrix when deinterleaving
 			if row % 2 == 0:
 				if orien == 0:
-					temp_bank[row][col/2] = k1 * s[row][col]
+					#temp_bank[row][col/2] = k1 * s[row][col]
+					temp_bank[row][col/2] =  s[row][col]
 				else:
-					temp_bank[col][row/2] = k1 * s[row][col]
+					#temp_bank[col][row/2] = k1 * s[row][col]
+					temp_bank[col][row/2] =  s[row][col]
 			else:
 				if orien == 0:
-					temp_bank[row][col/2 + height/2] = k2 * s[row][col]
+					#temp_bank[row][col/2 + height/2] = k2 * s[row][col]
+					temp_bank[row][col/2 + height/2] =  s[row][col]
 				else:
-					temp_bank[col][row/2 + height/2] = k2 * s[row][col]
+					#temp_bank[col][row/2 + height/2] = k2 * s[row][col]
+					temp_bank[col][row/2 + height/2] =  s[row][col]
     # write temp_bank to s:
 	for row in range(width):
 		for col in range(height):
@@ -99,7 +103,7 @@ def fwt97(s, width, height):
         ''' Lifting is done on the cols. '''
         # Predict 1. y1
         pix = Add_mul_top()
-        for row in range(1, height-1, 2):
+        for row in range(2, height, 2):
 			pix.setSig_p(0)
 			pix.setSig_even_odd(1)
 			pix.setSig_fwd_inv(1)
@@ -107,14 +111,14 @@ def fwt97(s, width, height):
 			pix.setSig_right(int(s[row+1][col]))
 			pix.setSig_sam(int(s[row][col]))
 			even,  odd = add_mul_ram(pix)
-			s[row][col] += float(even)
+			s[row][col] += float(odd)
 
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
          
 		
         # Update 1. y0
         
-        for row in range(2, height, 2):
+        for row in range(1, height-1, 2):
 			pix.setSig_p(0)
 			pix.setSig_even_odd(0)
 			pix.setSig_fwd_inv(1)
@@ -122,7 +126,7 @@ def fwt97(s, width, height):
 			pix.setSig_right(int(s[row+1][col]))
 			pix.setSig_sam(int(s[row][col])) 		 
 			even,   odd  = add_mul_ram(pix)
-			s[row][col] += float(odd)
+			s[row][col] += float(even)
 
     s = de_interleave(s,k1,k2,orien,height,width)                  
     return s
