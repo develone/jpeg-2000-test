@@ -111,8 +111,9 @@ def fwt97(s, width, height):
 			pix.setSig_right(int(s[row+1][col]))
 			pix.setSig_sam(int(s[row][col]))
 			even,  odd = add_mul_ram(pix)
-			s[row][col] += float(odd)
-
+			#print (s[row][col]),int(s[row-1][col]),int(s[row+1][col])
+			s[row][col] = float(even)
+			#print row,col,s[row][col]
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
          
 		
@@ -126,8 +127,9 @@ def fwt97(s, width, height):
 			pix.setSig_right(int(s[row+1][col]))
 			pix.setSig_sam(int(s[row][col])) 		 
 			even,   odd  = add_mul_ram(pix)
-			s[row][col] += float(even)
-
+			#print (s[row][col]),int(s[row-1][col]),int(s[row+1][col])
+			s[row][col] = float(odd)
+			#print row,col,s[row][col]
     s = de_interleave(s,k1,k2,orien,height,width)                  
     return s
 
@@ -179,14 +181,16 @@ def iwt97(s, width, height):
         # Inverse update 2.
         for row in range(1, height-1, 2):
 			pix.setSig_p(0)
-			pix.setSig_even_odd(1)
+			pix.setSig_even_odd(0)
 			pix.setSig_fwd_inv(0)
 			pix.setSig_left(int(s[row-1][col]))
 			pix.setSig_right(int(s[row+1][col]))
 			 
-			pix.setSig_sam(int(s[row][col])) 
+			pix.setSig_sam(int(s[row][col]))
+			#print (s[row][col]),int(s[row-1][col]),int(s[row+1][col]) 
 			even, odd = add_mul_ram(pix)			
-			s[row][col] += float(even)
+			s[row][col] = float(odd)
+			#print row,col,s[row][col]
 			 
             #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
         #s[0][col] += 2 * a4 * s[1][col]
@@ -194,15 +198,16 @@ def iwt97(s, width, height):
         # Inverse predict 2.
         for row in range(2, height, 2):
 			pix.setSig_p(0)
-			pix.setSig_even_odd(0)
+			pix.setSig_even_odd(1)
 			pix.setSig_fwd_inv(0)
 			pix.setSig_left(int(s[row-1][col]))
 			pix.setSig_right(int(s[row+1][col]))
 			 
 			pix.setSig_sam(int(s[row][col])) 
+			#print (s[row][col]),int(s[row-1][col]),int(s[row+1][col])
 			even, odd = add_mul_ram(pix)			
-			s[row][col] += float(odd)
-
+			s[row][col] = float(even)
+			#print row,col,s[row][col]
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
         #s[height-1][col] += 2 * a3 * s[height-2][col]
 
