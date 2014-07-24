@@ -14,6 +14,8 @@ m = dwt.fwt97_2d(m, 1)
 dwt.seq_to_img(m, pix)
 # Save the transformed image.
 im.save("test1_512_fwt.png")
+w, h = im.size
+m = dwt.upper_lower(m, w, h)
 mm = dwt.iwt97_2d(m, 1)
 dwt.seq_to_img(mm, pix)
 im.save("test1_512_iwt.png")

@@ -18,6 +18,32 @@ mat4x4 = [
          [12, 13, 14, 15], # Row 4
          ]                 # We don't do anything with this matrix.
                            # It's just here for clarification.
+def upper_lower(s, width, height):
+			
+	temp_bank = [[0]*width for i in range(height)]
+	for col in range(width/2):
+		
+		for row in range(height/2):
+			
+			temp_bank[col+width/2][row+height/2] = s[row][col]
+			
+	for row in range(width):
+		for col in range(height):
+			s[row][col] = temp_bank[col][row]
+	return s
+def lower_upper(s, width, height):
+			
+	temp_bank = [[0]*width for i in range(height)]
+	for col in range(width/2,width,1):
+		
+		for row in range(height/2,height,1):
+			
+			temp_bank[col-width/2][row-height/2] = s[row][col]
+			
+	for row in range(width):
+		for col in range(height):
+			s[row][col] = temp_bank[col][row]
+	return s
 def de_interleave(s,k1,k2,orien,height,width):
 	# de-interleave
 	temp_bank = [[0]*width for i in range(height)]
@@ -55,6 +81,7 @@ def fwt97_2d(m, nlevels=1):
     for i in range(nlevels):
         m = fwt97(m, w, h) # cols
         m = fwt97(m, w, h) # rows
+        lower_upper(m, w, h)
         w /= 2
         h /= 2
     
@@ -68,13 +95,15 @@ def iwt97_2d(m, nlevels=1):
     
     w = len(m[0])
     h = len(m)
-
+    
     # Find starting size of m:
     for i in range(nlevels-1):
+	
         h /= 2
         w /= 2
         
     for i in range(nlevels):
+	
         m = iwt97(m, w, h) # rows
         m = iwt97(m, w, h) # cols
         h *= 2
@@ -155,7 +184,6 @@ def iwt97(s, width, height):
     #k2 = 4.69230769231
     #k1 = 1.230174104914
     #k2 = 1.6257861322319229
-    
     # Interleave:
     temp_bank = [[0]*width for i in range(height)]
     for col in range(width/2):
@@ -167,12 +195,10 @@ def iwt97(s, width, height):
             #temp_bank[col * 2][row] = s[row][col]
             #temp_bank[col * 2 + 1][row] =  s[row][col + width/2]
 			temp_bank[col * 2][row] = s[row][col]
-			temp_bank[col * 2 + 1][row] =  s[row][col + width/2]            
-    # write temp_bank to s:
+			temp_bank[col * 2 + 1][row] =  s[row][col + width/2]
     for row in range(width):
         for col in range(height):
-            s[row][col] = temp_bank[row][col]
-	
+            s[row][col] = temp_bank[row][col]    	
     pix = Add_mul_top() 
                
     for col in range(width): # Do the 1D transform on all cols:
