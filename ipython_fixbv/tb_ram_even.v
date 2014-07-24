@@ -1,9 +1,8 @@
 module tb_ram_even;
 
 reg clk;
-reg [9:0] pix_right;
+reg [8:0] pix_right;
 reg pix_we_even;
-reg pix_p;
 reg [6:0] pix_addr_odd;
 reg pix_fwd_inv;
 reg [6:0] pix_addr_even;
@@ -13,14 +12,13 @@ wire [8:0] pix_dout_odd;
 reg [8:0] pix_din_odd;
 wire [8:0] pix_dout_even;
 reg pix_even_odd;
-reg [9:0] pix_left;
+reg [8:0] pix_left;
 
 initial begin
     $from_myhdl(
         clk,
         pix_right,
         pix_we_even,
-        pix_p,
         pix_addr_odd,
         pix_fwd_inv,
         pix_addr_even,
@@ -40,7 +38,6 @@ ram_even dut(
     clk,
     pix_right,
     pix_we_even,
-    pix_p,
     pix_addr_odd,
     pix_fwd_inv,
     pix_addr_even,

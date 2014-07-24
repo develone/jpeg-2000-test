@@ -9,7 +9,7 @@ class Add_shift_top(object):
 		 
 		self.even_odd = Signal(bool(0))
 		self.fwd_inv = Signal(bool(0))
-		self.p = Signal(bool(0))
+		 
 		self.left = Signal(intbv(0)[9:])
 		self.right = Signal(intbv(0)[9:])
 	 
@@ -57,8 +57,7 @@ class Add_shift_top(object):
 		self.even_odd.next = (bool(val))
 	def setSig_fwd_inv(self,val):   
 		self.fwd_inv.next = (bool(val))	
-	def setSig_p(self,val):   
-		self.p.next = (bool(val))									
+ 									
 def add_shift_ram(clk, pix):
  
 	
@@ -68,39 +67,16 @@ def add_shift_ram(clk, pix):
 	
 	@always(clk.posedge)
 	def hdl():
-		if not pix.p:
- 
-			if pix.even_odd: 
-				if pix.fwd_inv:
-					pix.din_even.next = pix.right - ((pix.left >> 1) + (pix.right >> 1))
-				else:
-					pix.din_odd.next = (pix.left + pix.right + 2)>>2
-				 
+		if pix.even_odd: 
+			if pix.fwd_inv:
+				pix.din_even.next = pix.right - ((pix.left >> 1) + (pix.right >> 1))
 			else:
-				if pix.fwd_inv:
-					pix.din_odd.next = (pix.left + pix.right + 2)>>2
-				 
-				else:
-					pix.din_even.next = pix.right - ((pix.left >> 1) + (pix.right >> 1))
-				 
+				pix.din_even.next = pix.right + ((pix.left >> 1) + (pix.right >> 1))
 		else:
- 
-			if pix.even_odd:
-				if pix.fwd_inv:
-					pix.din_even.next = pix.right - ((pix.left >> 1) + (pix.right >> 1))
-				 
-				else:
-					pix.din_odd.next = (pix.left + pix.right + 2)>>2
-				 
-					
+			if pix.fwd_inv:
+				pix.din_odd.next = (pix.left + pix.right + 2)>>2
 			else:
-				if pix.fwd_inv:
-					pix.din_odd.next = (pix.left + pix.right + 2)>>2
-				 
-				else:
-					pix.din_even.next = pix.right - ((pix.left >> 1) + (pix.right >> 1))	 		
-			
-	
+				pix.din_odd.next = (pix.left - pix.right + 2)>>2
 	return hdl
 	
 def ram_odd(pix, clk, depth = 128):
@@ -161,7 +137,7 @@ def testbench():
 	def stimulus():
 		for i in range(3):
 			yield clk.posedge
-			pix.setSig_p(0)
+			 
 			pix.setSig_even_odd(1)
 			pix.setSig_fwd_inv(1)
 			pix.setSig_left(100)

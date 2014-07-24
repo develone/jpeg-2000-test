@@ -104,7 +104,7 @@ def iwt97_2d(m, nlevels=1):
 
 
 def fwt97(s, width, height):
-    ''' Forward Cohen-Daubechies-Feauveau 9 tap / 7 tap wavelet transform   
+    ''' Forward Cohen-Daubechies-Feauveau 5 tap / 3 tap wavelet transform   
     performed on all columns of the 2D n*n matrix signal s via lifting.
     The returned result is s, the modified input matrix.
     The highpass and lowpass results are stored on the left half and right
@@ -133,19 +133,14 @@ def fwt97(s, width, height):
 
 
 def iwt97(s, width, height):
-    ''' Inverse CDF 9/7. '''
+    ''' Inverse CDF 5/3. '''
     
  
     # Interleave:
     temp_bank = [[0]*width for i in range(height)]
     for col in range(width/2):
         for row in range(height):
-            # k1 and k2 scale the vals
-            # simultaneously transpose the matrix when interleaving
-            #temp_bank[col * 2][row] = k1 * s[row][col]
-            #temp_bank[col * 2 + 1][row] = k2 * s[row][col + width/2]
-            #temp_bank[col * 2][row] = s[row][col]
-            #temp_bank[col * 2 + 1][row] =  s[row][col + width/2]
+  
 			temp_bank[col * 2][row] = s[row][col]
 			temp_bank[col * 2 + 1][row] =  s[row][col + width/2]
     for row in range(width):
