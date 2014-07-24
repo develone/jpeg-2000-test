@@ -1,5 +1,4 @@
-from add_mul_sim_53 import *
-from myhdl import *
+
  
 '''
 2D CDF 9/7 Wavelet Forward and Inverse Transform (lifting implementation)
@@ -44,7 +43,7 @@ def lower_upper(s, width, height):
 		for col in range(height):
 			s[row][col] = temp_bank[col][row]
 	return s
-def de_interleave(s,k1,k2,orien,height,width):
+def de_interleave(s,height,width):
 	# de-interleave
 	temp_bank = [[0]*width for i in range(height)]
 	for row in range(width):
@@ -52,19 +51,11 @@ def de_interleave(s,k1,k2,orien,height,width):
             # k1 and k2 scale the vals
             # simultaneously transpose the matrix when deinterleaving
 			if row % 2 == 0:
-				if orien == 0:
-					#temp_bank[row][col/2] = k1 * s[row][col]
-					temp_bank[row][col/2] =  s[row][col]
-				else:
-					#temp_bank[col][row/2] = k1 * s[row][col]
-					temp_bank[col][row/2] =  s[row][col]
+				 
+				temp_bank[col][row/2] =  s[row][col]
 			else:
-				if orien == 0:
-					#temp_bank[row][col/2 + height/2] = k2 * s[row][col]
-					temp_bank[row][col/2 + height/2] =  s[row][col]
-				else:
-					#temp_bank[col][row/2 + height/2] = k2 * s[row][col]
-					temp_bank[col][row/2 + height/2] =  s[row][col]
+				 
+				temp_bank[col][row/2 + height/2] =  s[row][col]
     # write temp_bank to s:
 	for row in range(width):
 		for col in range(height):
@@ -119,71 +110,32 @@ def fwt97(s, width, height):
     The highpass and lowpass results are stored on the left half and right
     half of s respectively, after the matrix is transposed. '''
 
-    k1 = 0.493
-    k2 = 0.1105
-    orien = 0
-    k1 = 0.9
-    k2 = 0.013
-    orien = 1
 
         
     for col in range(width): # Do the 1D transform on all cols:
         ''' Core 1D lifting process in this loop. '''
         ''' Lifting is done on the cols. '''
         # Predict 1. y1
-        pix = Add_mul_top()
+         
         for row in range(2, height, 2):
-			pix.setSig_p(0)
-			pix.setSig_even_odd(1)
-			pix.setSig_fwd_inv(1)
-			pix.setSig_left(int(s[row-1][col]))
-			pix.setSig_right(int(s[row+1][col]))
-			pix.setSig_sam(int(s[row][col]))
-			even,  odd = add_mul_ram(pix)
-			#print (s[row][col]),int(s[row-1][col]),int(s[row+1][col])
-			s[row][col] = float(even)
-			#print row,col,s[row][col]
+ 
+			s[row][col] = float(s[row][col] - ((int(s[row-1][col])>>1) + (int(s[row+1][col])>>1)))
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
          
 		
         # Update 1. y0
         
         for row in range(1, height-1, 2):
-			pix.setSig_p(0)
-			pix.setSig_even_odd(0)
-			pix.setSig_fwd_inv(1)
-			pix.setSig_left(int(s[row-1][col]))
-			pix.setSig_right(int(s[row+1][col]))
-			pix.setSig_sam(int(s[row][col])) 		 
-			even,   odd  = add_mul_ram(pix)
-			#print (s[row][col]),int(s[row-1][col]),int(s[row+1][col])
-			s[row][col] = float(odd)
-			#print row,col,s[row][col]
-    s = de_interleave(s,k1,k2,orien,height,width)                  
+ 
+			s[row][col] = float(s[row][col] + ((int(s[row-1][col]) + int(s[row+1][col]) + 2)>>2))
+    s = de_interleave(s,height,width)                  
     return s
 
 
 def iwt97(s, width, height):
     ''' Inverse CDF 9/7. '''
     
-    # 9/7 inverse coefficients:
-    a1 = 1.586134342
-     
-    a2 = 0.05298011854
-     
-    a3 = -0.8829110762
-     
-    a4 = -0.4435068522
-    
-    # Inverse scale coeffs:
-    #k1 = 2.02839756592
-    #k2 = 9.04977375566
-    k1 = 2.4
-    k2 = 60.0
-    #k1 = 1.44827586207
-    #k2 = 4.69230769231
-    #k1 = 1.230174104914
-    #k2 = 1.6257861322319229
+ 
     # Interleave:
     temp_bank = [[0]*width for i in range(height)]
     for col in range(width/2):
@@ -199,41 +151,23 @@ def iwt97(s, width, height):
     for row in range(width):
         for col in range(height):
             s[row][col] = temp_bank[row][col]    	
-    pix = Add_mul_top() 
+      
                
     for col in range(width): # Do the 1D transform on all cols:
         ''' Perform the inverse 1D transform. '''
         
         # Inverse update 2.
         for row in range(1, height-1, 2):
-			pix.setSig_p(0)
-			pix.setSig_even_odd(0)
-			pix.setSig_fwd_inv(0)
-			pix.setSig_left(int(s[row-1][col]))
-			pix.setSig_right(int(s[row+1][col]))
-			 
-			pix.setSig_sam(int(s[row][col]))
-			#print (s[row][col]),int(s[row-1][col]),int(s[row+1][col]) 
-			even, odd = add_mul_ram(pix)			
-			s[row][col] = float(odd)
-			#print row,col,s[row][col]
+ 
+			s[row][col] = float(s[row][col] - ((int(s[row-1][col]) + int(s[row+1][col]) + 2)>>2))
 			 
             #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
         #s[0][col] += 2 * a4 * s[1][col]
         
         # Inverse predict 2.
         for row in range(2, height, 2):
-			pix.setSig_p(0)
-			pix.setSig_even_odd(1)
-			pix.setSig_fwd_inv(0)
-			pix.setSig_left(int(s[row-1][col]))
-			pix.setSig_right(int(s[row+1][col]))
-			 
-			pix.setSig_sam(int(s[row][col])) 
-			#print (s[row][col]),int(s[row-1][col]),int(s[row+1][col])
-			even, odd = add_mul_ram(pix)			
-			s[row][col] = float(even)
-			#print row,col,s[row][col]
+ 
+			s[row][col] = float(s[row][col] + ((int(s[row-1][col])>>1) + (int(s[row+1][col])>>1)))
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
         #s[height-1][col] += 2 * a3 * s[height-2][col]
 
