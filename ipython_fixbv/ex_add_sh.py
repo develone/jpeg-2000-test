@@ -27,61 +27,55 @@ def toTwosComplement(binarySequence):
             carryBit = 0
 
     return ''.join(str(x) for x in convertedSequence)
-    
-x = intbv(100, min = -255, max = 255)
-y = intbv(110, min = -255, max = 255)
-res = y - ((x >> 1) + (y >> 1))
+x = intbv(0, min = -255, max = 255)
+y = intbv(0, min = -255, max = 255)
+z = intbv(0, min = -255, max = 255)
+res = z - ((x) + (y)+2)>>2
 print (x), (y), (res)
-print hex(x), hex(y), hex(res)
-print
-x = intbv(202, min = -255, max = 255)
-y = intbv(182, min = -255, max = 255)
-res = y - ((x >> 1) + (y >> 1))
-print (x), (y), (res)
-print hex(x), hex(y), hex(res)
-t= (0x1f6)
+print hex(z), hex(x), hex(y), hex(res)
+print 
+t= (0x1ffff)
 z = bin(t)
 print z, hex(t)
 print '-',toTwosComplement(z)
 print
-x = intbv(200, min = -255, max = 255)
-y = intbv(174, min = -255, max = 255)
-res = y - ((x >> 1) + (y >> 1))
-print (x), (y), (res)
-print hex(x), hex(y), hex(res)
-t= (0x1f3)
+   
+x = intbv(102, min = -255, max = 255)
+y = intbv(104, min = -255, max = 255)
+z = intbv(100, min = -255, max = 255)
+res = z - ((x>>1) + (y>>1))
+print (z),(x), (y), (res)
+print hex(z), hex(x), hex(y), hex(res)
+print 
+t= (0x1fffd)
 z = bin(t)
 print z, hex(t)
 print '-',toTwosComplement(z)
-print
-x = intbv(204, min = -255, max = 255)
-y = intbv(194, min = -255, max = 255)
-res = y - ((x >> 1) + (y >> 1))
-print (x), (y), (res)
-print hex(x), hex(y), hex(res)
-t= (0x1fb)
-z = bin(t)
-print z, hex(t)
-print '-',toTwosComplement(z)
-print
+print 
+x = intbv(102, min = -255, max = 255)
+y = intbv(104, min = -255, max = 255)
+z = intbv(100, min = -255, max = 255)
+res = z + ((x>>1) + (y>>1))
+print (z),(x), (y), (res)
+print hex(z), hex(x), hex(y), hex(res)
+print 
 
-x = intbv(106, min = -255, max = 255)
-y = intbv(126, min = -255, max = 255)
-res = y - ((x >> 1) + (y >> 1))
-print (x), (y), (res)
-print hex(x), hex(y), hex(res)
-print
-x = intbv(136, min = -255, max = 255)
-y = intbv(106, min = -255, max = 255)
-res = y - ((x >> 1) + (y >> 1))
-print (x), (y), (res)
-print hex(x), hex(y), hex(res)
-t= (0x1f1)
+x = intbv(102, min = -255, max = 255)
+y = intbv(104, min = -255, max = 255)
+z = intbv(-3, min = -255, max = 255)
+res = z + ((x>>1) + (y>>1))
+print (z),(x), (y), (res)
+print hex(z), hex(x), hex(y), hex(res)
+print 
+x = intbv(102, min = -255, max = 255)
+y = intbv(104, min = -255, max = 255)
+z = intbv(-3, min = -255, max = 255)
+res = z - ((x) + (y))>>2
+print (z),(x), (y), (res)
+print hex(z), hex(x), hex(y), hex(res)
+print  
+t= (0x1ffcb)
 z = bin(t)
 print z, hex(t)
 print '-',toTwosComplement(z)
-print
-x = intbv(100, min = -255, max = 255)
-y = intbv(96, min = -255, max = 255)
-res = ((x) + (y) + 2)>>2
-print hex(x), hex(y), hex(res)
+print 

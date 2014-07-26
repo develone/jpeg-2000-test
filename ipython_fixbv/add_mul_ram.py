@@ -189,10 +189,10 @@ def add_mul_ram(clk, pix):
 			
 	return hdl
 	
-def ram_odd(pix, clk, depth = 128):
+def ram_odd(pix, clk, depth = 256):
 	"""  Ram model """
 	ww = (20,16)
-	mem_odd = [Signal(fixbv(0)[ww]) for i in range(128)]    
+	mem_odd = [Signal(fixbv(0)[ww]) for i in range(256)]    
 	@always(clk.posedge)
 	def write_odd():
 		if pix.we_odd:
@@ -204,10 +204,10 @@ def ram_odd(pix, clk, depth = 128):
 
 	return write_odd, read_odd
 
-def ram_even(pix, clk, depth = 128):
+def ram_even(pix, clk, depth = 256):
 	"""  Ram model """
 	ww = (20,16)
-	mem_even = [Signal(fixbv(0)[ww]) for i in range(128)]
+	mem_even = [Signal(fixbv(0)[ww]) for i in range(256)]
 	@always(clk.posedge)
 	def write_even():
 		if pix.we_even:
