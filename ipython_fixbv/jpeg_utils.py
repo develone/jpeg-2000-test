@@ -33,7 +33,7 @@ class Add_shift_top(object):
 		self.we_right = Signal(bool(0))
 		self.addr_right = Signal(intbv(0)[8:])
 		
-		self.presetn = ResetSignal(0, 0, async=True)
+		
 		self.pslverr = Signal(bool(0))
 		self.prdata = Signal(intbv(0, 0, 2**32))
 		self.pready = Signal(bool(0))
@@ -57,14 +57,7 @@ class Add_shift_top(object):
 
 	def reset(self):
 		duration = self.kwargs['duration']	
-        print '-- Resetting --'
-        self.presetn.next = False
-        yield delay(duration * 5)
-
-        print '-- Reset --'
-        self.presetn.next = True
-        yield delay(duration * 5)
-        			
+			
 	def setSig_we_odd(self,val):   
 		self.we_odd.next = Signal(bool(val))
 		
