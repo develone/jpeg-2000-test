@@ -1,16 +1,90 @@
 from myhdl import *
 
-from jpeg_utils import Add_shift_top 
+from jpeg_utils import Add_shift_top
+APB3_DURATION = int(1e9 / 10e6)
 class OverrunError(Exception):
     pass
 
  
 				
 def add_shift_ram(clk, pix):
- 
+	 	
+
+					
+	def ram_odd(pix, clk, depth = 256):
+		"""  Ram model """
+		DATA_WIDTH = 65536	
+		mem_odd = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]    
+		@always(clk.posedge)
+		def write_odd():
+			if pix.we_odd:
+				mem_odd[pix.addr_odd].next = pix.din_odd
+                
+		@always_comb
+		def read_odd():
+			pix.dout_odd.next = mem_odd[pix.addr_odd]
+
+		return write_odd, read_odd 
 	
-             
+ 	def ram_even(pix, clk, depth = 256):
+		"""  Ram model """
+		DATA_WIDTH = 65536	
+		mem_even = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]    
+		@always(clk.posedge)
+		def write_even():
+			if pix.we_even:
+				mem_even[pix.addr_even].next = pix.din_even
+                
+		@always_comb
+		def read_even():
+			pix.dout_even.next = mem_even[pix.addr_even]
+
+		return write_even, read_even 
+
+ 	def ram_sam(pix, clk, depth = 256):
+		"""  Ram model """
+		DATA_WIDTH = 65536	
+		mem_sam = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]    
+		@always(clk.posedge)
+		def write_sam():
+			if pix.we_sam:
+				mem_sam[pix.addr_sam].next = pix.din_sam
+                
+		@always_comb
+		def read_sam():
+			pix.dout_sam.next = mem_sam[pix.addr_sam]
+
+		return write_sam, read_sam            
  
+ 	def ram_left(pix, clk, depth = 256):
+		"""  Ram model """
+		DATA_WIDTH = 65536	
+		mem_left = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]    
+		@always(clk.posedge)
+		def write_left():
+			if pix.we_left:
+				mem_left[pix.addr_left].next = pix.din_left
+                
+		@always_comb
+		def read_left():
+			pix.dout_left.next = mem_left[pix.addr_left]
+
+		return write_left, read_left
+
+ 	def ram_right(pix, clk, depth = 256):
+		"""  Ram model """
+		DATA_WIDTH = 65536	
+		mem_right = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]    
+		@always(clk.posedge)
+		def write_right():
+			if pix.we_right:
+				mem_right[pix.addr_right].next = pix.din_right
+                
+		@always_comb
+		def read_right():
+			pix.dout_right.next = mem_right[pix.addr_right]
+
+		return write_right, read_right	 
 	 
 	
 	@always(clk.posedge)
@@ -32,126 +106,16 @@ def add_shift_ram(clk, pix):
 		else:
 			pix.noupdate.next = 1
 	return hdl
-def set_state():	
-	########## STATE MACHINE ######
-	"""If state is TRANSFER_IN data is written to ram_sam, ram_left, and ram_right.
-	If state is TRANSFER_OUT ram_even and ram_odd. 
-	If state is Update_Sample on a given sam the addr_left will be set sam - 1 & addr_right will 
-	be set sam + 1 updated will be set True
-	if sam is even even_odd will be set True if sam is odd even_odd will be set False
-	if sam = 255 or 256 state_t is set TRANSFER_OUT which is the end of samples"""
-	@always_seq(pix.pclk.posedge, pix.reset)
-	def state_machine():
-		if pix.state == pix.state_t.IDLE:
-			pix.state.next = pix.state_t.UPDATE_SAMPLE
-		elif pix.state == pix.state_t.UPDATE_SAMPLE:
-			if sam % 2 == 0:
-				 pix.even_odd.next = 1
-				 pix.addr_even.next = pix.sam
-			else:
-				pix.even_odd.next = 0
-				pix.addr_odd.next = pix.sam
-					 
-			pix.addr_sam.next = pix.sam
-			pix.addr_left.next = pix.sam -1
-			pix.addr_right.next = pix.sam + 1
-			pix.addr_even.next = pix.sam
-			pix.addr_odd.next = pix.sam
-			pix.updated.next = 1
-			if pix.sam == 256 :
-				pix.updated.next = 0
-				pix.state.next = pix.state_t.TRANSFER_OUT
-			elif pix.sam == 255:
-				pix.updated.next = 0
-				pix.state.next = pix.state_t.TRANSFER_OUT
-		elif pix.state == pix.state_t.TRANSFER_OUT:
-			pix.transoutrdy.next = 1
-			pix.state.next = pix.state_t.IDLE
-		elif pix.state == pix.state_t.TRANSFER_IN:
-			pix.updated.next = 1
-			pix.state.next = pix.state_t.UPDATE_SAMPLE
-			pix.state.next = pix.state_t.IDLE
+ 
 			
-def ram_odd(pix, clk, depth = 256):
-	"""  Ram model """
-	DATA_WIDTH = 65536	
-	mem_odd = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]    
-	@always(clk.posedge)
-	def write_odd():
-		if pix.we_odd:
-			mem_odd[pix.addr_odd].next = pix.din_odd
-                
-	@always_comb
-	def read_odd():
-		pix.dout_odd.next = mem_odd[pix.addr_odd]
 
-	return write_odd, read_odd
-
-def ram_even(pix, clk, depth = 256):
-	"""  Ram model """
-	DATA_WIDTH = 65536 
-	mem_even = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]
-	@always(clk.posedge)
-	def write_even():
-		if pix.we_even:
-			mem_even[pix.addr_even].next = pix.din_even
-                
-	@always_comb
-	def read_even():
-		pix.dout_even.next = mem_even[pix.addr_even]
-
-	return write_even, read_even
-def ram_left(pix, clk, depth = 256):
-	"""  Ram model """
-	DATA_WIDTH = 65536 
-	mem_left = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]
-	@always(clk.posedge)
-	def write_left():
-		if pix.we_left:
-			mem_left[pix.addr_left].next = pix.din_left
-                
-	@always_comb
-	def read_left():
-		pix.dout_left.next = mem_left[pix.addr_left]
-
-	return write_left, read_left	
-def ram_right(pix, clk, depth = 256):
-	"""  Ram model """
-	DATA_WIDTH = 65536 
-	mem_right = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]
-	@always(clk.posedge)
-	def write_right():
-		if pix.we_right:
-			mem_right[pix.addr_right].next = pix.din_right
-                
-	@always_comb
-	def read_right():
-		pix.dout_right.next = mem_right[pix.addr_right]
-
-	return write_right, read_right
-def ram_sam(pix, clk, depth = 256):
-	"""  Ram model """
-	DATA_WIDTH = 65536 
-	mem_sam = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]
-	@always(clk.posedge)
-	def write_sam():
-		if pix.we_sam:
-			mem_sam[pix.addr_sam].next = pix.din_sam
-                
-	@always_comb
-	def read_sam():
-		pix.dout_sam.next = mem_sam[pix.addr_sam]
-
-	return write_sam, read_sam
+ 
+ 
 def convert():
 	clk = Signal(bool(0))
-	pix = Add_shift_top()
+	pix = Add_shift_top(duration=APB3_DURATION)
 	toVerilog(add_shift_ram, clk, pix)
-	toVerilog(ram_odd, pix, clk)
-	toVerilog(ram_even, pix, clk)
-	toVerilog(ram_left, pix, clk)
-	toVerilog(ram_right, pix, clk)
-	toVerilog(ram_sam, pix, clk)
+ 
 	signals = (pix.transoutrdy,
 		pix.reset,
 		pix.penable, 
@@ -170,11 +134,7 @@ def testbench():
 	clk = Signal(bool(0))
 	pix = Add_shift_top()
 
- 	d_instodd = ram_odd(pix, clk)
-	d_insteven = ram_even(pix, clk)
- 	d_instright = ram_right(pix, clk)
-	d_instleft = ram_left(pix, clk)
-	d_instsam = ram_sam(pix,clk)
+ 
 	d_inst3 = add_shift_ram(clk, pix)
 	
 	@always(delay(10))
@@ -241,7 +201,7 @@ def testbench():
 			for i in range(n-1):
 			 	yield clk.posedge
 		raise StopSimulation
-	return  d_instleft, d_instright, d_instsam, d_instodd, d_insteven, d_inst3, stimulus, clkgen
+	return   d_inst3, stimulus, clkgen
 convert()	
 tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
