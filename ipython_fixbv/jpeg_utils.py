@@ -56,8 +56,16 @@ class Add_shift_top(object):
 		self.noupdate = Signal(bool(0))
 
 	def reset(self):
-		duration = self.kwargs['duration']	
-			
+		duration = self.kwargs['duration']
+		
+		print '-- Resetting --'
+		self.presetn.next = False
+		yield delay(duration * 5)
+		
+		print '-- Reset --'
+		self.presetn.next = True
+		yield delay(duration * 5)
+				
 	def setSig_we_odd(self,val):   
 		self.we_odd.next = Signal(bool(val))
 		
