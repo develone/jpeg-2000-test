@@ -33,7 +33,7 @@ class Add_shift_top(object):
 		self.we_right = Signal(bool(0))
 		self.addr_right = Signal(intbv(0)[8:])
 		
-		
+		self.presetn = ResetSignal(0, 0, async=True)
 		self.pslverr = Signal(bool(0))
 		self.prdata = Signal(intbv(0, 0, 2**32))
 		self.pready = Signal(bool(0))
