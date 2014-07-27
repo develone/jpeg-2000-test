@@ -1,94 +1,11 @@
 from myhdl import *
 
+from jpeg_utils import Add_shift_top 
+class OverrunError(Exception):
+    pass
+
  
-
-
-class Add_shift_top(object):
-	
-	def __init__(self):
-		DATA_WIDTH = 65536
-		self.even_odd = Signal(bool(0))
-		self.fwd_inv = Signal(bool(0))
-		 
-		self.din_sam = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-		self.dout_sam = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-		self.din_left = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-		self.dout_left = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-		self.din_right = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-		self.dout_right = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-		self.din_odd = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-		self.dout_odd = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-		self.din_even = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-		self.dout_even = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-
-		self.we_odd = Signal(bool(0))
-		self.addr_odd = Signal(intbv(0)[8:])
-
-		self.we_sam = Signal(bool(0))
-		self.addr_sam = Signal(intbv(0)[8:])
-
-		self.we_even = Signal(bool(0))
-		self.addr_even = Signal(intbv(0)[8:])
-
- 		self.we_left = Signal(bool(0))
-		self.addr_left = Signal(intbv(0)[8:])
-
-		self.we_right = Signal(bool(0))
-		self.addr_right = Signal(intbv(0)[8:])
- 
-	def setSig_we_odd(self,val):   
-		self.we_odd.next = (bool(val))
-		
-	def setSig_we_even(self,val):   
-		self.we_even.next = (bool(val))
-	
-	def setSig_we_left(self,val):   
-		self.we_left.next = (bool(val))
-		
-	def setSig_we_sam(self,val):   
-		self.we_sam.next = (bool(val))  
- 
-	def setSig_we_right(self,val):   
-		self.we_right.next = (bool(val))  
-	
- 	def setSig_addr_sam(self,val):   
-		self.addr_sam.next = Signal(intbv(val))
-
- 	def setSig_addr_left(self,val):   
-		self.addr_left.next = Signal(intbv(val))
-
- 	def setSig_addr_right(self,val):   
-		self.addr_right.next = Signal(intbv(val))
-
-	def  setSig_addr_even(self,val):   
-		self.addr_even.next = Signal(intbv(val))
-
-	def  setSig_addr_odd(self,val):   
-		self.addr_odd.next = Signal(intbv(val))
- 
-
-	def setSig_din_odd(self,val):   
-		DATA_WIDTH = 65536
-		self.din_odd.next = Signal(intbv(val, min = -DATA_WIDTH, max = DATA_WIDTH))
-			
-	def setSig_din_sam(self,val):   
-		DATA_WIDTH = 65536
-		self.din_sam.next = Signal(intbv(val, min = -DATA_WIDTH, max = DATA_WIDTH))
-
-	def setSig_din_left(self,val):   
-		DATA_WIDTH = 65536
-		self.din_left.next = Signal(intbv(val, min = -DATA_WIDTH, max = DATA_WIDTH))
-
-	def setSig_din_right(self,val):   
-		DATA_WIDTH = 65536
-		self.din_right.next = Signal(intbv(val, min = -DATA_WIDTH, max = DATA_WIDTH))				 									
-
-	def setSig_even_odd(self,val):   
-		self.even_odd.next = (bool(val))
-
-	def setSig_fwd_inv(self,val):   
-		self.fwd_inv.next = (bool(val))	
-
+				
 def add_shift_ram(clk, pix):
  
 	
@@ -98,18 +15,63 @@ def add_shift_ram(clk, pix):
 	
 	@always(clk.posedge)
 	def hdl():
-		if pix.even_odd: 
-			if pix.fwd_inv:
-				pix.din_even.next = pix.dout_sam - ((pix.dout_left >> 1) + (pix.dout_right >> 1))
-			else:
-				pix.din_even.next = pix.dout_sam + ((pix.dout_left >> 1) + (pix.dout_right >> 1))
-		else:
-			if pix.fwd_inv:
-				pix.din_odd.next = pix.dout_sam + (pix.dout_left + pix.dout_right + 2)>>2
-			else:
-				pix.din_odd.next = pix.dout_sam - (pix.dout_left + pix.dout_right + 2)>>2
-	return hdl
+		
 	
+		if pix.updated == 1:
+			
+			if pix.even_odd: 
+				if pix.fwd_inv:
+					pix.din_even.next = pix.dout_sam - ((pix.dout_left >> 1) + (pix.dout_right >> 1))
+				else:
+					pix.din_even.next = pix.dout_sam + ((pix.dout_left >> 1) + (pix.dout_right >> 1))
+			else:
+				if pix.fwd_inv:
+					pix.din_odd.next = pix.dout_sam + (pix.dout_left + pix.dout_right + 2)>>2
+				else:
+					pix.din_odd.next = pix.dout_sam - (pix.dout_left + pix.dout_right + 2)>>2
+		else:
+			pix.noupdate.next = 1
+	return hdl
+def set_state():	
+	########## STATE MACHINE ######
+	"""If state is TRANSFER_IN data is written to ram_sam, ram_left, and ram_right.
+	If state is TRANSFER_OUT ram_even and ram_odd. 
+	If state is Update_Sample on a given sam the addr_left will be set sam - 1 & addr_right will 
+	be set sam + 1 updated will be set True
+	if sam is even even_odd will be set True if sam is odd even_odd will be set False
+	if sam = 255 or 256 state_t is set TRANSFER_OUT which is the end of samples"""
+	@always_seq(pix.pclk.posedge, pix.reset)
+	def state_machine():
+		if pix.state == pix.state_t.IDLE:
+			pix.state.next = pix.state_t.UPDATE_SAMPLE
+		elif pix.state == pix.state_t.UPDATE_SAMPLE:
+			if sam % 2 == 0:
+				 pix.even_odd.next = 1
+				 pix.addr_even.next = pix.sam
+			else:
+				pix.even_odd.next = 0
+				pix.addr_odd.next = pix.sam
+					 
+			pix.addr_sam.next = pix.sam
+			pix.addr_left.next = pix.sam -1
+			pix.addr_right.next = pix.sam + 1
+			pix.addr_even.next = pix.sam
+			pix.addr_odd.next = pix.sam
+			pix.updated.next = 1
+			if pix.sam == 256 :
+				pix.updated.next = 0
+				pix.state.next = pix.state_t.TRANSFER_OUT
+			elif pix.sam == 255:
+				pix.updated.next = 0
+				pix.state.next = pix.state_t.TRANSFER_OUT
+		elif pix.state == pix.state_t.TRANSFER_OUT:
+			pix.transoutrdy.next = 1
+			pix.state.next = pix.state_t.IDLE
+		elif pix.state == pix.state_t.TRANSFER_IN:
+			pix.updated.next = 1
+			pix.state.next = pix.state_t.UPDATE_SAMPLE
+			pix.state.next = pix.state_t.IDLE
+			
 def ram_odd(pix, clk, depth = 256):
 	"""  Ram model """
 	DATA_WIDTH = 65536	
@@ -190,7 +152,20 @@ def convert():
 	toVerilog(ram_left, pix, clk)
 	toVerilog(ram_right, pix, clk)
 	toVerilog(ram_sam, pix, clk)
-
+	signals = (pix.transoutrdy,
+		pix.reset,
+		pix.penable, 
+		pix.psel,
+		pix.pwrite,
+		pix.full,
+		pix.pclk,
+		pix.sam,
+		pix.updated,
+		pix.state_t,
+		pix.state,
+		pix.noupdate)
+	#toVerilog(set_state, *signals )
+	
 def testbench():
 	clk = Signal(bool(0))
 	pix = Add_shift_top()
@@ -210,6 +185,11 @@ def testbench():
 	def stimulus():
 		for i in range(3):
 			yield clk.posedge
+			pix.setSig_updated(1)
+			pix.setSig_noupdate(0)
+			pix.setSig_transoutrdy(0)
+			pix.setSig_sam(1)
+			
 			pix.setSig_we_sam(1)
 			pix.setSig_addr_sam(0) 
 			pix.setSig_din_sam(100)
@@ -256,7 +236,7 @@ def testbench():
 				 
  			 	yield clk.posedge	
 			for i in range(1):
-				 
+				pix.setSig_transoutrdy(1)
 				yield clk.posedge			 	
 			for i in range(n-1):
 			 	yield clk.posedge
