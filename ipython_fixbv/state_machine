@@ -1,0 +1,37 @@
+	########## STATE MACHINE ######
+	"""If state is TRANSFER_IN data is written to ram_sam, ram_left, and ram_right.
+	If state is TRANSFER_OUT ram_even and ram_odd. 
+	If state is Update_Sample on a given sam the addr_left will be set sam - 1 & addr_right will 
+	be set sam + 1 updated will be set True
+	if sam is even even_odd will be set True if sam is odd even_odd will be set False
+	if sam = 255 or 256 state_t is set TRANSFER_OUT which is the end of samples"""
+	@always_seq(pix.pclk.posedge, pix.reset=resetn)
+	def state_machine():
+		if pix.state == pix.state_t.IDLE:
+			pix.state.next = pix.state_t.UPDATE_SAMPLE
+		elif pix.state == pix.state_t.UPDATE_SAMPLE:
+			if sam % 2 == 0:
+				pix.even_odd.next = 1
+				pix.addr_even.next = pix.sam
+			else:
+				pix.even_odd.next = 0
+				pix.addr_odd.next = pix.sam
+				pix.addr_sam.next = pix.sam
+				pix.addr_left.next = pix.sam -1
+				pix.addr_right.next = pix.sam + 1
+				pix.addr_even.next = pix.sam
+				pix.addr_odd.next = pix.sam
+				pix.updated.next = 1
+				if pix.sam == 256 :
+					pix.updated.next = 0
+					pix.state.next = pix.state_t.TRANSFER_OUT
+		elif pix.sam == 255:
+			pix.updated.next = 0
+			pix.state.next = pix.state_t.TRANSFER_OUT
+		elif pix.state == pix.state_t.TRANSFER_OUT:
+			pix.transoutrdy.next = 1
+			pix.state.next = pix.state_t.IDLE
+		elif pix.state == pix.state_t.TRANSFER_IN:
+			pix.updated.next = 1
+			pix.state.next = pix.state_t.UPDATE_SAMPLE
+			pix.state.next = pix.state_t.IDLE
