@@ -9,83 +9,61 @@ class OverrunError(Exception):
 				
 def add_shift_ram(clk, pix):
 	 	
-
+	"""  Ram model """
+	DATA_WIDTH = 65536	
+	mem_right = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)] 
+	mem_left = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]
+	mem_sam = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]
+	mem_odd = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]
+	mem_even = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]
 					
-	def ram_odd(pix, clk, depth = 256):
-		"""  Ram model """
-		DATA_WIDTH = 65536	
-		mem_odd = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]    
-		@always(clk.posedge)
-		def write_odd():
-			if pix.we_odd:
-				mem_odd[pix.addr_odd].next = pix.din_odd
+     
+	@always(clk.posedge)
+	def write_odd():
+		if pix.we_odd:
+			mem_odd[pix.addr_odd].next = pix.din_odd
                 
-		@always_comb
-		def read_odd():
-			pix.dout_odd.next = mem_odd[pix.addr_odd]
-
-		return write_odd, read_odd 
+	@always_comb
+	def read_odd():
+		pix.dout_odd.next = mem_odd[pix.addr_odd]
 	
- 	def ram_even(pix, clk, depth = 256):
-		"""  Ram model """
-		DATA_WIDTH = 65536	
-		mem_even = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]    
-		@always(clk.posedge)
-		def write_even():
-			if pix.we_even:
-				mem_even[pix.addr_even].next = pix.din_even
+ 	@always(clk.posedge)
+	def write_even():
+		if pix.we_even:
+			mem_even[pix.addr_even].next = pix.din_even
                 
-		@always_comb
-		def read_even():
-			pix.dout_even.next = mem_even[pix.addr_even]
+	@always_comb
+	def read_even():
+		pix.dout_even.next = mem_even[pix.addr_even]
 
-		return write_even, read_even 
 
- 	def ram_sam(pix, clk, depth = 256):
-		"""  Ram model """
-		DATA_WIDTH = 65536	
-		mem_sam = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]    
-		@always(clk.posedge)
-		def write_sam():
-			if pix.we_sam:
-				mem_sam[pix.addr_sam].next = pix.din_sam
+ 	@always(clk.posedge)
+	def write_sam():
+		if pix.we_sam:
+			mem_sam[pix.addr_sam].next = pix.din_sam
                 
-		@always_comb
-		def read_sam():
-			pix.dout_sam.next = mem_sam[pix.addr_sam]
+	@always_comb
+	def read_sam():
+		pix.dout_sam.next = mem_sam[pix.addr_sam]
 
-		return write_sam, read_sam            
- 
- 	def ram_left(pix, clk, depth = 256):
-		"""  Ram model """
-		DATA_WIDTH = 65536	
-		mem_left = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]    
-		@always(clk.posedge)
-		def write_left():
-			if pix.we_left:
-				mem_left[pix.addr_left].next = pix.din_left
+ 	@always(clk.posedge)
+	def write_left():
+		if pix.we_left:
+			mem_left[pix.addr_left].next = pix.din_left
                 
-		@always_comb
-		def read_left():
-			pix.dout_left.next = mem_left[pix.addr_left]
-
-		return write_left, read_left
-
- 	def ram_right(pix, clk, depth = 256):
-		"""  Ram model """
-		DATA_WIDTH = 65536	
-		mem_right = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]    
-		@always(clk.posedge)
-		def write_right():
-			if pix.we_right:
-				mem_right[pix.addr_right].next = pix.din_right
-                
-		@always_comb
-		def read_right():
-			pix.dout_right.next = mem_right[pix.addr_right]
-
-		return write_right, read_right	 
+	@always_comb
+	def read_left():
+		pix.dout_left.next = mem_left[pix.addr_left]
 	 
+	@always(clk.posedge)
+	def write_right():
+		if pix.we_right:
+			mem_right[pix.addr_right].next = pix.din_right
+                
+	@always_comb
+	def read_right():
+		pix.dout_right.next = mem_right[pix.addr_right]
+
 	
 	@always(clk.posedge)
 	def hdl():
@@ -105,7 +83,7 @@ def add_shift_ram(clk, pix):
 					pix.din_odd.next = pix.dout_sam - (pix.dout_left + pix.dout_right + 2)>>2
 		else:
 			pix.noupdate.next = 1
-	return hdl
+	return hdl, write_sam, read_sam, write_right, read_right, write_left, read_left, write_odd, read_odd
  
 			
 
