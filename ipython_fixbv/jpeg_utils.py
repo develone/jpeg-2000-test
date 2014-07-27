@@ -176,3 +176,34 @@ class Add_shift_top(object):
 		
 		self.pclk.next = False
 		yield delay(duration // 2)
+import unittest
+
+class TestApb3BusFunctionalModel(unittest.TestCase):
+    def test_simulate(self):
+        import myhdl
+        duration=1
+
+        def _sim():
+            pix = Add_shift_top(duration=duration)
+            pix_presetn = pix.presetn
+            pix_pclk = pix.pclk
+            pix_paddr = pix.paddr
+            pix_psel = pix.psel
+            pix_penable = pix.penable
+            pix_pwrite = pix.pwrite
+            pix_pwdata = pix.pwdata
+            pix_pready = pix.pready
+            pix_prdata = pix.prdata
+            pix_pslverr = pix.pslverr
+            
+            @myhdl.instance
+            def __sim():
+                yield pix.reset() 
+                yield pix.transmit(0x4000, 0x0110)
+            return __sim
+
+        s = myhdl.Simulation(myhdl.traceSignals(_sim))
+        s.run(10000)
+
+if __name__ == '__main__':
+    unittest.main()
