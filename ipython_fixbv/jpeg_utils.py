@@ -52,9 +52,21 @@ class Add_shift_top(object):
 		self.sam = Signal(intbv(0)[8:])
 		self.updated = Signal(bool(0))
 		self.state_t = enum('IDLE', 'UPDATE_SAMPLE', 'TRANSFER_OUT','TRANSFER_IN')
-		self.state = Signal(self.state_t.IDLE)
+		self.state = Signal(self.state_t.UPDATE_SAMPLE)
 		self.noupdate = Signal(bool(0))
+	
+	def setSig_state_update_sample(self):
+		self.state.next = Signal(self.state_t.UPDATE_SAMPLE)
 
+	def setSig_state_transfer_out(self):
+		self.state.next = Signal(self.state_t.TRANSFER_OUT)
+
+	def setSig_state_transfer_in(self):
+		self.state.next = Signal(self.state_t.TRANSFER_IN)
+
+	def setSig_state_idle(self):
+		self.state.next = Signal(self.state_t.IDLE)
+		
 	def reset(self):
 		duration = self.kwargs['duration']
 		

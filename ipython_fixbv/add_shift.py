@@ -1,5 +1,5 @@
 from myhdl import *
-
+import add_shift_sm as sm
 from jpeg_utils import Add_shift_top
 APB3_DURATION = int(1e9 / 10e6)
 class OverrunError(Exception):
@@ -146,18 +146,24 @@ def convert():
 		pix.state,
 		pix.noupdate)
 	#toVerilog(set_state, *signals )
-	
+	print "generating jpeg_sm.v"
+	sm.convert()
 def testbench():
 	clk = Signal(bool(0))
 	pix = Add_shift_top()
 
  
 	d_inst3 = add_shift_ram(clk, pix)
-	
+	d_sm = sm.tb(pix)
+	print d_sm, type(d_sm)
 	@always(delay(10))
 	def clkgen():
 		clk.next = not clk
 	
+	@always(delay(10))	
+	def clkgen1():
+		pix.pclk.next = not pix.pclk
+		
 	@instance
 	def stimulus():
 		for i in range(3):
@@ -192,6 +198,7 @@ def testbench():
 				pix.setSig_addr_even(1) 
 			 	yield clk.posedge
 			for i in range(1):
+				pix.setSig_state_update_sample()
 			 	pix.setSig_addr_even(0)
 				pix.setSig_we_odd(1)
 				pix.setSig_addr_odd(0)
@@ -205,6 +212,7 @@ def testbench():
 				pix.setSig_din_sam(-53) 
 			 	yield clk.posedge
 			for i in range(1):
+				pix.setSig_state_update_sample()
 				pix.setSig_fwd_inv(1)
 			 	 
 			 
@@ -218,7 +226,7 @@ def testbench():
 			for i in range(n-1):
 			 	yield clk.posedge
 		raise StopSimulation
-	return   d_inst3, stimulus, clkgen
+	return   d_inst3, d_sm, stimulus, clkgen, clkgen1
 convert()	
 tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
