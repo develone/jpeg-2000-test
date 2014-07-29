@@ -35,9 +35,9 @@ def jpeg_sm(resetn, pix):
 				if pix.sam == 256 :
 					pix.updated.next = 0
 					pix.state.next = pix.state_t.TRANSFER_OUT
-		elif pix.sam == 255:
-			pix.updated.next = 0
-			pix.state.next = pix.state_t.TRANSFER_OUT
+				elif pix.sam == 255:
+					pix.updated.next = 0
+					pix.state.next = pix.state_t.TRANSFER_OUT
 		elif pix.state == pix.state_t.TRANSFER_OUT:
 			pix.transoutrdy.next = 1
 			pix.state.next = pix.state_t.IDLE
