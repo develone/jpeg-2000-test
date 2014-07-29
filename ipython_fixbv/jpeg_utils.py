@@ -1,4 +1,4 @@
-from myhdl import ResetSignal, Signal, enum, intbv, always, delay
+from myhdl import *
 
 class Add_shift_top(object):
 	
@@ -66,6 +66,9 @@ class Add_shift_top(object):
 
 	def setSig_state_idle(self):
 		self.state.next = Signal(self.state_t.IDLE)
+
+	def __str__(self):
+		return " %s " % self.state
 		
 	def reset(self):
 		duration = self.kwargs['duration']

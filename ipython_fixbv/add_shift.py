@@ -190,6 +190,7 @@ def testbench():
 			 	yield clk.posedge
 			for i in range(1):
 				pix.setSig_state_update_sample()
+				print(pix)
 			 	pix.setSig_addr_even(0)
 				pix.setSig_we_odd(1)
 				pix.setSig_addr_odd(0)
@@ -218,7 +219,7 @@ def testbench():
 			 	yield clk.posedge
 		raise StopSimulation
 	return   d_inst3, d_sm, stimulus, clkgen, clkgen1
-convert()	
+#convert()	
 tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
 sim.run()
