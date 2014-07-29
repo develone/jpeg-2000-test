@@ -1,13 +1,12 @@
 from myhdl import *
-import add_shift_sm as sm
+
 from jpeg_utils import Add_shift_top
 APB3_DURATION = int(1e9 / 10e6)
 class OverrunError(Exception):
     pass
 
- 
-				
-def add_shift_ram(clk, pix):
+def jpeg_sm(resetn, pix):
+
 	
 	########## STATE MACHINE ######
 	"""If state is TRANSFER_IN data is written to ram_sam, ram_left, and ram_right.
@@ -16,12 +15,12 @@ def add_shift_ram(clk, pix):
 	be set sam + 1 updated will be set True
 	if sam is even even_odd will be set True if sam is odd even_odd will be set False
 	if sam = 255 or 256 state_t is set TRANSFER_OUT which is the end of samples"""
-	#@always_seq(pix.pclk.posedge, pix.reset=resetn)
+	@always_seq(pix.pclk.posedge, reset=resetn)
 	def state_machine():
 		if pix.state == pix.state_t.IDLE:
 			pix.state.next = pix.state_t.UPDATE_SAMPLE
 		elif pix.state == pix.state_t.UPDATE_SAMPLE:
-			if sam % 2 == 0:
+			if pix.sam % 2 == 0:
 				pix.even_odd.next = 1
 				pix.addr_even.next = pix.sam
 			else:
@@ -48,6 +47,11 @@ def add_shift_ram(clk, pix):
 			pix.state.next = pix.state_t.IDLE
 
 	 	
+ 
+	return state_machine 
+					
+def add_shift_ram(clk, pix):
+		
 	"""  Ram model """
 	DATA_WIDTH = 65536	
 	mem_right = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)] 
@@ -130,32 +134,19 @@ def add_shift_ram(clk, pix):
  
 def convert():
 	clk = Signal(bool(0))
-	pix = Add_shift_top(duration=APB3_DURATION)
+	#pix = Add_shift_top(duration=APB3_DURATION)
+	pix = Add_shift_top()
 	toVerilog(add_shift_ram, clk, pix)
- 
-	signals = (pix.transoutrdy,
-		pix.reset,
-		pix.penable, 
-		pix.psel,
-		pix.pwrite,
-		pix.full,
-		pix.pclk,
-		pix.sam,
-		pix.updated,
-		pix.state_t,
-		pix.state,
-		pix.noupdate)
-	#toVerilog(set_state, *signals )
-	print "generating jpeg_sm.v"
-	sm.convert()
+ 	toVerilog(jpeg_sm, pix.presetn, pix )
+
 def testbench():
 	clk = Signal(bool(0))
 	pix = Add_shift_top()
 
  
 	d_inst3 = add_shift_ram(clk, pix)
-	d_sm = sm.tb(pix)
-	print d_sm, type(d_sm)
+	d_sm = jpeg_sm(pix.presetn, pix)
+ 
 	@always(delay(10))
 	def clkgen():
 		clk.next = not clk

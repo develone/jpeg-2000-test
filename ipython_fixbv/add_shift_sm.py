@@ -8,20 +8,7 @@ class OverrunError(Exception):
 
  
 				
-def jpeg_sm(resetn,
-		pclk,
-		state_t,
-        state,
-		even_odd,
-		addr_even,
-		addr_sam,
-		addr_left,
-		addr_right,
-		addr_odd,
-		updated,
-		transoutrdy,
-		sam,
-        ):
+def jpeg_sm(resetn, pix):
 
 	
 	########## STATE MACHINE ######
@@ -31,36 +18,36 @@ def jpeg_sm(resetn,
 	be set sam + 1 updated will be set True
 	if sam is even even_odd will be set True if sam is odd even_odd will be set False
 	if sam = 255 or 256 state_t is set TRANSFER_OUT which is the end of samples"""
-	@always_seq(pclk.posedge, reset=resetn)
+	@always_seq(pix.pclk.posedge, reset=resetn)
 	def state_machine():
-		if state == state_t.IDLE:
-			state.next = state_t.UPDATE_SAMPLE
-		elif state == state_t.UPDATE_SAMPLE:
-			if sam % 2 == 0:
-				even_odd.next = 1
-				addr_even.next = sam
+		if pix.state == pix.state_t.IDLE:
+			pix.state.next = pix.state_t.UPDATE_SAMPLE
+		elif pix.state == pix.state_t.UPDATE_SAMPLE:
+			if pix.sam % 2 == 0:
+				pix.even_odd.next = 1
+				pix.addr_even.next = pix.sam
 			else:
-				even_odd.next = 0
-				addr_odd.next = sam
-				addr_sam.next = sam
-				addr_left.next = sam -1
-				addr_right.next = sam + 1
-				addr_even.next = sam
-				addr_odd.next = sam
-				updated.next = 1
-				if sam == 256 :
-					updated.next = 0
-					state.next = state_t.TRANSFER_OUT
-		elif sam == 255:
-			updated.next = 0
-			state.next = state_t.TRANSFER_OUT
-		elif state == state_t.TRANSFER_OUT:
-			transoutrdy.next = 1
-			state.next = state_t.IDLE
-		elif state == state_t.TRANSFER_IN:
-			updated.next = 1
-			state.next = state_t.UPDATE_SAMPLE
-			state.next = state_t.IDLE
+				pix.even_odd.next = 0
+				pix.addr_odd.next = pix.sam
+				pix.addr_sam.next = pix.sam
+				pix.addr_left.next = pix.sam -1
+				pix.addr_right.next = pix.sam + 1
+				pix.addr_even.next = pix.sam
+				pix.addr_odd.next = pix.sam
+				pix.updated.next = 1
+				if pix.sam == 256 :
+					pix.updated.next = 0
+					pix.state.next = pix.state_t.TRANSFER_OUT
+		elif pix.sam == 255:
+			pix.updated.next = 0
+			pix.state.next = pix.state_t.TRANSFER_OUT
+		elif pix.state == pix.state_t.TRANSFER_OUT:
+			pix.transoutrdy.next = 1
+			pix.state.next = pix.state_t.IDLE
+		elif pix.state == pix.state_t.TRANSFER_IN:
+			pix.updated.next = 1
+			pix.state.next = pix.state_t.UPDATE_SAMPLE
+			pix.state.next = pix.state_t.IDLE
 
 	 	
  
@@ -72,24 +59,14 @@ def jpeg_sm(resetn,
  
 def convert():
 	clk = Signal(bool(0))
-	pix = Add_shift_top(duration=APB3_DURATION)
+	#pix = Add_shift_top(duration=APB3_DURATION)
+	pix = Add_shift_top()
 	#toVerilog(add_shift_ram, clk, pix)
  
 	signals = (pix.presetn,
-		pix.pclk,
-		pix.state_t,
-        pix.state,
-		pix.even_odd,
-		pix.addr_even,
-		pix.addr_sam,
-		pix.addr_left,
-		pix.addr_right,
-		pix.addr_odd,
-		pix.updated,
-		pix.transoutrdy,
-		pix.sam)
+		)
 		
-	toVerilog(jpeg_sm, *signals )
+	toVerilog(jpeg_sm, pix.presetn, pix )
 
 def tb(pix):
 	clk = Signal(bool(0))
@@ -107,7 +84,7 @@ def tb(pix):
 		pix.updated,
 		pix.transoutrdy,
 		pix.sam)
-	return jpeg_sm(*signals)
+	return jpeg_sm(pix.presetn, pix)
 		
 def testbench():
 	clk = Signal(bool(0))
@@ -127,7 +104,7 @@ def testbench():
 		pix.sam)
  
 	#d_inst3 = add_shift_ram(clk, pix)
-	d_sm = jpeg_sm(*signals)
+	d_sm = jpeg_sm(pix.presetn, pix)
 	@always(delay(10))
 	def clkgen():
 		clk.next = not clk
@@ -199,7 +176,7 @@ def testbench():
 			 	yield clk.posedge
 		raise StopSimulation
 	return   d_sm, stimulus, clkgen, clkgen1
-convert()	
-tb_fsm = traceSignals(testbench)
-sim = Simulation(tb_fsm)
-sim.run()
+#convert()	
+#tb_fsm = traceSignals(testbench)
+#sim = Simulation(tb_fsm)
+#sim.run()

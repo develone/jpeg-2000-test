@@ -2,7 +2,7 @@ from myhdl import ResetSignal, Signal, enum, intbv, always, delay
 
 class Add_shift_top(object):
 	
-	def __init__(self, *args, **kwargs):
+	def __init__(self):
 		DATA_WIDTH = 65536
 		self.even_odd = Signal(bool(0))
 		self.fwd_inv = Signal(bool(0))
@@ -40,7 +40,7 @@ class Add_shift_top(object):
 		self.pwdata = Signal(intbv(0, 0, 2**32))
 		self.paddr = Signal(intbv(0, 0, 2**32))
 		self.presetn = ResetSignal(0, 0, async=True)
-		self.kwargs = kwargs
+		#self.kwargs = kwargs
 		
 		self.transoutrdy  = Signal(bool(0))
 		#self.resetn  = Signal(bool(0))
@@ -52,7 +52,7 @@ class Add_shift_top(object):
 		self.sam = Signal(intbv(0)[8:])
 		self.updated = Signal(bool(0))
 		self.state_t = enum('IDLE', 'UPDATE_SAMPLE', 'TRANSFER_OUT','TRANSFER_IN')
-		self.state = Signal(self.state_t.UPDATE_SAMPLE)
+		self.state = Signal(self.state_t.IDLE)
 		self.noupdate = Signal(bool(0))
 	
 	def setSig_state_update_sample(self):
