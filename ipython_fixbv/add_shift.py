@@ -1,5 +1,5 @@
 from myhdl import *
-
+m = [156.0, 156.0, 156.0, 156.0, 164.0, 164.0, 164.0, 164.0, 164.0, 164.0, 164.0, 164.0, 156.0, 156.0, 164.0, 164.0, 156.0, 156.0, 164.0, 164.0, 148.0, 148.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 164.0, 164.0, 164.0, 164.0, 164.0, 164.0, 172.0, 172.0, 172.0, 172.0, 172.0, 172.0, 172.0, 172.0, 172.0, 172.0, 164.0, 164.0, 148.0, 148.0, 156.0, 156.0, 124.0, 124.0, 116.0, 116.0, 92.0, 92.0, 92.0, 92.0, 84.0, 84.0, 108.0, 108.0, 108.0, 108.0, 100.0, 100.0, 100.0, 100.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 108.0, 100.0, 100.0, 108.0, 108.0, 108.0, 108.0, 116.0, 116.0, 116.0, 116.0, 124.0, 124.0, 116.0, 116.0, 124.0, 124.0, 124.0, 124.0, 116.0, 116.0, 116.0, 116.0, 124.0, 124.0, 124.0, 124.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 124.0, 124.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 124.0, 124.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 132.0, 132.0, 140.0, 140.0, 124.0, 124.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 140.0, 140.0, 132.0, 132.0, 140.0, 140.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 140.0, 140.0, 132.0, 132.0, 132.0, 132.0, 140.0, 140.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 140.0, 140.0, 132.0, 132.0, 140.0, 140.0, 132.0, 132.0, 132.0, 132.0, 124.0, 124.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 140.0, 140.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 124.0, 124.0, 132.0, 132.0, 140.0, 140.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 124.0, 124.0, 132.0, 132.0, 140.0, 140.0, 132.0, 132.0, 132.0, 132.0, 124.0, 124.0, 132.0, 132.0, 124.0, 124.0, 140.0, 140.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 124.0, 124.0, 140.0, 140.0, 132.0, 132.0, 124.0, 124.0, 124.0, 124.0, 132.0, 132.0, 124.0, 124.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 132.0, 124.0, 124.0, 132.0, 132.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 116.0, 116.0, 124.0, 124.0, 116.0, 116.0, 108.0, 108.0, 116.0, 116.0, 100.0, 100.0, 100.0, 100.0, 116.0, 116.0, 124.0, 124.0, 132.0, 132.0, 140.0, 140.0, 148.0, 148.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 164.0, 164.0, 164.0, 164.0, 156.0, 156.0, 148.0, 148.0, 156.0, 156.0, 156.0, 156.0, 148.0, 148.0, 148.0, 148.0, 156.0, 156.0, 156.0, 156.0, 148.0, 148.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 148.0, 148.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 164.0, 164.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 156.0, 188.0, 188.0, 204.0, 204.0, 212.0, 212.0, 212.0, 212.0, 220.0, 220.0, 220.0, 220.0, 220.0, 220.0, 212.0, 212.0, 196.0, 196.0, 148.0, 148.0, 108.0, 108.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 116.0, 116.0, 124.0, 124.0, 116.0, 116.0, 116.0, 116.0, 132.0, 132.0, 124.0, 124.0, 116.0, 116.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 116.0, 116.0, 124.0, 124.0, 132.0, 132.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 116.0, 116.0, 132.0, 132.0, 132.0, 132.0, 124.0, 124.0, 124.0, 124.0, 124.0, 124.0, 132.0, 132.0, 132.0, 132.0, 116.0, 116.0, 116.0, 116.0, 116.0, 116.0, 116.0, 116.0, 124.0, 124.0, 132.0, 132.0, 164.0, 164.0, 172.0, 172.0, 156.0, 156.0]
 from jpeg_utils import Add_shift_top
 APB3_DURATION = int(1e9 / 10e6)
 class OverrunError(Exception):
@@ -23,42 +23,87 @@ def jpeg_sm(resetn, pix):
 			pix.addr_left.next = 0
 			pix.addr_right.next = 0
 			pix.addr_sam.next = 0
-			pix.addr_odd.next = 0
-			pix.addr_even.next = 0
+			pix.addr_res.next = 0
+			pix.we_res.next = 0
+			pix.we_sam.next = 0
+			pix.we_left.next = 0
+			pix.we_right.next = 0
 			pix.transoutrdy.next = 0
-			pix.state.next = pix.state_t.IDLE
-		else:
+			pix.transinrdy.next = 0
 			pix.state.next = pix.state_t.UPDATE_SAMPLE
+		else:
+			#pix.state.next = pix.state_t.UPDATE_SAMPLE
 			if pix.state == pix.state_t.IDLE:
-				pix.state.next = pix.state_t.UPDATE_SAMPLE
+				if pix.state == pix.state_t.UPDATE_SAMPLE:
+					pix.state.next = pix.state_t.UPDATE_SAMPLE
+				if pix.state == pix.state_t.TRANSFER_IN:
+					pix.state.next = pix.state_t.TRANSFER_IN
+				if pix.state == pix.state_t.TRANSFER_OUT:
+					pix.state.next = pix.state_t.TRANSFER_OUT
 			elif pix.state == pix.state_t.UPDATE_SAMPLE:
+				pix.even_odd.next = 0
+				pix.we_left.next = 0
+				pix.we_right.next = 0
+				pix.we_sam.next = 0
+				pix.updated.next = 1
+				pix.we_res.next = 1
 				if pix.sam % 2 == 0:
 					pix.even_odd.next = 1
-					pix.addr_even.next = pix.sam
+					pix.addr_res.next = pix.sam
+					pix.addr_sam.next = pix.sam
+					if pix.sam != 0:
+						pix.addr_left.next = pix.sam -1
+					pix.addr_right.next = pix.sam + 1
+
+
 				else:
 					pix.even_odd.next = 0
-					pix.addr_odd.next = pix.sam
+					pix.addr_res.next = pix.sam
 					pix.addr_sam.next = pix.sam
 					pix.addr_left.next = pix.sam -1
-					if pix.sam <= 254:
+					if pix.sam <= 253:
+
 						pix.addr_right.next = pix.sam + 1
-					pix.addr_even.next = pix.sam
-					pix.addr_odd.next = pix.sam
-					pix.updated.next = 1
+					pix.addr_res.next = pix.sam
+
 					if pix.sam == 255 :
+						pix.even_odd.next = 0
+						pix.we_res.next = 0
 						pix.updated.next = 0
 						pix.state.next = pix.state_t.TRANSFER_OUT
 					elif pix.sam == 254:
+						pix.even_odd.next = 0
 						pix.updated.next = 0
 						pix.state.next = pix.state_t.TRANSFER_OUT
 			elif pix.state == pix.state_t.TRANSFER_OUT:
-				pix.transoutrdy.next = 1
-				pix.state.next = pix.state_t.IDLE
-			elif pix.state == pix.state_t.TRANSFER_IN:
-				pix.updated.next = 1
-				pix.state.next = pix.state_t.UPDATE_SAMPLE
-				pix.state.next = pix.state_t.IDLE
+				pix.we_res.next = 0
+				pix.updated.next = 0
 
+				if pix.addr_sam == 255:
+					pix.transoutrdy.next = 1
+					pix.state.next = pix.state_t.IDLE
+				else:
+					pix.addr_sam.next =  1 + pix.addr_sam
+			elif pix.state == pix.state_t.TRANSFER_IN:
+				pix.we_sam.next = 1
+				pix.we_left.next = 1
+				pix.we_right.next = 1
+
+
+				pix.we_res.next = 0
+				pix.updated.next = 0
+				pix.transinrdy.next = 0
+				if pix.addr_sam == 255:
+					pix.we_sam.next = 0
+					pix.we_left.next = 0
+					pix.we_right.next = 0
+
+					pix.transinrdy.next = 1
+					pix.state.next = pix.state_t.IDLE
+				else:
+					pix.addr_sam.next = pix.sam
+					pix.addr_left.next = pix.sam
+					pix.addr_right.next = pix.sam
 
 
 	return state_machine
@@ -70,28 +115,18 @@ def add_shift_ram(clk, pix):
 	mem_right = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]
 	mem_left = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]
 	mem_sam = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]
-	mem_odd = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]
-	mem_even = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]
+	mem_res = [Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH)) for i in range(256)]
+
 
 
 	@always(clk.posedge)
-	def write_odd():
-		if pix.we_odd:
-			mem_odd[pix.addr_odd].next = pix.din_odd
+	def write_res():
+		if pix.we_res:
+			mem_res[pix.addr_res].next = pix.din_res
 
 	@always_comb
-	def read_odd():
-		pix.dout_odd.next = mem_odd[pix.addr_odd]
-
- 	@always(clk.posedge)
-	def write_even():
-		if pix.we_even:
-			mem_even[pix.addr_even].next = pix.din_even
-
-	@always_comb
-	def read_even():
-		pix.dout_even.next = mem_even[pix.addr_even]
-
+	def read_res():
+		pix.dout_res.next = mem_res[pix.addr_res]
 
  	@always(clk.posedge)
 	def write_sam():
@@ -129,17 +164,17 @@ def add_shift_ram(clk, pix):
 
 			if pix.even_odd:
 				if pix.fwd_inv:
-					pix.din_even.next = pix.dout_sam - ((pix.dout_left >> 1) + (pix.dout_right >> 1))
+					pix.din_res.next = pix.dout_sam - ((pix.dout_left >> 1) + (pix.dout_right >> 1))
 				else:
-					pix.din_even.next = pix.dout_sam + ((pix.dout_left >> 1) + (pix.dout_right >> 1))
+					pix.din_res.next = pix.dout_sam + ((pix.dout_left >> 1) + (pix.dout_right >> 1))
 			else:
 				if pix.fwd_inv:
-					pix.din_odd.next = pix.dout_sam + (pix.dout_left + pix.dout_right + 2)>>2
+					pix.din_res.next = pix.dout_sam + (pix.dout_left + pix.dout_right + 2)>>2
 				else:
-					pix.din_odd.next = pix.dout_sam - (pix.dout_left + pix.dout_right + 2)>>2
+					pix.din_res.next = pix.dout_sam - (pix.dout_left + pix.dout_right + 2)>>2
 		else:
 			pix.noupdate.next = 1
-	return hdl, write_sam, read_sam, write_right, read_right, write_left, read_left, write_odd, read_odd
+	return hdl, write_sam, read_sam, write_right, read_right, write_left, read_left, write_res, read_res
 
 
 
@@ -170,72 +205,75 @@ def testbench():
 
 	@instance
 	def stimulus():
-		for i in range(3):
+		for i in range(1):
+			pix.setSig_presetn(0)
+			print("%8d  %s" % (now(), pix))
 			yield clk.posedge
-			pix.setSig_updated(1)
-			pix.setSig_noupdate(0)
-			pix.setSig_transoutrdy(0)
-			pix.setSig_sam(1)
+		for i in range(1):
 
-			pix.setSig_we_sam(1)
-			pix.setSig_addr_sam(1)
-			pix.setSig_din_sam(100)
-			pix.setSig_we_left(1)
-			pix.setSig_addr_left(0)
-			pix.setSig_din_left(102)
-			pix.setSig_we_right(1)
-			pix.setSig_addr_right(0)
-			pix.setSig_din_right(104)
-			pix.setSig_even_odd(1)
+			yield clk.posedge
+		for i in range(1):
+
+
+			yield clk.posedge
+		for i in range(1):
+			yield clk.posedge
+		for i in range(1):
+			pix.setSig_presetn(1)
+
+
+
+			#setting samples 1 2 3
+
+
+
+
+
+			yield clk.posedge
+
+		for i in range(1):
+			pix.setSig_sam(0)
+			yield clk.posedge
+		for i  in range(2):
+
+			pix.setSig_state_transfer_in()
+			print("%8d  %s" % (now(), pix))
+			yield clk.posedge
+
+		for i  in range(255):
+			#print m[i]
+			pix.setSig_din_left(int(m[i]))
+			pix.setSig_din_right(int(m[i]))
+			pix.setSig_din_sam(int(m[i]))
+			pix.setSig_sam(i)
+
+			yield clk.posedge
+		for i  in range(1):
 			pix.setSig_fwd_inv(1)
+			yield clk.posedge
+		for i  in range(1):
+			pix.setSig_state_update_sample()
+			yield clk.posedge
 
-			pix.setSig_we_even(1)
-			pix.setSig_addr_even(0)
-
- 		for n in (18, 8, 8, 4):
-			for i in range(1):
-				pix.setSig_sam(3)
-				pix.we_sam = (1)
-				pix.setSig_addr_sam(0)
-				pix.setSig_din_sam(-3)
-				pix.setSig_fwd_inv(0)
-				pix.setSig_we_even(1)
-				pix.setSig_addr_even(1)
-			 	yield clk.posedge
-			for i in range(1):
-				pix.setSig_state_update_sample()
-				print("%8d  %s" % (now(), pix))
-				pix.setSig_updated(1)
-			 	pix.setSig_addr_even(1)
-				pix.setSig_we_odd(1)
-				pix.setSig_addr_odd(0)
-				yield clk.posedge
-			for i in range(1):
-				pix.setSig_state_idle()
-				print("%8d  %s" % (now(), pix))
-				pix.reset()
-				pix.setSig_even_odd(0)
-				pix.setSig_fwd_inv(0)
-				yield clk.posedge
-			for i in range(1):
-				pix.setSig_sam(255)
-				pix.setSig_din_sam(-53)
-			 	yield clk.posedge
-			for i in range(1):
-				pix.setSig_state_update_sample()
-				pix.setSig_fwd_inv(1)
-
-
-			 	yield clk.posedge
-			for i in range(1):
-
- 			 	yield clk.posedge
-			for i in range(1):
-				pix.setSig_transoutrdy(1)
-				yield clk.posedge
-			for i in range(n-1):
-
-			 	yield clk.posedge
+		for i  in range(1):
+			pix.setSig_sam(2)
+			yield clk.posedge
+		for i  in range(1):
+			pix.setSig_state_update_sample()
+			yield clk.posedge
+		for i  in range(2,255,2):
+			pix.setSig_sam(i)
+			yield clk.posedge
+		for i  in range(1,255-1,2):
+			pix.setSig_sam(i)
+			yield clk.posedge
+		for i  in range(1):
+			pix.setSig_fwd_inv(0)
+		for i  in range(255):
+			pix.setSig_addr_sam(0)
+			pix.setSig_state_transfer_out()
+			print("%8d  %s" % (now(), pix))
+			yield clk.posedge
 		raise StopSimulation
 	return   d_inst3, d_sm, stimulus, clkgen, clkgen1
 #convert()

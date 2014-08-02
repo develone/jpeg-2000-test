@@ -14,21 +14,16 @@ class Add_shift_top(object):
 		self.dout_left = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 		self.din_right = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 		self.dout_right = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-		self.din_odd = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-		self.dout_odd = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-		self.din_even = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-		self.dout_even = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
+		self.din_res = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
+		self.dout_res = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 
-		self.we_odd = Signal(bool(0))
-		self.addr_odd = Signal(intbv(0)[8:])
+		self.we_res = Signal(bool(0))
+		self.addr_res = Signal(intbv(0)[8:])
 
 		self.we_sam = Signal(bool(0))
 		self.addr_sam = Signal(intbv(0)[8:])
 
-		self.we_even = Signal(bool(0))
-		self.addr_even = Signal(intbv(0)[8:])
-
- 		self.we_left = Signal(bool(0))
+  		self.we_left = Signal(bool(0))
 		self.addr_left = Signal(intbv(0)[8:])
 
 		self.we_right = Signal(bool(0))
@@ -45,6 +40,7 @@ class Add_shift_top(object):
 		#self.kwargs = kwargs
 
 		self.transoutrdy  = Signal(bool(0))
+		self.transinrdy  = Signal(bool(0))
 		#self.resetn  = Signal(bool(0))
 		self.penable  = Signal(bool(0))
 		self.psel  = Signal(bool(0))
@@ -76,12 +72,16 @@ class Add_shift_top(object):
 		duration = self.kwargs['duration']
 
 		print '-- Resetting --'
-		self.presetn.next = False
-		yield delay(duration * 5)
+		self.resetn.next = False
+		yield delay(1)
 
 		print '-- Reset --'
-		self.presetn.next = True
-		yield delay(duration * 5)
+		self.resetn.next = True
+		yield delay(1)
+
+
+	def setSig_presetn(self,val):
+		self.presetn.next = Signal(bool(val))
 
 	def setSig_we_odd(self,val):
 		self.we_odd.next = Signal(bool(val))
