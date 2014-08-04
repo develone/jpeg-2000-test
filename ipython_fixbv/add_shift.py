@@ -108,7 +108,7 @@ def jpeg_sm(resetn, pix):
 
 	return state_machine
 
-def add_shift_ram(clk, pix):
+def add_shift_ram(pix):
 
 	"""  Ram model """
 	DATA_WIDTH = 65536
@@ -119,7 +119,7 @@ def add_shift_ram(clk, pix):
 
 
 
-	@always(clk.posedge)
+	@always(pix.pclk.posedge)
 	def write_res():
 		if pix.we_res:
 			mem_res[pix.addr_res].next = pix.din_res
@@ -128,7 +128,7 @@ def add_shift_ram(clk, pix):
 	def read_res():
 		pix.dout_res.next = mem_res[pix.addr_res]
 
- 	@always(clk.posedge)
+ 	@always(pix.pclk.posedge)
 	def write_sam():
 		if pix.we_sam:
 			mem_sam[pix.addr_sam].next = pix.din_sam
@@ -137,7 +137,7 @@ def add_shift_ram(clk, pix):
 	def read_sam():
 		pix.dout_sam.next = mem_sam[pix.addr_sam]
 
- 	@always(clk.posedge)
+ 	@always(pix.pclk.posedge)
 	def write_left():
 		if pix.we_left:
 			mem_left[pix.addr_left].next = pix.din_left
@@ -146,7 +146,7 @@ def add_shift_ram(clk, pix):
 	def read_left():
 		pix.dout_left.next = mem_left[pix.addr_left]
 
-	@always(clk.posedge)
+	@always(pix.pclk.posedge)
 	def write_right():
 		if pix.we_right:
 			mem_right[pix.addr_right].next = pix.din_right
@@ -156,7 +156,7 @@ def add_shift_ram(clk, pix):
 		pix.dout_right.next = mem_right[pix.addr_right]
 
 
-	@always(clk.posedge)
+	@always(pix.pclk.posedge)
 	def hdl():
 
 
@@ -181,26 +181,25 @@ def add_shift_ram(clk, pix):
 
 
 def convert():
-	clk = Signal(bool(0))
+	
 	#pix = Add_shift_top(duration=APB3_DURATION)
 	pix = Add_shift_top()
-	toVerilog(add_shift_ram, clk, pix)
+	toVerilog(add_shift_ram, pix)
  	toVerilog(jpeg_sm, pix.presetn, pix )
 
 def testbench():
-	clk = Signal(bool(0))
+	
+	
 	pix = Add_shift_top()
 
 
-	d_inst3 = add_shift_ram(clk, pix)
+	d_inst3 = add_shift_ram(pix)
 	d_sm = jpeg_sm(pix.presetn, pix)
+
+
 
 	@always(delay(10))
 	def clkgen():
-		clk.next = not clk
-
-	@always(delay(10))
-	def clkgen1():
 		pix.pclk.next = not pix.pclk
 
 	@instance
@@ -208,16 +207,16 @@ def testbench():
 		for i in range(1):
 			pix.setSig_presetn(0)
 			print("%8d  %s" % (now(), pix))
-			yield clk.posedge
+			yield pix.pclk.posedge
 		for i in range(1):
 
-			yield clk.posedge
+			yield pix.pclk.posedge
 		for i in range(1):
 
 
-			yield clk.posedge
+			yield pix.pclk.posedge
 		for i in range(1):
-			yield clk.posedge
+			yield pix.pclk.posedge
 		for i in range(1):
 			pix.setSig_presetn(1)
 
@@ -229,16 +228,16 @@ def testbench():
 
 
 
-			yield clk.posedge
+			yield pix.pclk.posedge
 
 		for i in range(1):
 			pix.setSig_sam(0)
-			yield clk.posedge
+			yield pix.pclk.posedge
 		for i  in range(2):
 
 			pix.setSig_state_transfer_in()
 			print("%8d  %s" % (now(), pix))
-			yield clk.posedge
+			yield pix.pclk.posedge
 
 		for i  in range(255):
 			#print m[i]
@@ -247,35 +246,35 @@ def testbench():
 			pix.setSig_din_sam(int(m[i]))
 			pix.setSig_sam(i)
 
-			yield clk.posedge
+			yield pix.pclk.posedge
 		for i  in range(1):
 			pix.setSig_fwd_inv(1)
-			yield clk.posedge
+			yield pix.pclk.posedge
 		for i  in range(1):
 			pix.setSig_state_update_sample()
-			yield clk.posedge
+			yield pix.pclk.posedge
 
 		for i  in range(1):
 			pix.setSig_sam(2)
-			yield clk.posedge
+			yield pix.pclk.posedge
 		for i  in range(1):
 			pix.setSig_state_update_sample()
-			yield clk.posedge
+			yield pix.pclk.posedge
 		for i  in range(2,255,2):
 			pix.setSig_sam(i)
-			yield clk.posedge
+			yield pix.pclk.posedge
 		for i  in range(1,255-1,2):
 			pix.setSig_sam(i)
-			yield clk.posedge
+			yield pix.pclk.posedge
 		for i  in range(1):
 			pix.setSig_fwd_inv(0)
 		for i  in range(255):
 			pix.setSig_addr_sam(0)
 			pix.setSig_state_transfer_out()
 			print("%8d  %s" % (now(), pix))
-			yield clk.posedge
+			yield pix.pclk.posedge
 		raise StopSimulation
-	return   d_inst3, d_sm, stimulus, clkgen, clkgen1
+	return   d_inst3, d_sm, stimulus, clkgen
 #convert()
 tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
