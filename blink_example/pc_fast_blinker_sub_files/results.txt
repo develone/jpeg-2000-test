@@ -1,0 +1,106 @@
+
+##################################################################
+# This program tests the interface between the host PC and the FPGA 
+# on the XuLA board that has been programmed to act as a subtractor.
+##################################################################
+
+ 63 -  32 =   31 ==> CORRECT!
+ 24 -  50 =  -26 ==> CORRECT!
+ 55 -   8 =   47 ==> CORRECT!
+ 31 -  31 =    0 ==> CORRECT!
+  4 -  39 =  -35 ==> CORRECT!
+ 68 - 100 =  -32 ==> CORRECT!
+ 90 - 115 =  -25 ==> CORRECT!
+ 35 -  98 =  -63 ==> CORRECT!
+105 -  89 =   16 ==> CORRECT!
+ 87 -  53 =   34 ==> CORRECT!
+106 -   0 =  106 ==> CORRECT!
+ 56 -  43 =   13 ==> CORRECT!
+ 56 -   3 =   53 ==> CORRECT!
+ 75 -   9 =   66 ==> CORRECT!
+105 -  88 =   17 ==> CORRECT!
+ 82 -  85 =   -3 ==> CORRECT!
+ 96 - 104 =   -8 ==> CORRECT!
+ 35 -  86 =  -51 ==> CORRECT!
+ 71 - 121 =  -50 ==> CORRECT!
+ 31 -  66 =  -35 ==> CORRECT!
+ 93 - 110 =  -17 ==> CORRECT!
+ 79 -  42 =   37 ==> CORRECT!
+ 40 -  22 =   18 ==> CORRECT!
+125 - 115 =   10 ==> CORRECT!
+ 20 -  24 =   -4 ==> CORRECT!
+108 -  46 =   62 ==> CORRECT!
+ 85 - 105 =  -20 ==> CORRECT!
+ 51 -  98 =  -47 ==> CORRECT!
+115 -  35 =   80 ==> CORRECT!
+  5 -  59 =  -54 ==> CORRECT!
+  8 -  73 =  -65 ==> CORRECT!
+ 11 -  87 =  -76 ==> CORRECT!
+ 67 - 125 =  -58 ==> CORRECT!
+  8 - 101 =  -93 ==> CORRECT!
+115 -  32 =   83 ==> CORRECT!
+ 30 -  11 =   19 ==> CORRECT!
+ 90 - 112 =  -22 ==> CORRECT!
+ 32 -   8 =   24 ==> CORRECT!
+ 77 -  27 =   50 ==> CORRECT!
+ 50 -  71 =  -21 ==> CORRECT!
+109 -  33 =   76 ==> CORRECT!
+115 -  68 =   47 ==> CORRECT!
+ 56 -  27 =   29 ==> CORRECT!
+ 97 -  85 =   12 ==> CORRECT!
+118 -  77 =   41 ==> CORRECT!
+108 -  40 =   68 ==> CORRECT!
+ 62 -  60 =    2 ==> CORRECT!
+112 -  78 =   34 ==> CORRECT!
+113 -  85 =   28 ==> CORRECT!
+ 35 -  20 =   15 ==> CORRECT!
+ 46 - 105 =  -59 ==> CORRECT!
+ 50 -  14 =   36 ==> CORRECT!
+ 52 -  99 =  -47 ==> CORRECT!
+ 64 - 107 =  -43 ==> CORRECT!
+105 -  20 =   85 ==> CORRECT!
+  4 -  14 =  -10 ==> CORRECT!
+ 14 -   9 =    5 ==> CORRECT!
+115 -  80 =   35 ==> CORRECT!
+ 36 -  14 =   22 ==> CORRECT!
+ 64 -  20 =   44 ==> CORRECT!
+ 51 -  52 =   -1 ==> CORRECT!
+ 15 -  44 =  -29 ==> CORRECT!
+112 -  10 =  102 ==> CORRECT!
+118 -  97 =   21 ==> CORRECT!
+ 24 - 120 =  -96 ==> CORRECT!
+108 -  93 =   15 ==> CORRECT!
+ 63 - 120 =  -57 ==> CORRECT!
+ 15 - 125 = -110 ==> CORRECT!
+ 12 - 120 = -108 ==> CORRECT!
+104 -  53 =   51 ==> CORRECT!
+ 73 - 118 =  -45 ==> CORRECT!
+105 - 124 =  -19 ==> CORRECT!
+125 -  95 =   30 ==> CORRECT!
+ 55 -  78 =  -23 ==> CORRECT!
+120 -  88 =   32 ==> CORRECT!
+ 49 -  76 =  -27 ==> CORRECT!
+ 13 -  85 =  -72 ==> CORRECT!
+117 - 125 =   -8 ==> CORRECT!
+104 - 115 =  -11 ==> CORRECT!
+  2 - 103 = -101 ==> CORRECT!
+122 -  81 =   41 ==> CORRECT!
+  6 - 106 = -100 ==> CORRECT!
+ 63 - 103 =  -40 ==> CORRECT!
+  7 - 114 = -107 ==> CORRECT!
+  8 -  27 =  -19 ==> CORRECT!
+109 -  50 =   59 ==> CORRECT!
+ 97 - 111 =  -14 ==> CORRECT!
+ 75 -  79 =   -4 ==> CORRECT!
+ 25 - 126 = -101 ==> CORRECT!
+ 54 - 112 =  -58 ==> CORRECT!
+ 16 -  41 =  -25 ==> CORRECT!
+ 36 -  23 =   13 ==> CORRECT!
+ 59 -  20 =   39 ==> CORRECT!
+ 24 - 105 =  -81 ==> CORRECT!
+ 46 -  58 =  -12 ==> CORRECT!
+123 -  85 =   38 ==> CORRECT!
+ 44 -  20 =   24 ==> CORRECT!
+107 -  49 =   58 ==> CORRECT!
+ 72 -  33 =   39 ==> CORRECT!
+ 94 -  25 =   69 ==> CORRECT!

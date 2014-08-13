@@ -7,16 +7,16 @@ right = (intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 sam = (intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 res = (intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 
-left_i = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-right_i = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-sam_i = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-res_o = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
+left_s = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
+right_s = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
+sam_s = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
+res_s = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 
-updated_i = Signal(bool(0))
-even_odd_i = Signal(bool(0))
-fwd_inv_i = Signal(bool(0))
-clk_i = Signal(bool(0))
-noupdate_o = Signal(bool(0))
+updated_s = Signal(bool(0))
+even_odd_s = Signal(bool(0))
+fwd_inv_s = Signal(bool(0))
+clk_fast = Signal(bool(0))
+noupdate_s = Signal(bool(0))
 flag = 0
 def step1(sam,left,right,flag):
 	if flag == 1:
@@ -57,56 +57,57 @@ def test_jpeg():
 		flag = 0
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
 			
-def jpeg(clk_i, left_i, right_i, sam_i, updated_i, even_odd_i, fwd_inv_i, noupdate_o, res_o):
-	@always(clk_i.posedge)
+def jpeg(clk_fast, left_s, right_s, sam_s, res_s, even_odd_s = 1, fwd_inv_s =1 ):
+ 	
+	
+	@always(clk_fast.posedge)
 	def hdl():
-		if  updated_i == 1:
-			if even_odd_i:
-				if  fwd_inv_i:
-					 res_o.next =  sam_i - ((left_i >> 1) + (right_i >> 1))
-				else:
-					 res_o.next =  sam_i + ((left_i >> 1) + ( right_i >> 1))
+		 
+		if even_odd_s:
+			if  fwd_inv_s:
+				res_s.next =  sam_s - ((left_s >> 1) + (right_s >> 1))
 			else:
-				if fwd_inv_i:
-					 res_o.next =  sam_i + (left_i +  right_i + 2)>>2
-				else:
-					 res_o.next =  sam_i - (left_i +  right_i + 2)>>2
+				res_s.next =  sam_s + ((left_s >> 1) + ( right_s >> 1))
 		else:
-			noupdate_o.next = 1
+			if fwd_inv_s:
+				res_s.next =  sam_s + (left_s +  right_s + 2)>>2
+			else:
+				res_s.next =  sam_s - (left_s +  right_s + 2)>>2
+		 
 	return hdl
 def testbench():
-	i_inst = jpeg( clk_i, left_i, right_i, sam_i, updated_i, even_odd_i, fwd_inv_i, noupdate_o, res_o)
+	i_inst = jpeg( clk_fast, left_s, right_s, sam_s, res_s)
 
 	@always(delay(10))
 	def clkgen():
-		clk_i.next = not clk_i
+		clk_fast.next = not clk_fast
 	
 	@instance
 	def stimulus():	
 	
 		for i in range(1):
-			updated_i.next = 1
-			even_odd_i.next = 1
-			fwd_inv_i.next = 1
+			updated_s.next = 1
+			even_odd_s.next = 1
+			fwd_inv_s.next = 1
 			
-			yield clk_i.posedge
+			yield clk_fast.posedge
 		for i in range(1,128,2):
-			sam_i.next = int(m[i])
-			left_i.next = int(m[i - 1])
-			right_i.next = int(m[i + 1])
+			sam_s.next = int(m[i])
+			left_s.next = int(m[i - 1])
+			right_s.next = int(m[i + 1])
 			if i == 45:
-				even_odd_i.next = 0
+				even_odd_s.next = 0
 			if i == 65:
-				fwd_inv_i.next = 0
+				fwd_inv_s.next = 0
 			if i == 73:
-				updated_i.next = 0	
-			yield clk_i.posedge	
+				updated_s.next = 0	
+			yield clk_fast.posedge	
 		raise StopSimulation
 	return   i_inst, stimulus, clkgen
 def convert():			
-	toVerilog(jpeg, clk_i, left_i, right_i, sam_i, updated_i, even_odd_i, fwd_inv_i, noupdate_o, res_o)
-	toVHDL(jpeg, clk_i, left_i, right_i, sam_i, updated_i, even_odd_i, fwd_inv_i, noupdate_o, res_o)
-#convert()
+	toVerilog(jpeg, clk_fast, left_s, right_s, sam_s, res_s)
+	toVHDL(jpeg, clk_fast, left_s, right_s, sam_s, res_s)
+convert()
 tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
 sim.run()
