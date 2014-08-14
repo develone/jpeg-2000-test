@@ -1,0 +1,3 @@
+[submodule "blink_example/pc_fast_blinker_test_jpeg_files/XESS_VHDL_Lib"]
+	path = blink_example/pc_fast_blinker_test_jpeg_files/XESS_VHDL_Lib
+	url = git@github.com:xesscorp/VHDL_Lib.git
