@@ -17,12 +17,12 @@
 -- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
-library IEEE;
+library IEEE, XESS;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use work.pck_myhdl_09.all;
 --use work.jpeg.all; 
-use work.HostIoPckg.all; -- Package for PC <=> FPGA communications.
+use XESS.HostIoPckg.all; -- Package for PC <=> FPGA communications.
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
