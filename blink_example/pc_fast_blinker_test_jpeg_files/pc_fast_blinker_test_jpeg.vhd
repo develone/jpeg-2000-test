@@ -63,8 +63,8 @@ end component;
    
   signal  even_odd_s : std_logic;
   signal  fwd_inv_s : std_logic;
-  --alias even_odd_s is tojpeg_s(51 downto 51);
-  --alias fwd_ins_s is tojpeg_s(52 downto 52);
+  alias even_odd_tmp_s is  tojpeg_s(51);
+  alias fwd_ins_tmp_s is tojpeg_s(52);
   alias right_s is tojpeg_s(16 downto 0); -- jpeg's 1st operand.
   alias left_s is tojpeg_s(33 downto 17); -- jpeg's 2nd operand.
   alias sam_s is tojpeg_s(50 downto 34); -- jpeg's 3rd operand.
@@ -154,6 +154,10 @@ UHostIoToJpeg : HostIoToDut
 		end if;
 	end process;
   
+  --even_odd_s <= even_odd_tmp_s(0);
+  --fwd_inv_s <= fwd_inv_tmp_s;
+  even_odd_s <= '1';
+  fwd_inv_s <= '1';
   ujpeg: jpeg port map(
         clk_fast => clk_fast,
         left_s => signed(left_s),
