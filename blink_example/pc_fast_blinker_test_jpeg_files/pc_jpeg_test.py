@@ -41,7 +41,9 @@ for i in range(0, 100):
     right = randint(0, 511)  # Get a random, positive byte...
     
     lift = jpeg.Exec(right, left, sam)  # Use the jpeg in FPGA.
-    loc_lift = sam - (left + right)
+    loc_lift = sam - ((left>>1) + (right>>1))
     print '%5d %5d %5d %5d %5d ' % (sam, left, right, loc_lift, lift.int)
     if loc_lift != lift.int:
 	print 'ERROR %5d  %5d' % (loc_lift, lift.int)
+    else:
+	print 'results are the same between the local and FPGA'

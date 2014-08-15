@@ -12,23 +12,21 @@
     <!-- Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved. -->
   </header>
 
-  <version xil_pn:ise_version="14.7" xil_pn:schema_version="2"/>
+  <version xil_pn:ise_version="14.6" xil_pn:schema_version="2"/>
 
   <files>
     <file xil_pn:name="jpeg.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="1"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="7"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="5"/>
     </file>
     <file xil_pn:name="pc_fast_blinker_test_jpeg.ucf" xil_pn:type="FILE_UCF">
       <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
     </file>
     <file xil_pn:name="pc_fast_blinker_test_jpeg.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="3"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="8"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="6"/>
     </file>
     <file xil_pn:name="XESS_VHDL_Lib/AdcInterfaces.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="4"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
       <library xil_pn:name="XESS"/>
     </file>
     <file xil_pn:name="XESS_VHDL_Lib/audio.vhd" xil_pn:type="FILE_VHDL">
@@ -48,17 +46,15 @@
     </file>
     <file xil_pn:name="XESS_VHDL_Lib/ClkGen.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="8"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="3"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
       <library xil_pn:name="XESS"/>
     </file>
     <file xil_pn:name="XESS_VHDL_Lib/Common.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="9"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="1"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="2"/>
       <library xil_pn:name="XESS"/>
     </file>
     <file xil_pn:name="XESS_VHDL_Lib/Delay.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="10"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
       <library xil_pn:name="XESS"/>
     </file>
     <file xil_pn:name="XESS_VHDL_Lib/fifo.vhd" xil_pn:type="FILE_VHDL">
@@ -78,12 +74,10 @@
     </file>
     <file xil_pn:name="XESS_VHDL_Lib/HostIo.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="14"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="6"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="4"/>
       <library xil_pn:name="XESS"/>
     </file>
     <file xil_pn:name="XESS_VHDL_Lib/HostIoComm.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="15"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
       <library xil_pn:name="XESS"/>
     </file>
     <file xil_pn:name="XESS_VHDL_Lib/HostIoToI2c.vhd" xil_pn:type="FILE_VHDL">
@@ -112,13 +106,9 @@
       <library xil_pn:name="XESS"/>
     </file>
     <file xil_pn:name="XESS_VHDL_Lib/Misc.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="21"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
       <library xil_pn:name="XESS"/>
     </file>
     <file xil_pn:name="XESS_VHDL_Lib/PatternGen.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="22"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
       <library xil_pn:name="XESS"/>
     </file>
     <file xil_pn:name="XESS_VHDL_Lib/pwm.vhd" xil_pn:type="FILE_VHDL">
@@ -153,7 +143,7 @@
     </file>
     <file xil_pn:name="XESS_VHDL_Lib/SyncToClk.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="29"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="2"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="1"/>
       <library xil_pn:name="XESS"/>
     </file>
     <file xil_pn:name="XESS_VHDL_Lib/TestBoardCore.vhd" xil_pn:type="FILE_VHDL">
@@ -166,13 +156,10 @@
       <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
       <library xil_pn:name="XESS"/>
     </file>
-    <file xil_pn:name="XESS_VHDL_Lib/Board_Packages/XuLA2.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="32"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="4"/>
-    </file>
+    <file xil_pn:name="XESS_VHDL_Lib/Board_Packages/XuLA2.vhd" xil_pn:type="FILE_VHDL"/>
     <file xil_pn:name="pck_myhdl_09.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="43"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="5"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="3"/>
     </file>
   </files>
 
@@ -254,7 +241,7 @@
     <property xil_pn:name="Exclude Compilation of EDK Sub-Libraries" xil_pn:value="false" xil_pn:valueState="default"/>
     <property xil_pn:name="Extra Cost Tables Map" xil_pn:value="0" xil_pn:valueState="default"/>
     <property xil_pn:name="Extra Effort (Highest PAR level only)" xil_pn:value="None" xil_pn:valueState="default"/>
-    <property xil_pn:name="FPGA Start-Up Clock" xil_pn:value="CCLK" xil_pn:valueState="default"/>
+    <property xil_pn:name="FPGA Start-Up Clock" xil_pn:value="JTAG Clock" xil_pn:valueState="non-default"/>
     <property xil_pn:name="FSM Encoding Algorithm" xil_pn:value="Auto" xil_pn:valueState="default"/>
     <property xil_pn:name="FSM Style" xil_pn:value="LUT" xil_pn:valueState="default"/>
     <property xil_pn:name="Filter Files From Compile Order" xil_pn:value="true" xil_pn:valueState="default"/>
@@ -299,7 +286,7 @@
     <property xil_pn:name="Incremental Compilation" xil_pn:value="true" xil_pn:valueState="default"/>
     <property xil_pn:name="Insert Buffers to Prevent Pulse Swallowing" xil_pn:value="true" xil_pn:valueState="default"/>
     <property xil_pn:name="Instantiation Template Target Language Xps" xil_pn:value="VHDL" xil_pn:valueState="default"/>
-    <property xil_pn:name="JTAG Pin TCK" xil_pn:value="Pull Up" xil_pn:valueState="default"/>
+    <property xil_pn:name="JTAG Pin TCK" xil_pn:value="Float" xil_pn:valueState="non-default"/>
     <property xil_pn:name="JTAG Pin TDI" xil_pn:value="Pull Up" xil_pn:valueState="default"/>
     <property xil_pn:name="JTAG Pin TDO" xil_pn:value="Pull Up" xil_pn:valueState="default"/>
     <property xil_pn:name="JTAG Pin TMS" xil_pn:value="Pull Up" xil_pn:valueState="default"/>
@@ -448,7 +435,7 @@
     <property xil_pn:name="Top-Level Source Type" xil_pn:value="HDL" xil_pn:valueState="default"/>
     <property xil_pn:name="Trim Unconnected Signals" xil_pn:value="true" xil_pn:valueState="default"/>
     <property xil_pn:name="Tristate On Configuration Pulse Width" xil_pn:value="0" xil_pn:valueState="default"/>
-    <property xil_pn:name="Unused IOB Pins" xil_pn:value="Pull Down" xil_pn:valueState="default"/>
+    <property xil_pn:name="Unused IOB Pins" xil_pn:value="Float" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Use 64-bit PlanAhead on 64-bit Systems" xil_pn:value="true" xil_pn:valueState="default"/>
     <property xil_pn:name="Use Clock Enable" xil_pn:value="Auto" xil_pn:valueState="default"/>
     <property xil_pn:name="Use Custom Project File Behavioral" xil_pn:value="false" xil_pn:valueState="default"/>
