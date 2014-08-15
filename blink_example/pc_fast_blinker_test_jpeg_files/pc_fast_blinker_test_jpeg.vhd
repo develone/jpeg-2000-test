@@ -47,7 +47,9 @@ component jpeg is
         left_s: in signed (16 downto 0);
         right_s: in signed (16 downto 0);
         sam_s: in signed (16 downto 0);
-        res_s: out signed (16 downto 0)
+        res_s: out signed (16 downto 0);
+		  even_odd_s : in std_logic ;
+		  fwd_inv_s : in std_logic
     );
 end component;
 
@@ -57,10 +59,10 @@ end component;
   --     50        40         30        20        10         0
   --   2109876543210987654 32109876543210987 65432109876543210
   signal fromjpeg_s : std_logic_vector(16 downto 0); -- From jpeg to PC.
-  signal tojpeg_s : std_logic_vector(50 downto 0); -- From PC to jpeg.
+  signal tojpeg_s : std_logic_vector(52 downto 0); -- From PC to jpeg.
    
-  --signal  even_odd_s : std_logic;
-  --signal  fwd_inv_s : std_logic;
+  signal  even_odd_s : std_logic;
+  signal  fwd_inv_s : std_logic;
   --alias even_odd_s is tojpeg_s(51 downto 51);
   --alias fwd_ins_s is tojpeg_s(52 downto 52);
   alias right_s is tojpeg_s(16 downto 0); -- jpeg's 1st operand.
@@ -157,8 +159,10 @@ UHostIoToJpeg : HostIoToDut
         left_s => signed(left_s),
         right_s => signed(right_s),
         sam_s => signed(sam_s),
-        res_s => signed_res_s
-        );
+        res_s => signed_res_s,
+        even_odd_s => even_odd_s,
+		  fwd_inv_s => fwd_inv_s  
+		  );
   
    -- This is the subtractor.
    -- difference_s <= minuend_s - subtrahend_s;
