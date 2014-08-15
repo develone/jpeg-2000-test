@@ -13,10 +13,10 @@ use work.pck_myhdl_09.all;
 entity jpeg is
     port (
         clk_fast: in std_logic;
-        left_s: in signed (17 downto 0);
-        right_s: in signed (17 downto 0);
-        sam_s: in signed (17 downto 0);
-        res_s: out signed (17 downto 0)
+        left_s: in signed (16 downto 0);
+        right_s: in signed (16 downto 0);
+        sam_s: in signed (16 downto 0);
+        res_s: out signed (16 downto 0)
     );
 end entity jpeg;
 
@@ -38,14 +38,14 @@ begin
 JPEG_HDL: process (clk_fast) is
 begin
     if rising_edge(clk_fast) then
-        if even_odd_s then
-            if fwd_inv_s then
+        if even_odd_s = 1 then
+            if fwd_inv_s = 1then
                 res_s <= (sam_s - (shift_right(left_s, 1) + shift_right(right_s, 1)));
             else
                 res_s <= (sam_s + (shift_right(left_s, 1) + shift_right(right_s, 1)));
             end if;
         else
-            if fwd_inv_s then
+            if fwd_inv_s = 1then
                 res_s <= shift_right((sam_s + ((left_s + right_s) + 2)), 2);
             else
                 res_s <= shift_right((sam_s - ((left_s + right_s) + 2)), 2);

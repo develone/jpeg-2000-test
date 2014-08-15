@@ -20,6 +20,7 @@
 library IEEE, XESS;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use IEEE.NUMERIC_STD.ALL;
 use work.pck_myhdl_09.all;
 --use work.jpeg.all; 
 use XESS.HostIoPckg.all; -- Package for PC <=> FPGA communications.
@@ -39,6 +40,17 @@ entity pc_fast_blinker_test_jpeg is
 end pc_fast_blinker_test_jpeg;
 
 architecture Behavioral of pc_fast_blinker_test_jpeg is
+
+component jpeg is
+    port (
+        clk_fast: in std_logic;
+        left_s: in signed (16 downto 0);
+        right_s: in signed (16 downto 0);
+        sam_s: in signed (16 downto 0);
+        res_s: out signed (16 downto 0)
+    );
+end component;
+
   signal  clk_fast : std_logic;
   signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
   -- Connections between the shift-register module and  jpeg.
@@ -54,7 +66,8 @@ architecture Behavioral of pc_fast_blinker_test_jpeg is
   alias right_s is tojpeg_s(16 downto 0); -- jpeg's 1st operand.
   alias left_s is tojpeg_s(33 downto 17); -- jpeg's 2nd operand.
   alias sam_s is tojpeg_s(50 downto 34); -- jpeg's 3rd operand.
-  alias res_s is fromjpeg_s; -- jpeg output.
+  --alias res_s is fromjpeg_s; -- jpeg output.
+  alias signed_res_s is signed(fromjpeg_s);
   -- Connections between the shift-register module and the subtractor.
   -- signal toSub_s : std_logic_vector(15 downto 0); -- From PC to subtrctr.
   -- signal fromSub_s : std_logic_vector(7 downto 0); -- From subtrctr to PC.
@@ -138,9 +151,18 @@ UHostIoToJpeg : HostIoToDut
 			cnt_r <= cnt_r + 1;
 		end if;
 	end process;
+  
+  ujpeg: jpeg port map(
+        clk_fast => clk_fast,
+        left_s => signed(left_s),
+        right_s => signed(right_s),
+        sam_s => signed(sam_s),
+        res_s => signed_res_s
+        );
+  
    -- This is the subtractor.
    -- difference_s <= minuend_s - subtrahend_s;
-   res_s <= (sam_s - ((left_s) + (right_s)));
+--   res_s <= (sam_s - ((left_s) + (right_s)));
    blinker_o <= cnt_r(22);
    --fromBlinker_s <= cnt_r(22 downto 22); -- Blinker output to shift reg. this commented out
 end Behavioral;
