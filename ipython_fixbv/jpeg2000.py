@@ -70,9 +70,9 @@ def jpeg(clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s  ):
 				res_s.next =  sam_s + ((left_s >> 1) + ( right_s >> 1))
 		else:
 			if fwd_inv_s:
-				res_s.next =  sam_s + (left_s +  right_s + 2)>>2
+				res_s.next =  sam_s + ((left_s +  right_s + 2)>>2)
 			else:
-				res_s.next =  sam_s - (left_s +  right_s + 2)>>2
+				res_s.next =  sam_s - ((left_s +  right_s + 2)>>2)
 		 
 	return hdl
 def testbench():
