@@ -1,4 +1,4 @@
-import waveletsim_53 as dwt
+import waveletsim_53_fpga as dwt
 
 im = dwt.Image.open("../lena_512.png")
 pix = im.load()
