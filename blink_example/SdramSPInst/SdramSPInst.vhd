@@ -8,7 +8,7 @@ use IEEE.NUMERIC_STD.all;
 use work.ClkgenPckg.all;     -- For the clock generator module.
 use work.SdramCntlPckg.all;  -- For the SDRAM controller module.
 use work.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module.
-
+use work.pck_myhdl_09.all;
 entity SdramSPInst is
   port (
     fpgaClk_i : in    std_logic;  -- 12 MHz clock input from external clock source.
@@ -26,7 +26,7 @@ end entity;
 architecture Behavioral of SdramSPInst is
   constant NO                     : std_logic := '0';
   constant YES                    : std_logic := '1';
-  constant RAM_SIZE_C             : natural   := 256;  -- Number of words in RAM.
+  constant RAM_SIZE_C             : natural   := 1024;  -- Number of words in RAM.
   constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
   constant MIN_ADDR_C             : natural   := 1;  -- Process RAM from this address ...
   constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
@@ -85,7 +85,15 @@ begin
       sdAddr_o  => sdAddr_o,
       sdData_io => sdData_io
       );
-
+  ujpeg: jpeg port map(
+        clk_s => clk_fast,
+        left_s => signed(left_s),
+        right_s => signed(right_s),
+        sam_s => signed(sam_s),
+        res_s => signed_res_s,
+        even_odd_s => even_odd_s,
+		  fwd_inv_s => fwd_inv_s  
+		  );
   -- Connect the SDRAM controller signals to the FSM signals.     
   dataToSdram_s <= std_logic_vector(dataToRam_r);
   dataFromRam_s <= RamWord_t(dataFromSdram_s);
