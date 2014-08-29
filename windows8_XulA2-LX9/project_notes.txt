@@ -1,0 +1,81 @@
+These 3 projects were built on a Windows 8 with ISE 14.7
+	c:\Xilinx\14.7\ISE_DS\blinker
+	c:\Xilinx\14.7\ISE_DS\pc_fast_blinker_sub
+	c:\Xilinx\14.7\ISE_DS\test_jpeg
+Since these are used with a repo on GitHub
+	c:\Users\vidal\Documents\GitHub\jpeg-2000-test\windows8_XulA2-LX9
+pwd
+/run/media/vidal/ef8bceae-4730-4810-b594-ce6aafd13919/vidal/fedora20_ws009/jpeg-2000-test/windows8_XulA2-LX9/blinker
+
+python /bin/xsload.py --usb 0 --fpga blinker.bit
+Success: Bitstream blinker.bit downloaded into XuLA2-LX9 !
+Exception AttributeError: "'NoneType' object has no attribute 'copy'" in <bound method Device.__del__ of <usb.core.Device object at 0x7f65c6216dd0>> ignored
+Exception AttributeError: "'NoneType' object has no attribute 'libusb_unref_device'" in <bound method _Device.__del__ of <usb.backend.libusb1._Device object at 0x7f65c6216e10>> ignored
+
+pwd
+/run/media/vidal/ef8bceae-4730-4810-b594-ce6aafd13919/vidal/fedora20_ws009/jpeg-2000-test/windows8_XulA2-LX9/pc_fast_blinker_sub
+
+python /bin/xsload.py --usb 0 --fpga pc_fast_blinker_sub.bit
+Success: Bitstream pc_fast_blinker_sub.bit downloaded into XuLA2-LX9 !
+Exception AttributeError: "'NoneType' object has no attribute 'copy'" in <bound method Device.__del__ of <usb.core.Device object at 0x7f3ff628de10>> ignored
+Exception AttributeError: "'NoneType' object has no attribute 'libusb_unref_device'" in <bound method _Device.__del__ of <usb.backend.libusb1._Device object at 0x7f3ff628de50>> ignored
+
+python pc_subtractor_test.py
+
+##################################################################
+# This program tests the interface between the host PC and the FPGA
+# on the XuLA board that has been programmed to act as a subtractor.
+##################################################################
+
+ 31 -  43 =  -12 ==> CORRECT!
+ 70 -  13 =   57 ==> CORRECT!
+ 38 -  58 =  -20 ==> CORRECT!
+ 83 -  99 =  -16 ==> CORRECT!
+ 79 -  21 =   58 ==> CORRECT!
+ 91 -  23 =   68 ==> CORRECT!
+ 82 -  12 =   70 ==> CORRECT!
+ 58 -  15 =   43 ==> CORRECT!
+ 61 -   0 =   61 ==> CORRECT!
+115 -  23 =   92 ==> CORRECT!
+ 50 - 109 =  -59 ==> CORRECT!
+ 79 -  91 =  -12 ==> CORRECT!
+  7 -  52 =  -45 ==> CORRECT!
+ 89 -  82 =    7 ==> CORRECT!
+ 21 - 103 =  -82 ==> CORRECT!
+ 24 -  37 =  -13 ==> CORRECT!
+ 89 -  35 =   54 ==> CORRECT!
+ 92 -   8 =   84 ==> CORRECT!
+ 61 -   9 =   52 ==> CORRECT!
+ 82 -  96 =  -14 ==> CORRECT!
+ 32 - 111 =  -79 ==> CORRECT!
+102 -  11 =   91 ==> CORRECT!
+
+pwd
+/run/media/vidal/ef8bceae-4730-4810-b594-ce6aafd13919/vidal/fedora20_ws009/jpeg-2000-test/windows8_XulA2-LX9/test_jpeg
+
+python /bin/xsload.py --usb 0 --fpga pc_fast_blinker_test_jpeg.bit
+Success: Bitstream pc_fast_blinker_test_jpeg.bit downloaded into XuLA2-LX9 !
+Exception AttributeError: "'NoneType' object has no attribute 'copy'" in <bound method Device.__del__ of <usb.core.Device object at 0x7f0f3bff2dd0>> ignored
+Exception AttributeError: "'NoneType' object has no attribute 'libusb_unref_device'" in <bound method _Device.__del__ of <usb.backend.libusb1._Device object at 0x7f0f3bff2e10>> ignored
+
+python pc_jpeg_test.py
+
+##################################################################
+# This program tests the interface between the host PC and the FPGA
+# on the XuLA board that has been programmed to act as a jpeg_lifting .
+##################################################################
+
+  131   115   285 1 0   330   330
+results are the same between the local and FPGA
+  161   250   203 1 0   387   387
+results are the same between the local and FPGA
+  413   193   380 1 0   699   699
+results are the same between the local and FPGA
+  438   374   418 1 0   834   834
+results are the same between the local and FPGA
+  263   190   118 1 0   417   417
+results are the same between the local and FPGA
+   20   197   251 1 0   243   243
+results are the same between the local and FPGA
+  340   344     8 1 0   516   516
+results are the same between the local and FPGA
