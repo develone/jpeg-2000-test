@@ -11,11 +11,11 @@ print '''
 USB_ID = 0  # USB port index for the XuLA board connected to the host PC.
 JPEG_ID = 4  # This is the identifier for the jpeg in the FPGA.
 
-# Create a jpeg intfc obj with three 17-bit inputs and one 17-bit output.
+# Create a jpeg intfc obj with three 8-bit inputs and one 8-bit output.
 even_odd = 1
 fwd_inv = 1
 
-jpeg = XsDut(USB_ID, JPEG_ID, [16, 16, 16, 1, 1], [16])
+jpeg = XsDut(USB_ID, JPEG_ID, [8, 8, 8, 1, 1], [8])
 
 '''
 2D CDF 9/7 Wavelet Forward and Inverse Transform (lifting implementation)
@@ -138,8 +138,8 @@ def fwt97(s, width, height):
         print 'forward dwt', col
         for row in range(2, height, 2):
 			#print (s[row][col])
-			ll = (intbv(s[row][col])[16:] - ((intbv(s[row-1][col])>>1)[16:] + (intbv(s[row+1][col])>>1)[16:]))
-			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[16:]), XsBitArray(intbv((s[row-1][col]))[16:]), XsBitArray(intbv((s[row][col]))[16:]), even_odd, fwd_inv)
+			ll = (intbv(s[row][col])[7:] - ((intbv(s[row-1][col])>>1)[7:] + (intbv(s[row+1][col])>>1)[7:]))
+			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[7:]), XsBitArray(intbv((s[row-1][col]))[7:]), XsBitArray(intbv((s[row][col]))[7:]), even_odd, fwd_inv)
 			s[row][col] = lift.int
 
 			#print '%3d %3d %5d %5d %1d %1d %5d %5d' % (col, row, (s[row+1][col]), (s[row-1][col]), even_odd, fwd_inv, (s[row][col]), ll)
@@ -151,8 +151,8 @@ def fwt97(s, width, height):
         even_odd = 0
         fwd_inv = 1
         for row in range(1, height-1, 2):
-			ll = (intbv(s[row][col])[16:] + ((intbv(s[row-1][col])[16:] + intbv(s[row+1][col])[16:] + 2)>>2))
-			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[16:]), XsBitArray(intbv((s[row-1][col]))[16:]), XsBitArray(intbv((s[row][col]))[16:]), even_odd, fwd_inv)
+			ll = (intbv(s[row][col])[7:] + ((intbv(s[row-1][col])[7:] + intbv(s[row+1][col])[7:] + 2)>>2))
+			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[7:]), XsBitArray(intbv((s[row-1][col]))[7:]), XsBitArray(intbv((s[row][col]))[7:]), even_odd, fwd_inv)
 			s[row][col] = lift.int
 			#print '%3d %3d %5d %5d %1d %1d %5d %5d' % (col, row, (s[row+1][col]), (s[row-1][col]), even_odd, fwd_inv, (s[row][col]), ll)
 
@@ -187,7 +187,7 @@ def iwt97(s, width, height):
         for row in range(1, height-1, 2):
 
 			#s[row][col] = float(s[row][col] - ((int(s[row-1][col]) + int(s[row+1][col]) + 2)>>2))
-			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[16:]), XsBitArray(intbv((s[row-1][col]))[16:]), XsBitArray(intbv((s[row][col]))[16:]), even_odd, fwd_inv)
+			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[7:]), XsBitArray(intbv((s[row-1][col]))[7:]), XsBitArray(intbv((s[row][col]))[7:]), even_odd, fwd_inv)
 			s[row][col] = lift.int
 
             #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
@@ -199,7 +199,7 @@ def iwt97(s, width, height):
         for row in range(2, height, 2):
 
 			#s[row][col] = float(s[row][col] + ((int(s[row-1][col])>>1) + (int(s[row+1][col])>>1)))
-			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[16:]), XsBitArray(intbv((s[row-1][col]))[16:]), XsBitArray(intbv((s[row][col]))[16:]), even_odd, fwd_inv)
+			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[7:]), XsBitArray(intbv((s[row-1][col]))[7:]), XsBitArray(intbv((s[row][col]))[7:]), even_odd, fwd_inv)
 			s[row][col] = lift.int
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
         #s[height-1][col] += 2 * a3 * s[height-2][col]
