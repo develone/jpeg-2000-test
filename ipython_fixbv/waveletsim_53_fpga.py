@@ -135,13 +135,14 @@ def fwt97(s, width, height):
 
         even_odd = 1
         fwd_inv = 1
+        print 'forward dwt', col
         for row in range(2, height, 2):
 			#print (s[row][col])
 			ll = (intbv(s[row][col])[16:] - ((intbv(s[row-1][col])>>1)[16:] + (intbv(s[row+1][col])>>1)[16:]))
 			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[16:]), XsBitArray(intbv((s[row-1][col]))[16:]), XsBitArray(intbv((s[row][col]))[16:]), even_odd, fwd_inv)
 			s[row][col] = lift.int
 
-			print '%3d %3d %5d %5d %1d %1d %5d %5d' % (col, row, (s[row+1][col]), (s[row-1][col]), even_odd, fwd_inv, (s[row][col]), ll)
+			#print '%3d %3d %5d %5d %1d %1d %5d %5d' % (col, row, (s[row+1][col]), (s[row-1][col]), even_odd, fwd_inv, (s[row][col]), ll)
 
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])
 
@@ -153,7 +154,7 @@ def fwt97(s, width, height):
 			ll = (intbv(s[row][col])[16:] + ((intbv(s[row-1][col])[16:] + intbv(s[row+1][col])[16:] + 2)>>2))
 			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[16:]), XsBitArray(intbv((s[row-1][col]))[16:]), XsBitArray(intbv((s[row][col]))[16:]), even_odd, fwd_inv)
 			s[row][col] = lift.int
-			print '%3d %3d %5d %5d %1d %1d %5d %5d' % (col, row, (s[row+1][col]), (s[row-1][col]), even_odd, fwd_inv, (s[row][col]), ll)
+			#print '%3d %3d %5d %5d %1d %1d %5d %5d' % (col, row, (s[row+1][col]), (s[row-1][col]), even_odd, fwd_inv, (s[row][col]), ll)
 
 
     s = de_interleave(s,height,width)
@@ -180,17 +181,26 @@ def iwt97(s, width, height):
         ''' Perform the inverse 1D transform. '''
 
         # Inverse update 2.
+        even_odd = 0
+        fwd_inv = 0
+        print 'inverse dwt',col
         for row in range(1, height-1, 2):
 
-			s[row][col] = float(s[row][col] - ((int(s[row-1][col]) + int(s[row+1][col]) + 2)>>2))
+			#s[row][col] = float(s[row][col] - ((int(s[row-1][col]) + int(s[row+1][col]) + 2)>>2))
+			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[16:]), XsBitArray(intbv((s[row-1][col]))[16:]), XsBitArray(intbv((s[row][col]))[16:]), even_odd, fwd_inv)
+			s[row][col] = lift.int
 
             #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
         #s[0][col] += 2 * a4 * s[1][col]
 
         # Inverse predict 2.
+        even_odd = 1
+        fwd_inv = 0
         for row in range(2, height, 2):
 
-			s[row][col] = float(s[row][col] + ((int(s[row-1][col])>>1) + (int(s[row+1][col])>>1)))
+			#s[row][col] = float(s[row][col] + ((int(s[row-1][col])>>1) + (int(s[row+1][col])>>1)))
+			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[16:]), XsBitArray(intbv((s[row-1][col]))[16:]), XsBitArray(intbv((s[row][col]))[16:]), even_odd, fwd_inv)
+			s[row][col] = lift.int
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
         #s[height-1][col] += 2 * a3 * s[height-2][col]
 
