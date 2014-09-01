@@ -1,7 +1,8 @@
-These 3 projects were built on a Windows 8 with ISE 14.7
+These 4 projects were built on a Windows 8 with ISE 14.7
 	c:\Xilinx\14.7\ISE_DS\blinker
 	c:\Xilinx\14.7\ISE_DS\pc_fast_blinker_sub
-	c:\Xilinx\14.7\ISE_DS\test_jpeg
+	c:\Xilinx\14.7\ISE_DS\test_jpeg uses 17 bit 
+	c:\Xilinx\14.7\ISE_DS\jpeg_test_16 uses 16 bit
 Since these are used with a repo on GitHub
 	c:\Users\vidal\Documents\GitHub\jpeg-2000-test\windows8_XulA2-LX9
 pwd
