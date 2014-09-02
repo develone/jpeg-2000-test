@@ -41,7 +41,7 @@ package HostIoPckg is
 
   component BscanToHostIo is
     generic (
-      FPGA_DEVICE_G    : FpgaDevice_t   := SPARTAN3A;  -- FPGA device type.
+      FPGA_DEVICE_G    : FpgaDevice_t   := SPARTAN6;  -- FPGA device type.
       TAP_USER_INSTR_G : TapUserInstr_t := USER1  -- USER instruction this module responds to.
       );
     port (
@@ -121,11 +121,11 @@ package HostIoPckg is
       tdi_i          : in  std_logic := LO;  -- Bit from the host to the FPGA application logic.
       tdo_o          : out std_logic;  -- Bit from the FPGA application logic to the host.
       -- Interface to the memory.
-      addr_o         : out std_logic_vector;      -- Address to memory.
+      addr_o         : out std_logic_vector;       -- Address to memory.
       wr_o           : out std_logic;   -- Write data to memory when high.
-      dataFromHost_o : out std_logic_vector;      -- Data written to memory.
+      dataFromHost_o : out std_logic_vector;       -- Data written to memory.
       rd_o           : out std_logic;   -- Read data from memory when high.
-      dataToHost_i   : in  std_logic_vector;      -- Data read from memory.
+      dataToHost_i   : in  std_logic_vector;       -- Data read from memory.
       rwDone_i       : in  std_logic := HI  -- True when memory read/write operation is done.
       );
   end component;
@@ -135,7 +135,7 @@ package HostIoPckg is
       ID_G               : std_logic_vector := "11111111";  -- The ID this module responds to.
       PYLD_CNTR_LENGTH_G : natural          := 32;  -- Length of payload bit counter.
       ADDR_INC           : integer          := 1;  -- Add to address after each memory R/W operation.
-      FPGA_DEVICE_G      : FpgaDevice_t     := SPARTAN3A;  -- FPGA device type.
+      FPGA_DEVICE_G      : FpgaDevice_t     := SPARTAN6;  -- FPGA device type.
       TAP_USER_INSTR_G   : TapUserInstr_t   := USER1;  -- USER instruction this module responds to.
       SIMPLE_G           : boolean          := false;  -- If true, include BscanToHostIo module in this module.
       SYNC_G             : boolean          := true  -- If true, sync this module with the memory clock domain.
@@ -149,11 +149,11 @@ package HostIoPckg is
       tdo_o          : out std_logic;   -- Bit from the memory to the host.
       -- Interface to the memory.
       clk_i          : in  std_logic := LO;  -- Clock from FPGA application logic. 
-      addr_o         : out std_logic_vector;       -- Address to memory.
+      addr_o         : out std_logic_vector;        -- Address to memory.
       wr_o           : out std_logic;   -- Write data to memory when high.
-      dataFromHost_o : out std_logic_vector;       -- Data written to memory.
+      dataFromHost_o : out std_logic_vector;        -- Data written to memory.
       rd_o           : out std_logic;   -- Read data from memory when high.
-      dataToHost_i   : in  std_logic_vector;       -- Data read from memory.
+      dataToHost_i   : in  std_logic_vector;        -- Data read from memory.
       opBegun_i      : in  std_logic := HI;  -- High when memory read/write operation has begun.
       done_i         : in  std_logic := HI  -- High when memory read/write operation is done.
       );
@@ -163,7 +163,7 @@ package HostIoPckg is
     generic (
       ID_G               : std_logic_vector := "11111111";  -- The ID this module responds to.
       PYLD_CNTR_LENGTH_G : natural          := 32;  -- Length of payload bit counter.
-      FPGA_DEVICE_G      : FpgaDevice_t     := SPARTAN3A;  -- FPGA device type.
+      FPGA_DEVICE_G      : FpgaDevice_t     := SPARTAN6;  -- FPGA device type.
       TAP_USER_INSTR_G   : TapUserInstr_t   := USER1;  -- USER instruction this module responds to.
       SIMPLE_G           : boolean          := false  -- If true, include BscanToHostIo module in this module.
       );
@@ -197,7 +197,7 @@ use work.HostIoPckg.all;
 
 entity BscanToHostIo is
   generic (
-    FPGA_DEVICE_G    : FpgaDevice_t   := SPARTAN3A;  -- FPGA device type.
+    FPGA_DEVICE_G    : FpgaDevice_t   := SPARTAN6;  -- FPGA device type.
     TAP_USER_INSTR_G : TapUserInstr_t := USER1  -- USER instruction this module responds to.
     );
   port (
@@ -405,11 +405,11 @@ end architecture;
 -- Then this module extracts data words from the payload bitstream and writes them to
 -- the memory device at sequentially increasing addresses beginning from that address.
 --
---       |     Header reception     |                    Payload bits                     |
+--       |     Header reception     |                    Payload bits                        |
 -- TDI:  |  ID  | # of payload bits | Opcode | Starting address |  Data1  | ..... | DataN |
 -- TDO:  |xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx|
 -- Addr: |xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx| Addr1 | ..... | AddrN |
--- Data: |xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx| Data1 | ..... | DataN |
+-- Data: |xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx|   Data1  | ..... | DataN        |
 --
 -- Read operations:
 -- Once the HostIoHdrScanner module extracts the ID and number of payload bits,
@@ -419,7 +419,7 @@ end architecture;
 -- starting from that address, and it shifts them serially back to the host.
 -- (Valid data on TDO starts after the first read of the memory completes.) 
 --
---       |     Header reception     |        Payload bits       |   RAM data goes back to host  |
+--       |     Header reception     |        Payload bits       |  RAM data goes back to host  |
 -- TDI:  |  ID  | # of payload bits | Opcode | Starting address |xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx|
 -- TDO:  |xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx| Data1 | ... | DataN-1 |
 -- Addr: |xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx| Addr1 | Addr2 | ... |  AddrN  |
@@ -459,11 +459,11 @@ entity HostIoToRamCore is
     tdi_i          : in  std_logic := LO;  -- Bit from the host to the FPGA application logic.
     tdo_o          : out std_logic;  -- Bit from the FPGA application logic to the host.
     -- Interface to the memory.
-    addr_o         : out std_logic_vector;      -- Address to memory.
+    addr_o         : out std_logic_vector;       -- Address to memory.
     wr_o           : out std_logic;     -- Write data to memory when high.
-    dataFromHost_o : out std_logic_vector;      -- Data written to memory.
+    dataFromHost_o : out std_logic_vector;       -- Data written to memory.
     rd_o           : out std_logic;     -- Read data from memory when high.
-    dataToHost_i   : in  std_logic_vector;      -- Data read from memory.
+    dataToHost_i   : in  std_logic_vector;       -- Data read from memory.
     rwDone_i       : in  std_logic := HI  -- True when memory read/write operation is done.
     );
 end entity;
@@ -537,7 +537,7 @@ begin
                 shiftReg_r(dataFromHost_o'high) <= ONE;
               else    -- Now get data to write to memory from the host.
                 if wrToMemory_r = YES and rwDone_i = YES then  -- Write to memory is done.
-                  wrToMemory_r   <= NO;  -- Stop any further writes till another complete data word arrives from host.
+                  wrToMemory_r <= NO;  -- Stop any further writes till another complete data word arrives from host.
                   addrFromHost_r <= addrFromHost_r + ADDR_INC;  -- Point to next memory location to be written (if needed).
                 end if;
                 if shiftReg_r(0) = LO then  -- Shifting in data from host before writing it to memory. 
@@ -637,7 +637,7 @@ entity RamCtrlSync is
 end entity;
 
 architecture arch of RamCtrlSync is
-  signal ctrlIn_s : std_logic;  -- JTAG domain control signal sync'ed to RAM domain.
+  signal ctrlIn_s  : std_logic;  -- JTAG domain control signal sync'ed to RAM domain.
 begin
 
   -- Sync the RAM control signal from the JTAG clock domain to the RAM domain.
@@ -677,7 +677,7 @@ begin
       end if;
     end if;
   end process;
-  
+
 end architecture;
 
 
@@ -698,7 +698,7 @@ entity HostIoToRam is
     ID_G               : std_logic_vector := "11111111";  -- The ID this module responds to.
     PYLD_CNTR_LENGTH_G : natural          := 32;  -- Length of payload bit counter.
     ADDR_INC           : integer          := 1;  -- Add to address after each memory R/W operation.
-    FPGA_DEVICE_G      : FpgaDevice_t     := SPARTAN3A;   -- FPGA device type.
+    FPGA_DEVICE_G      : FpgaDevice_t     := SPARTAN6;   -- FPGA device type.
     TAP_USER_INSTR_G   : TapUserInstr_t   := USER1;  -- USER instruction this module responds to.
     SIMPLE_G           : boolean          := false;  -- If true, include BscanToHostIo module in this module.
     SYNC_G             : boolean          := true  -- If true, sync this module with the memory clock domain.
@@ -712,11 +712,11 @@ entity HostIoToRam is
     tdo_o          : out std_logic;     -- Bit from the memory to the host.
     -- Interface to the memory.
     clk_i          : in  std_logic := LO;  -- Clock from FPGA application logic. 
-    addr_o         : out std_logic_vector;       -- Address to memory.
+    addr_o         : out std_logic_vector;        -- Address to memory.
     wr_o           : out std_logic;     -- Write data to memory when high.
-    dataFromHost_o : out std_logic_vector;       -- Data written to memory.
+    dataFromHost_o : out std_logic_vector;        -- Data written to memory.
     rd_o           : out std_logic;     -- Read data from memory when high.
-    dataToHost_i   : in  std_logic_vector;       -- Data read from memory.
+    dataToHost_i   : in  std_logic_vector;        -- Data read from memory.
     opBegun_i      : in  std_logic := HI;  -- High when memory read/write operation has begun.
     done_i         : in  std_logic := HI  -- High when memory read/write operation is done.
     );
@@ -879,7 +879,7 @@ entity HostIoToDut is
   generic (
     ID_G               : std_logic_vector := "11111111";  -- The ID this module responds to.
     PYLD_CNTR_LENGTH_G : natural          := 32;  -- Length of payload bit counter.
-    FPGA_DEVICE_G      : FpgaDevice_t     := SPARTAN3A;   -- FPGA device type.
+    FPGA_DEVICE_G      : FpgaDevice_t     := SPARTAN6;   -- FPGA device type.
     TAP_USER_INSTR_G   : TapUserInstr_t   := USER1;  -- USER instruction this module responds to.
     SIMPLE_G           : boolean          := false  -- If true, include BscanToHostIo module in this module.
     );
@@ -962,7 +962,7 @@ begin
   process(drck_s)
   begin
     if rising_edge(drck_s) then
-      
+
       activateClk_r <= LO;  -- By default, keep clock to DUT inactive.
 
       -- Keep processing as long as this module is activated.
@@ -994,17 +994,17 @@ begin
                   activateClk_r <= HI;
                 when 1 =>
                   -- Only one input to DUT, so drive it directly from the TDI pin.
-                  vectorToDut_o(0) <= tdi_s;
+                  vectorToDut_o(vectorToDut_o'low) <= tdi_s;
                   activateClk_r    <= HI;
                 when others =>
                   if shiftReg_r(0) = NO then  -- Shifting in data from host before applying it to the DUT. 
-                    shiftReg_r(vectorToDut_o'range) <= tdi_s & shiftReg_r(vectorToDut_o'high downto 1);
+                    shiftReg_r(vectorToDut_o'length-1 downto 0) <= tdi_s & shiftReg_r(vectorToDut_o'length-1 downto 1);
                   else  -- Vector from host received, now apply it to the DUT.
-                    vectorToDut_o                  <= tdi_s & shiftReg_r(vectorToDut_o'high downto 1);  -- Output test vector to DUT.
+                    vectorToDut_o                  <= tdi_s & shiftReg_r(vectorToDut_o'length-1 downto 1);  -- Output test vector to DUT.
                     activateClk_r                  <= HI;  -- Pulse vector clock for one cycle after vector is received.
                     -- Clear shift register so it can receive another vector from the host.
                     shiftReg_r                     <= (others => ZERO);  -- Clear all shift register bits and ...
-                    shiftReg_r(vectorToDut_o'high) <= HI;  -- ... set MSbit so we can tell when all bits are received.
+                    shiftReg_r(vectorToDut_o'length-1) <= HI;  -- ... set MSbit so we can tell when all bits are received.
                   end if;
               end case;
 
@@ -1013,7 +1013,7 @@ begin
                 shiftReg_r <= ZERO & shiftReg_r(shiftReg_r'high downto 1);  -- Shift register contents.
                 bitCntr_r  <= bitCntr_r - 1;  -- One more bit has been sent to the host.
               else  -- Load the DUT output bits into the shift register.
-                shiftReg_r(vectorFromDut_i'range) <= vectorFromDut_i;  -- Load the DUT outputs into the host shift register.
+                shiftReg_r(vectorFromDut_i'length-1 downto 0) <= vectorFromDut_i;  -- Load the DUT outputs into the host shift register.
                 bitCntr_r                         <= vectorFromDut_i'length - 1;  -- Set the number of bits to send.
               end if;
 
@@ -1030,9 +1030,9 @@ begin
         opcodeRcvd_r            <= NO;
         shiftReg_r              <= (others => ZERO);  -- Clear all shift register bits and ...
         if vectorToDut_o'length > 0 then
-          shiftReg_r(vectorToDut_o'high) <= ONE;  -- ... set MSbit so we can tell when all bits are received.
+          shiftReg_r(vectorToDut_o'length-1) <= ONE;  -- ... set MSbit so we can tell when all bits are received.
         end if;
-        bitCntr_r <= 0;
+        bitCntr_r     <= 0;
       end if;
     end if;
 

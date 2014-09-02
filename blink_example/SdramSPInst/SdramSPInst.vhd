@@ -8,25 +8,29 @@ use IEEE.NUMERIC_STD.all;
 use work.ClkgenPckg.all;     -- For the clock generator module.
 use work.SdramCntlPckg.all;  -- For the SDRAM controller module.
 use work.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module.
-use work.pck_myhdl_09.all;
+
 entity SdramSPInst is
   port (
     fpgaClk_i : in    std_logic;  -- 12 MHz clock input from external clock source.
     sdClk_o   : out   std_logic;  -- 100 MHz clock to SDRAM.
     sdClkFb_i : in    std_logic;  -- 100 MHz clock fed back into FPGA.
+    sdCke_o   : out   std_logic;  -- SDRAM clock enable.
+    sdCe_bo   : out   std_logic;  -- SDRAM chip-enable.
     sdRas_bo  : out   std_logic;  -- SDRAM row address strobe.
     sdCas_bo  : out   std_logic;  -- SDRAM column address strobe.
     sdWe_bo   : out   std_logic;  -- SDRAM write-enable.
-    sdBs_o    : out   std_logic;  -- SDRAM bank-address.
-    sdAddr_o  : out   std_logic_vector(11 downto 0);  -- SDRAM address bus.
-    sdData_io : inout std_logic_vector(15 downto 0)    -- SDRAM data bus.
+    sdBs_o    : out   std_logic_vector(1 downto 0);  -- SDRAM bank-address.
+    sdAddr_o  : out   std_logic_vector(12 downto 0);  -- SDRAM address bus.
+    sdData_io : inout std_logic_vector(15 downto 0);    -- SDRAM data bus.
+    sdDqmh_o  : out   std_logic;  -- SDRAM high-byte databus qualifier.
+    sdDqml_o  : out   std_logic  -- SDRAM low-byte databus qualifier.
     );
 end entity;
 
 architecture Behavioral of SdramSPInst is
   constant NO                     : std_logic := '0';
   constant YES                    : std_logic := '1';
-  constant RAM_SIZE_C             : natural   := 16384;  -- Number of words in RAM.
+  constant RAM_SIZE_C             : natural   := 256;  -- Number of words in RAM.
   constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
   constant MIN_ADDR_C             : natural   := 1;  -- Process RAM from this address ...
   constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
@@ -39,7 +43,7 @@ architecture Behavioral of SdramSPInst is
   signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
   signal dataFromRam_s            : RamWord_t;  -- Data read from RAM.
   -- Convert the busses for connection to the SDRAM controller.
-  signal addrSdram_s              : std_logic_vector(22 downto 0);  -- Address.
+  signal addrSdram_s              : std_logic_vector(23 downto 0);  -- Address.
   signal dataToSdram_s            : std_logic_vector(sdData_io'range);  -- Data.
   signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  -- Data.
   -- FSM state.
@@ -53,10 +57,14 @@ begin
   --*********************************************************************
   -- Generate a 100 MHz clock from the 12 MHz input clock and send it out
   -- to the SDRAM. Then feed it back in to clock the internal logic.
+  -- (The Spartan-6 FPGAs are a bit picky about what their DCM outputs
+  -- are allowed to drive, so I have to use the clkToLogic_o output to
+  -- send the clock signal to the output pin of the FPGA and on to the
+  -- SDRAM chip.)
   --*********************************************************************
   Clkgen_u1 : Clkgen
     generic map (BASE_FREQ_G => 12.0, CLK_MUL_G => 25, CLK_DIV_G => 3)
-    port map(I               => fpgaClk_i, O => sdClk_o);
+    port map(I               => fpgaClk_i, clkToLogic_o => sdClk_o);
   clk_s <= sdClkFb_i;                   -- SDRAM clock feeds back into FPGA.
 
   --*********************************************************************
@@ -78,23 +86,19 @@ begin
       data_i    => dataToSdram_s,
       data_o    => dataFromSdram_s,
       -- SDRAM side.
+      sdCke_o   => sdCke_o, -- SDRAM clock-enable pin is connected on the XuLA2.
+      sdCe_bo   => sdCe_bo, -- SDRAM chip-enable is connected on the XuLA2.
       sdRas_bo  => sdRas_bo,
       sdCas_bo  => sdCas_bo,
       sdWe_bo   => sdWe_bo,
-      sdBs_o(0) => sdBs_o,
+      sdBs_o    => sdBs_o, -- Both SDRAM bank selects are connected on the XuLA2.
       sdAddr_o  => sdAddr_o,
-      sdData_io => sdData_io
+      sdData_io => sdData_io,
+      sdDqmh_o  => sdDqmh_o, -- SDRAM high-byte databus qualifier is connected on the XuLA2.
+      sdDqml_o  => sdDqml_o  -- SDRAM low-byte databus qualifier is connected on the XuLA2.
       );
-  ujpeg: jpeg port map(
-        clk_s => clk_fast,
-        left_s => signed(left_s),
-        right_s => signed(right_s),
-        sam_s => signed(sam_s),
-        res_s => signed_res_s,
-        even_odd_s => even_odd_s,
-		  fwd_inv_s => fwd_inv_s
-		  );
-  -- Connect the SDRAM controller signals to the FSM signals.
+
+  -- Connect the SDRAM controller signals to the FSM signals.     
   dataToSdram_s <= std_logic_vector(dataToRam_r);
   dataFromRam_s <= RamWord_t(dataFromSdram_s);
   addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
@@ -102,7 +106,7 @@ begin
   --*********************************************************************
   -- State machine that initializes RAM and then reads RAM to compute
   -- the sum of products of the RAM address and data. This section
-  -- is combinatorial logic that sets the control bits for each state
+  -- is combinatorial logic that sets the control bits for each state 
   -- and determines the next state.
   --*********************************************************************
   FsmComb_p : process(state_r, addr_r, dataToRam_r,
@@ -140,7 +144,7 @@ begin
         if done_s = NO then      -- While current RAM read is not complete ...
           rd_s <= YES;                  -- keep read-enable active.
         elsif addr_r <= MAX_ADDR_C then  -- If not the final address ...
-          -- add product of previous RAM address and data read
+          -- add product of previous RAM address and data read 
           -- from that address to the summation ...
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s * addr_r);
           addr_x <= addr_r + 1;         -- and go to next address.
@@ -153,14 +157,14 @@ begin
         null;                           -- so wait here and do nothing.
       when others =>                    -- Erroneous state ...
         state_x <= INIT;                -- so re-run the entire process.
-
+        
     end case;
 
   end process;
 
   --*********************************************************************
   -- Update the FSM's registers with their next values as computed by
-  -- the FSM's combinatorial section.
+  -- the FSM's combinatorial section.       
   --*********************************************************************
   FsmUpdate_p : process(clk_s)
   begin
