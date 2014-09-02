@@ -15,7 +15,7 @@ JPEG_ID = 4  # This is the identifier for the jpeg in the FPGA.
 even_odd = 1
 fwd_inv = 1
 
-jpeg = XsDut(USB_ID, JPEG_ID, [8, 8, 8, 1, 1], [8])
+jpeg = XsDut(USB_ID, JPEG_ID, [16, 16, 16, 1, 1], [16])
 
 '''
 2D CDF 9/7 Wavelet Forward and Inverse Transform (lifting implementation)
@@ -62,21 +62,21 @@ def lower_upper(s, width, height):
 	return s
 def de_interleave(s,height,width):
 	# de-interleave
-	temp_bank = [[0]*width for i in range(height)]
+	#temp_bank = [[0]*width for i in range(height)]
 	for row in range(width):
 		for col in range(width):
             # k1 and k2 scale the vals
             # simultaneously transpose the matrix when deinterleaving
 			if row % 2 == 0:
 
-				temp_bank[col][row/2] =  s[row][col]
+				s[col][row/2] =  s[row][col]
 			else:
 
-				temp_bank[col][row/2 + height/2] =  s[row][col]
+				s[col][row/2 + height/2] =  s[row][col]
     # write temp_bank to s:
-	for row in range(width):
-		for col in range(height):
-			s[row][col] = temp_bank[row][col]
+	#for row in range(width):
+		#for col in range(height):
+			#s[row][col] = temp_bank[row][col]
 	return s
 
 def fwt97_2d(m, nlevels=1):
@@ -138,9 +138,9 @@ def fwt97(s, width, height):
         print 'forward dwt', col
         for row in range(2, height, 2):
 			#print (s[row][col])
-			ll = (intbv(s[row][col])[7:] - ((intbv(s[row-1][col])>>1)[7:] + (intbv(s[row+1][col])>>1)[7:]))
-			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[7:]), XsBitArray(intbv((s[row-1][col]))[7:]), XsBitArray(intbv((s[row][col]))[7:]), even_odd, fwd_inv)
-			s[row][col] = lift.int
+			ll = (intbv(s[row][col])[16:] - ((intbv(s[row-1][col])>>1)[16:] + (intbv(s[row+1][col])>>1)[16:]))
+			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[16:]), XsBitArray(intbv((s[row-1][col]))[16:]), XsBitArray(intbv((s[row][col]))[16:]), even_odd, fwd_inv)
+			s[row][col] = intbv(lift.int)[16:]
 
 			#print '%3d %3d %5d %5d %1d %1d %5d %5d' % (col, row, (s[row+1][col]), (s[row-1][col]), even_odd, fwd_inv, (s[row][col]), ll)
 
@@ -151,9 +151,9 @@ def fwt97(s, width, height):
         even_odd = 0
         fwd_inv = 1
         for row in range(1, height-1, 2):
-			ll = (intbv(s[row][col])[7:] + ((intbv(s[row-1][col])[7:] + intbv(s[row+1][col])[7:] + 2)>>2))
-			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[7:]), XsBitArray(intbv((s[row-1][col]))[7:]), XsBitArray(intbv((s[row][col]))[7:]), even_odd, fwd_inv)
-			s[row][col] = lift.int
+			ll = (intbv(s[row][col])[16:] + ((intbv(s[row-1][col])[16:] + intbv(s[row+1][col])[16:] + 2)>>2))
+			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[16:]), XsBitArray(intbv((s[row-1][col]))[16:]), XsBitArray(intbv((s[row][col]))[16:]), even_odd, fwd_inv)
+			s[row][col] = intbv(lift.int)[16:]
 			#print '%3d %3d %5d %5d %1d %1d %5d %5d' % (col, row, (s[row+1][col]), (s[row-1][col]), even_odd, fwd_inv, (s[row][col]), ll)
 
 
@@ -187,8 +187,8 @@ def iwt97(s, width, height):
         for row in range(1, height-1, 2):
 
 			#s[row][col] = float(s[row][col] - ((int(s[row-1][col]) + int(s[row+1][col]) + 2)>>2))
-			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[7:]), XsBitArray(intbv((s[row-1][col]))[7:]), XsBitArray(intbv((s[row][col]))[7:]), even_odd, fwd_inv)
-			s[row][col] = lift.int
+			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[16:]), XsBitArray(intbv((s[row-1][col]))[16:]), XsBitArray(intbv((s[row][col]))[16:]), even_odd, fwd_inv)
+			s[row][col] = intbv(lift.int)[16:]
 
             #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
         #s[0][col] += 2 * a4 * s[1][col]
@@ -199,8 +199,8 @@ def iwt97(s, width, height):
         for row in range(2, height, 2):
 
 			#s[row][col] = float(s[row][col] + ((int(s[row-1][col])>>1) + (int(s[row+1][col])>>1)))
-			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[7:]), XsBitArray(intbv((s[row-1][col]))[7:]), XsBitArray(intbv((s[row][col]))[7:]), even_odd, fwd_inv)
-			s[row][col] = lift.int
+			lift = jpeg.Exec(XsBitArray(intbv((s[row+1][col]))[16:]), XsBitArray(intbv((s[row-1][col]))[16:]), XsBitArray(intbv((s[row][col]))[16:]), even_odd, fwd_inv)
+			s[row][col] = intbv(lift.int)[16:]
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
         #s[height-1][col] += 2 * a3 * s[height-2][col]
 

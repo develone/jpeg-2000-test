@@ -1,6 +1,6 @@
 import wavelet97lift as dwt
 
-im = dwt.Image.open("../lena_256.png")
+im = dwt.Image.open("../lena_128.png")
 pix = im.load()
 m = list(im.getdata())
 m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
@@ -10,7 +10,7 @@ for row in range(0, len(m)):
         for col in range(0, len(m[0])):
                 m[row][col] = float(m[row][col])
 
-im1 = dwt.Image.open("test1_256_iwt.png")
+im1 = dwt.Image.open("test1_128_iwt.png")
 pix = im1.load()
 m1 = list(im1.getdata())
 m1 = [m1[i:i+im1.size[0]] for i in range(0, len(m1), im1.size[0])]

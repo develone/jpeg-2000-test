@@ -37,7 +37,7 @@ use UNISIM.VComponents.all;
 entity pc_fast_blinker_jpeg_test_8 is
     Port ( clk_i : in std_logic;
           blinker_o : out  STD_LOGIC);
-end pc_fast_blinker_jpeg_test_16;
+end pc_fast_blinker_jpeg_test_8;
 
 architecture Behavioral of pc_fast_blinker_jpeg_test_8 is
 
