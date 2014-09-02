@@ -23,7 +23,7 @@ from random import *  # Import some random number generator routines.
 
 print '''
 ##################################################################
-# This program tests the interface between the host PC and the FPGA
+# This program tests the interface between the host PC and the FPGA 
 # on the XuLA board that has been programmed to act as a jpeg_lifting .
 ##################################################################
 '''
@@ -34,14 +34,14 @@ JPEG_ID = 4  # This is the identifier for the jpeg in the FPGA.
 # Create a jpeg intfc obj with three 17-bit inputs and one 17-bit output.
 even_odd = 1
 fwd_inv = 0
-jpeg = XsDut(USB_ID, JPEG_ID, [8, 8, 8, 1, 1], [8])
+jpeg = XsDut(USB_ID, JPEG_ID, [16, 16, 16, 1, 1], [16])
 
 # Test the subtractor by iterating through some random inputs.
 for i in range(0, 100):
-    sam = randint(0, 100)  # Get a random, positive byte...
-    left = randint(0, 100)  # Get a random, positive byte...
-    right = randint(0, 100)  # Get a random, positive byte...
-
+    sam = randint(0, 511)  # Get a random, positive byte...
+    left = randint(0, 511)  # Get a random, positive byte...
+    right = randint(0, 511)  # Get a random, positive byte...
+    
     lift = jpeg.Exec(right, left, sam, even_odd, fwd_inv )  # Use the jpeg in FPGA.
     if even_odd:
 	if fwd_inv:

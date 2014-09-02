@@ -1,20 +1,20 @@
 ----------------------------------------------------------------------------------
--- Company:
--- Engineer:
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    15:20:09 08/08/2014 
+-- Design Name: 
+-- Module Name:    blinker - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
 --
--- Create Date:    15:20:09 08/08/2014
--- Design Name:
--- Module Name:    blinker - Behavioral
--- Project Name:
--- Target Devices:
--- Tool versions:
--- Description:
+-- Dependencies: 
 --
--- Dependencies:
---
--- Revision:
+-- Revision: 
 -- Revision 0.01 - File Created
--- Additional Comments:
+-- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
 library IEEE;
@@ -22,7 +22,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use IEEE.NUMERIC_STD.ALL;
 use work.pck_myhdl_09.all;
---use work.jpeg.all;
+--use work.jpeg.all; 
 use work.HostIoPckg.all; -- Package for PC <=> FPGA communications.
 
 -- Uncomment the following library declaration if using
@@ -34,20 +34,20 @@ use work.HostIoPckg.all; -- Package for PC <=> FPGA communications.
 library UNISIM;
 use UNISIM.VComponents.all;
 
-entity pc_fast_blinker_jpeg_test_8 is
+entity pc_fast_blinker_jpeg_test_16 is
     Port ( clk_i : in std_logic;
           blinker_o : out  STD_LOGIC);
-end pc_fast_blinker_jpeg_test_8;
+end pc_fast_blinker_jpeg_test_16;
 
-architecture Behavioral of pc_fast_blinker_jpeg_test_8 is
+architecture Behavioral of pc_fast_blinker_jpeg_test_16 is
 
 component jpeg is
     port (
         clk_fast: in std_logic;
-        left_s: in signed (7 downto 0);
-        right_s: in signed (7 downto 0);
-        sam_s: in signed (7 downto 0);
-        res_s: out signed (7 downto 0);
+        left_s: in signed (15 downto 0);
+        right_s: in signed (15 downto 0);
+        sam_s: in signed (15 downto 0);
+        res_s: out signed (15 downto 0);
 		  even_odd_s : in std_logic ;
 		  fwd_inv_s : in std_logic
     );
@@ -57,17 +57,17 @@ end component;
   signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
   -- Connections between the shift-register module and  jpeg.
   -- 50        40         30        20        10         0
-  --                         54 32109876 54321098 76543210
-  signal fromjpeg_s : std_logic_vector(7 downto 0); -- From jpeg to PC.
-  signal tojpeg_s : std_logic_vector(25 downto 0); -- From PC to jpeg.
-
+  --   98 7654321098765432 1098765432109876 5432109876543210
+  signal fromjpeg_s : std_logic_vector(15 downto 0); -- From jpeg to PC.
+  signal tojpeg_s : std_logic_vector(49 downto 0); -- From PC to jpeg.
+   
   signal  even_odd_s : std_logic;
   signal  fwd_inv_s : std_logic;
-  alias even_odd_tmp_s is  tojpeg_s(24);
-  alias fwd_inv_tmp_s is tojpeg_s(25);
-  alias right_s is tojpeg_s(7 downto 0); -- jpeg's 1st operand.
-  alias left_s is tojpeg_s(15 downto 8); -- jpeg's 2nd operand.
-  alias sam_s is tojpeg_s(23 downto 16); -- jpeg's 3rd operand.
+  alias even_odd_tmp_s is  tojpeg_s(48);
+  alias fwd_inv_tmp_s is tojpeg_s(49);
+  alias right_s is tojpeg_s(15 downto 0); -- jpeg's 1st operand.
+  alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
+  alias sam_s is tojpeg_s(47 downto 32); -- jpeg's 3rd operand.
   --alias res_s is fromjpeg_s; -- jpeg output.
   alias signed_res_s is signed(fromjpeg_s);
   -- Connections between the shift-register module and the subtractor.
@@ -120,7 +120,7 @@ UHostIoToJpeg : HostIoToDut
     -- vectorFromDut_i => fromSub_s -- From subtractor difference to PC.
 
     -- Connections to the blinker.
-    --vectorToDut_o => toBlinker_s, this commented out
+    --vectorToDut_o => toBlinker_s, this commented out 
     -- From PC to blinker (dummy sig).
     --vectorFromDut_i => fromBlinker_s -- From blinker to PC. this commented out
 
@@ -132,28 +132,28 @@ UHostIoToJpeg : HostIoToDut
 
   DCM_SP_inst : DCM_SP
    generic map (
-
-      CLKFX_DIVIDE => 1,                     -- Divide value on CLKFX outputs - D - (1-32)
-      CLKFX_MULTIPLY => 10                   -- Multiply value on CLKFX outputs - M - (2-32)
-
+   
+      CLKFX_DIVIDE => 3,                     -- Divide value on CLKFX outputs - D - (1-32)
+      CLKFX_MULTIPLY => 25                   -- Multiply value on CLKFX outputs - M - (2-32)
+  
    )
    port map (
 		CLKFX => clk_fast,		-- 1-bit output: Digital Frequency Synthesizer output (DFS)
-		CLKIN => clk_i,
-		RST => '0'            -- 1-bit input: Active high reset input
-
+		CLKIN => clk_i, 
+		RST => '0'            -- 1-bit input: Active high reset input	
+       
    );
 
 
 
-
+  
 	process(clk_fast) is
 	begin
 		if rising_edge(clk_fast) then
 			cnt_r <= cnt_r + 1;
 		end if;
 	end process;
-
+  
   even_odd_s <= even_odd_tmp_s;
   fwd_inv_s <= fwd_inv_tmp_s;
   --even_odd_s <= '1';
@@ -165,9 +165,9 @@ UHostIoToJpeg : HostIoToDut
         sam_s => signed(sam_s),
         res_s => signed_res_s,
         even_odd_s => even_odd_s,
-		  fwd_inv_s => fwd_inv_s
+		  fwd_inv_s => fwd_inv_s  
 		  );
-
+  
    -- This is the subtractor.
    -- difference_s <= minuend_s - subtrahend_s;
 --   res_s <= (sam_s - ((left_s) + (right_s)));
