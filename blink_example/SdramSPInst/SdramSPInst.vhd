@@ -26,7 +26,7 @@ end entity;
 architecture Behavioral of SdramSPInst is
   constant NO                     : std_logic := '0';
   constant YES                    : std_logic := '1';
-  constant RAM_SIZE_C             : natural   := 1024;  -- Number of words in RAM.
+  constant RAM_SIZE_C             : natural   := 16384;  -- Number of words in RAM.
   constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
   constant MIN_ADDR_C             : natural   := 1;  -- Process RAM from this address ...
   constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
@@ -92,9 +92,9 @@ begin
         sam_s => signed(sam_s),
         res_s => signed_res_s,
         even_odd_s => even_odd_s,
-		  fwd_inv_s => fwd_inv_s  
+		  fwd_inv_s => fwd_inv_s
 		  );
-  -- Connect the SDRAM controller signals to the FSM signals.     
+  -- Connect the SDRAM controller signals to the FSM signals.
   dataToSdram_s <= std_logic_vector(dataToRam_r);
   dataFromRam_s <= RamWord_t(dataFromSdram_s);
   addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
@@ -102,7 +102,7 @@ begin
   --*********************************************************************
   -- State machine that initializes RAM and then reads RAM to compute
   -- the sum of products of the RAM address and data. This section
-  -- is combinatorial logic that sets the control bits for each state 
+  -- is combinatorial logic that sets the control bits for each state
   -- and determines the next state.
   --*********************************************************************
   FsmComb_p : process(state_r, addr_r, dataToRam_r,
@@ -140,7 +140,7 @@ begin
         if done_s = NO then      -- While current RAM read is not complete ...
           rd_s <= YES;                  -- keep read-enable active.
         elsif addr_r <= MAX_ADDR_C then  -- If not the final address ...
-          -- add product of previous RAM address and data read 
+          -- add product of previous RAM address and data read
           -- from that address to the summation ...
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s * addr_r);
           addr_x <= addr_r + 1;         -- and go to next address.
@@ -153,14 +153,14 @@ begin
         null;                           -- so wait here and do nothing.
       when others =>                    -- Erroneous state ...
         state_x <= INIT;                -- so re-run the entire process.
-        
+
     end case;
 
   end process;
 
   --*********************************************************************
   -- Update the FSM's registers with their next values as computed by
-  -- the FSM's combinatorial section.       
+  -- the FSM's combinatorial section.
   --*********************************************************************
   FsmUpdate_p : process(clk_s)
   begin
