@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <report-views version="2.0" >
  <header>
-  <DateModified>2014-09-02T15:27:47</DateModified>
+  <DateModified>2014-09-03T15:31:47</DateModified>
   <ModuleName>SdramSPInst</ModuleName>
-  <SummaryTimeStamp>Unknown</SummaryTimeStamp>
+  <SummaryTimeStamp>2014-09-03T15:30:28</SummaryTimeStamp>
   <SavedFilePath>C:/Xilinx/14.7/ISE_DS/SdramSPInst/iseconfig/SdramSPInst.xreport</SavedFilePath>
-  <ImplementationReportsDirectory>C:/Xilinx/14.7/ISE_DS/SdramSPInst</ImplementationReportsDirectory>
+  <ImplementationReportsDirectory>C:/Xilinx/14.7/ISE_DS/SdramSPInst\</ImplementationReportsDirectory>
   <DateInitialized>2014-09-02T15:27:47</DateInitialized>
   <EnableMessageFiltering>false</EnableMessageFiltering>
  </header>

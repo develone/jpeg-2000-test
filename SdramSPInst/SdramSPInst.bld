@@ -46,7 +46,7 @@ NGDBUILD Design Results Summary:
   Number of errors:     0
   Number of warnings:   1
 
-Total memory usage is 142060 kilobytes
+Total memory usage is 142508 kilobytes
 
 Writing NGD file "SdramSPInst.ngd" ...
 Total REAL time to NGDBUILD completion:  5 sec
