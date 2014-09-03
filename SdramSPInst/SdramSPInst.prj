@@ -1,0 +1,6 @@
+vhdl work "SyncToClk.vhd"
+vhdl work "Common.vhd"
+vhdl work "SdramCntl.vhd"
+vhdl work "HostIo.vhd"
+vhdl work "ClkGen.vhd"
+vhdl work "SdramSPInst.vhd"

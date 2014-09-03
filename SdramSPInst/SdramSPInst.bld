@@ -1,0 +1,55 @@
+Release 14.7 ngdbuild P.20131013 (nt)
+Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved.
+
+Command Line: C:\Xilinx\14.7\ISE_DS\ISE\bin\nt\unwrapped\ngdbuild.exe -intstyle
+ise -dd _ngo -nt timestamp -uc XuLA2.ucf -p xc6slx9-ftg256-2 SdramSPInst.ngc
+SdramSPInst.ngd
+
+Reading NGO file "C:/Xilinx/14.7/ISE_DS/SdramSPInst/SdramSPInst.ngc" ...
+Gathering constraint information from source properties...
+Done.
+
+Annotating constraints to design from ucf file "XuLA2.ucf" ...
+Resolving constraint associations...
+Checking Constraint Associations...
+INFO:ConstraintSystem:178 - TNM 'fpgaClk_i', used in period specification
+   'TSfpgaClk_i', was traced into DCM_SP instance Clkgen_u1/u0. The following
+   new TNM groups and period specifications were generated at the DCM_SP
+   output(s): 
+   CLKFX: <TIMESPEC TS_Clkgen_u1_genClkP_s = PERIOD "Clkgen_u1_genClkP_s"
+   TSfpgaClk_i * 8.333333333 HIGH 50%>
+
+INFO:ConstraintSystem:178 - TNM 'fpgaClk_i', used in period specification
+   'TSfpgaClk_i', was traced into DCM_SP instance Clkgen_u1/u0. The following
+   new TNM groups and period specifications were generated at the DCM_SP
+   output(s): 
+   CLKFX180: <TIMESPEC TS_Clkgen_u1_genClkN_s = PERIOD "Clkgen_u1_genClkN_s"
+   TSfpgaClk_i * 8.333333333 PHASE 5 ns HIGH 50%>
+
+Done...
+
+WARNING:NgdBuild:1212 - User specified non-default attribute value
+   (83.3333333333333) was detected for the CLKIN_PERIOD attribute on DCM
+   "Clkgen_u1/u0".  This does not match the PERIOD constraint value (12 MHz.). 
+   The uncertainty calculation will use the non-default attribute value.  This
+   could result in incorrect uncertainty calculated for DCM output clocks.
+Checking expanded design ...
+
+Partition Implementation Status
+-------------------------------
+
+  No Partitions were found in this design.
+
+-------------------------------
+
+NGDBUILD Design Results Summary:
+  Number of errors:     0
+  Number of warnings:   1
+
+Total memory usage is 142060 kilobytes
+
+Writing NGD file "SdramSPInst.ngd" ...
+Total REAL time to NGDBUILD completion:  5 sec
+Total CPU time to NGDBUILD completion:   5 sec
+
+Writing NGDBUILD log file "SdramSPInst.bld"...

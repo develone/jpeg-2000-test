@@ -1,0 +1,6 @@
+work	"ClkGen.vhd"
+work	"Common.vhd"
+work	"HostIo.vhd"
+work	"SdramCntl.vhd"
+work	"SdramSPInst.vhd"
+work	"SyncToClk.vhd"
