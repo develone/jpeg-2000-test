@@ -32,9 +32,9 @@ architecture Behavioral of SdramSPInst is
   -- Connections between the shift-register module and  jpeg.
   -- 50        40         30        20        10         0
   --   98 7654321098765432 1098765432109876 5432109876543210
-  signal fromjpeg_s : std_logic_vector(15 downto 0); -- From jpeg to PC.
+  signal fromjpeg_s : std_logic_vector(31 downto 0); -- From jpeg to PC.
   signal tojpeg_s : std_logic_vector(49 downto 0); -- From PC to jpeg.
-
+  --signal fromsum_s : std_logic_vector(15 downto 0);
   signal  even_odd_s : std_logic;
   signal  fwd_inv_s : std_logic;
   alias even_odd_tmp_s is  tojpeg_s(48);
@@ -42,8 +42,10 @@ architecture Behavioral of SdramSPInst is
   alias right_s is tojpeg_s(15 downto 0); -- jpeg's 1st operand.
   alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
   alias sam_s is tojpeg_s(47 downto 32); -- jpeg's 3rd operand.
-  --alias res_s is fromjpeg_s; -- jpeg output.
-  --alias signed_res_s is signed(fromjpeg_s);
+  --alias res_s is fromjpeg_s(15 downto 0); -- jpeg output.
+  alias fromsum_s is fromjpeg_s(31 downto 16); -- jpeg output.
+  alias signed_res_s is signed(fromjpeg_s(15 downto 0));
+  alias signed_fromsum_s is signed(fromjpeg_s(31 downto 16));
 
 component jpeg is
     port (
@@ -121,7 +123,7 @@ UHostIoToJpeg : HostIoToDut
         left_s => signed(left_s),
         right_s => signed(right_s),
         sam_s => signed(sam_s),
-        --res_s => signed_res_s,
+        res_s => signed_res_s,
         even_odd_s => even_odd_s,
 		  fwd_inv_s => fwd_inv_s
 		  );
@@ -255,5 +257,5 @@ UHostIoToJpeg : HostIoToDut
   --*********************************************************************
   sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
    
-fromjpeg_s <= sumDut_s;
+fromsum_s <= sumDut_s;
 end architecture;
