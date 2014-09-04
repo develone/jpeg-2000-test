@@ -35,26 +35,9 @@ JPEG_ID = 4  # This is the identifier for the jpeg in the FPGA.
 even_odd = 1
 fwd_inv = 0
 jpeg = XsDut(USB_ID, JPEG_ID, [16, 16, 16, 1, 1], [16])
-
-# Test the subtractor by iterating through some random inputs.
-for i in range(0, 100):
-    sam = randint(0, 511)  # Get a random, positive byte...
-    left = randint(0, 511)  # Get a random, positive byte...
-    right = randint(0, 511)  # Get a random, positive byte...
+sam = randint(0, 511)  # Get a random, positive byte...
+left = randint(0, 511)  # Get a random, positive byte...
+right = randint(0, 511)  # Get a random, positive byte...
     
-    lift = jpeg.Exec(right, left, sam, even_odd, fwd_inv )  # Use the jpeg in FPGA.
-    if even_odd:
-	if fwd_inv:
-		loc_lift = sam - ((left>>1) + (right>>1))
-	else:
-		loc_lift = sam + ((left>>1) + (right>>1))
-    else:
-	if fwd_inv:
-		loc_lift = sam + ( (left + right + 2)>>2)
-	else:
-		loc_lift = sam - ( (left + right + 2)>>2)
-    print '%5d %5d %5d %1d %1d %5d %5d ' % (sam, left, right, even_odd, fwd_inv, loc_lift, lift.int)
-    if loc_lift != lift.int:
-	print 'ERROR %5d  %5d' % (loc_lift, lift.int)
-    else:
-	print 'results are the same between the local and FPGA'
+lift = jpeg.Exec(right, left, sam, even_odd, fwd_inv )  # Use the jpeg in FPGA.
+print lift.int

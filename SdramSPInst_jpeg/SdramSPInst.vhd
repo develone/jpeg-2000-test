@@ -7,7 +7,7 @@ use IEEE.STD_LOGIC_1164.all;
 use IEEE.NUMERIC_STD.all;
 use work.ClkgenPckg.all;     -- For the clock generator module.
 use work.SdramCntlPckg.all;  -- For the SDRAM controller module.
-use work.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module.
+use work.HostIoPckg.all;     -- For the FPGA<=>PC transfer link module.
 use work.pck_myhdl_09.all;
 
 entity SdramSPInst is
@@ -43,7 +43,7 @@ architecture Behavioral of SdramSPInst is
   alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
   alias sam_s is tojpeg_s(47 downto 32); -- jpeg's 3rd operand.
   --alias res_s is fromjpeg_s; -- jpeg output.
-  alias signed_res_s is signed(fromjpeg_s);
+  --alias signed_res_s is signed(fromjpeg_s);
 
 component jpeg is
     port (
@@ -80,6 +80,11 @@ end component;
   signal sum_r, sum_x             : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
   signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
+  signal inShiftDr_s : std_logic; -- True when bits shift btwn PC & FPGA.
+  signal drck_s : std_logic; -- Bit shift clock.
+  signal tdi_s : std_logic; -- Bits from host PC to the blinker.
+  signal tdo_s : std_logic; -- Bits from blinker to the host PC.
+
 begin
 -------------------------------------------------------------------------
 -- JTAG entry point.
@@ -116,7 +121,7 @@ UHostIoToJpeg : HostIoToDut
         left_s => signed(left_s),
         right_s => signed(right_s),
         sam_s => signed(sam_s),
-        res_s => signed_res_s,
+        --res_s => signed_res_s,
         even_odd_s => even_odd_s,
 		  fwd_inv_s => fwd_inv_s
 		  );
@@ -197,6 +202,7 @@ UHostIoToJpeg : HostIoToDut
 
       when WRITE_DATA =>                -- Load RAM with values.
         if done_s = NO then  -- While current RAM write is not complete ...
+		   
           wr_s <= YES;                  -- keep write-enable active.
         elsif addr_r < MAX_ADDR_C then  -- If haven't reach final address ...
           addr_x      <= addr_r + 1;    -- go to next address ...
@@ -214,6 +220,7 @@ UHostIoToJpeg : HostIoToDut
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s * addr_r);
+			 
           addr_x <= addr_r + 1;         -- and go to next address.
           if addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...
             state_x <= DONE;            -- so go to the next state.
@@ -247,6 +254,6 @@ UHostIoToJpeg : HostIoToDut
   -- Send the summation to the HostIoToDut module and then on to the PC.
   --*********************************************************************
   sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
-
-
+   
+fromjpeg_s <= sumDut_s;
 end architecture;
