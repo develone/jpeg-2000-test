@@ -34,7 +34,7 @@ architecture Behavioral of SdramSPInst is
   --   98 7654321098765432 1098765432109876 5432109876543210
   signal fromjpeg_s : std_logic_vector(15 downto 0); -- From jpeg to PC.
   signal tojpeg_s : std_logic_vector(49 downto 0); -- From PC to jpeg.
-   
+
   signal  even_odd_s : std_logic;
   signal  fwd_inv_s : std_logic;
   alias even_odd_tmp_s is  tojpeg_s(48);
@@ -81,7 +81,33 @@ end component;
   signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
 begin
-
+-------------------------------------------------------------------------
+-- JTAG entry point.
+-------------------------------------------------------------------------
+-- Main entry point for the JTAG signals between the PC and the FPGA.
+UBscanToHostIo : BscanToHostIo
+  port map (
+    inShiftDr_o => inShiftDr_s,
+    drck_o => drck_s,
+    tdi_o => tdi_s,
+    tdo_i => tdo_s
+    );
+-------------------------------------------------------------------------
+-- Shift-register.
+-------------------------------------------------------------------------
+-- This is the shift-register module between jpeg and JTAG entry point.
+UHostIoToJpeg : HostIoToDut
+  generic map (ID_G => "00000100") -- The identifier used by the PC.
+    port map (
+    -- Connections to the BscanToHostIo JTAG entry-point module.
+    inShiftDr_i => inShiftDr_s,
+    drck_i => drck_s,
+    tdi_i => tdi_s,
+    tdo_o => tdo_s,
+    -- Connections to jpeg
+    vectorToDut_o => tojpeg_s, -- From PC to jpeg sam left right.
+    vectorFromDut_i => fromjpeg_s -- From jpeg to PC.
+    );
   even_odd_s <= even_odd_tmp_s;
   fwd_inv_s <= fwd_inv_tmp_s;
 
@@ -92,7 +118,7 @@ begin
         sam_s => signed(sam_s),
         res_s => signed_res_s,
         even_odd_s => even_odd_s,
-		  fwd_inv_s => fwd_inv_s  
+		  fwd_inv_s => fwd_inv_s
 		  );
 
   --*********************************************************************
@@ -139,7 +165,7 @@ begin
       sdDqml_o  => sdDqml_o  -- SDRAM low-byte databus qualifier is connected on the XuLA2.
       );
 
-  -- Connect the SDRAM controller signals to the FSM signals.     
+  -- Connect the SDRAM controller signals to the FSM signals.
   dataToSdram_s <= std_logic_vector(dataToRam_r);
   dataFromRam_s <= RamWord_t(dataFromSdram_s);
   addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
@@ -147,7 +173,7 @@ begin
   --*********************************************************************
   -- State machine that initializes RAM and then reads RAM to compute
   -- the sum of products of the RAM address and data. This section
-  -- is combinatorial logic that sets the control bits for each state 
+  -- is combinatorial logic that sets the control bits for each state
   -- and determines the next state.
   --*********************************************************************
   FsmComb_p : process(state_r, addr_r, dataToRam_r,
@@ -185,7 +211,7 @@ begin
         if done_s = NO then      -- While current RAM read is not complete ...
           rd_s <= YES;                  -- keep read-enable active.
         elsif addr_r <= MAX_ADDR_C then  -- If not the final address ...
-          -- add product of previous RAM address and data read 
+          -- add product of previous RAM address and data read
           -- from that address to the summation ...
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s * addr_r);
           addr_x <= addr_r + 1;         -- and go to next address.
@@ -198,14 +224,14 @@ begin
         null;                           -- so wait here and do nothing.
       when others =>                    -- Erroneous state ...
         state_x <= INIT;                -- so re-run the entire process.
-        
+
     end case;
 
   end process;
 
   --*********************************************************************
   -- Update the FSM's registers with their next values as computed by
-  -- the FSM's combinatorial section.       
+  -- the FSM's combinatorial section.
   --*********************************************************************
   FsmUpdate_p : process(clk_s)
   begin
@@ -221,13 +247,6 @@ begin
   -- Send the summation to the HostIoToDut module and then on to the PC.
   --*********************************************************************
   sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
-  HostIoToDut_u2 : HostIoToDut
-    generic map (SIMPLE_G => true)
-    port map (
-      --vectorFromDut_i => sumDut_s,
-      --vectorToDut_o   => nullDutOut_s
-      vectorToDut_o => tojpeg_s, -- From PC to jpeg sam left right.
-      vectorFromDut_i => fromjpeg_s -- From jpeg to PC.
-      );
+
 
 end architecture;
