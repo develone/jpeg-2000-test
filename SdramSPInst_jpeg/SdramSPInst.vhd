@@ -8,6 +8,7 @@ use IEEE.NUMERIC_STD.all;
 use work.ClkgenPckg.all;     -- For the clock generator module.
 use work.SdramCntlPckg.all;  -- For the SDRAM controller module.
 use work.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module.
+use work.pck_myhdl_09.all;
 
 entity SdramSPInst is
   port (
@@ -28,6 +29,33 @@ entity SdramSPInst is
 end entity;
 
 architecture Behavioral of SdramSPInst is
+  -- Connections between the shift-register module and  jpeg.
+  -- 50        40         30        20        10         0
+  --   98 7654321098765432 1098765432109876 5432109876543210
+  signal fromjpeg_s : std_logic_vector(15 downto 0); -- From jpeg to PC.
+  signal tojpeg_s : std_logic_vector(49 downto 0); -- From PC to jpeg.
+   
+  signal  even_odd_s : std_logic;
+  signal  fwd_inv_s : std_logic;
+  alias even_odd_tmp_s is  tojpeg_s(48);
+  alias fwd_inv_tmp_s is tojpeg_s(49);
+  alias right_s is tojpeg_s(15 downto 0); -- jpeg's 1st operand.
+  alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
+  alias sam_s is tojpeg_s(47 downto 32); -- jpeg's 3rd operand.
+  --alias res_s is fromjpeg_s; -- jpeg output.
+  alias signed_res_s is signed(fromjpeg_s);
+
+component jpeg is
+    port (
+        clk_fast: in std_logic;
+        left_s: in signed (15 downto 0);
+        right_s: in signed (15 downto 0);
+        sam_s: in signed (15 downto 0);
+        res_s: out signed (15 downto 0);
+		  even_odd_s : in std_logic ;
+		  fwd_inv_s : in std_logic
+    );
+end component;
   constant NO                     : std_logic := '0';
   constant YES                    : std_logic := '1';
   constant RAM_SIZE_C             : natural   := 8192;  -- Number of words in RAM.
@@ -53,6 +81,19 @@ architecture Behavioral of SdramSPInst is
   signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
 begin
+
+  even_odd_s <= even_odd_tmp_s;
+  fwd_inv_s <= fwd_inv_tmp_s;
+
+  ujpeg: jpeg port map(
+        clk_fast => clk_s,
+        left_s => signed(left_s),
+        right_s => signed(right_s),
+        sam_s => signed(sam_s),
+        res_s => signed_res_s,
+        even_odd_s => even_odd_s,
+		  fwd_inv_s => fwd_inv_s  
+		  );
 
   --*********************************************************************
   -- Generate a 100 MHz clock from the 12 MHz input clock and send it out
@@ -183,8 +224,10 @@ begin
   HostIoToDut_u2 : HostIoToDut
     generic map (SIMPLE_G => true)
     port map (
-      vectorFromDut_i => sumDut_s,
-      vectorToDut_o   => nullDutOut_s
+      --vectorFromDut_i => sumDut_s,
+      --vectorToDut_o   => nullDutOut_s
+      vectorToDut_o => tojpeg_s, -- From PC to jpeg sam left right.
+      vectorFromDut_i => fromjpeg_s -- From jpeg to PC.
       );
 
 end architecture;
