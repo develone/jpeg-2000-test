@@ -1,7 +1,0 @@
-vhdl isim_temp "SyncToClk.vhd"
-vhdl isim_temp "Common.vhd"
-vhdl isim_temp "SdramCntl.vhd"
-vhdl isim_temp "HostIo.vhd"
-vhdl isim_temp "ClkGen.vhd"
-vhdl isim_temp "SdramSPInst.vhd"
-vhdl isim_temp "SdramSPIinstTB.vhd"

@@ -1,8 +1,0 @@
-INTSTYLE=ise
-INFILE=C:\Xilinx\14.7\ISE_DS\SdramSPInst\SdramSPInst.ncd
-OUTFILE=C:\Xilinx\14.7\ISE_DS\SdramSPInst\SdramSPInst.bit
-FAMILY=Spartan6
-PART=xc6slx9-2ftg256
-WORKINGDIR=C:\Xilinx\14.7\ISE_DS\SdramSPInst
-LICENSE=WebPack
-USER_INFO=210798212_1777495311_0_868
