@@ -9,6 +9,8 @@ use work.ClkgenPckg.all;     -- For the clock generator module.
 use work.SdramCntlPckg.all;  -- For the SDRAM controller module.
 use work.HostIoPckg.all;     -- For the FPGA<=>PC transfer link module.
 use work.pck_myhdl_09.all;
+library UNISIM;
+use UNISIM.VComponents.all;
 
 entity SdramSPInst is
   port (
@@ -63,7 +65,7 @@ end component;
   constant RAM_SIZE_C             : natural   := 8192;  -- Number of words in RAM.
   constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
   constant MIN_ADDR_C             : natural   := 1;  -- Process RAM from this address ...
-  constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
+  constant MAX_ADDR_C             : natural   := 2;  -- ... to this address.
   subtype RamWord_t is unsigned(RAM_WIDTH_C-1 downto 0);  -- RAM word type.
   signal clk_s                    : std_logic;  -- Internal clock.
   signal wr_s                     : std_logic;  -- Write-enable control.
@@ -199,7 +201,7 @@ UHostIoToJpeg : HostIoToDut
 
       when INIT =>                      -- Initialize the FSM.
         addr_x      <= MIN_ADDR_C;      -- Start writing data at this address.
-        dataToRam_x <= TO_UNSIGNED(1, RAM_WIDTH_C);  -- Initial value to write.
+        --dataToRam_x <= TO_UNSIGNED(1, RAM_WIDTH_C);  -- Initial value to write.
         state_x     <= WRITE_DATA;      -- Go to next state.
 
       when WRITE_DATA =>                -- Load RAM with values.
@@ -208,7 +210,7 @@ UHostIoToJpeg : HostIoToDut
           wr_s <= YES;                  -- keep write-enable active.
         elsif addr_r < MAX_ADDR_C then  -- If haven't reach final address ...
           addr_x      <= addr_r + 1;    -- go to next address ...
-          dataToRam_x <= dataToRam_r + 3;  -- and write this value.
+          --dataToRam_x <= dataToRam_r ;  -- and write this value.
         else                 -- Else, the final address has been written ...
           addr_x  <= MIN_ADDR_C;        -- go back to the start, ...
           sum_x   <= 0;                 -- clear the sum-of-products, ...
@@ -221,7 +223,7 @@ UHostIoToJpeg : HostIoToDut
         elsif addr_r <= MAX_ADDR_C then  -- If not the final address ...
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
-          sum_x  <= sum_r + TO_INTEGER(dataFromRam_s * addr_r);
+          sum_x  <= TO_INTEGER(dataFromRam_s );
 			 
           addr_x <= addr_r + 1;         -- and go to next address.
           if addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...
