@@ -35,15 +35,16 @@ architecture Behavioral of SdramSPInst is
   -- 50        40         30        20        10         0
   --   98 7654321098765432 1098765432109876 5432109876543210
   signal fromjpeg_s : std_logic_vector(31 downto 0); -- From jpeg to PC.
-  signal tojpeg_s : std_logic_vector(49 downto 0); -- From PC to jpeg.
+  signal tojpeg_s : std_logic_vector(1 downto 0); -- From PC to jpeg.
+  --signal tojpeg_s : std_logic_vector(49 downto 0); -- From PC to jpeg.
   --signal fromsum_s : std_logic_vector(15 downto 0);
   signal  even_odd_s : std_logic;
   signal  fwd_inv_s : std_logic;
-  alias even_odd_tmp_s is  tojpeg_s(48);
-  alias fwd_inv_tmp_s is tojpeg_s(49);
-  alias right_s is tojpeg_s(15 downto 0); -- jpeg's 1st operand.
-  alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
-  alias sam_s is tojpeg_s(47 downto 32); -- jpeg's 3rd operand.
+  alias even_odd_tmp_s is  tojpeg_s(0);
+  alias fwd_inv_tmp_s is tojpeg_s(1);
+  --alias right_s is tojpeg_s(15 downto 0); -- jpeg's 1st operand.
+  --alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
+  --alias sam_s is tojpeg_s(47 downto 32); -- jpeg's 3rd operand.
   --alias res_s is fromjpeg_s(15 downto 0); -- jpeg output.
   alias fromsum_s is fromjpeg_s(31 downto 16); -- jpeg output.
   alias signed_res_s is signed(fromjpeg_s(15 downto 0));
@@ -52,9 +53,9 @@ architecture Behavioral of SdramSPInst is
 component jpeg is
     port (
         clk_fast: in std_logic;
-        left_s: in signed (15 downto 0);
-        right_s: in signed (15 downto 0);
-        sam_s: in signed (15 downto 0);
+        left_r: in signed (15 downto 0);
+        right_r: in signed (15 downto 0);
+        sam_r: in signed (15 downto 0);
         res_s: out signed (15 downto 0);
 		  even_odd_s : in std_logic ;
 		  fwd_inv_s : in std_logic
@@ -74,6 +75,9 @@ end component;
   signal addr_r, addr_x           : natural range 0 to RAM_SIZE_C-1;  -- RAM address.
   signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
   signal dataFromRam_s            : RamWord_t;  -- Data read from RAM.
+  signal right_s                  : RamWord_t;
+  signal left_s                   : RamWord_t;
+  signal sam_s                    : RamWord_t;
   -- Convert the busses for connection to the SDRAM controller.
   signal addrSdram_s              : std_logic_vector(23 downto 0);  -- Address.
   signal dataToSdram_s            : std_logic_vector(sdData_io'range);  -- Data.
@@ -81,7 +85,7 @@ end component;
   -- FSM state.
   type state_t is (INIT, WRITE_DATA, READ_AND_SUM_DATA, DONE);  -- FSM states.
   signal state_r, state_x         : state_t   := INIT;  -- FSM starts off in init state.
-  signal sum_r, sum_x             : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
+  signal sum_r, sum_x, left_r, right_r, sam_r ,left_x, right_x, sam_x             : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
   signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
   signal inShiftDr_s : std_logic; -- True when bits shift btwn PC & FPGA.
@@ -122,9 +126,9 @@ UHostIoToJpeg : HostIoToDut
 
   ujpeg: jpeg port map(
         clk_fast => clk_s,
-        left_s => signed(left_s),
-        right_s => signed(right_s),
-        sam_s => signed(sam_s),
+        left_r => signed(left_s),
+        right_r => signed(right_s),
+        sam_r => signed(sam_s),
         res_s => signed_res_s,
         even_odd_s => even_odd_s,
 		  fwd_inv_s => fwd_inv_s
@@ -224,7 +228,9 @@ UHostIoToJpeg : HostIoToDut
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
-
+			 left_x <= TO_INTEGER(dataFromRam_s );
+			 right_x <= TO_INTEGER(dataFromRam_s );
+			 sam_x <= TO_INTEGER(dataFromRam_s );
           addr_x <= addr_r + 1;         -- and go to next address.
           if addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...
             state_x <= DONE;            -- so go to the next state.
@@ -251,6 +257,9 @@ UHostIoToJpeg : HostIoToDut
       dataToRam_r <= dataToRam_x;
       state_r     <= state_x;
       sum_r       <= sum_x;
+		left_r      <= left_x;
+		right_r      <= right_x;
+		sam_r      <= sam_x;
     end if;
   end process;
 

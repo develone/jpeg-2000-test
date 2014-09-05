@@ -7,9 +7,9 @@ right = (intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 sam = (intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 res = (intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 
-left_s = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-right_s = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-sam_s = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
+left_r = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
+right_r = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
+sam_r = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 res_s = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 
 updated_s = Signal(bool(0))
@@ -57,7 +57,7 @@ def test_jpeg():
 		flag = 0
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
 
-def jpeg(clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s  ):
+def jpeg(clk_fast, left_r, right_r, sam_r, res_s, even_odd_s , fwd_inv_s  ):
 
 
 	@always(clk_fast.posedge)
@@ -65,18 +65,18 @@ def jpeg(clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s  ):
 
 		if even_odd_s:
 			if  fwd_inv_s:
-				res_s.next =  sam_s - ((left_s >> 1) + (right_s >> 1))
+				res_s.next =  sam_r - ((left_r >> 1) + (right_r >> 1))
 			else:
-				res_s.next =  sam_s + ((left_s >> 1) + ( right_s >> 1))
+				res_s.next =  sam_r + ((left_r >> 1) + ( right_r >> 1))
 		else:
 			if fwd_inv_s:
-				res_s.next =  sam_s + ((left_s +  right_s + 2)>>2)
+				res_s.next =  sam_r + ((left_r +  right_r + 2)>>2)
 			else:
-				res_s.next =  sam_s - ((left_s +  right_s + 2)>>2)
+				res_s.next =  sam_r - ((left_r +  right_r + 2)>>2)
 
 	return hdl
 def testbench():
-	i_inst = jpeg( clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s)
+	i_inst = jpeg( clk_fast, left_r, right_r, sam_r, res_s, even_odd_s , fwd_inv_s)
 
 	@always(delay(10))
 	def clkgen():
@@ -92,9 +92,9 @@ def testbench():
 
 			yield clk_fast.posedge
 		for i in range(1,128,2):
-			sam_s.next = int(m[i])
-			left_s.next = int(m[i - 1])
-			right_s.next = int(m[i + 1])
+			sam_r.next = int(m[i])
+			left_r.next = int(m[i - 1])
+			right_r.next = int(m[i + 1])
 			if i == 45:
 				even_odd_s.next = 0
 			if i == 65:
@@ -105,8 +105,8 @@ def testbench():
 		raise StopSimulation
 	return   i_inst, stimulus, clkgen
 def convert():
-	toVerilog(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s)
-	toVHDL(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s)
+	toVerilog(jpeg, clk_fast, left_r, right_r, sam_r, res_s, even_odd_s , fwd_inv_s)
+	toVHDL(jpeg, clk_fast, left_r, right_r, sam_r, res_s, even_odd_s , fwd_inv_s)
 #convert()
 tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
