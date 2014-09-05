@@ -34,12 +34,13 @@ JPEG_ID = 4  # This is the identifier for the jpeg in the FPGA.
 # Create a jpeg intfc obj with three 17-bit inputs and one 17-bit output.
 even_odd = 1
 fwd_inv = 1
-jpeg = XsDut(USB_ID, JPEG_ID, [16, 16, 16, 1, 1], [16, 16])
-sam = randint(0, 511)  # Get a random, positive byte...
-left = randint(0, 511)  # Get a random, positive byte...
-right = randint(0, 511)  # Get a random, positive byte...
-loc_lift = sam - ((left>>1) + (right>>1))
-print sam, left, right, even_odd, fwd_inv
-print loc_lift
-lift , sum = jpeg.Exec(right, left, sam, even_odd, fwd_inv )  # Use the jpeg in FPGA.
+jpeg = XsDut(USB_ID, JPEG_ID, [1, 1], [16, 16])
+#sam = randint(0, 511)  # Get a random, positive byte...
+#left = randint(0, 511)  # Get a random, positive byte...
+#right = randint(0, 511)  # Get a random, positive byte...
+#loc_lift = sam - ((left>>1) + (right>>1))
+#print sam, left, right, even_odd, fwd_inv
+print even_odd, fwd_inv
+#print loc_lift
+lift , sum = jpeg.Exec(even_odd, fwd_inv )  # Use the jpeg in FPGA.
 print lift.int, sum.int
