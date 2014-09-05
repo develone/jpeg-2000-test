@@ -1,0 +1,19 @@
+09/05/14
+Modified the SdramSPInst to write data
+in the range of lena
+:1000000000A000A300A600A900AC00AF5500455514
+0000 00A0 160
+0001 00A3 163
+0002 00A6 166
+0003 00A9 169
+0004 00AC 172
+0005 00AF 175
+
+##################################################################
+# This program tests the interface between the host PC and the FPGA 
+# on the XuLA board that has been programmed to act as a jpeg_lifting .
+##################################################################
+
+81 105 390 1 1
+-166
+-166 1005
