@@ -34,22 +34,24 @@ architecture Behavioral of SdramSPInst is
   -- Connections between the shift-register module and  jpeg.
   -- 50        40         30        20        10         0
   --   98 7654321098765432 1098765432109876 5432109876543210
-  signal fromjpeg_s : std_logic_vector(31 downto 0); -- From jpeg to PC.
+  signal fromjpeg_s : std_logic_vector(79 downto 0); -- From jpeg to PC.
   signal tojpeg_s : std_logic_vector(1 downto 0); -- From PC to jpeg.
   --signal tojpeg_s : std_logic_vector(49 downto 0); -- From PC to jpeg.
   --signal fromsum_s : std_logic_vector(15 downto 0);
   signal  even_odd_s : std_logic;
   signal  fwd_inv_s : std_logic;
-  alias even_odd_tmp_s is  tojpeg_s(0);
-  alias fwd_inv_tmp_s is tojpeg_s(1);
+  --alias even_odd_tmp_s is  tojpeg_s(0);
+  --alias fwd_inv_tmp_s is tojpeg_s(1);
   --alias right_s is tojpeg_s(15 downto 0); -- jpeg's 1st operand.
   --alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
   --alias sam_s is tojpeg_s(47 downto 32); -- jpeg's 3rd operand.
-  --alias res_s is fromjpeg_s(15 downto 0); -- jpeg output.
+  alias res_s is fromjpeg_s(15 downto 0); -- jpeg output.
   alias fromsum_s is fromjpeg_s(31 downto 16); -- jpeg output.
   alias signed_res_s is signed(fromjpeg_s(15 downto 0));
   alias signed_fromsum_s is signed(fromjpeg_s(31 downto 16));
-
+  alias fromleft_s is fromjpeg_s(47 downto 32);
+  alias fromsam_s is fromjpeg_s(63 downto 48);
+  alias fromright_s is fromjpeg_s(79 downto 64);
 component jpeg is
     port (
         clk_fast: in std_logic;
@@ -66,6 +68,9 @@ end component;
   constant RAM_SIZE_C             : natural   := 8192;  -- Number of words in RAM.
   constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
   constant MIN_ADDR_C             : natural   := 0;  -- Process RAM from this address ...
+  constant LEFT_ADDR_C             : natural   := 0;
+  constant SAM_ADDR_C             : natural   := 1;
+  constant RIGHT_ADDR_C             : natural   := 2;
   constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
   subtype RamWord_t is unsigned(RAM_WIDTH_C-1 downto 0);  -- RAM word type.
   signal clk_s                    : std_logic;  -- Internal clock.
@@ -87,6 +92,9 @@ end component;
   signal state_r, state_x         : state_t   := INIT;  -- FSM starts off in init state.
   signal sum_r, sum_x, left_r, right_r, sam_r ,left_x, right_x, sam_x             : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
   signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
+  signal leftDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
+  signal samDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
+  signal rightDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
   signal inShiftDr_s : std_logic; -- True when bits shift btwn PC & FPGA.
   signal drck_s : std_logic; -- Bit shift clock.
@@ -121,8 +129,10 @@ UHostIoToJpeg : HostIoToDut
     vectorToDut_o => tojpeg_s, -- From PC to jpeg sam left right.
     vectorFromDut_i => fromjpeg_s -- From jpeg to PC.
     );
-  even_odd_s <= even_odd_tmp_s;
-  fwd_inv_s <= fwd_inv_tmp_s;
+  --even_odd_s <= even_odd_tmp_s;
+  even_odd_s <= '1';
+  --fwd_inv_s <= fwd_inv_tmp_s;
+  fwd_inv_s <= '1';
 
   ujpeg: jpeg port map(
         clk_fast => clk_s,
@@ -212,7 +222,7 @@ UHostIoToJpeg : HostIoToDut
         if done_s = NO then  -- While current RAM write is not complete ...
 
           wr_s <= YES;                  -- keep write-enable active.
-        elsif addr_r < MAX_ADDR_C then  -- If haven't reach final address ...
+        elsif addr_r < MAX_ADDR_C + 1 then  -- If haven't reach final address ...
           addr_x      <= addr_r + 1;    -- go to next address ...
           dataToRam_x <= dataToRam_r + 3 ;  -- and write this value.
         else                 -- Else, the final address has been written ...
@@ -228,9 +238,13 @@ UHostIoToJpeg : HostIoToDut
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
-			 left_x <= TO_INTEGER(dataFromRam_s );
-			 right_x <= TO_INTEGER(dataFromRam_s );
-			 sam_x <= TO_INTEGER(dataFromRam_s );
+			 if addr_r = LEFT_ADDR_C then
+			    left_x <= TO_INTEGER(dataFromRam_s );
+			 elsif addr_r = SAM_ADDR_C then
+			    sam_x <= TO_INTEGER(dataFromRam_s );
+			 elsif addr_r = RIGHT_ADDR_C then	 
+			    right_x <= TO_INTEGER(dataFromRam_s );
+			 end if;
           addr_x <= addr_r + 1;         -- and go to next address.
           if addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...
             state_x <= DONE;            -- so go to the next state.
@@ -267,6 +281,11 @@ UHostIoToJpeg : HostIoToDut
   -- Send the summation to the HostIoToDut module and then on to the PC.
   --*********************************************************************
   sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
-
+leftDut_s <= std_logic_vector(TO_UNSIGNED(left_r, 16));
+samDut_s <= std_logic_vector(TO_UNSIGNED(sam_r, 16));
+rightDut_s <= std_logic_vector(TO_UNSIGNED(right_r, 16));
 fromsum_s <= sumDut_s;
+fromleft_s <= leftDut_s;
+fromsam_s <= samDut_s;
+fromright_s <= rightDut_s;
 end architecture;
