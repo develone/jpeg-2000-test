@@ -1,3 +1,17 @@
+09/06/14
+chgs to "SdramSPInst.vhd"
+checking in the "sdramspinst.bit"
+
+##################################################################
+# This program tests the interface between the host PC and the FPGA 
+# on the XuLA board that has been programmed to act as a jpeg_lifting .
+##################################################################
+
+1 1
+0 1005 160 163 166
+Now the ram is initialized and 0 1 2 values are sent back
+using the "python pc_jpeg_sig.py"
+
 09/05/14
 Modified the SdramSPInst to write data
 in the range of lena
