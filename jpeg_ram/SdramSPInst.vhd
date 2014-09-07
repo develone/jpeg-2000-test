@@ -40,8 +40,8 @@ architecture Behavioral of SdramSPInst is
   --signal fromsum_s : std_logic_vector(15 downto 0);
   signal  even_odd_s : std_logic;
   signal  fwd_inv_s : std_logic;
-  --alias even_odd_tmp_s is  tojpeg_s(0);
-  --alias fwd_inv_tmp_s is tojpeg_s(1);
+  alias even_odd_tmp_s is  tojpeg_s(0);
+  alias fwd_inv_tmp_s is tojpeg_s(1);
   --alias right_s is tojpeg_s(15 downto 0); -- jpeg's 1st operand.
   --alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
   --alias sam_s is tojpeg_s(47 downto 32); -- jpeg's 3rd operand.
@@ -90,7 +90,7 @@ end component;
   -- FSM state.
   type state_t is (INIT, WRITE_DATA, READ_AND_SUM_DATA, DONE);  -- FSM states.
   signal state_r, state_x         : state_t   := INIT;  -- FSM starts off in init state.
-  signal sum_r, sum_x, left_r, right_r, sam_r ,left_x, right_x, sam_x             : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
+  signal  sum_r, sum_x, left_r, right_r, sam_r ,left_x, right_x, sam_x             : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
   signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal leftDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal samDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
@@ -129,10 +129,10 @@ UHostIoToJpeg : HostIoToDut
     vectorToDut_o => tojpeg_s, -- From PC to jpeg sam left right.
     vectorFromDut_i => fromjpeg_s -- From jpeg to PC.
     );
-  --even_odd_s <= even_odd_tmp_s;
-  even_odd_s <= '1';
-  --fwd_inv_s <= fwd_inv_tmp_s;
-  fwd_inv_s <= '1';
+  even_odd_s <= even_odd_tmp_s;
+  --even_odd_s <= '1';
+  fwd_inv_s <= fwd_inv_tmp_s;
+  --fwd_inv_s <= '1';
 
   ujpeg: jpeg port map(
         clk_fast => clk_s,
@@ -216,6 +216,7 @@ UHostIoToJpeg : HostIoToDut
       when INIT =>                      -- Initialize the FSM.
         addr_x      <= MIN_ADDR_C;      -- Start writing data at this address.
         dataToRam_x <= TO_UNSIGNED(160, RAM_WIDTH_C);  -- Initial value to write.
+		   
         state_x     <= WRITE_DATA;      -- Go to next state.
 
       when WRITE_DATA =>                -- Load RAM with values.
@@ -288,4 +289,5 @@ fromsum_s <= sumDut_s;
 fromleft_s <= leftDut_s;
 fromsam_s <= samDut_s;
 fromright_s <= rightDut_s;
+
 end architecture;
