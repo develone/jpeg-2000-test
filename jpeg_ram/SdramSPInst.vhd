@@ -68,9 +68,9 @@ end component;
   constant RAM_SIZE_C             : natural   := 8192;  -- Number of words in RAM.
   constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
   constant MIN_ADDR_C             : natural   := 0;  -- Process RAM from this address ...
-  constant LEFT_ADDR_C             : natural   := 0;
-  constant SAM_ADDR_C             : natural   := 1;
-  constant RIGHT_ADDR_C             : natural   := 2;
+  constant LEFT_ADDR_C             : natural   := 2;
+  constant SAM_ADDR_C             : natural   := 3;
+  constant RIGHT_ADDR_C             : natural   := 4;
   constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
   subtype RamWord_t is unsigned(RAM_WIDTH_C-1 downto 0);  -- RAM word type.
   signal clk_s                    : std_logic;  -- Internal clock.
@@ -80,6 +80,7 @@ end component;
   signal addr_r, addr_x           : natural range 0 to RAM_SIZE_C-1;  -- RAM address.
   signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
   signal dataFromRam_s            : RamWord_t;  -- Data read from RAM.
+  signal left_r, right_r, sam_r ,left_x, right_x, sam_x : RamWord_t; 
   signal right_s                  : RamWord_t;
   signal left_s                   : RamWord_t;
   signal sam_s                    : RamWord_t;
@@ -90,7 +91,7 @@ end component;
   -- FSM state.
   type state_t is (INIT, WRITE_DATA, READ_AND_SUM_DATA, DONE);  -- FSM states.
   signal state_r, state_x         : state_t   := INIT;  -- FSM starts off in init state.
-  signal  sum_r, sum_x, left_r, right_r, sam_r ,left_x, right_x, sam_x             : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
+  signal  sum_r, sum_x            : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
   signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal leftDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal samDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
@@ -200,7 +201,7 @@ UHostIoToJpeg : HostIoToDut
   -- and determines the next state.
   --*********************************************************************
   FsmComb_p : process(state_r, addr_r, dataToRam_r,
-                      sum_r, dataFromRam_s, done_s)
+                      sum_r, dataFromRam_s, done_s,left_r,sam_r,right_r)
   begin
     -- Disable RAM reads and writes by default.
     rd_s        <= NO;                  -- Don't write to RAM.
@@ -210,12 +211,14 @@ UHostIoToJpeg : HostIoToDut
     sum_x       <= sum_r;
     dataToRam_x <= dataToRam_r;
     state_x     <= state_r;
-
+    left_x <= left_r;
+	 right_x <= right_r;
+	 sam_x <= sam_r;
     case state_r is
 
       when INIT =>                      -- Initialize the FSM.
         addr_x      <= MIN_ADDR_C;      -- Start writing data at this address.
-        dataToRam_x <= TO_UNSIGNED(160, RAM_WIDTH_C);  -- Initial value to write.
+        dataToRam_x <= TO_UNSIGNED(-160, RAM_WIDTH_C);  -- Initial value to write.
 		   
         state_x     <= WRITE_DATA;      -- Go to next state.
 
@@ -239,12 +242,14 @@ UHostIoToJpeg : HostIoToDut
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
+			 
 			 if addr_r = LEFT_ADDR_C then
-			    left_x <= TO_INTEGER(dataFromRam_s );
+			    left_x <= dataFromRam_s;
 			 elsif addr_r = SAM_ADDR_C then
-			    sam_x <= TO_INTEGER(dataFromRam_s );
+			    sam_x <= dataFromRam_s ;
 			 elsif addr_r = RIGHT_ADDR_C then	 
-			    right_x <= TO_INTEGER(dataFromRam_s );
+			    right_x <= dataFromRam_s;
+				 --sum_x <= (samDut_s + shift_right(((leftDut_s + rightDut_s) + 2), 2));
 			 end if;
           addr_x <= addr_r + 1;         -- and go to next address.
           if addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...
@@ -282,9 +287,9 @@ UHostIoToJpeg : HostIoToDut
   -- Send the summation to the HostIoToDut module and then on to the PC.
   --*********************************************************************
   sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
-leftDut_s <= std_logic_vector(TO_UNSIGNED(left_r, 16));
-samDut_s <= std_logic_vector(TO_UNSIGNED(sam_r, 16));
-rightDut_s <= std_logic_vector(TO_UNSIGNED(right_r, 16));
+leftDut_s <= std_logic_vector(left_r);
+samDut_s <= std_logic_vector(sam_r);
+rightDut_s <= std_logic_vector(right_r);
 fromsum_s <= sumDut_s;
 fromleft_s <= leftDut_s;
 fromsam_s <= samDut_s;

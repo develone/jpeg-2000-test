@@ -1,3 +1,32 @@
+09/07/14
+modified files
+    project_status.txt
+    sdramspinst.bit
+    SdramSPInst.vhd
+    pc_jpeg_sig.py
+
+There is a problem with adding left_r, right_r, sam_r ,left_x, right_x, sam_x since this can only be 0 to natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
+
+signal left_r, right_r, sam_r ,left_x, right_x, sam_x : RamWord_t;
+Testing with storing -160 at addr 0
+
+constant LEFT_ADDR_C             : natural   := 2;
+constant SAM_ADDR_C             : natural   := 3;
+constant RIGHT_ADDR_C             : natural   := 4;
+
+:10000000FF60FF63FF66FF69FF6CFF6FFF72008890
+:10001000005E0069006B006C006A00750078007D6E
+FF66
+FF69
+FF6C
+
+##################################################################
+# This program tests the interface between the host PC and the FPGA 
+# on the XuLA board that has been programmed to act as a jpeg_lifting .
+##################################################################
+
+0 1
+0 -915 65382 65385 65388
 09/06/14
 chgs to "SdramSPInst.vhd"
 checking in the "sdramspinst.bit"
