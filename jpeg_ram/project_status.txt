@@ -1,4 +1,59 @@
 09/08/14
+This is what the SDram should be
+1000000000A000A300A600A900AC00AF00B2FF801B
+         160 163 169 172 175
+This is what I see when I read with gxsload.
+1000000000A00000000000A900AC00AF00B2FF801B
+
+##################################################################
+# This program tests the interface between the host PC and the FPGA 
+# on the XuLA board that has been programmed to act as a jpeg_lifting .
+##################################################################
+
+1 1
+211 1005 166 249 172 0b1 0b1   211 should be 0  249 should be 169
+0 1
+211 1005 166 249 172 0b0 0b1   211 should be 254  249 should be 169
+160 + 163 + 166 + 169 + 172 + 175 = 175 okay
+
+-- Connections between the shift-register module and  jpeg.
+  --    80          70         60        50        40          30        20        10         0
+  --   1 0 9876543210987654 3210987654321098 7654321098765432 1098765432109876 5432109876543210
+  signal fromjpeg_s : std_logic_vector(81 downto 0); -- From jpeg to PC.
+  alias fromresult_s is fromjpeg_s(15 downto 0); -- jpeg output.
+  alias fromsum_s is fromjpeg_s(31 downto 16); -- sum_r.
+  alias fromleft_s is fromjpeg_s(47 downto 32);  -- jpeg's left pixel
+  alias fromsam_s is fromjpeg_s(63 downto 48);  -- jpeg's sam pixel
+  alias fromright_s is fromjpeg_s(79 downto 64); --jpeg's right right
+  alias fromeven_odd_s is fromjpeg_s(80);
+  alias fromfwd_inv_s is fromjpeg_s(81);
+  
+  signal tojpeg_s : std_logic_vector(1 downto 0); -- From PC to jpeg.
+  --signal tojpeg_s : std_logic_vector(49 downto 0); -- From PC to jpeg.
+  --signal fromsum_s : std_logic_vector(15 downto 0);
+  --signal even_odd_tmp_s : std_logic;
+  --signal fwd_inv_tmp_s : std_logic;
+  alias even_odd_s is tojpeg_s(0);
+  alias fwd_inv_s is tojpeg_s(1);
+  
+--*********************************************************************
+  -- Send the summation to the HostIoToDut module and then on to the PC.
+  --*********************************************************************
+sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
+  resultDut_s <= (result_r);
+leftDut_s <= std_logic_vector(left_r);
+samDut_s <= std_logic_vector(sam_r);
+rightDut_s <= std_logic_vector(right_r);
+
+fromresult_s <= resultDut_s;
+fromsum_s <= sumDut_s;
+fromleft_s <= leftDut_s;
+fromsam_s <= samDut_s;
+fromright_s <= rightDut_s;
+
+fromeven_odd_s <= even_odd_s;
+fromfwd_inv_s <= fwd_inv_s;
+
 chgs required
 need to fix 12 should be 0
 need to fix 211 should be 254
@@ -11,7 +66,8 @@ need to move
 
 clean up --use work.pck_myhdl_09.all;
 
-need to return result_r instead of sumDut_s
+need to return result_r instead of sumDut_s fixed step 1 result_s <= std_logic_vector(result_r); step 2
+res_s <= result_s;
 sumDut_s <= std_logic_vector(result_r);
 
 removed jpeg.vhd & pck_myhdl_09.vhd

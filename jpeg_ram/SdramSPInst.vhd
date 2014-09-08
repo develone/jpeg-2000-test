@@ -31,10 +31,19 @@ entity SdramSPInst is
 end entity;
 
 architecture Behavioral of SdramSPInst is
+
   -- Connections between the shift-register module and  jpeg.
-  -- 50        40         30        20        10         0
-  --   98 7654321098765432 1098765432109876 5432109876543210
+  --    80          70         60        50        40          30        20        10         0
+  --   1 0 9876543210987654 3210987654321098 7654321098765432 1098765432109876 5432109876543210
   signal fromjpeg_s : std_logic_vector(81 downto 0); -- From jpeg to PC.
+  alias fromresult_s is fromjpeg_s(15 downto 0); -- jpeg output.
+  alias fromsum_s is fromjpeg_s(31 downto 16); -- sum_r.
+  alias fromleft_s is fromjpeg_s(47 downto 32);  -- jpeg's left pixel
+  alias fromsam_s is fromjpeg_s(63 downto 48);  -- jpeg's sam pixel
+  alias fromright_s is fromjpeg_s(79 downto 64); --jpeg's right right
+  alias fromeven_odd_s is fromjpeg_s(80);
+  alias fromfwd_inv_s is fromjpeg_s(81);
+  
   signal tojpeg_s : std_logic_vector(1 downto 0); -- From PC to jpeg.
   --signal tojpeg_s : std_logic_vector(49 downto 0); -- From PC to jpeg.
   --signal fromsum_s : std_logic_vector(15 downto 0);
@@ -42,18 +51,8 @@ architecture Behavioral of SdramSPInst is
   --signal fwd_inv_tmp_s : std_logic;
   alias even_odd_s is tojpeg_s(0);
   alias fwd_inv_s is tojpeg_s(1);
-  --alias right_s is tojpeg_s(15 downto 0); -- jpeg's 1st operand.
-  --alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
-  --alias sam_s is tojpeg_s(47 downto 32); -- jpeg's 3rd operand.
-  alias res_s is fromjpeg_s(15 downto 0); -- jpeg output.
-  alias fromsum_s is fromjpeg_s(31 downto 16); -- jpeg output.
-  alias signed_res_s is signed(fromjpeg_s(15 downto 0));
-  alias signed_fromsum_s is signed(fromjpeg_s(31 downto 16));
-  alias fromleft_s is fromjpeg_s(47 downto 32);
-  alias fromsam_s is fromjpeg_s(63 downto 48);
-  alias fromright_s is fromjpeg_s(79 downto 64);
-  alias even_odd_tmp_s is fromjpeg_s(80);
-  alias fwd_inv_tmp_s is fromjpeg_s(81);
+  
+  
 
   constant NO                     : std_logic := '0';
   constant YES                    : std_logic := '1';
@@ -85,6 +84,7 @@ architecture Behavioral of SdramSPInst is
   type state_t is (INIT, WRITE_DATA, READ_AND_SUM_DATA, DONE);  -- FSM states.
   signal state_r, state_x         : state_t   := INIT;  -- FSM starts off in init state.
   signal  sum_r, sum_x            : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
+  signal resultDut_s                 : std_logic_vector(15 downto 0); 
   signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal leftDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal samDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
@@ -124,9 +124,9 @@ UHostIoToJpeg : HostIoToDut
     vectorFromDut_i => fromjpeg_s -- From jpeg to PC.
     );
   --send back signals	 
-  even_odd_tmp_s <= even_odd_s;
+  --even_odd_tmp_s <= even_odd_s;
   --even_odd_s <= '1';
-  fwd_inv_tmp_s <= fwd_inv_s;
+  --fwd_inv_tmp_s <= fwd_inv_s;
   --fwd_inv_s <= '1';
 
    
@@ -279,14 +279,19 @@ UHostIoToJpeg : HostIoToDut
   --*********************************************************************
   -- Send the summation to the HostIoToDut module and then on to the PC.
   --*********************************************************************
-  --sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
-  sumDut_s <= std_logic_vector(result_r);
+  sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
+  resultDut_s <= (result_r);
 leftDut_s <= std_logic_vector(left_r);
 samDut_s <= std_logic_vector(sam_r);
 rightDut_s <= std_logic_vector(right_r);
+
+fromresult_s <= resultDut_s;
 fromsum_s <= sumDut_s;
 fromleft_s <= leftDut_s;
 fromsam_s <= samDut_s;
 fromright_s <= rightDut_s;
+
+fromeven_odd_s <= even_odd_s;
+fromfwd_inv_s <= fwd_inv_s;
 
 end architecture;
