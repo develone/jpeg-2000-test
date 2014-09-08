@@ -62,7 +62,7 @@
     </file>
     <file xil_pn:name="C:/Users/vidal/Documents/GitHub/VHDL_Lib/HostIo.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="39"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="8"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="7"/>
       <library xil_pn:name="XESS"/>
     </file>
     <file xil_pn:name="C:/Users/vidal/Documents/GitHub/VHDL_Lib/HostIoComm.vhd" xil_pn:type="FILE_VHDL">
@@ -127,7 +127,7 @@
     </file>
     <file xil_pn:name="C:/Users/vidal/Documents/GitHub/VHDL_Lib/SdramCntl.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="52"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="7"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="6"/>
       <library xil_pn:name="XESS"/>
     </file>
     <file xil_pn:name="C:/Users/vidal/Documents/GitHub/VHDL_Lib/Spi.vhd" xil_pn:type="FILE_VHDL">
@@ -159,15 +159,7 @@
     </file>
     <file xil_pn:name="C:/Users/vidal/Documents/GitHub/jpeg-2000-test/jpeg_ram/SdramSPInst.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="31"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="10"/>
-    </file>
-    <file xil_pn:name="C:/Users/vidal/Documents/GitHub/jpeg-2000-test/jpeg_ram/jpeg.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="32"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="9"/>
-    </file>
-    <file xil_pn:name="C:/Users/vidal/Documents/GitHub/jpeg-2000-test/jpeg_ram/pck_myhdl_09.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="33"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="6"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="8"/>
     </file>
   </files>
 
