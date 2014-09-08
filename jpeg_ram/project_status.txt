@@ -1,3 +1,54 @@
+09/08/14
+chgs required
+need to fix 12 should be 0
+need to fix 211 should be 254
+need to move 
+ if std_logic(even_odd_s) = YES then
+   result_x <= std_logic_vector(sam_r - (shift_right(left_r, 1) + shift_right(right_r, 1)));
+ else 
+   result_x <= std_logic_vector(sam_r + shift_right(((left_r + right_r) + 2), 2));
+ end if;
+
+clean up --use work.pck_myhdl_09.all;
+
+need to return result_r instead of sumDut_s
+sumDut_s <= std_logic_vector(result_r);
+
+removed jpeg.vhd & pck_myhdl_09.vhd
+if even_odd_s = NO then
+					result_x <= std_logic_vector(sam_r - (shift_right(left_r, 1) + shift_right(right_r, 1)));
+				 else 
+				   result_x <= std_logic_vector(sam_r + shift_right(((left_r + right_r) + 2), 2));
+				 end if;
+chgs pc_jpeg_sig.py
+needed to determine the values of even_odd & fwd_inv sent
+
+jpeg = XsDut(USB_ID, JPEG_ID, [1, 1], [16, 16, 16, 16, 16, 1, 1])
+lift , sum, left, sam, right, e_ret, f_ret = jpeg.Exec(even_odd, fwd_inv)  # Use the jpeg in FPGA.
+print lift.int, sum.int, left.int, sam.int, right.int, e_ret, f_ret
+##################################################################
+# This program tests the interface between the host PC and the FPGA 
+# on the XuLA board that has been programmed to act as a jpeg_lifting .
+##################################################################
+
+0 1
+0 12 166 169 172 0b0 0b1
+
+if std_logic(even_odd_s) = YES then
+					result_x <= std_logic_vector(sam_r - (shift_right(left_r, 1) + shift_right(right_r, 1)));
+				 else 
+				   result_x <= std_logic_vector(sam_r + shift_right(((left_r + right_r) + 2), 2));
+				 end if;
+
+##################################################################
+# This program tests the interface between the host PC and the FPGA 
+# on the XuLA board that has been programmed to act as a jpeg_lifting .
+##################################################################
+
+0 1
+0 211 166 169 172 0b0 0b1				 
+Given the above values for left sam and righ perform the fwd dwt odd should be 0 not 12 or 254 not 211 
+
 09/07/14
 modified files
     project_status.txt

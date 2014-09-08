@@ -8,7 +8,7 @@ use IEEE.NUMERIC_STD.all;
 use XESS.ClkgenPckg.all;     -- For the clock generator module.
 use XESS.SdramCntlPckg.all;  -- For the SDRAM controller module.
 use XESS.HostIoPckg.all;     -- For the FPGA<=>PC transfer link module.
-use work.pck_myhdl_09.all;
+--use work.pck_myhdl_09.all;
 library UNISIM;
 use UNISIM.VComponents.all;
 
@@ -34,14 +34,14 @@ architecture Behavioral of SdramSPInst is
   -- Connections between the shift-register module and  jpeg.
   -- 50        40         30        20        10         0
   --   98 7654321098765432 1098765432109876 5432109876543210
-  signal fromjpeg_s : std_logic_vector(79 downto 0); -- From jpeg to PC.
+  signal fromjpeg_s : std_logic_vector(81 downto 0); -- From jpeg to PC.
   signal tojpeg_s : std_logic_vector(1 downto 0); -- From PC to jpeg.
   --signal tojpeg_s : std_logic_vector(49 downto 0); -- From PC to jpeg.
   --signal fromsum_s : std_logic_vector(15 downto 0);
-  signal  even_odd_s : std_logic;
-  signal  fwd_inv_s : std_logic;
-  alias even_odd_tmp_s is  tojpeg_s(0);
-  alias fwd_inv_tmp_s is tojpeg_s(1);
+  --signal even_odd_tmp_s : std_logic;
+  --signal fwd_inv_tmp_s : std_logic;
+  alias even_odd_s is tojpeg_s(0);
+  alias fwd_inv_s is tojpeg_s(1);
   --alias right_s is tojpeg_s(15 downto 0); -- jpeg's 1st operand.
   --alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
   --alias sam_s is tojpeg_s(47 downto 32); -- jpeg's 3rd operand.
@@ -52,17 +52,9 @@ architecture Behavioral of SdramSPInst is
   alias fromleft_s is fromjpeg_s(47 downto 32);
   alias fromsam_s is fromjpeg_s(63 downto 48);
   alias fromright_s is fromjpeg_s(79 downto 64);
-component jpeg is
-    port (
-        clk_fast: in std_logic;
-        left_r: in signed (15 downto 0);
-        right_r: in signed (15 downto 0);
-        sam_r: in signed (15 downto 0);
-        res_s: out signed (15 downto 0);
-		  even_odd_s : in std_logic ;
-		  fwd_inv_s : in std_logic
-    );
-end component;
+  alias even_odd_tmp_s is fromjpeg_s(80);
+  alias fwd_inv_tmp_s is fromjpeg_s(81);
+
   constant NO                     : std_logic := '0';
   constant YES                    : std_logic := '1';
   constant RAM_SIZE_C             : natural   := 8192;  -- Number of words in RAM.
@@ -81,6 +73,7 @@ end component;
   signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
   signal dataFromRam_s            : RamWord_t;  -- Data read from RAM.
   signal left_r, right_r, sam_r ,left_x, right_x, sam_x : RamWord_t; 
+  signal result_r, result_x, result_s : std_logic_vector(15 downto 0);
   signal right_s                  : RamWord_t;
   signal left_s                   : RamWord_t;
   signal sam_s                    : RamWord_t;
@@ -130,20 +123,13 @@ UHostIoToJpeg : HostIoToDut
     vectorToDut_o => tojpeg_s, -- From PC to jpeg sam left right.
     vectorFromDut_i => fromjpeg_s -- From jpeg to PC.
     );
-  even_odd_s <= even_odd_tmp_s;
+  --send back signals	 
+  even_odd_tmp_s <= even_odd_s;
   --even_odd_s <= '1';
-  fwd_inv_s <= fwd_inv_tmp_s;
+  fwd_inv_tmp_s <= fwd_inv_s;
   --fwd_inv_s <= '1';
 
-  ujpeg: jpeg port map(
-        clk_fast => clk_s,
-        left_r => signed(left_s),
-        right_r => signed(right_s),
-        sam_r => signed(sam_s),
-        res_s => signed_res_s,
-        even_odd_s => even_odd_s,
-		  fwd_inv_s => fwd_inv_s
-		  );
+   
 
   --*********************************************************************
   -- Generate a 100 MHz clock from the 12 MHz input clock and send it out
@@ -201,7 +187,7 @@ UHostIoToJpeg : HostIoToDut
   -- and determines the next state.
   --*********************************************************************
   FsmComb_p : process(state_r, addr_r, dataToRam_r,
-                      sum_r, dataFromRam_s, done_s,left_r,sam_r,right_r)
+                      sum_r, dataFromRam_s, done_s,left_r,sam_r,right_r, result_r)
   begin
     -- Disable RAM reads and writes by default.
     rd_s        <= NO;                  -- Don't write to RAM.
@@ -218,7 +204,7 @@ UHostIoToJpeg : HostIoToDut
 
       when INIT =>                      -- Initialize the FSM.
         addr_x      <= MIN_ADDR_C;      -- Start writing data at this address.
-        dataToRam_x <= TO_UNSIGNED(-160, RAM_WIDTH_C);  -- Initial value to write.
+        dataToRam_x <= TO_UNSIGNED(160, RAM_WIDTH_C);  -- Initial value to write.
 		   
         state_x     <= WRITE_DATA;      -- Go to next state.
 
@@ -232,6 +218,7 @@ UHostIoToJpeg : HostIoToDut
         else                 -- Else, the final address has been written ...
           addr_x  <= MIN_ADDR_C;        -- go back to the start, ...
           sum_x   <= 0;                 -- clear the sum-of-products, ...
+			 --result_x   <= 0;                 -- clear the sum-of-products, ...
           state_x <= READ_AND_SUM_DATA;    -- and go to next state.
         end if;
 
@@ -249,6 +236,11 @@ UHostIoToJpeg : HostIoToDut
 			    sam_x <= dataFromRam_s ;
 			 elsif addr_r = RIGHT_ADDR_C then	 
 			    right_x <= dataFromRam_s;
+				 if std_logic(even_odd_s) = YES then
+					result_x <= std_logic_vector(sam_r - (shift_right(left_r, 1) + shift_right(right_r, 1)));
+				 else 
+				   result_x <= std_logic_vector(sam_r + shift_right(((left_r + right_r) + 2), 2));
+				 end if;
 				 --sum_x <= (samDut_s + shift_right(((leftDut_s + rightDut_s) + 2), 2));
 			 end if;
           addr_x <= addr_r + 1;         -- and go to next address.
@@ -280,13 +272,15 @@ UHostIoToJpeg : HostIoToDut
 		left_r      <= left_x;
 		right_r      <= right_x;
 		sam_r      <= sam_x;
+		result_r <= result_x;
     end if;
   end process;
 
   --*********************************************************************
   -- Send the summation to the HostIoToDut module and then on to the PC.
   --*********************************************************************
-  sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
+  --sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
+  sumDut_s <= std_logic_vector(result_r);
 leftDut_s <= std_logic_vector(left_r);
 samDut_s <= std_logic_vector(sam_r);
 rightDut_s <= std_logic_vector(right_r);
