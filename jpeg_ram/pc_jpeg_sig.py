@@ -45,8 +45,22 @@ print even_odd, fwd_inv
 lift , sum, left, sam, right, e_ret, f_ret = jpeg.Exec(even_odd, fwd_inv)  # Use the jpeg in FPGA.
 print lift.int, sum.int, left.int, sam.int, right.int, e_ret, f_ret
 
+even_odd = 1
+fwd_inv = 0
+print even_odd, fwd_inv
+
+lift , sum, left, sam, right, e_ret, f_ret = jpeg.Exec(even_odd, fwd_inv)  # Use the jpeg in FPGA.
+print lift.int, sum.int, left.int, sam.int, right.int, e_ret, f_ret
+
 even_odd = 0
 fwd_inv = 1
+print even_odd, fwd_inv
+
+lift , sum, left, sam, right, e_ret, f_ret = jpeg.Exec(even_odd, fwd_inv)  # Use the jpeg in FPGA.
+print lift.int, sum.int, left.int, sam.int, right.int, e_ret, f_ret
+
+even_odd = 0
+fwd_inv = 0
 print even_odd, fwd_inv
 
 lift , sum, left, sam, right, e_ret, f_ret = jpeg.Exec(even_odd, fwd_inv)  # Use the jpeg in FPGA.

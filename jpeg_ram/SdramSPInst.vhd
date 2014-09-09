@@ -41,16 +41,16 @@ architecture Behavioral of SdramSPInst is
   alias fromleft_s is fromjpeg_s(47 downto 32);  -- jpeg's left pixel
   alias fromsam_s is fromjpeg_s(63 downto 48);  -- jpeg's sam pixel
   alias fromright_s is fromjpeg_s(79 downto 64); --jpeg's right right
-  alias fromeven_odd_s is fromjpeg_s(80);
-  alias fromfwd_inv_s is fromjpeg_s(81);
+  alias fromev_o_s is fromjpeg_s(80);
+  alias fromfd_iv_s is fromjpeg_s(81);
   
   signal tojpeg_s : std_logic_vector(1 downto 0); -- From PC to jpeg.
   --signal tojpeg_s : std_logic_vector(49 downto 0); -- From PC to jpeg.
   --signal fromsum_s : std_logic_vector(15 downto 0);
-  --signal even_odd_tmp_s : std_logic;
-  --signal fwd_inv_tmp_s : std_logic;
-  alias even_odd_s is tojpeg_s(0);
-  alias fwd_inv_s is tojpeg_s(1);
+  --signal ev_o_tmp_s : std_logic;
+  --signal fd_iv_tmp_s : std_logic;
+  alias ev_o_s is tojpeg_s(0);
+  alias fd_iv_s is tojpeg_s(1);
   
   
 
@@ -71,6 +71,7 @@ architecture Behavioral of SdramSPInst is
   signal addr_r, addr_x           : natural range 0 to RAM_SIZE_C-1;  -- RAM address.
   signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
   signal dataFromRam_s            : RamWord_t;  -- Data read from RAM.
+  signal ev_o_x, ev_o_r, fd_iv_x, fd_iv_r                  : std_logic;
   signal left_r, right_r, sam_r ,left_x, right_x, sam_x : RamWord_t; 
   signal result_r, result_x, result_s : std_logic_vector(15 downto 0);
   signal right_s                  : RamWord_t;
@@ -96,6 +97,7 @@ architecture Behavioral of SdramSPInst is
   signal tdo_s : std_logic; -- Bits from blinker to the host PC.
 
 begin
+   
 -------------------------------------------------------------------------
 -- JTAG entry point.
 -------------------------------------------------------------------------
@@ -124,10 +126,10 @@ UHostIoToJpeg : HostIoToDut
     vectorFromDut_i => fromjpeg_s -- From jpeg to PC.
     );
   --send back signals	 
-  --even_odd_tmp_s <= even_odd_s;
-  --even_odd_s <= '1';
-  --fwd_inv_tmp_s <= fwd_inv_s;
-  --fwd_inv_s <= '1';
+  --ev_o_tmp_s <= ev_o_s;
+  --ev_o_s <= '1';
+  --fd_iv_tmp_s <= fd_iv_s;
+  --fd_iv_s <= '1';
 
    
 
@@ -187,7 +189,7 @@ UHostIoToJpeg : HostIoToDut
   -- and determines the next state.
   --*********************************************************************
   FsmComb_p : process(state_r, addr_r, dataToRam_r,
-                      sum_r, dataFromRam_s, done_s,left_r,sam_r,right_r, result_r)
+                      sum_r, dataFromRam_s, done_s,left_r,sam_r,right_r, result_r, ev_o_r, fd_iv_r)
   begin
     -- Disable RAM reads and writes by default.
     rd_s        <= NO;                  -- Don't write to RAM.
@@ -200,6 +202,8 @@ UHostIoToJpeg : HostIoToDut
     left_x <= left_r;
 	 right_x <= right_r;
 	 sam_x <= sam_r;
+	 ev_o_x <= ev_o_r;
+	 fd_iv_x <= fd_iv_r;
     case state_r is
 
       when INIT =>                      -- Initialize the FSM.
@@ -228,7 +232,7 @@ UHostIoToJpeg : HostIoToDut
         elsif addr_r <= MAX_ADDR_C then  -- If not the final address ...
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
-          sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
+          --sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
 			 
 			 if addr_r = LEFT_ADDR_C then
 			    left_x <= dataFromRam_s;
@@ -236,11 +240,20 @@ UHostIoToJpeg : HostIoToDut
 			    sam_x <= dataFromRam_s ;
 			 elsif addr_r = RIGHT_ADDR_C then	 
 			    right_x <= dataFromRam_s;
-				 if std_logic(even_odd_s) = YES then
-					result_x <= std_logic_vector(sam_r - (shift_right(left_r, 1) + shift_right(right_r, 1)));
-				 else 
-				   result_x <= std_logic_vector(sam_r + shift_right(((left_r + right_r) + 2), 2));
-				 end if;
+				 sum_x <= TO_INTEGER(dataFromRam_s);
+				 if std_logic(ev_o_x) = YES then
+					if std_logic(fd_iv_x) = YES then	
+						result_x <= std_logic_vector(sam_r - (shift_right(left_r, 1) + shift_right(right_r, 1)));
+					else
+						result_x <= std_logic_vector(sam_r + (shift_right(left_r, 1) + shift_right(right_r, 1)));
+					end if;
+				else
+					if std_logic(fd_iv_x) = YES then
+						result_x <= std_logic_vector(sam_r + shift_right(((left_r + right_r) + 2), 2));
+					else
+						result_x <= std_logic_vector(sam_r - shift_right(((left_r + right_r) + 2), 2));
+					end if;	 
+				end if;
 				 --sum_x <= (samDut_s + shift_right(((leftDut_s + rightDut_s) + 2), 2));
 			 end if;
           addr_x <= addr_r + 1;         -- and go to next address.
@@ -273,14 +286,17 @@ UHostIoToJpeg : HostIoToDut
 		right_r      <= right_x;
 		sam_r      <= sam_x;
 		result_r <= result_x;
+		ev_o_r <= ev_o_s;
+		fd_iv_r <= ev_o_s;
     end if;
   end process;
 
   --*********************************************************************
   -- Send the summation to the HostIoToDut module and then on to the PC.
   --*********************************************************************
-  sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
-  resultDut_s <= (result_r);
+  --sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
+  sumDut_s <= std_logic_vector(sam_r);
+  resultDut_s <= std_logic_vector(result_r);
 leftDut_s <= std_logic_vector(left_r);
 samDut_s <= std_logic_vector(sam_r);
 rightDut_s <= std_logic_vector(right_r);
@@ -291,7 +307,7 @@ fromleft_s <= leftDut_s;
 fromsam_s <= samDut_s;
 fromright_s <= rightDut_s;
 
-fromeven_odd_s <= even_odd_s;
-fromfwd_inv_s <= fwd_inv_s;
+fromev_o_s <= ev_o_s;
+fromfd_iv_s <= fd_iv_s;
 
 end architecture;

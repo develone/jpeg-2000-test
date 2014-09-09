@@ -1,3 +1,23 @@
+09/09/14
+Was failing to pass the ev_o_r & fd_iv_r to FsmComb_p
+The 169 that was being displayed as 249 was checked using the sum_r returned value.
+?????????
+Do not know how passing the 3rd ram in the sum_r value also fixed the 3rd value in the 3rd value returned value.
+?????????
+##################################################################
+# This program tests the interface between the host PC and the FPGA 
+# on the XuLA board that has been programmed to act as a jpeg_lifting .
+##################################################################
+
+1 1
+127 169 166 169 172 0b1 0b1
+1 0
+127 169 166 169 172 0b1 0b0
+0 1
+127 169 166 169 172 0b0 0b1
+0 0
+127 169 166 169 172 0b0 0b0
+
 09/08/14
 This is what the SDram should be
 1000000000A000A300A600A900AC00AF00B2FF801B
