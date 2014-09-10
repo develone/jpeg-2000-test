@@ -73,7 +73,8 @@ architecture Behavioral of SdramSPInst is
   signal dataFromRam_s            : RamWord_t;  -- Data read from RAM.
   signal ev_o_x, ev_o_r, fd_iv_x, fd_iv_r                  : std_logic;
   signal left_r, right_r, sam_r ,left_x, right_x, sam_x : RamWord_t; 
-  signal result_r, result_x, result_s : std_logic_vector(15 downto 0);
+  --signal result_r, result_x, result_s : std_logic_vector(15 downto 0);
+  signal result_r, result_x : integer range -32768 to 32767;
   signal right_s                  : RamWord_t;
   signal left_s                   : RamWord_t;
   signal sam_s                    : RamWord_t;
@@ -85,11 +86,9 @@ architecture Behavioral of SdramSPInst is
   type state_t is (INIT, WRITE_DATA, READ_AND_SUM_DATA, DONE);  -- FSM states.
   signal state_r, state_x         : state_t   := INIT;  -- FSM starts off in init state.
   signal  sum_r, sum_x            : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
-  signal resultDut_s                 : std_logic_vector(15 downto 0); 
+    
   signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
-  signal leftDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
-  signal samDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
-  signal rightDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
+  
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
   signal inShiftDr_s : std_logic; -- True when bits shift btwn PC & FPGA.
   signal drck_s : std_logic; -- Bit shift clock.
@@ -199,6 +198,7 @@ UHostIoToJpeg : HostIoToDut
     sum_x       <= sum_r;
     dataToRam_x <= dataToRam_r;
     state_x     <= state_r;
+	 result_x <= result_r;
     left_x <= left_r;
 	 right_x <= right_r;
 	 sam_x <= sam_r;
@@ -208,7 +208,7 @@ UHostIoToJpeg : HostIoToDut
 
       when INIT =>                      -- Initialize the FSM.
         addr_x      <= MIN_ADDR_C;      -- Start writing data at this address.
-        dataToRam_x <= TO_UNSIGNED(160, RAM_WIDTH_C);  -- Initial value to write.
+        dataToRam_x <= TO_UNSIGNED(161, RAM_WIDTH_C);  -- Initial value to write.
 		   
         state_x     <= WRITE_DATA;      -- Go to next state.
 
@@ -222,7 +222,7 @@ UHostIoToJpeg : HostIoToDut
         else                 -- Else, the final address has been written ...
           addr_x  <= MIN_ADDR_C;        -- go back to the start, ...
           sum_x   <= 0;                 -- clear the sum-of-products, ...
-			 --result_x   <= 0;                 -- clear the sum-of-products, ...
+			 result_x   <= 0;                 -- clear the sum-of-products, ...
           state_x <= READ_AND_SUM_DATA;    -- and go to next state.
         end if;
 
@@ -232,7 +232,7 @@ UHostIoToJpeg : HostIoToDut
         elsif addr_r <= MAX_ADDR_C then  -- If not the final address ...
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
-          --sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
+          sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
 			 
 			 if addr_r = LEFT_ADDR_C then
 			    left_x <= dataFromRam_s;
@@ -240,21 +240,23 @@ UHostIoToJpeg : HostIoToDut
 			    sam_x <= dataFromRam_s ;
 			 elsif addr_r = RIGHT_ADDR_C then	 
 			    right_x <= dataFromRam_s;
-				 sum_x <= TO_INTEGER(dataFromRam_s);
-				 if std_logic(ev_o_x) = YES then
-					if std_logic(fd_iv_x) = YES then	
-						result_x <= std_logic_vector(sam_r - (shift_right(left_r, 1) + shift_right(right_r, 1)));
+				 --sum_x <= TO_INTEGER(dataFromRam_s);
+				 --sum_x <= TO_INTEGER(shift_right(((left_r + right_r) + 2), 2));
+				 --sum_x <= TO_INTEGER((left_r + right_r) + 2);
+				 if  (ev_o_x) = YES then
+					if  (fd_iv_x) = YES then	
+						result_x <= TO_INTEGER(sam_r - (shift_right(left_r, 1) + shift_right(right_r, 1)));
 					else
-						result_x <= std_logic_vector(sam_r + (shift_right(left_r, 1) + shift_right(right_r, 1)));
+						result_x <= TO_INTEGER(sam_r + (shift_right(left_r, 1) + shift_right(right_r, 1)));
 					end if;
 				else
-					if std_logic(fd_iv_x) = YES then
-						result_x <= std_logic_vector(sam_r + shift_right(((left_r + right_r) + 2), 2));
+					if  (fd_iv_x) = YES then
+						result_x <= TO_INTEGER(sam_r + shift_right(((left_r + right_r) + 2), 2));
 					else
-						result_x <= std_logic_vector(sam_r - shift_right(((left_r + right_r) + 2), 2));
+						result_x <= TO_INTEGER(sam_r - shift_right(((left_r + right_r) + 2), 2));
 					end if;	 
 				end if;
-				 --sum_x <= (samDut_s + shift_right(((leftDut_s + rightDut_s) + 2), 2));
+				  
 			 end if;
           addr_x <= addr_r + 1;         -- and go to next address.
           if addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...
@@ -287,27 +289,27 @@ UHostIoToJpeg : HostIoToDut
 		sam_r      <= sam_x;
 		result_r <= result_x;
 		ev_o_r <= ev_o_s;
+		--ev_o_r <= '1';
 		fd_iv_r <= ev_o_s;
+		--fd_iv_r <= '1';
     end if;
   end process;
 
   --*********************************************************************
   -- Send the summation to the HostIoToDut module and then on to the PC.
   --*********************************************************************
-  --sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
-  sumDut_s <= std_logic_vector(sam_r);
-  resultDut_s <= std_logic_vector(result_r);
-leftDut_s <= std_logic_vector(left_r);
-samDut_s <= std_logic_vector(sam_r);
-rightDut_s <= std_logic_vector(right_r);
-
-fromresult_s <= resultDut_s;
+  sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
+  --sumDut_s <= std_logic_vector(sam_r);
+  fromresult_s <= std_logic_vector(TO_SIGNED(result_r,16));
+ 
+fromleft_s <= std_logic_vector(left_r);
+fromsam_s <= std_logic_vector(sam_r);
+fromright_s <= std_logic_vector(right_r);
+ 
 fromsum_s <= sumDut_s;
-fromleft_s <= leftDut_s;
-fromsam_s <= samDut_s;
-fromright_s <= rightDut_s;
+ 
 
-fromev_o_s <= ev_o_s;
-fromfd_iv_s <= fd_iv_s;
+fromev_o_s <= ev_o_r;
+fromfd_iv_s <= fd_iv_r;
 
 end architecture;

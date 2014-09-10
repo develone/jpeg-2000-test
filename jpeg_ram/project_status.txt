@@ -1,3 +1,31 @@
+09/10/14
+alias fromresult_s is fromjpeg_s(15 downto 0); -- jpeg output.
+signal result_r, result_x : integer range -32768 to 32767;
+result_x <= TO_INTEGER(sam_r + shift_right(((left_r + right_r) + 2), 2));
+fromresult_s <= std_logic_vector(TO_SIGNED(result_r,16));
+
+##################################################################
+# This program tests the interface between the host PC and the FPGA 
+# on the XuLA board that has been programmed to act as a jpeg_lifting .
+##################################################################
+
+1 1
+212 1011 167 170 173 0b1 0b1
+1 0
+212 1011 167 170 173 0b1 0b1
+0 1
+212 1011 167 170 173 0b0 0b1
+0 0
+212 1011 167 170 173 0b0 0b1
+
+
+ISim: Failed to link the desing, WIN 8.1 32Bit
+Posted Mon, 2014-03-31 08:16 by Anonymous
+ERROR:Simulator:861 - Failed to link the design
+I can't simulate my design.
+My friends are using the 64Bit Version. On their PCs It works after the update, but my PC is just a 32 Bit.
+What can I do that it works?
+
 09/09/14
 Was failing to pass the ev_o_r & fd_iv_r to FsmComb_p
 The 169 that was being displayed as 249 was checked using the sum_r returned value.
