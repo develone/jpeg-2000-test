@@ -38,7 +38,9 @@ use work.pck_myhdl_09.all;
 --use UNISIM.VComponents.all;
 
 entity top_level_mod is
-    Port ( clk_i : in std_logic;
+    Port (fpgaClk_i : in    std_logic;  -- 12 MHz clock input from external clock source.
+          sdClk_o   : out   std_logic;  -- 100 MHz clock to SDRAM.
+			 sdClkFb_i : in    std_logic;  -- 100 MHz clock fed back into FPGA.
           blinker_o : out  STD_LOGIC);
 
 end top_level_mod;
@@ -54,43 +56,28 @@ architecture Behavioral of top_level_mod is
   alias toeven_odd_s is tojpeg_s(48);
   alias tofwd_inv_s is tojpeg_s(49);
 
-
+  signal clk_fast : std_logic;
+  signal clk_s                    : std_logic;  -- Internal 
+  
   signal inShiftDr_s : std_logic; -- True when bits shift btwn PC & FPGA.
   signal drck_s : std_logic; -- Bit shift clock.
   signal tdi_s : std_logic; -- Bits from host PC to the blinker.
   signal tdo_s : std_logic; -- Bits from blinker to the host PC.
---component jpeg is
---    port (
---        clk_fast: in std_logic;
---        left_s: in signed (15 downto 0);
---        right_s: in signed (15 downto 0);
---        sam_s: in signed (15 downto 0);
---        res_s: out signed (15 downto 0);
---		  even_odd_s : in std_logic ;
---		  fwd_inv_s : in std_logic
---    );
---end component;
+component jpeg is
+    port (
+        clk_fast: in std_logic;
+        left_s: in signed (15 downto 0);
+        right_s: in signed (15 downto 0);
+        sam_s: in signed (15 downto 0);
+        res_s: out signed (15 downto 0);
+		  even_odd_s : in std_logic ;
+		  fwd_inv_s : in std_logic
+    );
+end component;
 signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
 
 begin
---process(clk_fast) is
-process(clk_i) is
-	begin
-	   --if rising_edge(clk_fast) then
-		if rising_edge(clk_i) then
-			cnt_r <= cnt_r + 1;
-		end if;
-	end process;
 
---ujpeg: jpeg port map(
---        clk_fast => clk_fast,
---        left_s => signed(left_s),
---        right_s => signed(right_s),
---        sam_s => signed(sam_s),
---        res_s => signed_res_s,
---        even_odd_s => even_odd_s,
---		  fwd_inv_s => fwd_inv_s  
---		  );
 
 -------------------------------------------------------------------------
 -- JTAG entry point.
@@ -128,10 +115,19 @@ UHostIoToJpeg : HostIoToDut
   -- send the clock signal to the output pin of the FPGA and on to the
   -- SDRAM chip.)
   --*********************************************************************
-  --Clkgen_u1 : Clkgen
-    --generic map (BASE_FREQ_G => 12.0, CLK_MUL_G => 25, CLK_DIV_G => 3)
-    --port map(I               => fpgaClk_i, clkToLogic_o => sdClk_o);
-  --clk_s <= sdClkFb_i;                   -- SDRAM clock feeds back into FPGA.
+  Clkgen_u1 : Clkgen
+    generic map (BASE_FREQ_G => 12.0, CLK_MUL_G => 25, CLK_DIV_G => 3)
+    port map(I               => fpgaClk_i, clkToLogic_o => sdClk_o);
+	  
+  clk_fast <= sdClkFb_i;    -- SDRAM clock feeds back into FPGA.
+ process(clk_fast) is
+	begin
+	   if rising_edge(clk_fast) then
+	 
+			cnt_r <= cnt_r + 1;
+		end if;
+	end process; 
+  
 blinker_o <= cnt_r(22);
 end Behavioral;
 
