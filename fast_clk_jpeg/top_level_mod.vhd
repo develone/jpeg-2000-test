@@ -63,6 +63,14 @@ architecture Behavioral of top_level_mod is
   signal drck_s : std_logic; -- Bit shift clock.
   signal tdi_s : std_logic; -- Bits from host PC to the blinker.
   signal tdo_s : std_logic; -- Bits from blinker to the host PC.
+  signal  even_odd_s : std_logic;
+  signal  fwd_inv_s : std_logic;
+  alias even_odd_tmp_s is  tojpeg_s(48);
+  alias fwd_inv_tmp_s is tojpeg_s(49);
+  alias right_s is tojpeg_s(15 downto 0); -- jpeg's 1st operand.
+  alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
+  alias sam_s is tojpeg_s(47 downto 32); 
+  alias signed_res_s is signed(fromjpeg_s);
 component jpeg is
     port (
         clk_fast: in std_logic;
@@ -77,7 +85,19 @@ end component;
 signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
 
 begin
+  even_odd_s <= even_odd_tmp_s;
+  fwd_inv_s <= fwd_inv_tmp_s;
 
+ujpeg: jpeg 
+	port map(
+        clk_fast => clk_fast,
+        left_s => signed(left_s),
+        right_s => signed(right_s),
+        sam_s => signed(sam_s),
+        res_s => signed_res_s,
+        even_odd_s => even_odd_s,
+		  fwd_inv_s => fwd_inv_s  
+		  );
 
 -------------------------------------------------------------------------
 -- JTAG entry point.
