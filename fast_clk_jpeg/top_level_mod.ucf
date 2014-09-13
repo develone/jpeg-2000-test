@@ -1,0 +1,11 @@
+net fpgaClk_i	loc=a9; # 12MHz input clock
+NET sdClkFb_i      LOC = K12;
+
+net blinker_o loc=t7 | IOSTANDARD=LVTTL | DRIVE=24 | SLEW=SLOW ;  # Blinker output to LED.
+NET sdClk_o        LOC = K11;
+##############################
+# I/O Drive
+##############################
+NET fpgaClk_i      IOSTANDARD = LVTTL;
+NET sdClk_o        IOSTANDARD = LVTTL | SLEW=FAST | DRIVE=8;
+NET sdClkFb_i      IOSTANDARD = LVTTL;
