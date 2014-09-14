@@ -41,8 +41,17 @@ entity top_level_mod is
     Port (fpgaClk_i : in    std_logic;  -- 12 MHz clock input from external clock source.
           sdClk_o   : out   std_logic;  -- 100 MHz clock to SDRAM.
 			 sdClkFb_i : in    std_logic;  -- 100 MHz clock fed back into FPGA.
-          blinker_o : out  STD_LOGIC);
-
+          --blinker_o : out  STD_LOGIC;
+			 sdCke_o   : out   std_logic;  -- SDRAM clock enable.
+          sdCe_bo   : out   std_logic;  -- SDRAM chip-enable.
+          sdRas_bo  : out   std_logic;  -- SDRAM row address strobe.
+          sdCas_bo  : out   std_logic;  -- SDRAM column address strobe.
+          sdWe_bo   : out   std_logic;  -- SDRAM write-enable.
+          sdBs_o    : out   std_logic_vector(1 downto 0);  -- SDRAM bank-address.
+          sdAddr_o  : out   std_logic_vector(12 downto 0);  -- SDRAM address bus.
+          sdData_io : inout std_logic_vector(15 downto 0);    -- SDRAM data bus.
+          sdDqmh_o  : out   std_logic;  -- SDRAM high-byte databus qualifier.
+          sdDqml_o  : out   std_logic);  -- SDRAM low-byte databus qualifier.
 end top_level_mod;
 
 architecture Behavioral of top_level_mod is
@@ -83,7 +92,23 @@ component jpeg is
     );
 end component;
 signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
+--Signals constants needed by Sdram---------------------------------------  
+constant NO                     : std_logic := '0';
+constant YES                    : std_logic := '1';
+constant RAM_SIZE_C             : natural   := 8192;  -- Number of words in RAM.
+constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
+constant MIN_ADDR_C             : natural   := 0;  -- Process RAM from this address ...
+constant LEFT_ADDR_C             : natural   := 2;
+constant SAM_ADDR_C             : natural   := 3;
+constant RIGHT_ADDR_C             : natural   := 4;
+constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
+subtype RamWord_t is unsigned(RAM_WIDTH_C-1 downto 0);  -- RAM word type.
 
+ 
+signal wr_s                     : std_logic;  -- Write-enable control.
+signal rd_s                     : std_logic;  -- Read-enable control.
+signal done_s                   : std_logic;  -- SDRAM R/W operation done signal.
+--Signals constants needed by Sdram---------------------------------------
 begin
   even_odd_s <= even_odd_tmp_s;
   fwd_inv_s <= fwd_inv_tmp_s;
@@ -140,6 +165,41 @@ UHostIoToJpeg : HostIoToDut
     port map(I               => fpgaClk_i, clkToLogic_o => sdClk_o);
 	  
   clk_fast <= sdClkFb_i;    -- SDRAM clock feeds back into FPGA.
+  --*********************************************************************
+  -- Instantiate the SDRAM controller that connects to the FSM
+  -- and interfaces to the external SDRAM chip.
+  --*********************************************************************
+  SdramCntl_u0 : SdramCntl
+    generic map(
+      FREQ_G       => 100.0,  -- Use clock freq. to compute timing parameters.
+      DATA_WIDTH_G => RAM_WIDTH_C       -- Width of data words.
+      )
+    port map(
+      clk_i     => clk_s,
+      -- FSM side.
+      rd_i      => rd_s,
+      wr_i      => wr_s,
+      done_o    => done_s,
+      --addr_i    => addrSdram_s,
+      --data_i    => dataToSdram_s,
+      --data_o    => dataFromSdram_s,
+      -- SDRAM side.
+      sdCke_o   => sdCke_o, -- SDRAM clock-enable pin is connected on the XuLA2.
+      sdCe_bo   => sdCe_bo, -- SDRAM chip-enable is connected on the XuLA2.
+      sdRas_bo  => sdRas_bo,
+      sdCas_bo  => sdCas_bo,
+      sdWe_bo   => sdWe_bo,
+      sdBs_o    => sdBs_o, -- Both SDRAM bank selects are connected on the XuLA2.
+      sdAddr_o  => sdAddr_o,
+      sdData_io => sdData_io,
+      sdDqmh_o  => sdDqmh_o, -- SDRAM high-byte databus qualifier is connected on the XuLA2.
+      sdDqml_o  => sdDqml_o  -- SDRAM low-byte databus qualifier is connected on the XuLA2.
+      );
+
+  -- Connect the SDRAM controller signals to the FSM signals.
+  --dataToSdram_s <= std_logic_vector(dataToRam_r);
+  --dataFromRam_s <= RamWord_t(dataFromSdram_s);
+  --addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length))
  process(clk_fast) is
 	begin
 	   if rising_edge(clk_fast) then
@@ -148,6 +208,6 @@ UHostIoToJpeg : HostIoToDut
 		end if;
 	end process; 
   
-blinker_o <= cnt_r(22);
+--blinker_o <= cnt_r(22);
 end Behavioral;
 

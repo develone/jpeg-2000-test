@@ -151,7 +151,7 @@
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="83"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="9"/>
     </file>
-    <file xil_pn:name="C:/Users/vidal/Documents/GitHub/jpeg-2000-test/fast_clk_jpeg/top_level_mod.ucf" xil_pn:type="FILE_UCF">
+    <file xil_pn:name="C:/Users/vidal/Documents/GitHub/jpeg-2000-test/fast_clk_jpeg/XuLA2.ucf" xil_pn:type="FILE_UCF">
       <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
     </file>
   </files>
