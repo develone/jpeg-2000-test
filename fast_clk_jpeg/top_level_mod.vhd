@@ -59,9 +59,13 @@ architecture Behavioral of top_level_mod is
   --    80          70         60        50        40          30        20        10         0
   --   1 0 9876543210987654 3210987654321098 7654321098765432 1098765432109876 5432109876543210
   --                                                                           5432109876543210
-  signal fromjpeg_s : std_logic_vector(15 downto 0); -- From jpeg to PC.
+  signal fromjpeg_s : std_logic_vector(31 downto 0); -- From jpeg to PC.
+  signal fromram_s : std_logic_vector(15 downto 0); -- From ram to PC.
+  alias fromsum_s is fromjpeg_s(31 downto 16); -- sum_r.
+  alias fromresult_s is fromjpeg_s(15 downto 0); -- jpeg output.
   --                                     9 8 7654321098765432 1098765432109876 5432109876543210
   signal tojpeg_s : std_logic_vector(49 downto 0); -- From PC to jpeg.
+  signal toram_s : std_logic_vector(15 downto 0); -- From PC to jpeg.
   alias toeven_odd_s is tojpeg_s(48);
   alias tofwd_inv_s is tojpeg_s(49);
 
@@ -79,7 +83,13 @@ architecture Behavioral of top_level_mod is
   alias right_s is tojpeg_s(15 downto 0); -- jpeg's 1st operand.
   alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
   alias sam_s is tojpeg_s(47 downto 32); 
-  alias signed_res_s is signed(fromjpeg_s);
+  alias signed_res_s is signed(fromresult_s);
+  --alias fromsum_s is fromjpeg_s(31 downto 16); -- jpeg output.
+
+ 
+  
+  
+
 component jpeg is
     port (
         clk_fast: in std_logic;
@@ -104,11 +114,26 @@ constant RIGHT_ADDR_C             : natural   := 4;
 constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
 subtype RamWord_t is unsigned(RAM_WIDTH_C-1 downto 0);  -- RAM word type.
 
- 
+signal addrSdram_s              : std_logic_vector(23 downto 0);  -- Address.
+signal dataToSdram_s            : std_logic_vector(sdData_io'range);  -- Data.
+signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  -- 
+signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
+signal dataFromRam_s            : RamWord_t;  -- Data read from RAM.
+signal addr_s                   : std_logic_vector(22 downto 0); 
+
+signal addr_r, addr_x           : natural range 0 to RAM_SIZE_C-1;  -- RAM address.
+
 signal wr_s                     : std_logic;  -- Write-enable control.
 signal rd_s                     : std_logic;  -- Read-enable control.
 signal done_s                   : std_logic;  -- SDRAM R/W operation done signal.
 --Signals constants needed by Sdram---------------------------------------
+-- FSM state.
+type state_t is (INIT, WRITE_DATA, READ_AND_SUM_DATA, DONE);  -- FSM states.
+signal state_r, state_x         : state_t   := INIT;  -- FSM starts off in init state.
+signal sum_r, sum_x             : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
+signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
+signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
+
 begin
   even_odd_s <= even_odd_tmp_s;
   fwd_inv_s <= fwd_inv_tmp_s;
@@ -151,6 +176,20 @@ UHostIoToJpeg : HostIoToDut
     vectorToDut_o => tojpeg_s, -- From PC to jpeg sam left right.
     vectorFromDut_i => fromjpeg_s -- From jpeg to PC.
     );
+  -- This is the shift-register module between Ram and JTAG entry point.
+--UHostIoToRam : HostIoToRam
+--  generic map (ID_G => "00000100") -- The identifier used by the PC.
+--    port map (
+--   
+--    -- Connections to ram
+--	 wr_o => wr_s,
+--	 clk_i => clk_fast,
+--	 rd_o => rd_s,
+--	 addr_o => addr_s,
+--    dataFromHost_o => toram_s, -- From PC to jpeg sam left right.
+--    dataToHost_i => fromram_s, -- From jpeg to PC.
+--	 done_i => done_s -- True when memory read/write operation is done.
+--    );  
 	 
 --*********************************************************************
   -- Generate a 100 MHz clock from the 12 MHz input clock and send it out
@@ -180,9 +219,9 @@ UHostIoToJpeg : HostIoToDut
       rd_i      => rd_s,
       wr_i      => wr_s,
       done_o    => done_s,
-      --addr_i    => addrSdram_s,
-      --data_i    => dataToSdram_s,
-      --data_o    => dataFromSdram_s,
+      addr_i    => addrSdram_s,
+      data_i    => dataToSdram_s,
+      data_o    => dataFromSdram_s,
       -- SDRAM side.
       sdCke_o   => sdCke_o, -- SDRAM clock-enable pin is connected on the XuLA2.
       sdCe_bo   => sdCe_bo, -- SDRAM chip-enable is connected on the XuLA2.
@@ -197,9 +236,9 @@ UHostIoToJpeg : HostIoToDut
       );
 
   -- Connect the SDRAM controller signals to the FSM signals.
-  --dataToSdram_s <= std_logic_vector(dataToRam_r);
-  --dataFromRam_s <= RamWord_t(dataFromSdram_s);
-  --addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length))
+  dataToSdram_s <= std_logic_vector(dataToRam_r);
+  dataFromRam_s <= RamWord_t(dataFromSdram_s);
+  addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
  process(clk_fast) is
 	begin
 	   if rising_edge(clk_fast) then
@@ -209,5 +248,88 @@ UHostIoToJpeg : HostIoToDut
 	end process; 
   
 --blinker_o <= cnt_r(22);
+
+--*********************************************************************
+  -- State machine that initializes RAM and then reads RAM to compute
+  -- the sum of products of the RAM address and data. This section
+  -- is combinatorial logic that sets the control bits for each state
+  -- and determines the next state.
+  --*********************************************************************
+  FsmComb_p : process(state_r, addr_r, dataToRam_r,
+                      sum_r, dataFromRam_s, done_s)
+  begin
+    -- Disable RAM reads and writes by default.
+    rd_s        <= NO;                  -- Don't write to RAM.
+    wr_s        <= NO;                  -- Don't read from RAM.
+    -- Load the registers with their current values by default.
+    addr_x      <= addr_r;
+    sum_x       <= sum_r;
+    dataToRam_x <= dataToRam_r;
+    state_x     <= state_r;
+
+    case state_r is
+
+      when INIT =>                      -- Initialize the FSM.
+        addr_x      <= MIN_ADDR_C;      -- Start writing data at this address.
+        dataToRam_x <= TO_UNSIGNED(1, RAM_WIDTH_C);  -- Initial value to write.
+        state_x     <= WRITE_DATA;      -- Go to next state.
+
+      when WRITE_DATA =>                -- Load RAM with values.
+        if done_s = NO then  -- While current RAM write is not complete ...
+		   
+          wr_s <= YES;                  -- keep write-enable active.
+        elsif addr_r < MAX_ADDR_C then  -- If haven't reach final address ...
+          addr_x      <= addr_r + 1;    -- go to next address ...
+          dataToRam_x <= dataToRam_r ;  -- and write this value.
+        else                 -- Else, the final address has been written ...
+          addr_x  <= MIN_ADDR_C;        -- go back to the start, ...
+          sum_x   <= 0;                 -- clear the sum-of-products, ...
+          state_x <= READ_AND_SUM_DATA;    -- and go to next state.
+        end if;
+
+      when READ_AND_SUM_DATA =>  -- Read RAM and sum address*data products
+        if done_s = NO then      -- While current RAM read is not complete ...
+          rd_s <= YES;                  -- keep read-enable active.
+        elsif addr_r <= MAX_ADDR_C then  -- If not the final address ...
+          -- add product of previous RAM address and data read
+          -- from that address to the summation ...
+          sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
+			 
+          addr_x <= addr_r + 1;         -- and go to next address.
+          if addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...
+            state_x <= DONE;            -- so go to the next state.
+          end if;
+        end if;
+
+      when DONE =>                      -- Summation complete ...
+        null;                           -- so wait here and do nothing.
+      when others =>                    -- Erroneous state ...
+        state_x <= INIT;                -- so re-run the entire process.
+
+    end case;
+
+  end process;
+
+  --*********************************************************************
+  -- Update the FSM's registers with their next values as computed by
+  -- the FSM's combinatorial section.
+  --*********************************************************************
+  FsmUpdate_p : process(clk_s)
+  begin
+    if rising_edge(clk_s) then
+      addr_r      <= addr_x;
+      dataToRam_r <= dataToRam_x;
+      state_r     <= state_x;
+      sum_r       <= sum_x;
+    end if;
+  end process;
+
+  --*********************************************************************
+  -- Send the summation to the HostIoToDut module and then on to the PC.
+  --*********************************************************************
+  sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
+   
+fromsum_s <= sumDut_s;
+
 end Behavioral;
 
