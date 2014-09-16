@@ -28,6 +28,8 @@ use XESS.SdramCntlPckg.all;  -- For the SDRAM controller module.
 use XESS.HostIoPckg.all;     -- For the FPGA<=>PC transfer link module.
 
 use work.pck_myhdl_09.all;
+library UNISIM;
+use UNISIM.VComponents.all;
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --use IEEE.NUMERIC_STD.ALL;
@@ -119,6 +121,9 @@ signal dataToSdram_s            : std_logic_vector(sdData_io'range);  -- Data.
 signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  -- 
 signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
 signal dataFromRam_s            : RamWord_t;  -- Data read from RAM.
+signal left_r, sam_r, right_r, left_x, sam_x, right_x    : RamWord_t;  
+-- Data read from RAM for left, sam, and right.
+--signal addr needed for HostIoToRam not for HostIoToDut
 signal addr_s                   : std_logic_vector(22 downto 0); 
 
 signal addr_r, addr_x           : natural range 0 to RAM_SIZE_C-1;  -- RAM address.
@@ -204,6 +209,7 @@ UHostIoToJpeg : HostIoToDut
     port map(I               => fpgaClk_i, clkToLogic_o => sdClk_o);
 	  
   clk_fast <= sdClkFb_i;    -- SDRAM clock feeds back into FPGA.
+  clk_s <= sdClkFb_i;
   --*********************************************************************
   -- Instantiate the SDRAM controller that connects to the FSM
   -- and interfaces to the external SDRAM chip.
@@ -256,7 +262,7 @@ UHostIoToJpeg : HostIoToDut
   -- and determines the next state.
   --*********************************************************************
   FsmComb_p : process(state_r, addr_r, dataToRam_r,
-                      sum_r, dataFromRam_s, done_s)
+                      sum_r, dataFromRam_s, done_s, left_r, sam_r, right_r)
   begin
     -- Disable RAM reads and writes by default.
     rd_s        <= NO;                  -- Don't write to RAM.
@@ -266,12 +272,15 @@ UHostIoToJpeg : HostIoToDut
     sum_x       <= sum_r;
     dataToRam_x <= dataToRam_r;
     state_x     <= state_r;
-
+    left_x       <= left_r;
+	 sam_x       <= sam_r;
+	 right_x       <= right_r;
+	 
     case state_r is
 
       when INIT =>                      -- Initialize the FSM.
         addr_x      <= MIN_ADDR_C;      -- Start writing data at this address.
-        dataToRam_x <= TO_UNSIGNED(1, RAM_WIDTH_C);  -- Initial value to write.
+        dataToRam_x <= TO_UNSIGNED(161, RAM_WIDTH_C);  -- Initial value to write.
         state_x     <= WRITE_DATA;      -- Go to next state.
 
       when WRITE_DATA =>                -- Load RAM with values.
@@ -280,7 +289,7 @@ UHostIoToJpeg : HostIoToDut
           wr_s <= YES;                  -- keep write-enable active.
         elsif addr_r < MAX_ADDR_C then  -- If haven't reach final address ...
           addr_x      <= addr_r + 1;    -- go to next address ...
-          dataToRam_x <= dataToRam_r ;  -- and write this value.
+          dataToRam_x <= dataToRam_r + 3 ;  -- and write this value.
         else                 -- Else, the final address has been written ...
           addr_x  <= MIN_ADDR_C;        -- go back to the start, ...
           sum_x   <= 0;                 -- clear the sum-of-products, ...
@@ -294,7 +303,13 @@ UHostIoToJpeg : HostIoToDut
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
-			 
+			        if addr_r = LEFT_ADDR_C then
+					      left_x <= dataFromRam_s;
+					  elsif addr_r = SAM_ADDR_C then	
+                     sam_x <= dataFromRam_s;	
+                 elsif addr_r = RIGHT_ADDR_C then	
+                     right_x <= dataFromRam_s;
+                 end if;							
           addr_x <= addr_r + 1;         -- and go to next address.
           if addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...
             state_x <= DONE;            -- so go to the next state.
@@ -321,14 +336,17 @@ UHostIoToJpeg : HostIoToDut
       dataToRam_r <= dataToRam_x;
       state_r     <= state_x;
       sum_r       <= sum_x;
+		sam_r       <= sam_x;
+		left_r      <= left_x;
+		right_x     <= right_x;
     end if;
   end process;
 
   --*********************************************************************
   -- Send the summation to the HostIoToDut module and then on to the PC.
   --*********************************************************************
-  sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
-   
+  --sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
+  sumDut_s <= std_logic_vector((sam_r));
 fromsum_s <= sumDut_s;
 
 end Behavioral;
