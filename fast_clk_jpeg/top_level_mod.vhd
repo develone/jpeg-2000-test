@@ -73,7 +73,9 @@ architecture Behavioral of top_level_mod is
   signal toram_s : std_logic_vector(15 downto 0); -- From PC to jpeg.
   alias toeven_odd_s is tojpeg_s(48);
   alias tofwd_inv_s is tojpeg_s(49);
-
+  signal left_s : std_logic_vector(15 downto 0);
+  signal sam_s : std_logic_vector(15 downto 0);
+  signal right_s : std_logic_vector(15 downto 0);
   signal clk_fast : std_logic;
   signal clk_s                    : std_logic;  -- Internal 
   
@@ -85,9 +87,9 @@ architecture Behavioral of top_level_mod is
   signal  fwd_inv_s : std_logic;
   alias even_odd_tmp_s is  tojpeg_s(48);
   alias fwd_inv_tmp_s is tojpeg_s(49);
-  alias right_s is tojpeg_s(15 downto 0); -- jpeg's 1st operand.
-  alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
-  alias sam_s is tojpeg_s(47 downto 32); 
+  --alias right_s is tojpeg_s(15 downto 0); -- jpeg's 1st operand.
+  --alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
+  --alias sam_s is tojpeg_s(47 downto 32); 
   alias signed_res_s is signed(fromresult_s);
   --alias fromsum_s is fromjpeg_s(31 downto 16); -- jpeg output.
 
@@ -354,10 +356,13 @@ UHostIoToJpeg : HostIoToDut
   sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
   leftDut_s <= std_logic_vector((left_r));
   samDut_s <= std_logic_vector((sam_r));
-  --rightDut_s <= std_logic_vector((right_r));
+  rightDut_s <= std_logic_vector((right_r));
 fromsum_s <= sumDut_s;
 fromleft_s <= leftDut_s;
+left_s <= leftDut_s;
 fromsam_s <= samDut_s;
+sam_s <= samDut_s;
 --fromright_s <= rightDut_s;
+right_s <= rightDut_s;
 end Behavioral;
 
