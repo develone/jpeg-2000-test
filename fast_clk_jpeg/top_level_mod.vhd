@@ -61,9 +61,12 @@ architecture Behavioral of top_level_mod is
   --    80          70         60        50        40          30        20        10         0
   --   1 0 9876543210987654 3210987654321098 7654321098765432 1098765432109876 5432109876543210
   --                                                                           5432109876543210
-  signal fromjpeg_s : std_logic_vector(31 downto 0); -- From jpeg to PC.
-  signal fromram_s : std_logic_vector(15 downto 0); -- From ram to PC.
+  signal fromjpeg_s : std_logic_vector(79 downto 0); -- From jpeg to PC.
+  --signal fromram_s : std_logic_vector(15 downto 0); -- From ram to PC.
   alias fromsum_s is fromjpeg_s(31 downto 16); -- sum_r.
+  alias fromleft_s is fromjpeg_s(47 downto 32); -- left_r.
+  alias fromsam_s is fromjpeg_s(63 downto 48); -- sam_r.
+  alias fromright_s is fromjpeg_s(79 downto 64); -- right_r.
   alias fromresult_s is fromjpeg_s(15 downto 0); -- jpeg output.
   --                                     9 8 7654321098765432 1098765432109876 5432109876543210
   signal tojpeg_s : std_logic_vector(49 downto 0); -- From PC to jpeg.
@@ -111,9 +114,9 @@ constant RAM_SIZE_C             : natural   := 8192;  -- Number of words in RAM.
 constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
 constant MIN_ADDR_C             : natural   := 0;  -- Process RAM from this address ...
 constant LEFT_ADDR_C             : natural   := 2;
-constant SAM_ADDR_C             : natural   := 3;
+constant SAM_ADDR_C             : natural   := 61;
 constant RIGHT_ADDR_C             : natural   := 4;
-constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
+constant MAX_ADDR_C             : natural   := 64;  -- ... to this address.
 subtype RamWord_t is unsigned(RAM_WIDTH_C-1 downto 0);  -- RAM word type.
 
 signal addrSdram_s              : std_logic_vector(23 downto 0);  -- Address.
@@ -137,6 +140,9 @@ type state_t is (INIT, WRITE_DATA, READ_AND_SUM_DATA, DONE);  -- FSM states.
 signal state_r, state_x         : state_t   := INIT;  -- FSM starts off in init state.
 signal sum_r, sum_x             : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
 signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
+signal leftDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
+signal samDut_s                 : std_logic_vector(15 downto 0);  -- Send sam back to PC.
+signal rightDut_s                 : std_logic_vector(15 downto 0);  -- Send right back to PC.
 signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
 
 begin
@@ -303,11 +309,11 @@ UHostIoToJpeg : HostIoToDut
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
-			        if addr_r = LEFT_ADDR_C then
+			        if addr_r = (SAM_ADDR_C - 1) then
 					      left_x <= dataFromRam_s;
 					  elsif addr_r = SAM_ADDR_C then	
                      sam_x <= dataFromRam_s;	
-                 elsif addr_r = RIGHT_ADDR_C then	
+                 elsif addr_r = (SAM_ADDR_C + 1) then	
                      right_x <= dataFromRam_s;
                  end if;							
           addr_x <= addr_r + 1;         -- and go to next address.
@@ -338,16 +344,20 @@ UHostIoToJpeg : HostIoToDut
       sum_r       <= sum_x;
 		sam_r       <= sam_x;
 		left_r      <= left_x;
-		right_x     <= right_x;
+		right_r     <= right_x;
     end if;
   end process;
 
   --*********************************************************************
   -- Send the summation to the HostIoToDut module and then on to the PC.
   --*********************************************************************
-  --sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
-  sumDut_s <= std_logic_vector((sam_r));
+  sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
+  leftDut_s <= std_logic_vector((left_r));
+  samDut_s <= std_logic_vector((sam_r));
+  --rightDut_s <= std_logic_vector((right_r));
 fromsum_s <= sumDut_s;
-
+fromleft_s <= leftDut_s;
+fromsam_s <= samDut_s;
+--fromright_s <= rightDut_s;
 end Behavioral;
 
