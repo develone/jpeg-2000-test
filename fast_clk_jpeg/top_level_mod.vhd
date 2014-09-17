@@ -61,18 +61,27 @@ architecture Behavioral of top_level_mod is
   --    80          70         60        50        40          30        20        10         0
   --   1 0 9876543210987654 3210987654321098 7654321098765432 1098765432109876 5432109876543210
   --                                                                           5432109876543210
+  
+  signal x : std_logic_vector(15 downto 0);  
   signal fromjpeg_s : std_logic_vector(79 downto 0); -- From jpeg to PC.
-  --signal fromram_s : std_logic_vector(15 downto 0); -- From ram to PC.
+  alias fromresult_s is fromjpeg_s(15 downto 0); -- jpeg output.
   alias fromsum_s is fromjpeg_s(31 downto 16); -- sum_r.
   alias fromleft_s is fromjpeg_s(47 downto 32); -- left_r.
   alias fromsam_s is fromjpeg_s(63 downto 48); -- sam_r.
   alias fromright_s is fromjpeg_s(79 downto 64); -- right_r.
-  alias fromresult_s is fromjpeg_s(15 downto 0); -- jpeg output.
-  --                                     9 8 7654321098765432 1098765432109876 5432109876543210
-  signal tojpeg_s : std_logic_vector(49 downto 0); -- From PC to jpeg.
+  
+  
+  signal  even_odd_s : std_logic;
+  signal  fwd_inv_s : std_logic;
+  
+  signal tojpeg_s : std_logic_vector(15 downto 0); -- From PC to jpeg.
+  alias even_odd_tmp_s is  tojpeg_s(14);
+  alias fwd_inv_tmp_s is tojpeg_s(15);  
+  
+  --signal fromram_s : std_logic_vector(15 downto 0); -- From ram to PC.
   signal toram_s : std_logic_vector(15 downto 0); -- From PC to jpeg.
-  alias toeven_odd_s is tojpeg_s(48);
-  alias tofwd_inv_s is tojpeg_s(49);
+   
+  --alias sam_addr_s is tojpeg_s (13 downto 0);
   signal left_s : std_logic_vector(15 downto 0);
   signal sam_s : std_logic_vector(15 downto 0);
   signal right_s : std_logic_vector(15 downto 0);
@@ -83,10 +92,8 @@ architecture Behavioral of top_level_mod is
   signal drck_s : std_logic; -- Bit shift clock.
   signal tdi_s : std_logic; -- Bits from host PC to the blinker.
   signal tdo_s : std_logic; -- Bits from blinker to the host PC.
-  signal  even_odd_s : std_logic;
-  signal  fwd_inv_s : std_logic;
-  alias even_odd_tmp_s is  tojpeg_s(48);
-  alias fwd_inv_tmp_s is tojpeg_s(49);
+
+  
   --alias right_s is tojpeg_s(15 downto 0); -- jpeg's 1st operand.
   --alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
   --alias sam_s is tojpeg_s(47 downto 32); 
@@ -112,33 +119,35 @@ signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
 --Signals constants needed by Sdram---------------------------------------  
 constant NO                     : std_logic := '0';
 constant YES                    : std_logic := '1';
-constant RAM_SIZE_C             : natural   := 8192;  -- Number of words in RAM.
+constant ROW_C             : natural   := 255;  -- Number of words in RAM.
+constant RAM_SIZE_C             : natural   := 16384;  -- Number of words in RAM.
 constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
 constant MIN_ADDR_C             : natural   := 0;  -- Process RAM from this address ...
-constant LEFT_ADDR_C             : natural   := 2;
-constant SAM_ADDR_C             : natural   := 61;
-constant RIGHT_ADDR_C             : natural   := 4;
-constant MAX_ADDR_C             : natural   := 64;  -- ... to this address.
+constant MAX_ADDR_C             : natural   := 8191;  -- ... to this address.
+constant MIN_ADDRJPEG_C             : natural   := 8192;  -- Process RAM from this address ...
+constant MAX_ADDRJPEG_C             : natural   := 16384;  -- ... to this address.
 subtype RamWord_t is unsigned(RAM_WIDTH_C-1 downto 0);  -- RAM word type.
 
 signal addrSdram_s              : std_logic_vector(23 downto 0);  -- Address.
 signal dataToSdram_s            : std_logic_vector(sdData_io'range);  -- Data.
 signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  -- 
 signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
+signal dataToRam_res_r, dataToRam_res_x : RamWord_t;  -- Data to write to RAM.
 signal dataFromRam_s            : RamWord_t;  -- Data read from RAM.
 signal left_r, sam_r, right_r, left_x, sam_x, right_x    : RamWord_t;  
 -- Data read from RAM for left, sam, and right.
 --signal addr needed for HostIoToRam not for HostIoToDut
 signal addr_s                   : std_logic_vector(22 downto 0); 
-
-signal addr_r, addr_x           : natural range 0 to RAM_SIZE_C-1;  -- RAM address.
-
+signal addrjpeg_r, addrjpeg_x           : natural range 8192 to RAM_SIZE_C-1;  -- RAM address.
+signal addr_r, addr_x           : natural range 0 to (RAM_SIZE_C-1)/2;  -- RAM address.
+signal sam_addr_r, sam_addr_x    :  natural range 0 to RAM_SIZE_C-1; 
+signal sam_addr_stor_r, sam_addr_stor_x    :  natural range 0 to RAM_SIZE_C-1; 
 signal wr_s                     : std_logic;  -- Write-enable control.
 signal rd_s                     : std_logic;  -- Read-enable control.
 signal done_s                   : std_logic;  -- SDRAM R/W operation done signal.
 --Signals constants needed by Sdram---------------------------------------
 -- FSM state.
-type state_t is (INIT, WRITE_DATA, READ_AND_SUM_DATA, DONE);  -- FSM states.
+type state_t is (INIT, READ_AND_SUM_DATA, WRITE_DATA, DONE);  -- FSM states.
 signal state_r, state_x         : state_t   := INIT;  -- FSM starts off in init state.
 signal sum_r, sum_x             : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
 signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
@@ -148,11 +157,13 @@ signal rightDut_s                 : std_logic_vector(15 downto 0);  -- Send righ
 signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
 
 begin
+  
   even_odd_s <= even_odd_tmp_s;
   fwd_inv_s <= fwd_inv_tmp_s;
-
+  --sam_addr_r <= conv_integer(sam_addr_s);
+    
 ujpeg: jpeg 
-	port map(
+	port map( 
         clk_fast => clk_fast,
         left_s => signed(left_s),
         right_s => signed(right_s),
@@ -270,7 +281,8 @@ UHostIoToJpeg : HostIoToDut
   -- and determines the next state.
   --*********************************************************************
   FsmComb_p : process(state_r, addr_r, dataToRam_r,
-                      sum_r, dataFromRam_s, done_s, left_r, sam_r, right_r)
+                      sum_r, dataFromRam_s, done_s, left_r, sam_r, right_r, sam_addr_r,
+							 dataToRam_res_r, addrjpeg_r)
   begin
     -- Disable RAM reads and writes by default.
     rd_s        <= NO;                  -- Don't write to RAM.
@@ -283,47 +295,61 @@ UHostIoToJpeg : HostIoToDut
     left_x       <= left_r;
 	 sam_x       <= sam_r;
 	 right_x       <= right_r;
-	 
+	 sam_addr_x    <= sam_addr_r;
+    
+    dataToRam_res_x 	  <=  dataToRam_res_r;
+	 addrjpeg_x      <= addrjpeg_r;
     case state_r is
 
       when INIT =>                      -- Initialize the FSM.
-        addr_x      <= MIN_ADDR_C;      -- Start writing data at this address.
-        dataToRam_x <= TO_UNSIGNED(161, RAM_WIDTH_C);  -- Initial value to write.
-        state_x     <= WRITE_DATA;      -- Go to next state.
+       
+        
+		  dataToRam_res_x <= TO_UNSIGNED(1, RAM_WIDTH_C);
+		  sam_addr_x  <=   1;
+		  addrjpeg_x  <=   MIN_ADDRJPEG_C + 1;
+        --state_x     <= WRITE_DATA;      -- Go to next state.
+        state_x <= READ_AND_SUM_DATA;    -- and go to next state.
 
-      when WRITE_DATA =>                -- Load RAM with values.
-        if done_s = NO then  -- While current RAM write is not complete ...
-		   
-          wr_s <= YES;                  -- keep write-enable active.
-        elsif addr_r < MAX_ADDR_C then  -- If haven't reach final address ...
-          addr_x      <= addr_r + 1;    -- go to next address ...
-          dataToRam_x <= dataToRam_r + 3 ;  -- and write this value.
-        else                 -- Else, the final address has been written ...
-          addr_x  <= MIN_ADDR_C;        -- go back to the start, ...
-          sum_x   <= 0;                 -- clear the sum-of-products, ...
-          state_x <= READ_AND_SUM_DATA;    -- and go to next state.
-        end if;
 
       when READ_AND_SUM_DATA =>  -- Read RAM and sum address*data products
         if done_s = NO then      -- While current RAM read is not complete ...
           rd_s <= YES;                  -- keep read-enable active.
-        elsif addr_r <= MAX_ADDR_C then  -- If not the final address ...
+        elsif addr_r <= ROW_C-2 then  -- If not the end of row ...
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
-			        if addr_r = (SAM_ADDR_C - 1) then
-					      left_x <= dataFromRam_s;
-					  elsif addr_r = SAM_ADDR_C then	
-                     sam_x <= dataFromRam_s;	
-                 elsif addr_r = (SAM_ADDR_C + 1) then	
-                     right_x <= dataFromRam_s;
-                 end if;							
+			 if addr_r = (sam_addr_r - 1) then
+			      left_x <= dataFromRam_s;
+			 elsif addr_r = sam_addr_r then	
+                sam_x <= dataFromRam_s;	
+          elsif addr_r = (sam_addr_r + 1) then	
+                right_x <= dataFromRam_s;
+			 end if;							
           addr_x <= addr_r + 1;         -- and go to next address.
-          if addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...
-            state_x <= DONE;            -- so go to the next state.
-          end if;
-        end if;
-
+          sam_addr_x <= sam_addr_r + 2;          
+		 elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...
+               state_x     <= DONE;      -- Go to next state.
+		 else 	
+					state_x     <= WRITE_DATA;      -- Go to next state.
+       end if;
+		  
+      when WRITE_DATA =>                -- Load RAM with values.
+        if done_s = NO then  -- While current RAM write is not complete ...
+		   
+          wr_s <= YES;                  -- keep write-enable active.
+        elsif addrjpeg_r <=  (MAX_ADDRJPEG_C + (ROW_C - 2)) then  -- If haven't reach final address ...
+		      
+			  addrjpeg_x <= addrjpeg_r;
+			  dataToRam_res_x <= dataToRam_res_r;
+			  addrjpeg_x <= addrjpeg_r + 2;
+          --addr_x      <= addr_r + 1;    -- go to next address ...
+          --dataToRam_x <= dataToRam_r + 3 ;  -- and write this value.
+        else                 -- Else, the final address has been written ...
+          addrjpeg_x  <= MIN_ADDRJPEG_C;        -- go back to the start, ...
+           
+          --state_x <= READ_AND_SUM_DATA;    -- and go to next state.
+			 state_x <= DONE;            -- so go to the next state.        
+		  end if;
       when DONE =>                      -- Summation complete ...
         null;                           -- so wait here and do nothing.
       when others =>                    -- Erroneous state ...
@@ -347,22 +373,27 @@ UHostIoToJpeg : HostIoToDut
 		sam_r       <= sam_x;
 		left_r      <= left_x;
 		right_r     <= right_x;
+		sam_addr_r  <= sam_addr_x; 
+		
+		dataToRam_res_r  <= dataToRam_res_x;
+		addrjpeg_r      <= addrjpeg_x;
     end if;
   end process;
 
   --*********************************************************************
-  -- Send the summation to the HostIoToDut module and then on to the PC.
+  -- Send the summation, left, sam, right from ram to the HostIoToDut module and then on to the PC.
   --*********************************************************************
   sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
   leftDut_s <= std_logic_vector((left_r));
   samDut_s <= std_logic_vector((sam_r));
   rightDut_s <= std_logic_vector((right_r));
-fromsum_s <= sumDut_s;
-fromleft_s <= leftDut_s;
-left_s <= leftDut_s;
-fromsam_s <= samDut_s;
-sam_s <= samDut_s;
---fromright_s <= rightDut_s;
-right_s <= rightDut_s;
+  fromsum_s <= sumDut_s; --back to PC
+  fromleft_s <= leftDut_s; --back to PC
+  left_s <= leftDut_s; --to jpeg
+  fromsam_s <= samDut_s; --back to PC 
+  sam_s <= samDut_s; --to jpeg
+  fromright_s <= rightDut_s; --back to PC
+  right_s <= rightDut_s; --to jpeg 
+  --dataToRam_res_r <= TO_UNSIGNED((fromresult_s),RAM_WIDTH_C);
 end Behavioral;
 
