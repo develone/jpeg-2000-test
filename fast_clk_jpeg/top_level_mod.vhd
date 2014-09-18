@@ -323,10 +323,12 @@ UHostIoToJpeg : HostIoToDut
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
 			 if addr_r = (sam_addr_r - 1) then
 			      left_x <= dataFromRam_s;
-			 elsif addr_r = sam_addr_r then	
-                sam_x <= dataFromRam_s;	
-          elsif addr_r = (sam_addr_r + 1) then	
-                right_x <= dataFromRam_s;
+					sam_x <= dataFromRam_s;
+					right_x <= dataFromRam_s;
+			 elsif addr_r = (sam_addr_r -1) then	
+                --sam_x <= dataFromRam_s;	
+          elsif addr_r = (sam_addr_r - 1) then	
+                --right_x <= dataFromRam_s;
 			 end if;							
           addr_x <= addr_r + 1;         -- and go to next address.
           sam_addr_x <= sam_addr_r + 2; 
