@@ -57,26 +57,25 @@ def test_jpeg():
 		flag = 0
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
 			
-def jpeg(clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s  ):
- 	
-	
+def jpeg(clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s):
 	@always(clk_fast.posedge)
 	def hdl():
-		 
-		if even_odd_s:
-			if  fwd_inv_s:
-				res_s.next =  sam_s - ((left_s >> 1) + (right_s >> 1))
+		if updated_s: 
+			if even_odd_s:
+				if  fwd_inv_s:
+					res_s.next =  sam_s - ((left_s >> 1) + (right_s >> 1))
+				else:
+					res_s.next =  sam_s + ((left_s >> 1) + ( right_s >> 1))
 			else:
-				res_s.next =  sam_s + ((left_s >> 1) + ( right_s >> 1))
+				if fwd_inv_s:
+					res_s.next =  sam_s + ((left_s +  right_s + 2)>>2)
+				else:
+					res_s.next =  sam_s - ((left_s +  right_s + 2)>>2)
 		else:
-			if fwd_inv_s:
-				res_s.next =  sam_s + ((left_s +  right_s + 2)>>2)
-			else:
-				res_s.next =  sam_s - ((left_s +  right_s + 2)>>2)
-		 
+			noupdate_s.next = 0
 	return hdl
 def testbench():
-	i_inst = jpeg( clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s)
+	i_inst = jpeg( clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
 
 	@always(delay(10))
 	def clkgen():
@@ -105,9 +104,9 @@ def testbench():
 		raise StopSimulation
 	return   i_inst, stimulus, clkgen
 def convert():			
-	toVerilog(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s)
-	toVHDL(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s)
-#convert()
+	toVerilog(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
+	toVHDL(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s )
+convert()
 tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
 sim.run()

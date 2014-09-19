@@ -71,6 +71,7 @@ architecture Behavioral of top_level_mod is
   alias fromright_s is fromjpeg_s(79 downto 64); -- right_r.
   alias fromaddr_sam_s is fromjpeg_s(95 downto 80); --addr_sam_r 
   alias fromaddrjpeg_s is fromjpeg_s(111 downto 96); --addr_sam_r
+  --alias fromjpegram_s is fromjpeg_s(127 downto 112); --addr_sam_r
   signal  even_odd_s : std_logic;
   signal  fwd_inv_s : std_logic;
   
@@ -112,7 +113,9 @@ component jpeg is
         sam_s: in signed (15 downto 0);
         res_s: out signed (15 downto 0);
 		  even_odd_s : in std_logic ;
-		  fwd_inv_s : in std_logic
+		  fwd_inv_s : in std_logic;
+		  updated_s : in std_logic;
+		  noupdate_s : out std_logic
     );
 end component;
 signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
@@ -127,7 +130,9 @@ constant MAX_ADDR_C             : natural   := 8191;  -- ... to this address.
 constant MIN_ADDRJPEG_C             : natural   := 8192;  -- Process RAM from this address ...
 constant MAX_ADDRJPEG_C             : natural   := 16384;  -- ... to this address.
 subtype RamWord_t is unsigned(RAM_WIDTH_C-1 downto 0);  -- RAM word type.
-
+signal updated_r, updated_x : std_logic;  
+signal noupdate_r, noupdate_x : std_logic; 
+signal updated_s, noupdate_s : std_logic;  -- jpeg left sam  right are valid
 signal addrSdram_s              : std_logic_vector(23 downto 0);  -- Address.
 signal dataToSdram_s            : std_logic_vector(sdData_io'range);  -- Data.
 signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  -- 
@@ -145,6 +150,7 @@ signal sam_addr_stor_r, sam_addr_stor_x    :  natural range 0 to RAM_SIZE_C-1;
 signal wr_s                     : std_logic;  -- Write-enable control.
 signal rd_s                     : std_logic;  -- Read-enable control.
 signal done_s                   : std_logic;  -- SDRAM R/W operation done signal.
+
 --Signals constants needed by Sdram---------------------------------------
 -- FSM state.
 type state_t is (INIT, READ_AND_SUM_DATA, WRITE_DATA, DONE);  -- FSM states.
@@ -156,6 +162,7 @@ signal samDut_s                 : std_logic_vector(15 downto 0);  -- Send sam ba
 signal rightDut_s                 : std_logic_vector(15 downto 0);  -- Send right back to PC.
 signal sam_addr_rDut_s                 : std_logic_vector(15 downto 0);  -- Send addr_sam_r back to PC.
 signal addrjpeg_rDut_s                 : std_logic_vector(15 downto 0);  -- Send addrjpeg_r back to PC.
+signal jpegram_rDut_s                 : std_logic_vector(15 downto 0);  -- Send jpegram_r back to PC.
 
 signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
 
@@ -163,6 +170,8 @@ begin
   
   even_odd_s <= even_odd_tmp_s;
   fwd_inv_s <= fwd_inv_tmp_s;
+  --updated_r <= '1';
+  --updated_s <= updated_r;
   --sam_addr_r <= conv_integer(sam_addr_s);
     
 ujpeg: jpeg 
@@ -173,7 +182,9 @@ ujpeg: jpeg
         sam_s => signed(sam_s),
         res_s => signed_res_s,
         even_odd_s => even_odd_s,
-		  fwd_inv_s => fwd_inv_s  
+		  fwd_inv_s => fwd_inv_s,
+        updated_s => updated_s,
+        noupdate_s => noupdate_s		  
 		  );
 
 -------------------------------------------------------------------------
@@ -285,11 +296,12 @@ UHostIoToJpeg : HostIoToDut
   --*********************************************************************
   FsmComb_p : process(state_r, addr_r, dataToRam_r,
                       sum_r, dataFromRam_s, done_s, left_r, sam_r, right_r, sam_addr_r,
-							 dataToRam_res_r, addrjpeg_r)
+							 dataToRam_res_r, addrjpeg_r, updated_r)
   begin
     -- Disable RAM reads and writes by default.
     rd_s        <= NO;                  -- Don't write to RAM.
     wr_s        <= NO;                  -- Don't read from RAM.
+	 
     -- Load the registers with their current values by default.
     addr_x      <= addr_r;
     sum_x       <= sum_r;
@@ -302,6 +314,7 @@ UHostIoToJpeg : HostIoToDut
     
     dataToRam_res_x 	  <=  dataToRam_res_r;
 	 addrjpeg_x      <= addrjpeg_r;
+	 updated_x  <= updated_r;
     case state_r is
 
       when INIT =>                      -- Initialize the FSM.
@@ -312,7 +325,7 @@ UHostIoToJpeg : HostIoToDut
 		  addrjpeg_x  <=   MIN_ADDRJPEG_C + 1;
         --state_x     <= WRITE_DATA;      -- Go to next state.
         state_x <= READ_AND_SUM_DATA;    -- and go to next state.
-
+        updated_x <= NO;
 
       when READ_AND_SUM_DATA =>  -- Read RAM and sum address*data products
         if done_s = NO then      -- While current RAM read is not complete ...
@@ -323,12 +336,13 @@ UHostIoToJpeg : HostIoToDut
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
 			 if addr_r = (sam_addr_r - 1) then
 			      left_x <= dataFromRam_s;
-					sam_x <= dataFromRam_s;
-					right_x <= dataFromRam_s;
-			 elsif addr_r = (sam_addr_r -1) then	
-                --sam_x <= dataFromRam_s;	
-          elsif addr_r = (sam_addr_r - 1) then	
-                --right_x <= dataFromRam_s;
+					--sam_x <= dataFromRam_s;
+					--right_x <= dataFromRam_s;
+			 elsif addr_r = (sam_addr_r ) then	
+                sam_x <= dataFromRam_s;	
+          elsif addr_r = (sam_addr_r + 1) then	
+                right_x <= dataFromRam_s;
+					 updated_x <= YES;
 			 end if;							
           addr_x <= addr_r + 1;         -- and go to next address.
           sam_addr_x <= sam_addr_r + 2; 
@@ -341,22 +355,22 @@ UHostIoToJpeg : HostIoToDut
        end if;
 		  
       when WRITE_DATA =>                -- Load RAM with values.
---        if done_s = NO then  -- While current RAM write is not complete ...
---		   
---          wr_s <= YES;                  -- keep write-enable active.
---        elsif addrjpeg_r <=  (MIN_ADDRJPEG_C + (ROW_C - 2)) then  -- If haven't reach final address ...
---		      
---			  addrjpeg_x <= addrjpeg_r;
---			  dataToRam_res_x <= dataToRam_res_r;
---			  addrjpeg_x <= addrjpeg_r + 2;
---           addr_x      <= addr_r + 1;    -- go to next address ...
---          --dataToRam_x <= dataToRam_r + 3 ;  -- and write this value.
---        else                 -- Else, the final address has been written ...
---          addrjpeg_x  <= MIN_ADDRJPEG_C;        -- go back to the start, ...
---           
---          --state_x <= READ_AND_SUM_DATA;    -- and go to next state.
---			 state_x <= DONE;            -- so go to the next state.        
---		  end if;
+        if done_s = NO then  -- While current RAM write is not complete ...
+		   
+          wr_s <= YES;                  -- keep write-enable active.
+        elsif addrjpeg_r <=  (MIN_ADDRJPEG_C + (ROW_C - 2)) then  -- If haven't reach final address ...
+		      
+			  addrjpeg_x <= addrjpeg_r;
+			  dataToRam_res_x <= dataToRam_res_r;
+			  addrjpeg_x <= addrjpeg_r + 2;
+           addr_x      <= addr_r + 1;    -- go to next address ...
+          --dataToRam_x <= dataToRam_r + 3 ;  -- and write this value.
+        else                 -- Else, the final address has been written ...
+          addrjpeg_x  <= MIN_ADDRJPEG_C;        -- go back to the start, ...
+           
+          --state_x <= READ_AND_SUM_DATA;    -- and go to next state.
+			 state_x <= DONE;            -- so go to the next state.        
+		  end if;
       when DONE =>                      -- Summation complete ...
         null;                           -- so wait here and do nothing.
       when others =>                    -- Erroneous state ...
@@ -384,6 +398,7 @@ UHostIoToJpeg : HostIoToDut
 		
 		dataToRam_res_r  <= dataToRam_res_x;
 		addrjpeg_r      <= addrjpeg_x;
+		updated_r <= updated_x;
     end if;
   end process;
 
@@ -400,11 +415,13 @@ UHostIoToJpeg : HostIoToDut
   fromsam_s <= samDut_s; --back to PC 
   sam_s <= samDut_s; --to jpeg
   fromright_s <= rightDut_s; --back to PC
-  right_s <= rightDut_s; --to jpeg 
-  --dataToRam_res_r <= TO_UNSIGNED((fromresult_s),RAM_WIDTH_C);
+  right_s <= rightDut_s; --to jpeg
+  updated_s <= updated_r;  
+  dataToRam_res_r <= RamWord_t(fromresult_s); --jpeg result to sdram
   sam_addr_rDut_s <= std_logic_vector(TO_SIGNED(sam_addr_r,16));
   fromaddr_sam_s <= sam_addr_rDut_s;
   addrjpeg_rDut_s <= std_logic_vector(TO_SIGNED(addrjpeg_r,16));
   fromaddrjpeg_s <= addrjpeg_rDut_s;
+  
 end Behavioral;
 
