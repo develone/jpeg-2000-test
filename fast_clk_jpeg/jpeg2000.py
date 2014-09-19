@@ -106,7 +106,7 @@ def testbench():
 def convert():			
 	toVerilog(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
 	toVHDL(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s )
-convert()
+#convert()
 tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
 sim.run()
