@@ -63,7 +63,7 @@ architecture Behavioral of top_level_mod is
   --                                                                           5432109876543210
   
   signal x : std_logic_vector(15 downto 0);  
-  signal fromjpeg_s : std_logic_vector(111 downto 0); -- From jpeg to PC.
+  signal fromjpeg_s : std_logic_vector(112 downto 0); -- From jpeg to PC.
   alias fromresult_s is fromjpeg_s(15 downto 0); -- jpeg output.
   alias fromsum_s is fromjpeg_s(31 downto 16); -- sum_r.
   alias fromleft_s is fromjpeg_s(47 downto 32); -- left_r.
@@ -71,7 +71,8 @@ architecture Behavioral of top_level_mod is
   alias fromright_s is fromjpeg_s(79 downto 64); -- right_r.
   alias fromaddr_sam_s is fromjpeg_s(95 downto 80); --addr_sam_r 
   alias fromaddrjpeg_s is fromjpeg_s(111 downto 96); --addr_sam_r
-  --alias fromjpegram_s is fromjpeg_s(127 downto 112); --addr_sam_r
+  alias fromnoupdate_s is fromjpeg_s(112);
+  --alias fromjpegram_s is fromjpeg_s(128 downto 113); --addr_sam_r
   signal  even_odd_s : std_logic;
   signal  fwd_inv_s : std_logic;
   
@@ -99,6 +100,7 @@ architecture Behavioral of top_level_mod is
   --alias left_s is tojpeg_s(31 downto 16); -- jpeg's 2nd operand.
   --alias sam_s is tojpeg_s(47 downto 32); 
   alias signed_res_s is signed(fromresult_s);
+  
   --alias fromsum_s is fromjpeg_s(31 downto 16); -- jpeg output.
 
  
@@ -422,6 +424,6 @@ UHostIoToJpeg : HostIoToDut
   fromaddr_sam_s <= sam_addr_rDut_s;
   addrjpeg_rDut_s <= std_logic_vector(TO_SIGNED(addrjpeg_r,16));
   fromaddrjpeg_s <= addrjpeg_rDut_s;
-  
+  fromnoupdate_s <= noupdate_s;
 end Behavioral;
 
