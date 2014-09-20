@@ -63,7 +63,7 @@ architecture Behavioral of top_level_mod is
   --                                                                           5432109876543210
   
   signal x : std_logic_vector(15 downto 0);  
-  signal fromjpeg_s : std_logic_vector(112 downto 0); -- From jpeg to PC.
+  signal fromjpeg_s : std_logic_vector(113 downto 0); -- From jpeg to PC.
   alias fromresult_s is fromjpeg_s(15 downto 0); -- jpeg output.
   alias fromsum_s is fromjpeg_s(31 downto 16); -- sum_r.
   alias fromleft_s is fromjpeg_s(47 downto 32); -- left_r.
@@ -71,7 +71,9 @@ architecture Behavioral of top_level_mod is
   alias fromright_s is fromjpeg_s(79 downto 64); -- right_r.
   alias fromaddr_sam_s is fromjpeg_s(95 downto 80); --addr_sam_r 
   alias fromaddrjpeg_s is fromjpeg_s(111 downto 96); --addr_sam_r
-  alias fromnoupdate_s is fromjpeg_s(112);
+ 
+  alias fromupdated_s is fromjpeg_s(112);
+  alias fromnoupdate_s is fromjpeg_s(113);
   --alias fromjpegram_s is fromjpeg_s(128 downto 113); --addr_sam_r
   signal  even_odd_s : std_logic;
   signal  fwd_inv_s : std_logic;
@@ -322,8 +324,9 @@ UHostIoToJpeg : HostIoToDut
       when INIT =>                      -- Initialize the FSM.
        
         
-		  dataToRam_res_x <= TO_UNSIGNED(1, RAM_WIDTH_C);
+		  --dataToRam_res_x <= TO_UNSIGNED(1, RAM_WIDTH_C);
 		  sam_addr_x  <=   1;
+		  addr_x  <=   0;
 		  addrjpeg_x  <=   MIN_ADDRJPEG_C + 1;
         --state_x     <= WRITE_DATA;      -- Go to next state.
         state_x <= READ_AND_SUM_DATA;    -- and go to next state.
@@ -332,7 +335,7 @@ UHostIoToJpeg : HostIoToDut
       when READ_AND_SUM_DATA =>  -- Read RAM and sum address*data products
         if done_s = NO then      -- While current RAM read is not complete ...
           rd_s <= YES;                  -- keep read-enable active.
-        elsif addr_r <= ROW_C-2 then  -- If not the end of row ...
+        elsif addr_r <= (MIN_ADDR_C + 3) then  -- If not the end of row ...
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
@@ -345,34 +348,35 @@ UHostIoToJpeg : HostIoToDut
           elsif addr_r = (sam_addr_r + 1) then	
                 right_x <= dataFromRam_s;
 					 updated_x <= YES;
+					 sam_addr_x <= sam_addr_r + 2;
+					 addrjpeg_x <= addrjpeg_r + 2;
 			 end if;							
           addr_x <= addr_r + 1;         -- and go to next address.
-          sam_addr_x <= sam_addr_r + 2; 
-			 addrjpeg_x <= addrjpeg_r + 2;
+          
        --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
-		 elsif addr_r <= ROW_C-2 then  -- Else, the final address has been read ...
+		 elsif addr_r <= (MIN_ADDR_C + 3) then  -- Else, the final address has been read ...
                state_x     <= WRITE_DATA;      -- Go to next state.
 		 else 	
 					state_x     <= DONE;      -- Go to next state.
        end if;
 		  
       when WRITE_DATA =>                -- Load RAM with values.
-        if done_s = NO then  -- While current RAM write is not complete ...
-		   
-          wr_s <= YES;                  -- keep write-enable active.
-        elsif addrjpeg_r <=  (MIN_ADDRJPEG_C + (ROW_C - 2)) then  -- If haven't reach final address ...
-		      
-			  addrjpeg_x <= addrjpeg_r;
-			  dataToRam_res_x <= dataToRam_res_r;
-			  addrjpeg_x <= addrjpeg_r + 2;
-           addr_x      <= addr_r + 1;    -- go to next address ...
-          --dataToRam_x <= dataToRam_r + 3 ;  -- and write this value.
-        else                 -- Else, the final address has been written ...
-          addrjpeg_x  <= MIN_ADDRJPEG_C;        -- go back to the start, ...
-           
-          --state_x <= READ_AND_SUM_DATA;    -- and go to next state.
-			 state_x <= DONE;            -- so go to the next state.        
-		  end if;
+--        if done_s = NO then  -- While current RAM write is not complete ...
+--		   
+--          wr_s <= YES;                  -- keep write-enable active.
+--        elsif addrjpeg_r <=  (MIN_ADDRJPEG_C + 3) then  -- If haven't reach final address ...
+--		      
+--			  addrjpeg_x <= addrjpeg_r;
+--			  dataToRam_res_x <= dataToRam_res_r;
+--			  addrjpeg_x <= addrjpeg_r + 2;
+--           addr_x      <= addr_r + 1;    -- go to next address ...
+--          --dataToRam_x <= dataToRam_r + 3 ;  -- and write this value.
+--        else                 -- Else, the final address has been written ...
+--          addrjpeg_x  <= MIN_ADDRJPEG_C;        -- go back to the start, ...
+--           
+--          --state_x <= READ_AND_SUM_DATA;    -- and go to next state.
+--			 state_x <= DONE;            -- so go to the next state.        
+--		  end if;
       when DONE =>                      -- Summation complete ...
         null;                           -- so wait here and do nothing.
       when others =>                    -- Erroneous state ...
@@ -420,10 +424,11 @@ UHostIoToJpeg : HostIoToDut
   right_s <= rightDut_s; --to jpeg
   updated_s <= updated_r;  
   dataToRam_res_r <= RamWord_t(fromresult_s); --jpeg result to sdram
-  sam_addr_rDut_s <= std_logic_vector(TO_SIGNED(sam_addr_r,16));
+  sam_addr_rDut_s <= std_logic_vector(TO_UNSIGNED(sam_addr_r,16));
   fromaddr_sam_s <= sam_addr_rDut_s;
-  addrjpeg_rDut_s <= std_logic_vector(TO_SIGNED(addrjpeg_r,16));
+  addrjpeg_rDut_s <= std_logic_vector(TO_UNSIGNED(addrjpeg_r,16));
   fromaddrjpeg_s <= addrjpeg_rDut_s;
   fromnoupdate_s <= noupdate_s;
+  fromupdated_s <= updated_s;
 end Behavioral;
 

@@ -72,7 +72,7 @@ def jpeg(clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, update
 				else:
 					res_s.next =  sam_s - ((left_s +  right_s + 2)>>2)
 		else:
-			noupdate_s.next = 0
+			noupdate_s.next = 1
 	return hdl
 def testbench():
 	i_inst = jpeg( clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
