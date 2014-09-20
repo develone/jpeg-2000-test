@@ -172,8 +172,7 @@ signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output
 
 begin
   
-  even_odd_s <= even_odd_tmp_s;
-  fwd_inv_s <= fwd_inv_tmp_s;
+
   --updated_r <= '1';
   --updated_s <= updated_r;
   --sam_addr_r <= conv_integer(sam_addr_s);
@@ -341,8 +340,7 @@ UHostIoToJpeg : HostIoToDut
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
 			 if addr_r = (sam_addr_r - 1) then
 			      left_x <= dataFromRam_s;
-					--sam_x <= dataFromRam_s;
-					--right_x <= dataFromRam_s;
+					
 			 elsif addr_r = (sam_addr_r ) then	
                 sam_x <= dataFromRam_s;	
           elsif addr_r = (sam_addr_r + 1) then	
@@ -416,13 +414,15 @@ UHostIoToJpeg : HostIoToDut
   samDut_s <= std_logic_vector((sam_r));
   rightDut_s <= std_logic_vector((right_r));
   fromsum_s <= sumDut_s; --back to PC
-  fromleft_s <= leftDut_s; --back to PC
+  
+  --setting jpeg signals
+  updated_s <= updated_r; 
   left_s <= leftDut_s; --to jpeg
-  fromsam_s <= samDut_s; --back to PC 
   sam_s <= samDut_s; --to jpeg
-  fromright_s <= rightDut_s; --back to PC
   right_s <= rightDut_s; --to jpeg
-  updated_s <= updated_r;  
+  even_odd_s <= even_odd_tmp_s;
+  fwd_inv_s <= fwd_inv_tmp_s;
+  
   dataToRam_res_r <= RamWord_t(fromresult_s); --jpeg result to sdram
   sam_addr_rDut_s <= std_logic_vector(TO_UNSIGNED(sam_addr_r,16));
   fromaddr_sam_s <= sam_addr_rDut_s;
@@ -430,5 +430,9 @@ UHostIoToJpeg : HostIoToDut
   fromaddrjpeg_s <= addrjpeg_rDut_s;
   fromnoupdate_s <= noupdate_s;
   fromupdated_s <= updated_s;
+  
+  fromleft_s <= leftDut_s; --back to PC
+  fromsam_s <= samDut_s; --back to PC 
+  fromright_s <= rightDut_s; --back to PC
 end Behavioral;
 
