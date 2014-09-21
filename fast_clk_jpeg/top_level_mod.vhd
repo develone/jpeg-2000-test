@@ -359,22 +359,18 @@ UHostIoToJpeg : HostIoToDut
        end if;
 		  
       when WRITE_DATA =>                -- Load RAM with values.
---        if done_s = NO then  -- While current RAM write is not complete ...
---		   
---          wr_s <= YES;                  -- keep write-enable active.
---        elsif addrjpeg_r <=  (MIN_ADDRJPEG_C + 3) then  -- If haven't reach final address ...
---		      
---			  addrjpeg_x <= addrjpeg_r;
---			  dataToRam_res_x <= dataToRam_res_r;
---			  addrjpeg_x <= addrjpeg_r + 2;
---           addr_x      <= addr_r + 1;    -- go to next address ...
---          --dataToRam_x <= dataToRam_r + 3 ;  -- and write this value.
---        else                 -- Else, the final address has been written ...
---          addrjpeg_x  <= MIN_ADDRJPEG_C;        -- go back to the start, ...
---           
---          --state_x <= READ_AND_SUM_DATA;    -- and go to next state.
---			 state_x <= DONE;            -- so go to the next state.        
---		  end if;
+        if done_s = NO then  -- While current RAM write is not complete ...
+		   
+          wr_s <= YES;                  -- keep write-enable active.
+        elsif addr_r <=  (MIN_ADDRJPEG_C + 3) then  -- If haven't reach final address ...
+          if addr_r = (addrjpeg_r) then
+		          dataToRam_x <= dataToRam_res_r;
+              addrjpeg_x <= addrjpeg_r + 2;
+          end if; 		  
+			 elsif addr_r <= (MIN_ADDRJPEG_C + 3) then
+          state_x <= DONE;
+        end if;   
+ 
       when DONE =>                      -- Summation complete ...
         null;                           -- so wait here and do nothing.
       when others =>                    -- Erroneous state ...
@@ -400,7 +396,7 @@ UHostIoToJpeg : HostIoToDut
 		right_r     <= right_x;
 		sam_addr_r  <= sam_addr_x; 
 		
-		dataToRam_res_r  <= dataToRam_res_x;
+		--dataToRam_res_r  <= dataToRam_res_x;
 		addrjpeg_r      <= addrjpeg_x;
 		updated_r <= updated_x;
     end if;
