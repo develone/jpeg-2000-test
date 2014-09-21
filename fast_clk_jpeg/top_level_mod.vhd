@@ -353,7 +353,7 @@ UHostIoToJpeg : HostIoToDut
           
        --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
 		 elsif addr_r <= (MIN_ADDR_C + 3) then  -- Else, the final address has been read ...
-		         
+		         addr_x <= MIN_ADDRJPEG_C;
                state_x     <= WRITE_DATA;      -- Go to next state.
 		 else 	
 					state_x     <= DONE;      -- Go to next state.
