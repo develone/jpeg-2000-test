@@ -347,12 +347,13 @@ UHostIoToJpeg : HostIoToDut
                 right_x <= dataFromRam_s;
 					 updated_x <= YES;
 					 sam_addr_x <= sam_addr_r + 2;
-					 addrjpeg_x <= addrjpeg_r + 2;
+					 --addrjpeg_x <= addrjpeg_r + 2;
 			 end if;							
           addr_x <= addr_r + 1;         -- and go to next address.
           
        --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
 		 elsif addr_r <= (MIN_ADDR_C + 3) then  -- Else, the final address has been read ...
+		         
                state_x     <= WRITE_DATA;      -- Go to next state.
 		 else 	
 					state_x     <= DONE;      -- Go to next state.
