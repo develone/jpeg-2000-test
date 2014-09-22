@@ -33,6 +33,8 @@ use IEEE.NUMERIC_STD.ALL;
 use XESS.ClkgenPckg.all;     -- For the clock generator module.
 use XESS.SdramCntlPckg.all;  -- For the SDRAM controller module.
 use XESS.HostIoPckg.all;     -- For the FPGA<=>PC transfer link module.
+
+use work.pck_myhdl_09.all;
 library UNISIM;
 use UNISIM.VComponents.all;
  
@@ -311,7 +313,10 @@ UHostIoToJpeg : HostIoToDut
       sdDqmh_o  => sdDqmh_o, -- SDRAM high-byte databus qualifier is connected on the XuLA2.
       sdDqml_o  => sdDqml_o  -- SDRAM low-byte databus qualifier is connected on the XuLA2.
       );
-
+  -- Connect the SDRAM controller signals to the FSM signals.
+  dataToSdram_s <= std_logic_vector(dataToRam_r);
+  dataFromRam_s <= RamWord_t(dataFromSdram_s);
+  addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
 --   -- Stimulus process
 --   stim_proc: process
 --   begin		
