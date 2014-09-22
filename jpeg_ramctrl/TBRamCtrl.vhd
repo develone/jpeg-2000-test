@@ -157,15 +157,15 @@ signal jpegram_rDut_s                 : std_logic_vector(15 downto 0);  -- Send 
 signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module. 
     -- Component Declaration for the Unit Under Test (UUT)
  
-    COMPONENT RamCtrl
-    PORT(
-			SOF : OUT  std_logic;
-         state : OUT  std_logic_vector(4 downto 0);
-         WR_DATAFlag : IN  std_logic;
-         clk_fast : IN  std_logic;
-         reset_n : IN  std_logic
-        );
-    END COMPONENT;
+--    COMPONENT RamCtrl
+--    PORT(
+--			SOF : OUT  std_logic;
+--         state : OUT  std_logic_vector(4 downto 0);
+--         WR_DATAFlag : IN  std_logic;
+--         clk_fast : IN  std_logic;
+--         reset_n : IN  std_logic
+--        );
+--    END COMPONENT;
     
 
    --Inputs
@@ -196,13 +196,13 @@ end component;
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: RamCtrl PORT MAP (
-          SOF => SOF,
-          state => state,
-          WR_DATAFlag => WR_DATAFlag,
-          clk_fast => clk_fast,
-          reset_n => reset_n
-        );
+--   uut: RamCtrl PORT MAP (
+--          SOF => SOF,
+--          state => state,
+--          WR_DATAFlag => WR_DATAFlag,
+--          clk_fast => clk_fast,
+--          reset_n => reset_n
+--        );
 
 --   -- Clock process definitions
 --   clk_fast_process :process
@@ -325,5 +325,158 @@ UHostIoToJpeg : HostIoToDut
 --	WR_DATAFlag <= '1';
 --      wait;
 --   end process;
+-- Connect the SDRAM controller signals to the FSM signals.
+  dataToSdram_s <= std_logic_vector(dataToRam_r);
+  dataFromRam_s <= RamWord_t(dataFromSdram_s);
+  addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
+ process(clk_fast) is
+	begin
+	   if rising_edge(clk_fast) then
+	 
+			cnt_r <= cnt_r + 1;
+		end if;
+	end process; 
+  
+--blinker_o <= cnt_r(22);
 
+--*********************************************************************
+  -- State machine that initializes RAM and then reads RAM to compute
+  -- the sum of products of the RAM address and data. This section
+  -- is combinatorial logic that sets the control bits for each state
+  -- and determines the next state.
+  --*********************************************************************
+  FsmComb_p : process(state_r, addr_r, dataToRam_r,
+                      sum_r, dataFromRam_s, done_s, left_r, sam_r, right_r, sam_addr_r,
+							 dataToRam_res_r, addrjpeg_r, updated_r)
+  begin
+    -- Disable RAM reads and writes by default.
+    rd_s        <= NO;                  -- Don't write to RAM.
+    wr_s        <= NO;                  -- Don't read from RAM.
+	 
+    -- Load the registers with their current values by default.
+    addr_x      <= addr_r;
+    sum_x       <= sum_r;
+    dataToRam_x <= dataToRam_r;
+    state_x     <= state_r;
+    left_x       <= left_r;
+	 sam_x       <= sam_r;
+	 right_x       <= right_r;
+	 sam_addr_x    <= sam_addr_r;
+    
+    dataToRam_res_x 	  <=  dataToRam_res_r;
+	 addrjpeg_x      <= addrjpeg_r;
+	 updated_x  <= updated_r;
+    case state_r is
+
+      when INIT =>                      -- Initialize the FSM.
+       
+        
+		  --dataToRam_res_x <= TO_UNSIGNED(1, RAM_WIDTH_C);
+		  sam_addr_x  <=   1;
+		  addr_x  <=   0;
+		  addrjpeg_x  <=   MIN_ADDRJPEG_C + 1;
+        --state_x     <= WRITE_DATA;      -- Go to next state.
+        state_x <= READ_AND_SUM_DATA;    -- and go to next state.
+        updated_x <= NO;
+
+      when READ_AND_SUM_DATA =>  -- Read RAM and sum address*data products
+        if done_s = NO then      -- While current RAM read is not complete ...
+          rd_s <= YES;                  -- keep read-enable active.
+        elsif addr_r <= (MIN_ADDR_C + 3) then  -- If not the end of row ...
+          -- add product of previous RAM address and data read
+          -- from that address to the summation ...
+          sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
+			 if addr_r = (sam_addr_r - 1) then
+			      left_x <= dataFromRam_s;
+					
+			 elsif addr_r = (sam_addr_r ) then	
+                sam_x <= dataFromRam_s;	
+          elsif addr_r = (sam_addr_r + 1) then	
+                right_x <= dataFromRam_s;
+					 updated_x <= YES;
+					 sam_addr_x <= sam_addr_r + 2;
+					 --addrjpeg_x <= addrjpeg_r + 2;
+			 end if;							
+          addr_x <= addr_r + 1;         -- and go to next address.
+          
+       --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
+		 elsif addr_r <= (MIN_ADDR_C + 3) then  -- Else, the final address has been read ...
+		         addr_x <= MIN_ADDRJPEG_C;
+               state_x     <= WRITE_DATA;      -- Go to next state.
+		 else 	
+					state_x     <= DONE;      -- Go to next state.
+       end if;
+		  
+      when WRITE_DATA =>                -- Load RAM with values.
+        if done_s = NO then  -- While current RAM write is not complete ...
+		   
+          wr_s <= YES;                  -- keep write-enable active.
+        elsif addr_r <=  (MIN_ADDRJPEG_C + 3) then  -- If haven't reach final address ...
+          if addr_r = (addrjpeg_r) then
+		          dataToRam_x <= dataToRam_res_r;
+              addrjpeg_x <= addrjpeg_r + 2;
+          end if; 		  
+			 elsif addr_r <= (MIN_ADDRJPEG_C + 3) then
+          state_x <= DONE;
+        end if;   
+ 
+      when DONE =>                      -- Summation complete ...
+        null;                           -- so wait here and do nothing.
+      when others =>                    -- Erroneous state ...
+        state_x <= INIT;                -- so re-run the entire process.
+
+    end case;
+
+  end process;
+
+  --*********************************************************************
+  -- Update the FSM's registers with their next values as computed by
+  -- the FSM's combinatorial section.
+  --*********************************************************************
+  FsmUpdate_p : process(clk_s)
+  begin
+    if rising_edge(clk_s) then
+      addr_r      <= addr_x;
+      dataToRam_r <= dataToRam_x;
+      state_r     <= state_x;
+      sum_r       <= sum_x;
+		sam_r       <= sam_x;
+		left_r      <= left_x;
+		right_r     <= right_x;
+		sam_addr_r  <= sam_addr_x; 
+		
+		--dataToRam_res_r  <= dataToRam_res_x;
+		addrjpeg_r      <= addrjpeg_x;
+		updated_r <= updated_x;
+    end if;
+  end process;
+
+  --*********************************************************************
+  -- Send the summation, left, sam, right from ram to the HostIoToDut module and then on to the PC.
+  --*********************************************************************
+  sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
+  leftDut_s <= std_logic_vector((left_r));
+  samDut_s <= std_logic_vector((sam_r));
+  rightDut_s <= std_logic_vector((right_r));
+  fromsum_s <= sumDut_s; --back to PC
+  
+  --setting jpeg signals
+  updated_s <= updated_r; 
+  left_s <= leftDut_s; --to jpeg
+  sam_s <= samDut_s; --to jpeg
+  right_s <= rightDut_s; --to jpeg
+  even_odd_s <= even_odd_tmp_s;
+  fwd_inv_s <= fwd_inv_tmp_s;
+  
+  dataToRam_res_r <= RamWord_t(fromresult_s); --jpeg result to sdram
+  sam_addr_rDut_s <= std_logic_vector(TO_UNSIGNED(sam_addr_r,16));
+  fromaddr_sam_s <= sam_addr_rDut_s;
+  addrjpeg_rDut_s <= std_logic_vector(TO_UNSIGNED(addrjpeg_r,16));
+  fromaddrjpeg_s <= addrjpeg_rDut_s;
+  fromnoupdate_s <= noupdate_s;
+  fromupdated_s <= updated_s;
+  
+  fromleft_s <= leftDut_s; --back to PC
+  fromsam_s <= samDut_s; --back to PC 
+  fromright_s <= rightDut_s; --back to PC
 END;
