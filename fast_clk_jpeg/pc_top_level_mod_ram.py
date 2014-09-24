@@ -41,10 +41,10 @@ jpeg = XsDut(USB_ID, JPEG_ID, [14, 1, 1], [16, 16, 16, 16, 16, 16, 16, 1, 1])
 #sam = randint(0, 511)  # Get a random, positive byte...
 #left = randint(0, 511)  # Get a random, positive byte...
 #right = randint(0, 511)  # Get a random, positive byte...
-left = 32877
-sam = 127
-right = 126
-sam_addr = 5
+left = 163
+sam = 160
+right = 155
+sam_addr = 1
 def loc_jpeg():
     if even_odd:
         if fwd_inv:
