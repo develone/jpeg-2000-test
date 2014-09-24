@@ -130,6 +130,9 @@ constant ROW_C             : natural   := 63;  -- Number of words in RAM.
 constant RAM_SIZE_C             : natural   := 16384;  -- Number of words in RAM.
 constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
 constant MIN_ADDR_C             : natural   := 0;  -- Process RAM from this address ...
+constant LEFT_ADDR_C             : natural   := 0;  -- Process RAM from this address ...
+constant SAM_ADDR_C             : natural   := 1;  -- Process RAM from this address ...
+constant RIGHT_ADDR_C             : natural   := 2;  -- Process RAM from this address ...
 constant MAX_ADDR_C             : natural   := 8191;  -- ... to this address.
 constant MIN_ADDRJPEG_C             : natural   := 8192;  -- Process RAM from this address ...
 constant MAX_ADDRJPEG_C             : natural   := 16384;  -- ... to this address.
@@ -324,9 +327,9 @@ UHostIoToJpeg : HostIoToDut
        
         
 		  --dataToRam_res_x <= TO_UNSIGNED(1, RAM_WIDTH_C);
-		  sam_addr_x  <=   7;
+		  sam_addr_x  <=   1;
 		  addr_x  <=   0;
-		  addrjpeg_x  <=   MIN_ADDRJPEG_C + 7;
+		  addrjpeg_x  <=   MIN_ADDRJPEG_C + 1;
         --state_x     <= WRITE_DATA;      -- Go to next state.
         state_x <= READ_AND_SUM_DATA;    -- and go to next state.
         updated_x <= NO;
@@ -334,16 +337,16 @@ UHostIoToJpeg : HostIoToDut
       when READ_AND_SUM_DATA =>  -- Read RAM and sum address*data products
         if done_s = NO then      -- While current RAM read is not complete ...
           rd_s <= YES;                  -- keep read-enable active.
-        elsif addr_r <= (MIN_ADDR_C + 8) then  -- If not the end of row ...
+        elsif addr_r <= (MIN_ADDR_C + 2) then  -- If not the end of row ...
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
-			 if addr_r = (sam_addr_r - 1) then
+			 if addr_r = LEFT_ADDR_C then
 			      left_x <= dataFromRam_s;
 					
-			 elsif addr_r = (sam_addr_r ) then	
+			 elsif addr_r = SAM_ADDR_C then	
                 sam_x <= dataFromRam_s;	
-          elsif addr_r = (sam_addr_r + 1) then	
+          elsif addr_r = RIGHT_ADDR_C then	
                 right_x <= dataFromRam_s;
 					 updated_x <= YES;
 					 sam_addr_x <= sam_addr_r + 2;
@@ -352,7 +355,7 @@ UHostIoToJpeg : HostIoToDut
           addr_x <= addr_r + 1;         -- and go to next address.
           
        --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
-		 elsif addr_r <= (MIN_ADDR_C + 8) then  -- Else, the final address has been read ...
+		 elsif addr_r <= (MIN_ADDR_C + 2) then  -- Else, the final address has been read ...
 		         addr_x <= MIN_ADDRJPEG_C;
                state_x     <= WRITE_DATA;      -- Go to next state.
 		 else 	
@@ -363,12 +366,12 @@ UHostIoToJpeg : HostIoToDut
         if done_s = NO then  -- While current RAM write is not complete ...
 		   
           wr_s <= YES;                  -- keep write-enable active.
-        elsif addr_r <=  (MIN_ADDRJPEG_C + 8) then  -- If haven't reach final address ...
+        elsif addr_r <=  (MIN_ADDRJPEG_C + 2) then  -- If haven't reach final address ...
           if addr_r = (addrjpeg_r) then
 		          dataToRam_x <= dataToRam_res_r;
               addrjpeg_x <= addrjpeg_r + 2;
           end if; 		  
-			 elsif addr_r <= (MIN_ADDRJPEG_C + 8) then
+			 elsif addr_r <= (MIN_ADDRJPEG_C + 2) then
           state_x <= DONE;
         end if;   
  
