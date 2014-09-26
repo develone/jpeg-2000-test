@@ -63,7 +63,7 @@ architecture Behavioral of top_level_mod is
   --                                                                           5432109876543210
   
   signal x : std_logic_vector(15 downto 0);  
-  signal fromjpeg_s : std_logic_vector(113 downto 0); -- From jpeg to PC.
+  signal fromjpeg_s : std_logic_vector(129 downto 0); -- From jpeg to PC.
   alias fromresult_s is fromjpeg_s(15 downto 0); -- jpeg output.
   alias fromsum_s is fromjpeg_s(31 downto 16); -- sum_r.
   alias fromleft_s is fromjpeg_s(47 downto 32); -- left_r.
@@ -72,9 +72,10 @@ architecture Behavioral of top_level_mod is
   alias fromaddr_sam_s is fromjpeg_s(95 downto 80); --addr_sam_r 
   alias fromaddrjpeg_s is fromjpeg_s(111 downto 96); --addr_sam_r
  
-  alias fromupdated_s is fromjpeg_s(112);
-  alias fromnoupdate_s is fromjpeg_s(113);
-  --alias fromjpegram_s is fromjpeg_s(128 downto 113); --addr_sam_r
+  alias fromupdated_s is fromjpeg_s(128);
+  alias fromnoupdate_s is fromjpeg_s(129);
+  alias fromaddr_s is fromjpeg_s(127 downto 112); --addr_r
+  --alias fromjpegram_s is fromjpeg_s(128 downto 112); --addr_sam_r
   signal  even_odd_s : std_logic;
   signal  fwd_inv_s : std_logic;
   
@@ -169,6 +170,7 @@ signal samDut_s                 : std_logic_vector(15 downto 0);  -- Send sam ba
 signal rightDut_s                 : std_logic_vector(15 downto 0);  -- Send right back to PC.
 signal sam_addr_rDut_s                 : std_logic_vector(15 downto 0);  -- Send addr_sam_r back to PC.
 signal addrjpeg_rDut_s                 : std_logic_vector(15 downto 0);  -- Send addrjpeg_r back to PC.
+signal addraddr_rDut_s                 : std_logic_vector(15 downto 0);  -- Send addraddr_r back to PC.
 signal jpegram_rDut_s                 : std_logic_vector(15 downto 0);  -- Send jpegram_r back to PC.
 
 signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
@@ -337,7 +339,7 @@ UHostIoToJpeg : HostIoToDut
       when READ_AND_SUM_DATA =>  -- Read RAM and sum address*data products
         if done_s = NO then      -- While current RAM read is not complete ...
           rd_s <= YES;                  -- keep read-enable active.
-        elsif addr_r <= (MIN_ADDR_C + 2) then  -- If not the end of row ...
+        elsif addr_r <= (MIN_ADDR_C + 3) then  -- If not the end of row ...
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
@@ -355,13 +357,13 @@ UHostIoToJpeg : HostIoToDut
           addr_x <= addr_r + 1;         -- and go to next address.
           
        --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
-		 elsif addr_r <= (MIN_ADDR_C + 2) then  -- Else, the final address has been read ...
+		 elsif addr_r = (MIN_ADDR_C + 4) then  -- Else, the final address has been read ...
 		         addr_x <= MIN_ADDRJPEG_C;
                state_x     <= WRITE_DATA;      -- Go to next state.
 		 else 	
 					state_x     <= DONE;      -- Go to next state.
        end if;
-		  
+				 
       when WRITE_DATA =>                -- Load RAM with values.
         if done_s = NO then  -- While current RAM write is not complete ...
 		   
@@ -370,8 +372,9 @@ UHostIoToJpeg : HostIoToDut
           if addr_r = (addrjpeg_r) then
 		          dataToRam_x <= dataToRam_res_r;
               addrjpeg_x <= addrjpeg_r + 2;
-          end if; 		  
-			 elsif addr_r <= (MIN_ADDRJPEG_C + 2) then
+          end if;
+		        addr_x <= addr_r + 1;         -- and go to next address.		
+		 	 elsif addr_r <= (MIN_ADDRJPEG_C + 2) then
           state_x <= DONE;
         end if;   
  
@@ -434,5 +437,8 @@ UHostIoToJpeg : HostIoToDut
   fromleft_s <= leftDut_s; --back to PC
   fromsam_s <= samDut_s; --back to PC 
   fromright_s <= rightDut_s; --back to PC
+  
+  addraddr_rDut_s <= std_logic_vector(TO_UNSIGNED(addr_r,16));
+  fromaddr_s <= addraddr_rDut_s;
 end Behavioral;
 
