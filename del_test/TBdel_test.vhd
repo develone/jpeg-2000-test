@@ -27,7 +27,7 @@
 --------------------------------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
- 
+use IEEE.numeric_std.all;
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --USE ieee.numeric_std.ALL;
@@ -42,8 +42,8 @@ ARCHITECTURE behavior OF TBdel_test IS
     COMPONENT del_test
     PORT(
          clk_fast : IN  std_logic;
-         left_s : IN  std_logic_vector(15 downto 0);
-         signed_res_s : OUT  std_logic_vector(15 downto 0)
+         left_s : IN  signed(15 downto 0);
+         signed_res_s : OUT  signed(15 downto 0)
         );
     END COMPONENT;
     
@@ -53,7 +53,7 @@ ARCHITECTURE behavior OF TBdel_test IS
    signal left_s : std_logic_vector(15 downto 0) := (others => '0');
 
  	--Outputs
-   signal signed_res_s : std_logic_vector(15 downto 0);
+   signal signed_res_s : signed(15 downto 0);
 
    -- Clock period definitions
    constant clk_fast_period : time := 10 ns;
@@ -63,7 +63,7 @@ BEGIN
 	-- Instantiate the Unit Under Test (UUT)
    uut: del_test PORT MAP (
           clk_fast => clk_fast,
-          left_s => left_s,
+          left_s => signed(left_s),
           signed_res_s => signed_res_s
         );
 
