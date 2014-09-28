@@ -43,6 +43,7 @@ ARCHITECTURE behavior OF TBdel_test IS
     PORT(
          clk_fast : IN  std_logic;
          left_s : IN  signed(15 downto 0);
+			delay_s : IN  signed(15 downto 0);
          signed_res_s : OUT  signed(15 downto 0)
         );
     END COMPONENT;
@@ -51,7 +52,7 @@ ARCHITECTURE behavior OF TBdel_test IS
    --Inputs
    signal clk_fast : std_logic := '0';
    signal left_s : std_logic_vector(15 downto 0) := (others => '0');
-
+   signal delay_s : std_logic_vector(15 downto 0) := (others => '0'); 
  	--Outputs
    signal signed_res_s : signed(15 downto 0);
 
@@ -64,6 +65,7 @@ BEGIN
    uut: del_test PORT MAP (
           clk_fast => clk_fast,
           left_s => signed(left_s),
+			 delay_s => signed(left_s),
           signed_res_s => signed_res_s
         );
 
