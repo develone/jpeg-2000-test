@@ -3,10 +3,16 @@
 -- Date: Sun Sep 28 07:37:08 2014
 
 
-library IEEE;
+library IEEE,XESS;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 use std.textio.all;
+
+use XESS.ClkgenPckg.all;     -- For the clock generator module.
+use XESS.SdramCntlPckg.all;  -- For the SDRAM controller module.
+use XESS.HostIoPckg.all;     -- For the FPGA<=>PC transfer link module.
+
+use XESS.DelayPckg.all;     -- For the FPGA<=>PC transfer link module.
 
 use work.pck_myhdl_09.all;
 
