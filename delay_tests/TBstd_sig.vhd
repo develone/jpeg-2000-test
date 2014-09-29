@@ -2,10 +2,10 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   13:45:40 09/28/2014
+-- Create Date:   05:55:44 09/29/2014
 -- Design Name:   
--- Module Name:   C:/Xilinx/14.7/ISE_DS/delay/TBstd_sig.vhd
--- Project Name:  delay
+-- Module Name:   C:/Xilinx/14.7/ISE_DS/delay_tests/TBstd_sig.vhd
+-- Project Name:  delay_tests
 -- Target Device:  
 -- Tool versions:  
 -- Description:   
@@ -42,18 +42,18 @@ ARCHITECTURE behavior OF TBstd_sig IS
     COMPONENT std_sig
     PORT(
          clk_i : IN  std_logic;
-         a_i : IN  std_logic;
-         aDelayed_o : OUT  std_logic
+         bus_i : IN  std_logic_vector :=(15 downto 0 => '0') ;
+         busDelayed_o : OUT  std_logic_vector :=(15 downto 0 => '0')
         );
     END COMPONENT;
     
 
    --Inputs
-   signal clk_i : std_logic := '0';
-   signal a_i : std_logic := '0';
+   signal clk_i : std_logic := '0' ;
+   signal bus_i : std_logic_vector (15 downto 0);
 
  	--Outputs
-   signal aDelayed_o : std_logic;
+   signal busDelayed_o : std_logic_vector (15 downto 0);
 
    -- Clock period definitions
    constant clk_i_period : time := 10 ns;
@@ -63,8 +63,8 @@ BEGIN
 	-- Instantiate the Unit Under Test (UUT)
    uut: std_sig PORT MAP (
           clk_i => clk_i,
-          a_i => a_i,
-          aDelayed_o => aDelayed_o
+          bus_i => bus_i,
+          busDelayed_o => busDelayed_o
         );
 
    -- Clock process definitions
@@ -86,9 +86,7 @@ BEGIN
       wait for clk_i_period*10;
 
       -- insert stimulus here 
-      a_i <= '1';
-		wait for 100 ns;
-		a_i <= '0';
+		bus_i <= x"00FA";
       wait;
    end process;
 

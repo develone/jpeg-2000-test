@@ -19,7 +19,7 @@
 ----------------------------------------------------------------------------------
 library IEEE,XESS;
 use IEEE.STD_LOGIC_1164.ALL;
-use XESS.DelayPckg.DelayLine;
+use XESS.DelayPckg.DelayBus;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -32,19 +32,19 @@ use XESS.DelayPckg.DelayLine;
 
 entity std_sig is
     Port ( clk_i : in STD_LOGIC;
-			  a_i : in  STD_LOGIC;
-           aDelayed_o : out  STD_LOGIC);
+			  bus_i : in  STD_LOGIC_VECTOR :=(15 downto 0 => '0');
+           busDelayed_o : out  STD_LOGIC_VECTOR :=(15 downto 0 => '0'));
 end std_sig;
 
 architecture Behavioral of std_sig is
 
 begin
-DelayLine_u0 : DelayLine
-	generic map (NUM_DELAY_CYCLES_G => 5)
+DelayBus_u0 : DelayBus
+	generic map (NUM_DELAY_CYCLES_G => 3)
 		port map (
 				clk_i => clk_i,
-				a_i => a_i,
-				aDelayed_o => aDelayed_o
+				bus_i => bus_i,
+				busDelayed_o => busDelayed_o
 				);
 end Behavioral;
 
