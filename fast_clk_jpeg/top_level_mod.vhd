@@ -374,7 +374,7 @@ DelayBus_u0 : DelayBus
                 sam_x <= dataFromRam_s;	
           elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	
                 right_x <= dataFromRam_s;
-					 left_x <= dataFromRam_s; --saving the right to left_x
+					 leftDel_x <= dataFromRam_s; --saving the right to left_x
 					 sigDelayed_x <= YES;
 					 updated_x <= YES;
 					 sam_addr_x <= sam_addr_r + 2;
