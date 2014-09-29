@@ -17,6 +17,9 @@ even_odd_s = Signal(bool(0))
 fwd_inv_s = Signal(bool(0))
 clk_fast = Signal(bool(0))
 noupdate_s = Signal(bool(0))
+leftDelDut_s = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
+signalDelayed_s = Signal(bool(0))
+updated_jpeg_s = Signal(bool(0))
 flag = 0
 def step1(sam,left,right,flag):
 	if flag == 1:
@@ -40,7 +43,7 @@ def test_jpeg():
 		print i, flag, sam, left, right, step1(sam,left,right,flag)
 		flag = 0
 		print i, flag, sam, left, right, step1(sam,left,right,flag)
-		flag = 1	
+		flag = 1
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
 		flag = 0
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
@@ -52,43 +55,57 @@ def test_jpeg():
 		print i, flag, sam, left, right, step1(sam,left,right,flag)
 		flag = 0
 		print i, flag, sam, left, right, step1(sam,left,right,flag)
-		flag = 1	
+		flag = 1
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
 		flag = 0
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
-			
-def jpeg(clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s):
+
+def jpeg(clk_fast, left_s, right_s, sam_s, res_s, updated_jpeg_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s, signalDelayed_s):
 	@always(clk_fast.posedge)
 	def hdl():
-		if updated_s: 
+		if updated_s:
 			if even_odd_s:
 				if  fwd_inv_s:
-					res_s.next =  sam_s - ((left_s >> 1) + (right_s >> 1))
+					if signalDelayed_s:
+						res_s.next =  sam_s - ((leftDelDut_s >> 1) + (right_s >> 1))
+					else:
+						res_s.next =  sam_s - ((left_s >> 1) + (right_s >> 1))
 				else:
-					res_s.next =  sam_s + ((left_s >> 1) + ( right_s >> 1))
+					if signalDelayed_s:
+						res_s.next =  sam_s + ((leftDelDut_s >> 1) + (right_s >> 1))
+					else:
+						res_s.next =  sam_s + ((left_s >> 1) + (right_s >> 1))
 			else:
 				if fwd_inv_s:
-					res_s.next =  sam_s + ((left_s +  right_s + 2)>>2)
+					if signalDelayed_s:
+						res_s.next =  sam_s + ((leftDelDut_s +  right_s + 2)>>2)
+					else:
+						res_s.next =  sam_s + ((left_s +  right_s + 2)>>2)
 				else:
-					res_s.next =  sam_s - ((left_s +  right_s + 2)>>2)
+					if signalDelayed_s:
+						res_s.next =  sam_s - ((leftDelDut_s +  right_s + 2)>>2)
+					else:
+						res_s.next =  sam_s - ((left_s +  right_s + 2)>>2)
+			updated_jpeg_s.next = 1
 		else:
 			noupdate_s.next = 1
+
 	return hdl
 def testbench():
-	i_inst = jpeg( clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
+	i_inst = jpeg( clk_fast, left_s, right_s, sam_s, res_s,updated_jpeg_s,  even_odd_s , fwd_inv_s, updated_s, noupdate_s, signalDelayed_s)
 
 	@always(delay(10))
 	def clkgen():
 		clk_fast.next = not clk_fast
-	
+
 	@instance
-	def stimulus():	
-	
+	def stimulus():
+
 		for i in range(1):
 			updated_s.next = 1
 			even_odd_s.next = 1
 			fwd_inv_s.next = 1
-			
+
 			yield clk_fast.posedge
 		for i in range(1,128,2):
 			sam_s.next = int(m[i])
@@ -99,13 +116,13 @@ def testbench():
 			if i == 65:
 				fwd_inv_s.next = 0
 			if i == 73:
-				updated_s.next = 0	
-			yield clk_fast.posedge	
+				updated_s.next = 0
+			yield clk_fast.posedge
 		raise StopSimulation
 	return   i_inst, stimulus, clkgen
-def convert():			
-	toVerilog(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
-	toVHDL(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s )
+def convert():
+	toVerilog(jpeg, clk_fast, left_s, right_s, sam_s, res_s, updated_jpeg_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s, signalDelayed_s)
+	toVHDL(jpeg, clk_fast, left_s, right_s, sam_s, res_s, updated_jpeg_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s, signalDelayed_s)
 #convert()
 tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
