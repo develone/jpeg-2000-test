@@ -26,7 +26,7 @@ use IEEE.NUMERIC_STD.ALL;
 use XESS.ClkgenPckg.all;     -- For the clock generator module.
 use XESS.SdramCntlPckg.all;  -- For the SDRAM controller module.
 use XESS.HostIoPckg.all;     -- For the FPGA<=>PC transfer link module.
-
+use XESS.DelayPckg.DelayBus; -- Needed to delay the left_r when reading from SDram
 use work.pck_myhdl_09.all;
 library UNISIM;
 use UNISIM.VComponents.all;
@@ -63,18 +63,19 @@ architecture Behavioral of top_level_mod is
   --                                                                           5432109876543210
   
   signal x : std_logic_vector(15 downto 0);  
-  signal fromjpeg_s : std_logic_vector(129 downto 0); -- From jpeg to PC.
+  signal fromjpeg_s : std_logic_vector(145 downto 0); -- From jpeg to PC.
   alias fromresult_s is fromjpeg_s(15 downto 0); -- jpeg output.
   alias fromsum_s is fromjpeg_s(31 downto 16); -- sum_r.
   alias fromleft_s is fromjpeg_s(47 downto 32); -- left_r.
   alias fromsam_s is fromjpeg_s(63 downto 48); -- sam_r.
   alias fromright_s is fromjpeg_s(79 downto 64); -- right_r.
-  alias fromaddr_sam_s is fromjpeg_s(95 downto 80); --addr_sam_r 
-  alias fromaddrjpeg_s is fromjpeg_s(111 downto 96); --addr_sam_r
- 
-  alias fromupdated_s is fromjpeg_s(128);
-  alias fromnoupdate_s is fromjpeg_s(129);
-  alias fromaddr_s is fromjpeg_s(127 downto 112); --addr_r
+  alias fromleftdel_s is fromjpeg_s(95 downto 80); -- right_r.
+  alias fromaddr_sam_s is fromjpeg_s(111 downto 96); --addr_sam_r 
+  alias fromaddrjpeg_s is fromjpeg_s(127 downto 112); --addr_sam_r
+  alias fromaddr_s is fromjpeg_s(143 downto 128); --addr_r
+  alias fromupdated_s is fromjpeg_s(144);
+  alias fromnoupdate_s is fromjpeg_s(145);
+  
   --alias fromjpegram_s is fromjpeg_s(128 downto 112); --addr_sam_r
   signal  even_odd_s : std_logic;
   signal  fwd_inv_s : std_logic;
@@ -147,7 +148,10 @@ signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  --
 signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
 signal dataToRam_res_r, dataToRam_res_x : RamWord_t;  -- Data to write to RAM.
 signal dataFromRam_s            : RamWord_t;  -- Data read from RAM.
-signal left_r, sam_r, right_r, left_x, sam_x, right_x    : RamWord_t;  
+signal left_r, sam_r, right_r, left_x, sam_x, right_x    : RamWord_t;
+signal leftDel_r, leftDel_x   : RamWord_t;
+signal left_sv, leftDel_sv : std_logic_vector(15 downto 0);
+signal sigDelayed_r, sigDelayed_x   : std_logic;  --needed to indicate if left_r has been delayed.
 -- Data read from RAM for left, sam, and right.
 --signal addr needed for HostIoToRam not for HostIoToDut
 signal addr_s                   : std_logic_vector(22 downto 0); 
@@ -166,6 +170,7 @@ signal state_r, state_x         : state_t   := INIT;  -- FSM starts off in init 
 signal sum_r, sum_x             : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
 signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
 signal leftDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
+signal leftDelDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
 signal samDut_s                 : std_logic_vector(15 downto 0);  -- Send sam back to PC.
 signal rightDut_s                 : std_logic_vector(15 downto 0);  -- Send right back to PC.
 signal sam_addr_rDut_s                 : std_logic_vector(15 downto 0);  -- Send addr_sam_r back to PC.
@@ -286,6 +291,19 @@ UHostIoToJpeg : HostIoToDut
   dataToSdram_s <= std_logic_vector(dataToRam_r);
   dataFromRam_s <= RamWord_t(dataFromSdram_s);
   addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
+ 
+ --***********************************************************************
+-- Needing to delay the left after going thru the READ_AND_SUM_DATA 
+-- 3 times.  Planning using DelayBus from the VHDL_Lib.
+--***********************************************************************
+
+DelayBus_u0 : DelayBus
+	generic map (NUM_DELAY_CYCLES_G => 2)
+		port map (
+				clk_i => clk_s,
+				bus_i => left_sv,
+				busDelayed_o => leftDel_sv
+				);
  process(clk_fast) is
 	begin
 	   if rising_edge(clk_fast) then
@@ -304,7 +322,8 @@ UHostIoToJpeg : HostIoToDut
   --*********************************************************************
   FsmComb_p : process(state_r, addr_r, dataToRam_r,
                       sum_r, dataFromRam_s, done_s, left_r, sam_r, right_r, sam_addr_r,
-							 dataToRam_res_r, addrjpeg_r, updated_r)
+							 dataToRam_res_r, addrjpeg_r, updated_r, 
+							 leftDel_r, sigDelayed_r)
   begin
     -- Disable RAM reads and writes by default.
     rd_s        <= NO;                  -- Don't write to RAM.
@@ -323,6 +342,8 @@ UHostIoToJpeg : HostIoToDut
     dataToRam_res_x 	  <=  dataToRam_res_r;
 	 addrjpeg_x      <= addrjpeg_r;
 	 updated_x  <= updated_r;
+	 leftDel_x <= leftDel_r;
+	 sigDelayed_x <= sigDelayed_r;
     case state_r is
 
       when INIT =>                      -- Initialize the FSM.
@@ -335,21 +356,26 @@ UHostIoToJpeg : HostIoToDut
         --state_x     <= WRITE_DATA;      -- Go to next state.
         state_x <= READ_AND_SUM_DATA;    -- and go to next state.
         updated_x <= NO;
-
+        sigDelayed_x <= NO;
+		  
       when READ_AND_SUM_DATA =>  -- Read RAM and sum address*data products
         if done_s = NO then      -- While current RAM read is not complete ...
           rd_s <= YES;                  -- keep read-enable active.
-        elsif addr_r <= (MIN_ADDR_C + 3) then  -- If not the end of row ...
+		  --this code needs to go thru 1 more than the desire values
+		  --0 1 2 3 left_r sam_r right_r
+        elsif addr_r <= (MIN_ADDR_C + 6) then  -- If not the end of row ...
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
           sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
-			 if addr_r = LEFT_ADDR_C then
+			 if addr_r = (LEFT_ADDR_C + sam_addr_r - 1) then
 			      left_x <= dataFromRam_s;
 					
-			 elsif addr_r = SAM_ADDR_C then	
+			 elsif addr_r = (SAM_ADDR_C + sam_addr_r - 1) then	
                 sam_x <= dataFromRam_s;	
-          elsif addr_r = RIGHT_ADDR_C then	
+          elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	
                 right_x <= dataFromRam_s;
+					 left_x <= dataFromRam_s; --saving the right to left_x
+					 sigDelayed_x <= YES;
 					 updated_x <= YES;
 					 sam_addr_x <= sam_addr_r + 2;
 					 --addrjpeg_x <= addrjpeg_r + 2;
@@ -357,7 +383,7 @@ UHostIoToJpeg : HostIoToDut
           addr_x <= addr_r + 1;         -- and go to next address.
           
        --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
-		 elsif addr_r = (MIN_ADDR_C + 4) then  -- Else, the final address has been read ...
+		 elsif addr_r = (MIN_ADDR_C + 7) then  -- Else, the final address has been read ...
 		         addr_x <= MIN_ADDRJPEG_C;
                state_x     <= WRITE_DATA;      -- Go to next state.
 		 else 	
@@ -387,7 +413,8 @@ UHostIoToJpeg : HostIoToDut
 
   end process;
 
-  --*********************************************************************
+
+--*********************************************************************
   -- Update the FSM's registers with their next values as computed by
   -- the FSM's combinatorial section.
   --*********************************************************************
@@ -399,13 +426,18 @@ UHostIoToJpeg : HostIoToDut
       state_r     <= state_x;
       sum_r       <= sum_x;
 		sam_r       <= sam_x;
-		left_r      <= left_x;
+		
 		right_r     <= right_x;
 		sam_addr_r  <= sam_addr_x; 
 		
 		--dataToRam_res_r  <= dataToRam_res_x;
 		addrjpeg_r      <= addrjpeg_x;
 		updated_r <= updated_x;
+		leftDel_r <= leftDel_x;
+		sigDelayed_r <= sigDelayed_x;
+      left_r      <= left_x;		
+		
+		
     end if;
   end process;
 
@@ -414,6 +446,8 @@ UHostIoToJpeg : HostIoToDut
   --*********************************************************************
   sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
   leftDut_s <= std_logic_vector((left_r));
+  left_sv <= std_logic_vector((leftDel_r));
+  leftDelDut_s <= leftDel_sv;
   samDut_s <= std_logic_vector((sam_r));
   rightDut_s <= std_logic_vector((right_r));
   fromsum_s <= sumDut_s; --back to PC
@@ -437,6 +471,7 @@ UHostIoToJpeg : HostIoToDut
   fromleft_s <= leftDut_s; --back to PC
   fromsam_s <= samDut_s; --back to PC 
   fromright_s <= rightDut_s; --back to PC
+  fromleftdel_s <= leftDelDut_s; --back to PC
   
   addraddr_rDut_s <= std_logic_vector(TO_UNSIGNED(addr_r,16));
   fromaddr_s <= addraddr_rDut_s;
