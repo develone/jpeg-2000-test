@@ -41,48 +41,52 @@ jpeg = XsDut(USB_ID, JPEG_ID, [14, 1, 1], [16, 16, 16, 16, 16, 16, 16, 16, 16, 1
 #sam = randint(0, 511)  # Get a random, positive byte...
 #left = randint(0, 511)  # Get a random, positive byte...
 #right = randint(0, 511)  # Get a random, positive byte...
-left = 163
-sam = 160
-right = 155
-sam_addr = 1
+#left = 163
+#sam = 160
+#right = 155
+sam_addr = 5
 def loc_jpeg():
     if even_odd:
         if fwd_inv:
-            loc_lift = sam - ((left>>1) + (right>>1))
+            loc_lift = sam_r.int - ((left_r.int>>1) + (right_r.int>>1))
         else:
-            loc_lift = sam + ((left>>1) + (right>>1))
+            loc_lift = sam_r.int + ((left_r.int>>1) + (right_r.int>>1))
     else:
         if fwd_inv:
-            loc_lift = sam + ( (left + right + 2)>>2)
+            loc_lift = sam_r.int + ( (left_r.int + right_r.int + 2)>>2)
         else:
-            loc_lift = sam - ( (left + right + 2)>>2)
+            loc_lift = sam_r.int - ( (left_r.int + right_r.int + 2)>>2)
     return loc_lift
-loc_lift = loc_jpeg()
+
 lift, sum, left_r, sam_r, right_r, delayed, addr_sam, addr_jpeg, addr, updated, noupdate = jpeg.Exec(sam_addr, even_odd, fwd_inv )  # Use the jpeg in FPGA.
 #print '%5d %1d %1d %5d %5d %5d %5d %5d %5d %5d'  % (sam_addr, even_odd, fwd_inv, loc_lift, lift.int, sum.int, left_r.int, sam_r.int, right_r.int, addr_sam.int, addr_jpeg.int)
 #print '%5d %1d %1d %5d %5d %5d %5d %5d %5d %5d'  % (sam_addr, even_odd, fwd_inv, loc_lift, lift.int, sum.int, left_r.int, sam_r.int, right_r.int, addr_sam.int, addr_jpeg.int)
+loc_lift = loc_jpeg()
 print sam_addr, even_odd, fwd_inv, loc_lift, lift, sum.int, left_r, sam_r, right_r, delayed,  addr_sam, addr_jpeg, addr,  updated, noupdate
 
 even_odd = 1 
 fwd_inv = 0
-loc_lift = loc_jpeg()
+
 lift, sum, left_r, sam_r, right_r, delayed, addr_sam, addr_jpeg, addr, update, noupdate = jpeg.Exec(sam_addr, even_odd, fwd_inv )  # Use the jpeg in FPGA.
 #print '%5d %1d %1d %5d %5d %5d %5d %5d %5d %5d'  % (sam_addr, even_odd, fwd_inv, loc_lift, lift.int, sum.int, left_r.int, sam_r.int, right_r.int, addr_sam.int, addr_jpeg.int)
 #print '%5d %1d %1d %5d %5d %5d %5d %5d %5d %5d'  % (sam_addr, even_odd, fwd_inv, loc_lift, lift.int, sum.int, left_r.int, sam_r.int, right_r.int, addr_sam.int, addr_jpeg.int)
+loc_lift = loc_jpeg()
 print sam_addr, even_odd, fwd_inv, loc_lift, lift, sum.int, left_r, sam_r, right_r, delayed,  addr_sam, addr_jpeg, addr, delayed, update, noupdate
 
 even_odd = 0 
 fwd_inv = 0
-loc_lift = loc_jpeg()
+
 lift, sum, left_r, sam_r, right_r, delayed, addr_sam, addr_jpeg, addr, updated, noupdate = jpeg.Exec(sam_addr, even_odd, fwd_inv )  # Use the jpeg in FPGA.
 #print '%5d %1d %1d %5d %5d %5d %5d %5d %5d %5d'  % (sam_addr, even_odd, fwd_inv, loc_lift, lift.int, sum.int, left_r.int, sam_r.int, right_r.int, addr_sam.int, addr_jpeg.int)
 #print '%5d %1d %1d %5d %5d %5d %5d %5d %5d %5d'  % (sam_addr, even_odd, fwd_inv, loc_lift, lift.int, sum.int, left_r.int, sam_r.int, right_r.int, addr_sam.int, addr_jpeg.int)
+loc_lift = loc_jpeg()
 print sam_addr, even_odd, fwd_inv, loc_lift, lift, sum.int, left_r, sam_r, right_r, delayed, addr_sam, addr_jpeg, addr, updated, noupdate
 
 even_odd = 0 
 fwd_inv = 1
-loc_lift = loc_jpeg()
+
 lift, sum, left_r, sam_r, right_r, delayed, addr_sam, addr_jpeg, addr, updated, noupdate = jpeg.Exec(sam_addr, even_odd, fwd_inv )  # Use the jpeg in FPGA.
 #print '%5d %1d %1d %5d %5d %5d %5d %5d %5d %5d'  % (sam_addr, even_odd, fwd_inv, loc_lift, lift.int, sum.int, left_r.int, sam_r.int, right_r.int, addr_sam.int, addr_jpeg.int)
 #print '%5d %1d %1d %5d %5d %5d %5d %5d %5d %5d'  % (sam_addr, even_odd, fwd_inv, loc_lift, lift.int, sum.int, left_r.int, sam_r.int, right_r.int, addr_sam.int, addr_jpeg.int)
+loc_lift = loc_jpeg()
 print sam_addr, even_odd, fwd_inv, loc_lift, lift, sum.int, left_r, sam_r, right_r, delayed, addr_sam, addr_jpeg, addr, updated, noupdate

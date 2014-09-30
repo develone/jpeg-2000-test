@@ -42,19 +42,22 @@ ARCHITECTURE behavior OF TBstd_sig IS
     COMPONENT std_sig
     PORT(
          clk_i : IN  std_logic;
-         bus_i : IN  std_logic_vector :=(15 downto 0 => '0') ;
-         busDelayed_o : OUT  std_logic_vector :=(15 downto 0 => '0')
+			sigDel_s : in STD_LOGIC;
+			sigDelayed_s : out STD_LOGIC;
+         left_sv : IN  std_logic_vector :=(15 downto 0 => '0') ;
+         leftDelDut_s : OUT  std_logic_vector :=(15 downto 0 => '0')
         );
     END COMPONENT;
     
 
    --Inputs
    signal clk_i : std_logic := '0' ;
-   signal bus_i : std_logic_vector (15 downto 0);
+	signal sigDel_s : std_logic := '0' ;
+   signal left_sv : std_logic_vector (15 downto 0);
 
  	--Outputs
-   signal busDelayed_o : std_logic_vector (15 downto 0);
-
+   signal leftDelDut_s : std_logic_vector (15 downto 0);
+	signal sigDelayed_s : std_logic;
    -- Clock period definitions
    constant clk_i_period : time := 10 ns;
  
@@ -63,8 +66,10 @@ BEGIN
 	-- Instantiate the Unit Under Test (UUT)
    uut: std_sig PORT MAP (
           clk_i => clk_i,
-          bus_i => bus_i,
-          busDelayed_o => busDelayed_o
+          left_sv => left_sv,
+          leftDelDut_s => leftDelDut_s,
+          sigDel_s => sigDel_s,
+			 sigDelayed_s => sigDelayed_s
         );
 
    -- Clock process definitions
@@ -86,7 +91,8 @@ BEGIN
       wait for clk_i_period*10;
 
       -- insert stimulus here 
-		bus_i <= x"00FA";
+		left_sv <= x"009B";
+		sigDel_s <= '1';
       wait;
    end process;
 

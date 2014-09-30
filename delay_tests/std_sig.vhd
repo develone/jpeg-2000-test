@@ -19,7 +19,7 @@
 ----------------------------------------------------------------------------------
 library IEEE,XESS;
 use IEEE.STD_LOGIC_1164.ALL;
-use XESS.DelayPckg.DelayBus;
+use XESS.DelayPckg.all;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -32,19 +32,40 @@ use XESS.DelayPckg.DelayBus;
 
 entity std_sig is
     Port ( clk_i : in STD_LOGIC;
-			  bus_i : in  STD_LOGIC_VECTOR :=(15 downto 0 => '0');
-           busDelayed_o : out  STD_LOGIC_VECTOR :=(15 downto 0 => '0'));
+			  sigDel_s : in STD_LOGIC;
+			  sigDelayed_s : out STD_LOGIC;
+			  left_sv : in  STD_LOGIC_VECTOR :=(15 downto 0 => '0');
+           leftDelDut_s : out  STD_LOGIC_VECTOR :=(15 downto 0 => '0'));
 end std_sig;
 
 architecture Behavioral of std_sig is
 
 begin
 DelayBus_u0 : DelayBus
-	generic map (NUM_DELAY_CYCLES_G => 3)
+	generic map (NUM_DELAY_CYCLES_G => 2)
 		port map (
 				clk_i => clk_i,
-				bus_i => bus_i,
-				busDelayed_o => busDelayed_o
+				bus_i => left_sv,
+				busDelayed_o => leftDelDut_s
 				);
+DelayLine_u1 : DelayLine
+	generic map (NUM_DELAY_CYCLES_G => 2)
+		port map (
+				clk_i => clk_i,
+				a_i => sigDel_s,
+				aDelayed_o => sigDelayed_s
+				);
+--ujpeg: jpeg 
+--	port map( 
+--        clk_fast => clk_i,
+--        left_s => signed(left_s),
+--        right_s => signed(right_s),
+--        sam_s => signed(sam_s),
+--        res_s => signed_res_s,
+--        even_odd_s => even_odd_s,
+--		  fwd_inv_s => fwd_inv_s,
+--        updated_s => updated_s,
+--        noupdate_s => noupdate_s		  
+--		  );				
 end Behavioral;
 

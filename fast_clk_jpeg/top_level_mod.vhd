@@ -26,7 +26,7 @@ use IEEE.NUMERIC_STD.ALL;
 use XESS.ClkgenPckg.all;     -- For the clock generator module.
 use XESS.SdramCntlPckg.all;  -- For the SDRAM controller module.
 use XESS.HostIoPckg.all;     -- For the FPGA<=>PC transfer link module.
-use XESS.DelayPckg.DelayBus; -- Needed to delay the left_r when reading from SDram
+use XESS.DelayPckg.all; -- Needed to delay the left_r when reading from SDram
 use work.pck_myhdl_09.all;
 library UNISIM;
 use UNISIM.VComponents.all;
@@ -152,6 +152,7 @@ signal left_r, sam_r, right_r, left_x, sam_x, right_x    : RamWord_t;
 signal leftDel_r, leftDel_x   : RamWord_t;
 signal left_sv, leftDel_sv : std_logic_vector(15 downto 0);
 signal sigDelayed_r, sigDelayed_x   : std_logic;  --needed to indicate if left_r has been delayed.
+signal sigDelayed_s, sigDel_s   : std_logic;  --needed to indicate if left_r has been delayed.
 -- Data read from RAM for left, sam, and right.
 --signal addr needed for HostIoToRam not for HostIoToDut
 signal addr_s                   : std_logic_vector(22 downto 0); 
@@ -304,6 +305,13 @@ DelayBus_u0 : DelayBus
 				bus_i => left_sv,
 				busDelayed_o => leftDel_sv
 				);
+DelayLine_u1 : DelayLine
+	generic map (NUM_DELAY_CYCLES_G => 2)
+		port map (
+				clk_i => clk_s,
+				a_i => sigDel_s,
+				aDelayed_o => sigDelayed_s
+				);			
  process(clk_fast) is
 	begin
 	   if rising_edge(clk_fast) then
@@ -350,7 +358,7 @@ DelayBus_u0 : DelayBus
        
         
 		  --dataToRam_res_x <= TO_UNSIGNED(1, RAM_WIDTH_C);
-		  sam_addr_x  <=   1;
+		  sam_addr_x  <=   5;
 		  addr_x  <=   0;
 		  addrjpeg_x  <=   MIN_ADDRJPEG_C + 1;
         --state_x     <= WRITE_DATA;      -- Go to next state.
