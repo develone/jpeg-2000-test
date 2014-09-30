@@ -27,7 +27,9 @@
 --------------------------------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
- 
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --USE ieee.numeric_std.ALL;
@@ -45,19 +47,30 @@ ARCHITECTURE behavior OF TBstd_sig IS
 			sigDel_s : in STD_LOGIC;
 			sigDelayed_s : out STD_LOGIC;
          left_sv : IN  std_logic_vector :=(15 downto 0 => '0') ;
-         leftDelDut_s : OUT  std_logic_vector :=(15 downto 0 => '0')
-        );
+         leftDelDut_s : OUT  std_logic_vector :=(15 downto 0 => '0');
+			even_odd_s : in std_logic;
+			fwd_inv_s : in std_logic;
+			updated_s : in std_logic;
+			noupdate_s : out std_logic;
+         left_s, sam_s, right_s : in signed(15 downto 0);
+         res_s : out signed(15 downto 0)
+			);
     END COMPONENT;
     
 
    --Inputs
    signal clk_i : std_logic := '0' ;
-	signal sigDel_s : std_logic := '0' ;
-   signal left_sv : std_logic_vector (15 downto 0);
-
+	signal sigDel_s  : std_logic := '0' ;
+	signal even_odd_s : std_logic := '0' ; 
+	signal fwd_inv_s : std_logic := '0' ;
+	signal updated_s : std_logic := '0' ;
+	signal left_sv : std_logic_vector (15 downto 0);
+   signal left_s, sam_s, right_s : signed(15 downto 0);
+	
  	--Outputs
    signal leftDelDut_s : std_logic_vector (15 downto 0);
-	signal sigDelayed_s : std_logic;
+	signal res_s : signed(15 downto 0);
+	signal sigDelayed_s, noupdate_s  : std_logic;
    -- Clock period definitions
    constant clk_i_period : time := 10 ns;
  
@@ -69,7 +82,15 @@ BEGIN
           left_sv => left_sv,
           leftDelDut_s => leftDelDut_s,
           sigDel_s => sigDel_s,
-			 sigDelayed_s => sigDelayed_s
+			 sigDelayed_s => sigDelayed_s,
+			 left_s => left_s,
+			 sam_s => sam_s,
+			 right_s => right_s,
+			 res_s => res_s,
+			 even_odd_s => even_odd_s,
+			 fwd_inv_s => fwd_inv_s,
+			 updated_s => updated_s,
+			 noupdate_s => noupdate_s
         );
 
    -- Clock process definitions
@@ -91,9 +112,28 @@ BEGIN
       wait for clk_i_period*10;
 
       -- insert stimulus here 
-		left_sv <= x"009B";
-		sigDel_s <= '1';
-      wait;
+
+		left_s <= x"00A3";
+		sam_s <= x"00A0";
+		right_s <= x"009B";
+		even_odd_s <= '1';
+		fwd_inv_s <= '1';
+		updated_s <= '0';
+		wait for 100 ns;	
+		updated_s <= '1';
+		wait for 100 ns;
+		
+		wait for 100 ns;
+      left_s <= x"00A3";
+		sam_s <= x"00A0";
+		right_s <= x"009B";      
+      wait for 100 ns;
+      left_s <= x"009B";
+		sam_s <= x"009B";
+		right_s <= x"009D";
+      left_sv <= x"009B";
+		sigDel_s <= '1';		
+		wait;
    end process;
 
 END;
