@@ -38,11 +38,12 @@ entity std_sig is
 			  clk_i : in STD_LOGIC;
 			  sigDel_s : in STD_LOGIC;
 			  sigDelayed_s : out STD_LOGIC;
+			  sigDel_flag :  in STD_LOGIC;
 			  left_sv : in  STD_LOGIC_VECTOR :=(15 downto 0 => '0');
            leftDelDut_s : out  STD_LOGIC_VECTOR :=(15 downto 0 => '0');
 			  even_odd_s, fwd_inv_s, updated_s  : in std_logic;
 			  noupdate_s : out std_logic;
-           left_s, sam_s, right_s : in signed(15 downto 0);
+           left_s, sam_s, right_s, lf_del : in signed(15 downto 0);
 			  res_s : out signed(15 downto 0)
 			  );
 end std_sig;
@@ -55,13 +56,15 @@ component jpeg is
     port (
         clk_fast: in std_logic;
         left_s : in signed (15 downto 0);
+		  leftDelDut_s : in signed (15 downto 0);
         right_s : in signed (15 downto 0);
         sam_s : in signed (15 downto 0);
         res_s: out signed (15 downto 0);
 		  even_odd_s : in std_logic ;
 		  fwd_inv_s : in std_logic;
 		  updated_s : in std_logic;
-		  noupdate_s : out std_logic
+		  noupdate_s : out std_logic;
+		  sigDelayed_s : in std_logic
     );
 end component;
 begin
@@ -83,13 +86,15 @@ ujpeg: jpeg
 	port map( 
         clk_fast => clk_i,
         left_s => left_s,
+		  leftDelDut_s => lf_del,
         right_s => right_s,
         sam_s => sam_s,
         res_s => res_s,
         even_odd_s => even_odd_s,
 		  fwd_inv_s => fwd_inv_s,
         updated_s => updated_s,
-        noupdate_s => noupdate_s		  
+        noupdate_s => noupdate_s,
+        sigDelayed_s => sigDel_flag 		  
 		  );				
 end Behavioral;
 

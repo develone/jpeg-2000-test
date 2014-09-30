@@ -45,6 +45,7 @@ ARCHITECTURE behavior OF TBstd_sig IS
     PORT(
          clk_i : IN  std_logic;
 			sigDel_s : in STD_LOGIC;
+			sigDel_flag : in std_logic;
 			sigDelayed_s : out STD_LOGIC;
          left_sv : IN  std_logic_vector :=(15 downto 0 => '0') ;
          leftDelDut_s : OUT  std_logic_vector :=(15 downto 0 => '0');
@@ -52,7 +53,7 @@ ARCHITECTURE behavior OF TBstd_sig IS
 			fwd_inv_s : in std_logic;
 			updated_s : in std_logic;
 			noupdate_s : out std_logic;
-         left_s, sam_s, right_s : in signed(15 downto 0);
+         left_s, sam_s, right_s, lf_del : in signed(15 downto 0);
          res_s : out signed(15 downto 0)
 			);
     END COMPONENT;
@@ -61,16 +62,18 @@ ARCHITECTURE behavior OF TBstd_sig IS
    --Inputs
    signal clk_i : std_logic := '0' ;
 	signal sigDel_s  : std_logic := '0' ;
+	signal sigDel_flag  : std_logic := '0' ;
 	signal even_odd_s : std_logic := '0' ; 
 	signal fwd_inv_s : std_logic := '0' ;
 	signal updated_s : std_logic := '0' ;
 	signal left_sv : std_logic_vector (15 downto 0);
-   signal left_s, sam_s, right_s : signed(15 downto 0);
+   signal left_s, sam_s, right_s, lf_del : signed(15 downto 0);
 	
  	--Outputs
    signal leftDelDut_s : std_logic_vector (15 downto 0);
 	signal res_s : signed(15 downto 0);
 	signal sigDelayed_s, noupdate_s  : std_logic;
+ 
    -- Clock period definitions
    constant clk_i_period : time := 10 ns;
  
@@ -81,7 +84,9 @@ BEGIN
           clk_i => clk_i,
           left_sv => left_sv,
           leftDelDut_s => leftDelDut_s,
+			 lf_del => lf_del,
           sigDel_s => sigDel_s,
+			 sigDel_flag => sigDel_flag,
 			 sigDelayed_s => sigDelayed_s,
 			 left_s => left_s,
 			 sam_s => sam_s,
@@ -91,6 +96,7 @@ BEGIN
 			 fwd_inv_s => fwd_inv_s,
 			 updated_s => updated_s,
 			 noupdate_s => noupdate_s
+			 
         );
 
    -- Clock process definitions
