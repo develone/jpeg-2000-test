@@ -19,6 +19,9 @@
 ----------------------------------------------------------------------------------
 library IEEE,XESS;
 use IEEE.STD_LOGIC_1164.ALL;
+use XESS.ClkgenPckg.all;     -- For the clock generator module.
+use XESS.SdramCntlPckg.all;  -- For the SDRAM controller module.
+use XESS.HostIoPckg.all;     -- For the FPGA<=>PC transfer link module.
 use XESS.DelayPckg.all;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use IEEE.NUMERIC_STD.ALL;
@@ -44,14 +47,63 @@ entity std_sig is
 			  even_odd_s, fwd_inv_s, updated_s  : in std_logic;
 			  noupdate_s : out std_logic;
            left_s, sam_s, right_s, lf_del : in signed(15 downto 0);
-			  res_s : out signed(15 downto 0)
+			  res_s : out signed(15 downto 0);
+			  fpgaClk_i : in    std_logic;  -- 12 MHz clock input from external clock source.
+           sdClk_o   : out   std_logic;  -- 100 MHz clock to SDRAM.
+			  sdClkFb_i : in    std_logic;  -- 100 MHz clock fed back into FPGA.
+           --blinker_o : out  STD_LOGIC;
+			  sdCke_o   : out   std_logic;  -- SDRAM clock enable.
+           sdCe_bo   : out   std_logic;  -- SDRAM chip-enable.
+           sdRas_bo  : out   std_logic;  -- SDRAM row address strobe.
+           sdCas_bo  : out   std_logic;  -- SDRAM column address strobe.
+           sdWe_bo   : out   std_logic;  -- SDRAM write-enable.
+           sdBs_o    : out   std_logic_vector(1 downto 0);  -- SDRAM bank-address.
+           sdAddr_o  : out   std_logic_vector(12 downto 0);  -- SDRAM address bus.
+           sdData_io : inout std_logic_vector(15 downto 0);    -- SDRAM data bus.
+           sdDqmh_o  : out   std_logic;  -- SDRAM high-byte databus qualifier.
+           sdDqml_o  : out   std_logic  -- SDRAM low-byte databus qualifier.
 			  );
 end std_sig;
 
 architecture Behavioral of std_sig is
-  --signal left_s, sam_s, right_s, res_s : signed(15 downto 0);
-  --signal even_odd_s, fwd_inv_s, updated_s, noupdate_s  : std_logic;
-   
+-------------------------------------------------------------------------
+-- JTAG
+------------------------------------------------------------------------- 
+ -- Main entry point for the JTAG signals between the PC and the FPGA.
+ --Signals constants needed by JTAG--------------------------------------- 
+  signal inShiftDr_s : std_logic; -- True when bits shift btwn PC & FPGA.
+  signal clk_fast : std_logic;
+  signal clk_s                    : std_logic;  -- Internal 
+  signal drck_s : std_logic; -- Bit shift clock.
+  signal tdi_s : std_logic; -- Bits from host PC to the blinker.
+  signal tdo_s : std_logic; -- Bits from blinker to the host PC.
+  signal tojpeg_s : std_logic_vector(15 downto 0); -- From PC to jpeg.
+  signal fromjpeg_s : std_logic_vector(145 downto 0); -- From jpeg to PC.
+--Signals constants needed by JTAG---------------------------------------
+  
+--Signals constants needed by Sdram---------------------------------------  
+constant NO                     : std_logic := '0';
+constant YES                    : std_logic := '1';
+constant ROW_C             : natural   := 63;  -- Number of words in RAM.
+constant RAM_SIZE_C             : natural   := 16384;  -- Number of words in RAM.
+constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
+constant MIN_ADDR_C             : natural   := 0;  -- Process RAM from this address ...
+constant LEFT_ADDR_C             : natural   := 0;  -- Process RAM from this address ...
+constant SAM_ADDR_C             : natural   := 1;  -- Process RAM from this address ...
+constant RIGHT_ADDR_C             : natural   := 2;  -- Process RAM from this address ...
+constant MAX_ADDR_C             : natural   := 8191;  -- ... to this address.
+constant MIN_ADDRJPEG_C             : natural   := 8192;  -- Process RAM from this address ...
+constant MAX_ADDRJPEG_C             : natural   := 16384;  -- ... to this address.
+subtype RamWord_t is unsigned(RAM_WIDTH_C-1 downto 0);  -- RAM word type.
+signal wr_s                     : std_logic;  -- Write-enable control.
+signal rd_s                     : std_logic;  -- Read-enable control.
+signal done_s                   : std_logic;  -- SDRAM R/W operation done signal.component jpeg is
+signal addrSdram_s              : std_logic_vector(23 downto 0);  -- Address.
+signal dataToSdram_s            : std_logic_vector(sdData_io'range);  -- Data.
+signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  --
+signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
+--Signals constants needed by Sdram--------------------------------------- 
+
 component jpeg is
     port (
         clk_fast: in std_logic;
@@ -95,6 +147,83 @@ ujpeg: jpeg
         updated_s => updated_s,
         noupdate_s => noupdate_s,
         sigDelayed_s => sigDel_flag 		  
-		  );				
+		  );	
+-------------------------------------------------------------------------
+-- JTAG entry point.
+-------------------------------------------------------------------------
+-- Main entry point for the JTAG signals between the PC and the FPGA.
+UBscanToHostIo : BscanToHostIo
+  port map (
+    inShiftDr_o => inShiftDr_s,
+    drck_o => drck_s,
+    tdi_o => tdi_s,
+    tdo_i => tdo_s
+    );
+-------------------------------------------------------------------------
+-- Shift-register.
+-------------------------------------------------------------------------
+-- This is the shift-register module between jpeg and JTAG entry point.
+UHostIoToJpeg : HostIoToDut
+  generic map (ID_G => "00000100") -- The identifier used by the PC.
+    port map (
+    -- Connections to the BscanToHostIo JTAG entry-point module.
+    inShiftDr_i => inShiftDr_s,
+    drck_i => drck_s,
+    tdi_i => tdi_s,
+    tdo_o => tdo_s,
+    -- Connections to jpeg
+    vectorToDut_o => tojpeg_s, -- From PC to jpeg sam left right.
+    vectorFromDut_i => fromjpeg_s -- From jpeg to PC.
+    );
+
+--*********************************************************************
+  -- Generate a 100 MHz clock from the 12 MHz input clock and send it out
+  -- to the SDRAM. Then feed it back in to clock the internal logic.
+  -- (The Spartan-6 FPGAs are a bit picky about what their DCM outputs
+  -- are allowed to drive, so I have to use the clkToLogic_o output to
+  -- send the clock signal to the output pin of the FPGA and on to the
+  -- SDRAM chip.)
+  --*********************************************************************
+  Clkgen_u1 : Clkgen
+    generic map (BASE_FREQ_G => 12.0, CLK_MUL_G => 25, CLK_DIV_G => 3)
+    port map(I               => fpgaClk_i, clkToLogic_o => sdClk_o);
+	  
+  clk_fast <= sdClkFb_i;    -- SDRAM clock feeds back into FPGA.
+  clk_s <= sdClkFb_i;
+ --*********************************************************************
+  -- Instantiate the SDRAM controller that connects to the FSM
+  -- and interfaces to the external SDRAM chip.
+  --*********************************************************************
+  SdramCntl_u0 : SdramCntl
+    generic map(
+      FREQ_G       => 100.0,  -- Use clock freq. to compute timing parameters.
+      DATA_WIDTH_G => RAM_WIDTH_C       -- Width of data words.
+      )
+    port map(
+      clk_i     => clk_s,
+      -- FSM side.
+      rd_i      => rd_s,
+      wr_i      => wr_s,
+      done_o    => done_s,
+      addr_i    => addrSdram_s,
+      data_i    => dataToSdram_s,
+      data_o    => dataFromSdram_s,
+      -- SDRAM side.
+      sdCke_o   => sdCke_o, -- SDRAM clock-enable pin is connected on the XuLA2.
+      sdCe_bo   => sdCe_bo, -- SDRAM chip-enable is connected on the XuLA2.
+      sdRas_bo  => sdRas_bo,
+      sdCas_bo  => sdCas_bo,
+      sdWe_bo   => sdWe_bo,
+      sdBs_o    => sdBs_o, -- Both SDRAM bank selects are connected on the XuLA2.
+      sdAddr_o  => sdAddr_o,
+      sdData_io => sdData_io,
+      sdDqmh_o  => sdDqmh_o, -- SDRAM high-byte databus qualifier is connected on the XuLA2.
+      sdDqml_o  => sdDqml_o  -- SDRAM low-byte databus qualifier is connected on the XuLA2.
+      );
+
+  -- Connect the SDRAM controller signals to the FSM signals.
+  dataToSdram_s <= std_logic_vector(dataToRam_r);
+--  dataFromRam_s <= RamWord_t(dataFromSdram_s);
+--  addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length)); 
 end Behavioral;
 
