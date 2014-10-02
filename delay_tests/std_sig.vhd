@@ -123,20 +123,20 @@ begin
 DelayBus_u0 : DelayBus
 	generic map (NUM_DELAY_CYCLES_G => 2)
 		port map (
-				clk_i => clk_i,
+				clk_i => clk_s,
 				bus_i => left_sv,
 				busDelayed_o => leftDelDut_s
 				);
 DelayLine_u1 : DelayLine
 	generic map (NUM_DELAY_CYCLES_G => 2)
 		port map (
-				clk_i => clk_i,
+				clk_i => clk_s,
 				a_i => sigDel_s,
 				aDelayed_o => sigDelayed_s
 				);
 ujpeg: jpeg 
 	port map( 
-        clk_fast => clk_i,
+        clk_fast => clk_fast,
         left_s => left_s,
 		  leftDelDut_s => lf_del,
         right_s => right_s,
