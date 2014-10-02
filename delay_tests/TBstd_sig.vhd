@@ -54,7 +54,9 @@ ARCHITECTURE behavior OF TBstd_sig IS
 			updated_s : in std_logic;
 			noupdate_s : out std_logic;
          left_s, sam_s, right_s, lf_del : in signed(15 downto 0);
-         res_s : out signed(15 downto 0)
+         res_s : out signed(15 downto 0);
+			fpgaClk_i : in    std_logic; -- 12 MHz clock input from external clock source.
+			sdClkFb_i : in    std_logic  -- 100 MHz clock fed back into FPGA.
 			);
     END COMPONENT;
     
@@ -68,7 +70,8 @@ ARCHITECTURE behavior OF TBstd_sig IS
 	signal updated_s : std_logic := '0' ;
 	signal left_sv : std_logic_vector (15 downto 0);
    signal left_s, sam_s, right_s, lf_del : signed(15 downto 0);
-	
+	signal fpgaClk_i : std_logic := '0' ;
+	signal sdClkFb_i : std_logic := '0' ;
  	--Outputs
    signal leftDelDut_s : std_logic_vector (15 downto 0);
 	signal res_s : signed(15 downto 0);
@@ -95,8 +98,9 @@ BEGIN
 			 even_odd_s => even_odd_s,
 			 fwd_inv_s => fwd_inv_s,
 			 updated_s => updated_s,
-			 noupdate_s => noupdate_s
-			 
+			 noupdate_s => noupdate_s,
+			 fpgaClk_i => fpgaClk_i,
+			 sdClkFb_i => sdClkFb_i
         );
 
    -- Clock process definitions
