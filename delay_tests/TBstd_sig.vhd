@@ -72,6 +72,19 @@ ARCHITECTURE behavior OF TBstd_sig IS
    signal left_s, sam_s, right_s, lf_del : signed(15 downto 0);
 	signal fpgaClk_i : std_logic := '0' ;
 	signal sdClkFb_i : std_logic := '0' ;
+	signal addr_x : unsigned(13 downto 0) := (others => '0');
+	signal sam_addr_x : unsigned(13 downto 0) := (others => '0');
+	signal updated_x : std_logic := '0';
+	signal sigDelayed_x : std_logic := '0';
+	signal addrjpeg_x : unsigned(13 downto 0) := (others => '0');
+	signal dataToRam_x : unsigned(15 downto 0) := (others => '0');
+ 	--Outputs
+   signal addr_r : unsigned(13 downto 0);
+	signal sam_addr_r : unsigned(13 downto 0) := (others => '0');
+	signal updated_r : std_logic := '0';
+	signal sigDelayed_r : std_logic := '0';
+	signal addrjpeg_r : unsigned(13 downto 0) := (others => '0');
+	signal dataToRam_r : unsigned(15 downto 0) := (others => '0');
  	--Outputs
    signal leftDelDut_s : std_logic_vector (15 downto 0);
 	signal res_s : signed(15 downto 0);
@@ -142,7 +155,9 @@ BEGIN
 		sam_s <= x"009B";
 		right_s <= x"009D";
       left_sv <= x"009B";
-		sigDel_s <= '1';		
+		sigDel_s <= '1';
+		dataToRam_x <= x"AA55";
+
 		wait;
    end process;
 

@@ -104,6 +104,20 @@ signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  --
 signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
 --Signals constants needed by Sdram--------------------------------------- 
 
+--Signals constants needed by FsmUpdate_p---------------------------------------	
+signal addr_x : unsigned(13 downto 0) := (others => '0');
+signal sam_addr_x : unsigned(13 downto 0) := (others => '0');
+signal updated_x : std_logic := '0';
+signal sigDelayed_x : std_logic := '0';
+signal addrjpeg_x : unsigned(13 downto 0) := (others => '0');
+--signal dataToRam_x : unsigned(15 downto 0) := (others => '0');   
+signal addr_r : unsigned(13 downto 0);
+signal sam_addr_r : unsigned(13 downto 0) := (others => '0');
+signal updated_r : std_logic := '0';
+signal sigDelayed_r : std_logic := '0';
+signal addrjpeg_r : unsigned(13 downto 0) := (others => '0');
+--signal dataToRam_r : unsigned(15 downto 0) := (others => '0');--Signals constants needed by FsmUpdate_p---------------------------------------
+
 component jpeg is
     port (
         clk_fast: in std_logic;
@@ -118,7 +132,24 @@ component jpeg is
 		  noupdate_s : out std_logic;
 		  sigDelayed_s : in std_logic
     );
-end component;
+end component;    
+COMPONENT FsmUpdate_p
+    PORT(
+         clk_s : IN  std_logic;
+         addr_r : OUT  unsigned(13 downto 0);
+         addr_x : IN  unsigned(13 downto 0);
+			sam_addr_r : OUT  unsigned(13 downto 0);
+         sam_addr_x : IN  unsigned(13 downto 0);
+			updated_r : OUT  std_logic;
+         updated_x : IN  std_logic;
+			sigDelayed_r : OUT  std_logic;
+         sigDelayed_x : IN  std_logic;
+         addrjpeg_r : OUT  unsigned(13 downto 0);
+         addrjpeg_x : IN  unsigned(13 downto 0);
+			dataToRam_r : OUT  unsigned(15 downto 0);
+         dataToRam_x : IN  unsigned(15 downto 0)
+			);
+END COMPONENT;
 begin
 DelayBus_u0 : DelayBus
 	generic map (NUM_DELAY_CYCLES_G => 2)
@@ -148,6 +179,22 @@ ujpeg: jpeg
         noupdate_s => noupdate_s,
         sigDelayed_s => sigDel_flag 		  
 		  );	
+uFsmUpdate_p : FsmUpdate_p 
+	PORT MAP (
+          clk_s => clk_i,
+          addr_r => addr_r,
+          addr_x => addr_x,
+			 sam_addr_r => sam_addr_r,
+          sam_addr_x => sam_addr_x,
+			 updated_r => updated_r,
+          updated_x => updated_x,
+			 sigDelayed_r => sigDelayed_r,
+          sigDelayed_x => sigDelayed_x,
+			 addrjpeg_r => addrjpeg_r,
+          addrjpeg_x => addrjpeg_x,
+			 dataToRam_r => dataToRam_r,
+          dataToRam_x => dataToRam_x
+        );
 -------------------------------------------------------------------------
 -- JTAG entry point.
 -------------------------------------------------------------------------
