@@ -61,7 +61,18 @@ entity std_sig is
            sdAddr_o  : out   std_logic_vector(12 downto 0);  -- SDRAM address bus.
            sdData_io : inout std_logic_vector(15 downto 0);    -- SDRAM data bus.
            sdDqmh_o  : out   std_logic;  -- SDRAM high-byte databus qualifier.
-           sdDqml_o  : out   std_logic  -- SDRAM low-byte databus qualifier.
+           sdDqml_o  : out   std_logic;  -- SDRAM low-byte databus qualifier.
+			  --for simulation these signals need to be in the entity section
+			  updated_r : out std_logic;
+			  updated_x : in std_logic;
+			  sigDelayed_r : out std_logic;
+			  sigDelayed_x : in std_logic;
+			  sam_addr_r : out unsigned(13 downto 0) := (others => '0');
+			  sam_addr_x : in unsigned(13 downto 0) := (others => '0');
+			  addrjpeg_r : out unsigned(13 downto 0) := (others => '0');
+			  addrjpeg_x : in unsigned(13 downto 0) := (others => '0');
+			  addr_r : out unsigned(13 downto 0) := (others => '0');
+			  addr_x : in unsigned(13 downto 0) := (others => '0')
 			  );
 end std_sig;
 
@@ -105,18 +116,19 @@ signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
 --Signals constants needed by Sdram--------------------------------------- 
 
 --Signals constants needed by FsmUpdate_p---------------------------------------	
-signal addr_x : unsigned(13 downto 0) := (others => '0');
-signal sam_addr_x : unsigned(13 downto 0) := (others => '0');
-signal updated_x : std_logic := '0';
-signal sigDelayed_x : std_logic := '0';
-signal addrjpeg_x : unsigned(13 downto 0) := (others => '0');
+--signal addr_x : unsigned(13 downto 0) := (others => '0');
+--signal sam_addr_x : unsigned(13 downto 0) := (others => '0');
+--signal updated_x : std_logic := '0';
+--signal sigDelayed_x : std_logic := '0';
+--signal addrjpeg_x : unsigned(13 downto 0) := (others => '0');
 --signal dataToRam_x : unsigned(15 downto 0) := (others => '0');   
-signal addr_r : unsigned(13 downto 0);
-signal sam_addr_r : unsigned(13 downto 0) := (others => '0');
-signal updated_r : std_logic := '0';
-signal sigDelayed_r : std_logic := '0';
-signal addrjpeg_r : unsigned(13 downto 0) := (others => '0');
---signal dataToRam_r : unsigned(15 downto 0) := (others => '0');--Signals constants needed by FsmUpdate_p---------------------------------------
+--signal addr_r : unsigned(13 downto 0);
+--signal sam_addr_r : unsigned(13 downto 0) := (others => '0');
+--signal updated_r : std_logic := '0';
+--signal sigDelayed_r : std_logic := '0';
+--signal addrjpeg_r : unsigned(13 downto 0) := (others => '0');
+--signal dataToRam_r : unsigned(15 downto 0) := (others => '0');
+--Signals constants needed by FsmUpdate_p---------------------------------------
 
 component jpeg is
     port (
@@ -154,20 +166,26 @@ begin
 DelayBus_u0 : DelayBus
 	generic map (NUM_DELAY_CYCLES_G => 2)
 		port map (
-				clk_i => clk_s,
+		      --clk_s => clk_s,
+			   --This clk used during simulation  
+				clk_i => clk_i,
 				bus_i => left_sv,
 				busDelayed_o => leftDelDut_s
 				);
 DelayLine_u1 : DelayLine
 	generic map (NUM_DELAY_CYCLES_G => 2)
 		port map (
-				clk_i => clk_s,
+		      --clk_s => clk_s,
+			   --This clk used during simulation  
+				clk_i => clk_i,
 				a_i => sigDel_s,
 				aDelayed_o => sigDelayed_s
 				);
 ujpeg: jpeg 
 	port map( 
-        clk_fast => clk_fast,
+        --clk_fast => clk_fast,
+		  --This clk used during simulation
+		  clk_fast => clk_i,
         left_s => left_s,
 		  leftDelDut_s => lf_del,
         right_s => right_s,
@@ -181,7 +199,9 @@ ujpeg: jpeg
 		  );	
 uFsmUpdate_p : FsmUpdate_p 
 	PORT MAP (
-          clk_s => clk_i,
+			 --clk_s => clk_s,
+			 --This clk used during simulation          
+			 clk_s => clk_i,
           addr_r => addr_r,
           addr_x => addr_x,
 			 sam_addr_r => sam_addr_r,

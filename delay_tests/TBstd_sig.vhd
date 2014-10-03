@@ -56,33 +56,45 @@ ARCHITECTURE behavior OF TBstd_sig IS
          left_s, sam_s, right_s, lf_del : in signed(15 downto 0);
          res_s : out signed(15 downto 0);
 			fpgaClk_i : in    std_logic; -- 12 MHz clock input from external clock source.
-			sdClkFb_i : in    std_logic  -- 100 MHz clock fed back into FPGA.
+			sdClkFb_i : in    std_logic;  -- 100 MHz clock fed back into FPGA.
+			--The following signal were not be stimulated in simul
+			--These need to be in the entity of std_signal
+			updated_r : out std_logic;
+			updated_x : in std_logic;
+			sigDelayed_r : out std_logic;
+			sigDelayed_x : in std_logic;
+			sam_addr_r : out unsigned(13 downto 0) := (others => '0');
+			sam_addr_x : in unsigned(13 downto 0) := (others => '0');
+			addrjpeg_r : out unsigned(13 downto 0) := (others => '0');
+			addrjpeg_x : in unsigned(13 downto 0) := (others => '0');
+			addr_r : out unsigned(13 downto 0) := (others => '0');
+			addr_x : in unsigned(13 downto 0) := (others => '0')
 			);
     END COMPONENT;
     
 
    --Inputs
    signal clk_i : std_logic := '0' ;
-	signal sigDel_s  : std_logic := '0' ;
-	signal sigDel_flag  : std_logic := '0' ;
-	signal even_odd_s : std_logic := '0' ; 
-	signal fwd_inv_s : std_logic := '0' ;
-	signal updated_s : std_logic := '0' ;
-	signal left_sv : std_logic_vector (15 downto 0);
+   signal sigDel_s  : std_logic := '0' ;
+   signal sigDel_flag  : std_logic := '0' ;
+   signal even_odd_s : std_logic := '0' ; 
+   signal fwd_inv_s : std_logic := '0' ;
+   signal updated_s : std_logic := '0' ;
+   signal left_sv : std_logic_vector (15 downto 0);
    signal left_s, sam_s, right_s, lf_del : signed(15 downto 0);
-	signal fpgaClk_i : std_logic := '0' ;
-	signal sdClkFb_i : std_logic := '0' ;
+   signal fpgaClk_i : std_logic := '0' ;
+   signal sdClkFb_i : std_logic := '0' ;
 	signal addr_x : unsigned(13 downto 0) := (others => '0');
 	signal sam_addr_x : unsigned(13 downto 0) := (others => '0');
-	signal updated_x : std_logic := '0';
-	signal sigDelayed_x : std_logic := '0';
+   signal updated_x : std_logic := '0';
+   signal sigDelayed_x : std_logic := '0';
 	signal addrjpeg_x : unsigned(13 downto 0) := (others => '0');
 	signal dataToRam_x : unsigned(15 downto 0) := (others => '0');
  	--Outputs
    signal addr_r : unsigned(13 downto 0);
 	signal sam_addr_r : unsigned(13 downto 0) := (others => '0');
-	signal updated_r : std_logic := '0';
-	signal sigDelayed_r : std_logic := '0';
+   signal updated_r : std_logic := '0';
+   signal sigDelayed_r : std_logic := '0';
 	signal addrjpeg_r : unsigned(13 downto 0) := (others => '0');
 	signal dataToRam_r : unsigned(15 downto 0) := (others => '0');
  	--Outputs
@@ -113,7 +125,18 @@ BEGIN
 			 updated_s => updated_s,
 			 noupdate_s => noupdate_s,
 			 fpgaClk_i => fpgaClk_i,
-			 sdClkFb_i => sdClkFb_i
+			 sdClkFb_i => sdClkFb_i,
+			 updated_r => updated_r,
+          updated_x => updated_x,
+			 sigDelayed_r => sigDelayed_r,
+          sigDelayed_x => sigDelayed_x,
+	       sam_addr_r => sam_addr_r,
+          sam_addr_x => sam_addr_x,		 
+          addrjpeg_r => addrjpeg_r,
+          addrjpeg_x => addrjpeg_x,
+
+          addr_r => addr_r,
+          addr_x => addr_x			 
         );
 
    -- Clock process definitions
@@ -157,7 +180,12 @@ BEGIN
       left_sv <= x"009B";
 		sigDel_s <= '1';
 		dataToRam_x <= x"AA55";
-
+		updated_x <= '1';
+		sigDelayed_x <= '1';
+		sam_addr_x <= b"00000000000001";
+		addrjpeg_x <= b"10000000000001";
+		addr_x <= b"10000000000001";
+		--sigDelayed_x <= sigDelayed_s;
 		wait;
    end process;
 
