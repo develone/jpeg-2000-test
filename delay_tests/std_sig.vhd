@@ -39,11 +39,9 @@ entity std_sig is
     Port ( 
 			  
 			  clk_i : in STD_LOGIC;
-			  sigDel_s : in STD_LOGIC;
-			  sigDelayed_s : out STD_LOGIC;
+
 			  sigDel_flag :  in STD_LOGIC;
-			  left_sv : in  STD_LOGIC_VECTOR :=(15 downto 0 => '0');
-           leftDelDut_s : out  STD_LOGIC_VECTOR :=(15 downto 0 => '0');
+
 			  even_odd_s, fwd_inv_s, updated_s  : in std_logic;
 			  noupdate_s : out std_logic;
            left_s, sam_s, right_s, lf_del : in signed(15 downto 0);
@@ -114,6 +112,11 @@ signal dataToSdram_s            : std_logic_vector(sdData_io'range);  -- Data.
 signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  --
 signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
 --Signals constants needed by Sdram--------------------------------------- 
+
+signal sigdel_s : std_logic;
+signal sigDelayed_s : std_logic;
+signal left_sv :   STD_LOGIC_VECTOR(15 downto 0) ;
+signal leftDelDut_s :   STD_LOGIC_VECTOR(15 downto 0);
 
 --Signals constants needed by FsmUpdate_p---------------------------------------	
 --signal addr_x : unsigned(13 downto 0) := (others => '0');

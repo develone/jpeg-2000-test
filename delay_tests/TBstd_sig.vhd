@@ -6,7 +6,7 @@
 -- Design Name:   
 -- Module Name:   C:/Xilinx/14.7/ISE_DS/delay_tests/TBstd_sig.vhd
 -- Project Name:  delay_tests
--- Target Device:  
+-- Target Devxice:  
 -- Tool versions:  
 -- Description:   
 -- 
@@ -25,10 +25,11 @@
 -- to guarantee that the testbench will bind correctly to the post-implementation 
 -- simulation model.
 --------------------------------------------------------------------------------
-LIBRARY ieee;
+LIBRARY ieee,XESS;
 USE ieee.std_logic_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use IEEE.NUMERIC_STD.ALL;
+use XESS.DelayPckg.all;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -44,11 +45,9 @@ ARCHITECTURE behavior OF TBstd_sig IS
     COMPONENT std_sig
     PORT(
          clk_i : IN  std_logic;
-			sigDel_s : in STD_LOGIC;
+		
 			sigDel_flag : in std_logic;
-			sigDelayed_s : out STD_LOGIC;
-         left_sv : IN  std_logic_vector :=(15 downto 0 => '0') ;
-         leftDelDut_s : OUT  std_logic_vector :=(15 downto 0 => '0');
+
 			even_odd_s : in std_logic;
 			fwd_inv_s : in std_logic;
 			updated_s : in std_logic;
@@ -71,16 +70,17 @@ ARCHITECTURE behavior OF TBstd_sig IS
 			addr_x : in unsigned(13 downto 0) := (others => '0')
 			);
     END COMPONENT;
-    
+	 
 
+	
    --Inputs
    signal clk_i : std_logic := '0' ;
-   signal sigDel_s  : std_logic := '0' ;
+
    signal sigDel_flag  : std_logic := '0' ;
    signal even_odd_s : std_logic := '0' ; 
    signal fwd_inv_s : std_logic := '0' ;
    signal updated_s : std_logic := '0' ;
-   signal left_sv : std_logic_vector (15 downto 0);
+
    signal left_s, sam_s, right_s, lf_del : signed(15 downto 0);
    signal fpgaClk_i : std_logic := '0' ;
    signal sdClkFb_i : std_logic := '0' ;
@@ -98,10 +98,13 @@ ARCHITECTURE behavior OF TBstd_sig IS
 	signal addrjpeg_r : unsigned(13 downto 0) := (others => '0');
 	signal dataToRam_r : unsigned(15 downto 0) := (others => '0');
  	--Outputs
-   signal leftDelDut_s : std_logic_vector (15 downto 0);
+
 	signal res_s : signed(15 downto 0);
+	signal sigDel_s  : std_logic := '0' ;
 	signal sigDelayed_s, noupdate_s  : std_logic;
- 
+	signal left_sv :   STD_LOGIC_VECTOR (15 downto 0);
+   signal leftDelDut_s :   STD_LOGIC_VECTOR (15 downto 0);
+ --signal noupdate_s  : std_logic;
    -- Clock period definitions
    constant clk_i_period : time := 10 ns;
  
@@ -110,12 +113,12 @@ BEGIN
 	-- Instantiate the Unit Under Test (UUT)
    uut: std_sig PORT MAP (
           clk_i => clk_i,
-          left_sv => left_sv,
-          leftDelDut_s => leftDelDut_s,
+          --left_sv => left_sv,
+          --leftDelDut_s => leftDelDut_s,
 			 lf_del => lf_del,
-          sigDel_s => sigDel_s,
+
 			 sigDel_flag => sigDel_flag,
-			 sigDelayed_s => sigDelayed_s,
+			 
 			 left_s => left_s,
 			 sam_s => sam_s,
 			 right_s => right_s,
@@ -138,6 +141,27 @@ BEGIN
           addr_r => addr_r,
           addr_x => addr_x			 
         );
+		  
+DelayBus_u0 : DelayBus
+	generic map (NUM_DELAY_CYCLES_G => 2)
+		port map (
+		      --clk_s => clk_s,
+			   --This clk used during simulation  
+				clk_i => clk_i,
+				bus_i => left_sv,
+				busDelayed_o => leftDelDut_s
+				);
+
+DelayLine_u1 : DelayLine
+	generic map (NUM_DELAY_CYCLES_G => 2)
+		port map (
+		      --clk_s => clk_s,
+			   --This clk used during simulation  
+				clk_i => clk_i,
+				a_i => sigDel_s,
+				aDelayed_o => sigDelayed_s
+				);		  
+
 
    -- Clock process definitions
    clk_i_process :process
