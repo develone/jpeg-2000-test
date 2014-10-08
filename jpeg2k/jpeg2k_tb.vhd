@@ -66,8 +66,10 @@ signal reset_jpeg, odd : std_logic;
     -- Component Declaration for the Unit Under Test (UUT)
     COMPONENT jpeg2k
     PORT(
+			fpgaClk_i : in    std_logic;  -- 12 MHz clock input from external clock source.
+			sdClkFb_i : in    std_logic;  -- 100 MHz clock fed back into FPGA.
          clk_i : IN  std_logic
-			--xxx : IN unsigned(15 downto 0)
+			 
         );
     END COMPONENT;   
 	 
@@ -206,6 +208,8 @@ u_approx : approx
     );		  
 	-- Instantiate the Unit Under Test (UUT)
     uut: jpeg2k PORT MAP (
+			 fpgaClk_i => clk_i,
+			 sdClkFb_i => clk_i,
           clk_i => clk_i
         );
 

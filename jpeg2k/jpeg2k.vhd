@@ -50,9 +50,9 @@ entity jpeg2k is
           sdAddr_o  : out   std_logic_vector(12 downto 0);  -- SDRAM address bus.
           sdData_io : inout std_logic_vector(15 downto 0);    -- SDRAM data bus.
           sdDqmh_o  : out   std_logic;  -- SDRAM high-byte databus qualifier.
-          sdDqml_o  : out   std_logic  -- SDRAM low-byte databus qualifier.
-	 --clk_i : in  STD_LOGIC
-	 --xxx : IN unsigned(15 downto 0)
+          sdDqml_o  : out   std_logic;  -- SDRAM low-byte databus qualifier.
+	 clk_i : in  STD_LOGIC
+	
 	 );
 end jpeg2k;
 
