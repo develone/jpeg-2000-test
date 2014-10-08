@@ -418,7 +418,7 @@ DelayLine_u1 : DelayLine
        
         
 		  --dataToRam_res_x <= TO_UNSIGNED(1, RAM_WIDTH_C);
-		  sam_addr_x  <=   63;
+		  sam_addr_x  <=   61;
 		  addr_x  <=   0;
 		  --addrjpeg_x  <=   MIN_ADDRJPEG_C + 1;
         --state_x     <= WRITE_DATA;      -- Go to next state.
@@ -431,7 +431,7 @@ DelayLine_u1 : DelayLine
           rd_s <= YES;                  -- keep read-enable active.
 		  --this code needs to go thru 1 more than the desire values
 		  --0 1 2 3 left_r sam_r right_r
-        elsif addr_r <= (MIN_ADDR_C + 64) then  -- If not the end of row ...
+        elsif addr_r <= (MIN_ADDR_C + 62) then  -- If not the end of row ...
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
 			 if sum_r < 1128 then
@@ -453,7 +453,7 @@ DelayLine_u1 : DelayLine
           addr_x <= addr_r + 1;         -- and go to next address.
           
        --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
-		 elsif addr_r = (MIN_ADDR_C + 65) then  -- Else, the final address has been read ...
+		 elsif addr_r = (MIN_ADDR_C + 63) then  -- Else, the final address has been read ...
 		         addr_x <= MIN_ADDRJPEG_C;
                state_x     <= WRITE_DATA;      -- Go to next state.
 		 else 	
