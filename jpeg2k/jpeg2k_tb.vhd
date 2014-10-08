@@ -25,8 +25,9 @@
 -- to guarantee that the testbench will bind correctly to the post-implementation 
 -- simulation model.
 --------------------------------------------------------------------------------
-LIBRARY ieee;
+LIBRARY ieee,XESS;
 USE ieee.std_logic_1164.ALL;
+use XESS.DelayPckg.all;
 use IEEE.numeric_std.all;
 use std.textio.all;
 
@@ -63,6 +64,13 @@ signal left_s, sam_s, right_s, res_s :  signed(15 downto 0);
 signal  even_odd_s, fwd_inv_s, clk_fast : std_logic;
 signal updated_s, noupdate_s : std_logic; 
 signal reset_jpeg, odd : std_logic; 
+
+signal sigdel_s : std_logic;
+signal sigDelayed_s : std_logic;
+signal left_sv :   STD_LOGIC_VECTOR(15 downto 0) ;
+signal leftDelDut_s :   STD_LOGIC_VECTOR(15 downto 0);
+signal leftDel_r, leftDel_x :   STD_LOGIC_VECTOR(15 downto 0);
+
     -- Component Declaration for the Unit Under Test (UUT)
     COMPONENT jpeg2k
     PORT(
@@ -205,7 +213,27 @@ u_approx : approx
         odd => odd,
         reset_jpeg => reset_jpeg,
         updated_s => updated_s 
-    );		  
+    );
+
+DelayBus_u0 : DelayBus
+	generic map (NUM_DELAY_CYCLES_G => 2)
+		port map (
+		      --clk_s => clk_s,
+			   --This clk used during simulation  
+				clk_i => clk_i,
+				bus_i => left_sv,
+				busDelayed_o => leftDelDut_s
+				);
+DelayLine_u1 : DelayLine
+	generic map (NUM_DELAY_CYCLES_G => 2)
+		port map (
+		      --clk_s => clk_s,
+			   --This clk used during simulation  
+				clk_i => clk_i,
+				a_i => sigDel_s,
+				aDelayed_o => sigDelayed_s
+				);
+				
 	-- Instantiate the Unit Under Test (UUT)
     uut: jpeg2k PORT MAP (
 			 fpgaClk_i => clk_i,
