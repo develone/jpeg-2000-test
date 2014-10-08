@@ -58,13 +58,13 @@ entity jpeg2k is
 end jpeg2k;
 
 architecture Behavioral of jpeg2k is
-signal fromjpeg_s : std_logic_vector(79 downto 0); -- From jpeg to PC.
+signal fromjpeg_s : std_logic_vector(95 downto 0); -- From jpeg to PC.
 alias fromsum_s is fromjpeg_s(15 downto 0); -- sum_r.
 alias fromleftDut_s is fromjpeg_s(31 downto 16); -- left
 alias fromsamDut_s is fromjpeg_s(47 downto 32); -- sam 
 alias fromrightDut_s is fromjpeg_s(63 downto 48); -- right
 alias fromleftDelDut_s is fromjpeg_s(79 downto 64); -- delayed
-
+alias fromresDut_s is fromjpeg_s(95 downto 80); -- res_s
 signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
 signal tojpeg_s : std_logic_vector(1 downto 0); -- From PC to jpeg.
 alias even_odd_tmp_s is  tojpeg_s(0);
@@ -162,8 +162,9 @@ signal leftDel_r, leftDel_x :   RamWord_t;
 signal leftDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
 signal samDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
 signal rightDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
- 
-component jpeg is
+signal resDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
+  
+component jpeg is 
     port (
         clk_fast: in std_logic;
         left_s: in signed (15 downto 0);
@@ -292,30 +293,30 @@ ujpeg: jpeg
         updated_s => updated_s,
         noupdate_s => noupdate_s		  
 		  );	
-
-u_approx : approx 
-    port map(
-        --clk_fast => clk_i,
-		  clk_fast => clk_fast,
-        even_odd_s => even_odd_s,
-        left_s => left_s,
-        sam_s => sam_s,
-        right_s => right_s,
-        we_lf => we_lf,
-        we_sam => we_sam,
-        we_rht => we_rht,
-        we_res => we_res,
-        addr_lf => addr_lf,
-        addr_sam => addr_sam,
-        addr_rht => addr_rht,
-		  addr_res => addr_res,
-        dout_lf => dout_lf,
-        dout_sam => dout_sam,
-        dout_rht => dout_rht,
-        odd => odd,
-        reset_jpeg => reset_jpeg,
-        updated_s => updated_s 
-    );
+ 		  
+--u_approx : approx 
+--    port map(
+--        --clk_fast => clk_i,
+--		  clk_fast => clk_fast,
+--        even_odd_s => even_odd_s,
+--        left_s => left_s,
+--        sam_s => sam_s,
+--        right_s => right_s,
+--        we_lf => we_lf,
+--        we_sam => we_sam,
+--        we_rht => we_rht,
+--        we_res => we_res,
+--        addr_lf => addr_lf,
+--        addr_sam => addr_sam,
+--        addr_rht => addr_rht,
+--		  addr_res => addr_res,
+--        dout_lf => dout_lf,
+--        dout_sam => dout_sam,
+--        dout_rht => dout_rht,
+--        odd => odd,
+--        reset_jpeg => reset_jpeg,
+--        updated_s => updated_s 
+--    );
 --*********************************************************************
   -- Generate a 100 MHz clock from the 12 MHz input clock and send it out
   -- to the SDRAM. Then feed it back in to clock the internal logic.
@@ -510,16 +511,26 @@ DelayLine_u1 : DelayLine
 		
     end if;
   end process;  
+    updated_s <= updated_r; 
+	 even_odd_s <= '1';
+	 fwd_inv_s <= '1';
+	 
     sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
 	 fromsum_s <= sumDut_s; --sum_r back to PC
     --DelayBus input is updated
     left_sv <= std_logic_vector((leftDel_r));
 	 fromleftDelDut_s <= leftDelDut_s; --delayed signal back to PC
 	 leftDut_s <=  std_logic_vector((left_r));
+	 left_s <= signed(leftDut_s); --to jpeg 
+    --fromleftDut_s <= left_s; --left signal back to PC
 	 fromleftDut_s <= leftDut_s; --left signal back to PC
 	 samDut_s <=  std_logic_vector((sam_r));
+	 sam_s <= signed(samDut_s); --to jpeg  
 	 fromsamDut_s <= samDut_s; --sam signal back to PC
 	 rightDut_s <=  std_logic_vector((right_r));
+	 right_s <= signed(rightDut_s);  --to jpeg 
 	 fromrightDut_s <= rightDut_s; --right signal back to PC
+    resDut_s <= std_logic_vector(res_s);
+	 fromresDut_s <= resDut_s;  --jpeg res back to PC
 end Behavioral;
 
