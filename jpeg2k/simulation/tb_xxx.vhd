@@ -8,15 +8,16 @@
   END tb_xxx;
 
   ARCHITECTURE behavior OF tb_xxx IS
-
+  signal fromjpeg_s : std_logic_vector(95 downto 0); -- From jpeg to PC.
+  alias fromresDut_s is fromjpeg_s(95 downto 80); -- res_s
    component xxx   
-      Port ( clk_i : in  STD_LOGIC;
+      Port ( clk_i : in  STD_LOGIC
 	 --addr_res : inout unsigned(8 downto 0);
  
-	 left_s  : in signed(15 downto 0);
-	 sam_s  : in signed(15 downto 0);
-	 right_s  : in signed(15 downto 0);
-	 res_s  : inout signed(15 downto 0)
+	 --left_s  : in signed(15 downto 0);
+	 --sam_s  : in signed(15 downto 0);
+	 --right_s  : in signed(15 downto 0);
+	 --res_s  : inout signed(15 downto 0)
 	 --even_odd_s : in  STD_LOGIC;
 	 --fwd_inv_s : in  STD_LOGIC;
 	 --updated_s : in  STD_LOGIC;
@@ -30,7 +31,8 @@
 end component;
 signal we_res : std_logic;
 --
---signal left_s, sam_s, right_s, res_s :  signed(15 downto 0);
+signal left_s, sam_s, right_s, res_s :  signed(15 downto 0);
+
 --signal  even_odd_s, fwd_inv_s, clk_fast : std_logic;
 --signal updated_s, noupdate_s : std_logic; 
 --signal dout_res : unsigned(15 downto 0);
@@ -54,8 +56,9 @@ constant RIGHT_ADDR_C             : natural   := 2;  -- Process RAM from this ad
 constant MAX_ADDR_C             : natural   := 8191;  -- ... to this address.
 constant MIN_ADDRJPEG_C             : natural   := 8192;  -- Process RAM from this address ...
 constant MAX_ADDRJPEG_C             : natural   := 16384;  -- ... to this address.
---signal sam_addr_r, sam_addr_x :  natural range 0 to RAM_SIZE_C-1; 
-
+--signal sam_addr_r, sam_addr_x :  natural range 0 to RAM_SIZE_C-1;
+subtype RamWord_t is unsigned(RAM_WIDTH_C-1 downto 0);  -- RAM word type. 
+signal left_r, sam_r, right_r, left_x, sam_x, right_x    : RamWord_t;
 --signal updated_r, updated_x : std_logic := '0';
 --signal left_s, sam_s, right_s, res_s :  signed(15 downto 0);
 --signal  even_odd_s, even_odd_x, even_odd_r,  fwd_inv_s, clk_fast : std_logic;
@@ -68,7 +71,7 @@ signal sam_addr_r, sam_addr_x :  natural range 0 to RAM_SIZE_C-1;
 signal updated_r, updated_x : std_logic := '0';
 --signal left_s, sam_s, right_s, res_s :  signed(15 downto 0);
 signal  even_odd_s, even_odd_x, even_odd_r,  fwd_inv_s, clk_fast : std_logic;
-signal updated_s, noupdate_s : std_logic; 
+signal updated_s, noupdate_s, flag : std_logic; 
  
 signal reset_sav_s, reset_sav_x, reset_sav_r  : std_logic := '0' ;
 signal incRes_s, incRes_x, incRes_r : std_logic := '0' ;
@@ -77,6 +80,11 @@ signal  din_res : unsigned(15 downto 0);
 type state_t is (INIT, ODD_SAMPLES, EVEN_SAMPLES, WRITE_DATA, DONE);  -- FSM states.
 signal state_r, state_x         : state_t   := INIT;  -- FSM starts off in init state
 signal addr_r, addr_x           : natural range 0 to RAM_SIZE_C-1;  -- RAM address.
+signal leftDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
+signal samDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
+signal rightDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
+signal resDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
+ 
 COMPONENT ram
     PORT(
          dout : OUT  unsigned(15 downto 0) := (others => '0');
@@ -119,7 +127,7 @@ component jpeg is
    --signal fwd_inv_s : std_logic := '0' ;
  --  signal updated_s : std_logic := '0' ;
    --signal noupdate_s : std_logic := '0' ;
-   signal left_s, sam_s, right_s, res_s : signed(15 downto 0);
+   --signal left_s, sam_s, right_s, res_s : signed(15 downto 0);
 
  
  
@@ -129,7 +137,7 @@ component jpeg is
 resram : ram
   port map(
      dout => dout_res,
-	  din => din_res,
+	  din => rightDut_s,
 	  addr => addr_res,
 	  we => we_res,
 	  clk_fast => clk_i
@@ -147,6 +155,7 @@ usave_to_ram : save_to_ram
 			incRes_i => incRes_s,
 			odd_i => even_odd_s
         ); 	
+ 
 
 ujpeg: jpeg 
 	port map( 
@@ -163,12 +172,12 @@ ujpeg: jpeg
   		  );
   -- Component Instantiation
           uut: xxx PORT MAP(
-                   clk_i => clk_i,
+                   clk_i => clk_i
 						 --addr_res => addr_res,
-        left_s => left_s,
-        right_s => right_s,
-        sam_s => sam_s,
-        res_s => res_s
+--        left_s => left_s,
+--        right_s => right_s,
+--        sam_s => sam_s,
+--        res_s => res_s
 		  --even_odd_s => even_odd_s,
 		  --fwd_inv_s  => fwd_inv_s,
 		  --updated_s =>  updated_s,
@@ -185,7 +194,7 @@ ujpeg: jpeg
 		wait for clk_i_period/2;
    end process;
 FsmComb_p : process(state_r,   even_odd_r, reset_sav_r,   sam_addr_r,
-							   updated_r, addr_r, incRes_r
+							   updated_r, addr_r, incRes_r, left_r, sam_r, right_r
 							  )	
 	begin
 		 even_odd_x  <= NO; --wkg on odd samples
@@ -207,9 +216,30 @@ FsmComb_p : process(state_r,   even_odd_r, reset_sav_r,   sam_addr_r,
 			even_odd_x <= NO;
          if addr_r <= (MIN_ADDR_C + 62) then
             --sam_addr_r = sam_addr_r + 1;
+				if addr_r = (LEFT_ADDR_C + sam_addr_r - 1) then
+			       left_x <= x"00A3";
+					 
+			   elsif addr_r = (SAM_ADDR_C + sam_addr_r - 1) then	
+                --sam_x <= dataFromRam_s;	
+                sam_x <= x"00A0";
+					 
+            elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	
+                  right_x <= x"009B";
+					 --dataFromRam_s  <= dataFromRam_s;
+					 sam_addr_x <= sam_addr_r + 2;
+				    incRes_x <= YES;
+				    updated_x <= YES;
+				end if;
 				addr_x <= addr_r + 1;         -- and go to next address.
-				sam_addr_x <= sam_addr_r + 2;
-				incRes_x <= YES;
+				
+				if updated_r =  YES then
+			       updated_x <= NO;
+		   
+            end if;
+				if incRes_r =  YES then
+			       incRes_x <= NO;
+		   
+            end if;
          elsif addr_r = (MIN_ADDR_C + 63) then
             sam_addr_x <= 2;
             even_odd_x <= YES;
@@ -242,9 +272,9 @@ FsmUpdate_p : process(clk_i)
       --dataToRam_r <= dataToRam_x;
       state_r     <= state_x;
       --sum_r       <= sum_x;
-		--sam_r       <= sam_x;
+		sam_r       <= sam_x;
 		
-		--right_r     <= right_x;
+		right_r     <= right_x;
 		sam_addr_r  <= sam_addr_x; 
 		
 		--dataToRam_res_r  <= dataToRam_res_x;
@@ -255,7 +285,7 @@ FsmUpdate_p : process(clk_i)
 		even_odd_r <= even_odd_x;
 		reset_sav_r <= reset_sav_x;
 		incRes_r <= incRes_x;
-      --left_r      <= left_x;		
+      left_r      <= left_x;		
 		
 		
     end if;
@@ -263,6 +293,16 @@ FsmUpdate_p : process(clk_i)
   reset_sav_s <= reset_sav_r;
   even_odd_s <= even_odd_r;
   updated_s <= updated_r;
+  incRes_s <= incRes_r;
+  fwd_inv_s <= '1';
+  leftDut_s <=  std_logic_vector((left_r));
+  left_s <= signed(leftDut_s); --to jpeg 
+  samDut_s <=  std_logic_vector((sam_r));
+  sam_s <= signed(samDut_s); --to jpeg  
+  rightDut_s <=  std_logic_vector((right_r));
+  right_s <= signed(rightDut_s);  --to jpeg 
+  resDut_s <= std_logic_vector(res_s);
+  fromresDut_s <= resDut_s;  --jpeg res back to PC
   --incRes_s <= incRes_r;
   
   --  Test Bench Statements
@@ -292,9 +332,9 @@ FsmUpdate_p : process(clk_i)
 		--reset_sav_s <= '1';
 		wait for 40 ns; 
 		--reset_sav_s <= '0';
-		left_s <= x"00A3";
-		sam_s <= x"00A0";
-		right_s <= x"009B";
+		--left_s <= x"00A3";
+		--sam_s <= x"00A0";
+		--right_s <= x"009B";
 		
 		fwd_inv_s <= '1';
 		---updated_s <= '1';
@@ -304,9 +344,9 @@ FsmUpdate_p : process(clk_i)
 		--incRes <= '0';
 		 
 		wait for 20ns;
-	   left_s <= x"009B";
-		sam_s <= x"009D";
-		right_s <= x"0090";
+	   --left_s <= x"009B";
+		--sam_s <= x"009D";
+		--right_s <= x"0090";
 		
 		wait for 40 ns;
 		--incRes <= '1';

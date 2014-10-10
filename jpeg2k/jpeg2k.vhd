@@ -415,9 +415,10 @@ DelayLine_u1 : DelayLine
 		  addr_x  <=   0;
 		  --addrjpeg_x  <=   MIN_ADDRJPEG_C + 1;
         --state_x     <= WRITE_DATA;      -- Go to next state.
-        state_x <= ODD_SAMPLES;    -- and go to next state.
-        updated_x <= NO;
+		  updated_x <= NO;
         sigDelayed_x <= NO;
+        state_x <= ODD_SAMPLES;    -- and go to next state.
+
 		  
       when ODD_SAMPLES =>  -- Read RAM and sum address*data products
 		  reset_sav_x <= NO;
@@ -429,7 +430,7 @@ DelayLine_u1 : DelayLine
 		  -- if 2 the test is 3 & 4
 		  -- if 1 the test is 2 & 3
 
-        elsif addr_r <= (MIN_ADDR_C + 2) then  -- If not the end of row ...
+        elsif addr_r <= (MIN_ADDR_C + 62) then  -- If not the end of row ...
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
 			 if sum_r < 1128 then
@@ -438,9 +439,9 @@ DelayLine_u1 : DelayLine
 			 if addr_r = (LEFT_ADDR_C + sam_addr_r - 1) then
 			      left_x <= dataFromRam_s;
 					
-			 elsif addr_r = (SAM_ADDR_C + sam_addr_r - 1) then	
+			 elsif addr_r = (SAM_ADDR_C + sam_addr_r ) then	
                 sam_x <= dataFromRam_s;	
-          elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	
+          elsif addr_r = (RIGHT_ADDR_C + sam_addr_r + 1) then	
                 right_x <= dataFromRam_s;
 					 leftDel_x <= dataFromRam_s; --saving the right to left_x
 					 sigDelayed_x <= YES;
@@ -449,10 +450,20 @@ DelayLine_u1 : DelayLine
 					 --addrjpeg_x <= addrjpeg_r + 2;
 			 end if;							
           addr_x <= addr_r + 1;         -- and go to next address.
-          
+          if updated_r =  YES then
+			       updated_x <= NO;
+		   
+          end if;
+			 if incRes_r =  YES then
+			       incRes_x <= NO;
+		   
+          end if;
        --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
-		 elsif addr_r = (MIN_ADDR_C + 3) then  -- Else, the final address has been read ...
-		         addr_x <= MIN_ADDRJPEG_C;
+		 elsif addr_r = (MIN_ADDR_C + 63) then  -- Else, the final address has been read ...
+		         sam_addr_x <= 2;
+               even_odd_x <= YES;
+				   reset_sav_x <= YES;
+               addr_x <= 0;
                state_x     <= EVEN_SAMPLES;      -- Go to next state.
 		 else 	
 					state_x     <= DONE;      -- Go to next state.
@@ -466,7 +477,7 @@ DelayLine_u1 : DelayLine
 		  --0 1 2 3 left_r sam_r right_r
 		  -- if 2 the test is 3 & 4
 		  -- if 1 the test is 2 & 3
-        elsif addr_r <= (MIN_ADDR_C + 2) then  -- If not the end of row ...
+        elsif addr_r <= (MIN_ADDR_C + 62) then  -- If not the end of row ...
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
 			 if sum_r < 1128 then
@@ -475,9 +486,9 @@ DelayLine_u1 : DelayLine
 			 if addr_r = (LEFT_ADDR_C + sam_addr_r - 1) then
 			      left_x <= dataFromRam_s;
 					
-			 elsif addr_r = (SAM_ADDR_C + sam_addr_r - 1) then	
+			 elsif addr_r = (SAM_ADDR_C + sam_addr_r ) then	
                 sam_x <= dataFromRam_s;	
-          elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	
+          elsif addr_r = (RIGHT_ADDR_C + sam_addr_r + 1) then	
                 right_x <= dataFromRam_s;
 					 leftDel_x <= dataFromRam_s; --saving the right to left_x
 					 sigDelayed_x <= YES;
@@ -486,9 +497,16 @@ DelayLine_u1 : DelayLine
 					 --addrjpeg_x <= addrjpeg_r + 2;
 			 end if;							
           addr_x <= addr_r + 1;         -- and go to next address.
-          
+          if updated_r =  YES then
+			       updated_x <= NO;
+		   
+          end if;
+			 if incRes_r =  YES then
+			       incRes_x <= NO;
+		   
+          end if;          
        --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
-		 elsif addr_r = (MIN_ADDR_C + 3) then  -- Else, the final address has been read ...
+		 elsif addr_r = (MIN_ADDR_C + 63) then  -- Else, the final address has been read ...
 		         addr_x <= MIN_ADDRJPEG_C;
                state_x     <= WRITE_DATA;      -- Go to next state.
 		 else 	
@@ -575,6 +593,7 @@ DelayLine_u1 : DelayLine
     --save_to_ram should saving
     --fromramDut_s <= std_logic_vector(dout_res);
 	 --addr_res <= addr_res + 2;
+	 incRes_s <= incRes_r;
 end Behavioral;
 
 
