@@ -39,6 +39,14 @@ even_odd_s = Signal(bool(0))
 fwd_inv_s = Signal(bool(0))
 clk_fast = Signal(bool(0))
 noupdate_s = Signal(bool(0))
+
+odd_i = Signal(bool(0))
+incRes_i = Signal(bool(0))
+we_s_o = Signal(bool(0))
+reset_sav_i = Signal(bool(0))
+dout_res_o = Signal(intbv(0)[16:])
+res_i = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
+addr_res_o = Signal(intbv(0)[RAM_ADDR:]) 
  
 updated_jpeg_s = Signal(bool(0))
 flag = 0
@@ -80,6 +88,25 @@ def test_jpeg():
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
 		flag = 0
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
+def save_to_ram(clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i):
+    @always(clk_fast.posedge)
+    def xx():
+        if (reset_sav_i == 1):
+            we_s_o.next = 0
+            if (odd_i == 1):
+                addr_res_o.next = 1
+            else:
+                addr_res_o.next = 2
+        elif (incRes_i == 1):
+            we_s_o.next = 0
+            addr_res_o.next = addr_res_o + 2
+            
+        else:    
+            we_s_o.next = 1
+            dout_res_o.next = res_i
+        
+            
+    return xx		
 def approx(clk_fast, even_odd_s, left_s, sam_s, right_s, we_lf, we_sam, we_rht, we_res, addr_lf, addr_sam, addr_rht, addr_res, dout_lf, dout_sam, dout_rht, odd, reset_jpeg, updated_s):
 
 	@always(clk_fast.posedge)
@@ -197,8 +224,10 @@ def convert():
 	toVHDL(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
 	toVerilog(ram, dout, din, addr, we, clk_fast)
 	toVHDL(ram, dout, din, addr, we, clk_fast)
-	toVerilog(approx, clk_fast, even_odd_s, left_s, sam_s, right_s, we_lf, we_sam, we_rht, we_res, addr_lf, addr_sam, addr_rht, addr_res,  dout_lf, dout_sam, dout_rht, odd, reset_jpeg, updated_s)
-	toVHDL(approx, clk_fast, even_odd_s, left_s, sam_s, right_s, we_lf, we_sam, we_rht, we_res, addr_lf, addr_sam, addr_rht, addr_res,  dout_lf, dout_sam, dout_rht, odd, reset_jpeg, updated_s)
+	#toVerilog(approx, clk_fast, even_odd_s, left_s, sam_s, right_s, we_lf, we_sam, we_rht, we_res, addr_lf, addr_sam, addr_rht, addr_res,  dout_lf, dout_sam, dout_rht, odd, reset_jpeg, updated_s)
+	#toVHDL(approx, clk_fast, even_odd_s, left_s, sam_s, right_s, we_lf, we_sam, we_rht, we_res, addr_lf, addr_sam, addr_rht, addr_res,  dout_lf, dout_sam, dout_rht, odd, reset_jpeg, updated_s)
+	toVerilog(save_to_ram, clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i)
+	toVHDL(save_to_ram, clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i)
 #convert()
 tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
