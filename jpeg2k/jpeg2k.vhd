@@ -430,7 +430,7 @@ DelayLine_u1 : DelayLine
 		  -- if 2 the test is 3 & 4
 		  -- if 1 the test is 2 & 3
 
-        elsif addr_r <= (MIN_ADDR_C + 62) then  -- If not the end of row ...
+        elsif addr_r <= (MIN_ADDR_C + 2) then  -- If not the end of row ...
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
 			 if sum_r < 1128 then
@@ -439,9 +439,9 @@ DelayLine_u1 : DelayLine
 			 if addr_r = (LEFT_ADDR_C + sam_addr_r - 1) then
 			      left_x <= dataFromRam_s;
 					
-			 elsif addr_r = (SAM_ADDR_C + sam_addr_r ) then	
+			 elsif addr_r = (SAM_ADDR_C + sam_addr_r - 1 ) then	
                 sam_x <= dataFromRam_s;	
-          elsif addr_r = (RIGHT_ADDR_C + sam_addr_r + 1) then	
+          elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	
                 right_x <= dataFromRam_s;
 					 leftDel_x <= dataFromRam_s; --saving the right to left_x
 					 sigDelayed_x <= YES;
@@ -459,7 +459,8 @@ DelayLine_u1 : DelayLine
 		   
           end if;
        --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
-		 elsif addr_r = (MIN_ADDR_C + 63) then  -- Else, the final address has been read ...
+		 elsif addr_r = (MIN_ADDR_C + 3) then  -- Else, the final address has been read ...
+		         addr_x <= 0;
 		         sam_addr_x <= 2;
                even_odd_x <= YES;
 				   reset_sav_x <= YES;
@@ -477,7 +478,7 @@ DelayLine_u1 : DelayLine
 		  --0 1 2 3 left_r sam_r right_r
 		  -- if 2 the test is 3 & 4
 		  -- if 1 the test is 2 & 3
-        elsif addr_r <= (MIN_ADDR_C + 62) then  -- If not the end of row ...
+        elsif addr_r <= (MIN_ADDR_C + 3) then  -- If not the end of row ...
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
 			 if sum_r < 1128 then
@@ -486,9 +487,9 @@ DelayLine_u1 : DelayLine
 			 if addr_r = (LEFT_ADDR_C + sam_addr_r - 1) then
 			      left_x <= dataFromRam_s;
 					
-			 elsif addr_r = (SAM_ADDR_C + sam_addr_r ) then	
+			 elsif addr_r = (SAM_ADDR_C + sam_addr_r - 1) then	
                 sam_x <= dataFromRam_s;	
-          elsif addr_r = (RIGHT_ADDR_C + sam_addr_r + 1) then	
+          elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	
                 right_x <= dataFromRam_s;
 					 leftDel_x <= dataFromRam_s; --saving the right to left_x
 					 sigDelayed_x <= YES;
@@ -506,7 +507,7 @@ DelayLine_u1 : DelayLine
 		   
           end if;          
        --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
-		 elsif addr_r = (MIN_ADDR_C + 63) then  -- Else, the final address has been read ...
+		 elsif addr_r = (MIN_ADDR_C + 4) then  -- Else, the final address has been read ...
 		         addr_x <= MIN_ADDRJPEG_C;
                state_x     <= WRITE_DATA;      -- Go to next state.
 		 else 	
@@ -567,10 +568,11 @@ DelayLine_u1 : DelayLine
     end if;
   end process;
     reset_sav_s <= reset_sav_r;
-    even_odd_s <= even_odd_r;  
+    even_odd_s <= even_odd_r;
+	 fwd_inv_s <= '1';	 
     updated_s <= updated_r; 
 	 --even_odd_s <= '0';
-	 fwd_inv_s <= '1';
+
 	 
     sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
 	 fromsum_s <= sumDut_s; --sum_r back to PC
