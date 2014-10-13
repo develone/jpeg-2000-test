@@ -59,14 +59,14 @@ entity jpeg2k is
 end jpeg2k;
 
 architecture Behavioral of jpeg2k is
-signal fromjpeg_s : std_logic_vector(95 downto 0); -- From jpeg to PC.
+signal fromjpeg_s : std_logic_vector(79 downto 0); -- From jpeg to PC.
 alias fromsum_s is fromjpeg_s(15 downto 0); -- sum_r.
 alias fromleftDut_s is fromjpeg_s(31 downto 16); -- left
 alias fromsamDut_s is fromjpeg_s(47 downto 32); -- sam 
 alias fromrightDut_s is fromjpeg_s(63 downto 48); -- right
-alias fromleftDelDut_s is fromjpeg_s(79 downto 64); -- delayed
-alias fromresDut_s is fromjpeg_s(95 downto 80); -- res_s
---alias fromramDut_s is fromjpeg_s(111 downto 96); --saved ram
+--alias fromleftDelDut_s is fromjpeg_s(95 downto 80); -- delayed
+alias fromresDut_s is fromjpeg_s(79 downto 64); -- res_s
+--alias fromsigDelDut_s is fromjpeg_s(96); --sigDelayed
 signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
 signal tojpeg_s : std_logic_vector(1 downto 0); -- From PC to jpeg.
 alias even_odd_tmp_s is  tojpeg_s(0);
@@ -285,9 +285,9 @@ ujpeg: jpeg
         right_s => right_s,
         sam_s => sam_s,
         res_s => res_s,
-        even_odd_s => even_odd_s,
+        even_odd_s => even_odd_r,
 		  fwd_inv_s => fwd_inv_s,
-        updated_s => updated_s,
+        updated_s => updated_r,
         noupdate_s => noupdate_s
   		  );	
 		  
@@ -443,11 +443,11 @@ DelayLine_u1 : DelayLine
                 sam_x <= dataFromRam_s;	
           elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	
                 right_x <= dataFromRam_s;
-					 leftDel_x <= dataFromRam_s; --saving the right to left_x
-					 sigDelayed_x <= YES;
 					 updated_x <= YES;
 					 sam_addr_x <= sam_addr_r + 2;
 					 --addrjpeg_x <= addrjpeg_r + 2;
+			  
+			 
 			 end if;							
           addr_x <= addr_r + 1;         -- and go to next address.
           if updated_r =  YES then
@@ -465,7 +465,8 @@ DelayLine_u1 : DelayLine
                even_odd_x <= YES;
 				   reset_sav_x <= YES;
                addr_x <= 0;
-               state_x     <= EVEN_SAMPLES;      -- Go to next state.
+					state_x     <= DONE;
+               --state_x     <= EVEN_SAMPLES;      -- Go to next state.
 		 else 	
 					state_x     <= DONE;      -- Go to next state.
        end if;
@@ -491,7 +492,7 @@ DelayLine_u1 : DelayLine
                 sam_x <= dataFromRam_s;	
           elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	
                 right_x <= dataFromRam_s;
-					 leftDel_x <= dataFromRam_s; --saving the right to left_x
+					 leftDel_x <= dataFromRam_s; --saving the right to leftDel_x
 					 sigDelayed_x <= YES;
 					 updated_x <= YES;
 					 sam_addr_x <= sam_addr_r + 2;
@@ -568,17 +569,17 @@ DelayLine_u1 : DelayLine
     end if;
   end process;
     reset_sav_s <= reset_sav_r;
-    even_odd_s <= even_odd_r;
+    --even_odd_s <= even_odd_r;
 	 fwd_inv_s <= '1';	 
-    updated_s <= updated_r; 
+    --updated_s <= updated_r; 
 	 --even_odd_s <= '0';
-
-	 
+    
     sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
 	 fromsum_s <= sumDut_s; --sum_r back to PC
     --DelayBus input is updated
     left_sv <= std_logic_vector((leftDel_r));
-	 fromleftDelDut_s <= leftDelDut_s; --delayed signal back to PC
+	 --fromleftDelDut_s <= leftDelDut_s; --delayed signal back to PC
+	 --fromsigDelDut_s <= sigDelayed_r;
 	 leftDut_s <=  std_logic_vector((left_r));
 	 left_s <= signed(leftDut_s); --to jpeg 
     --fromleftDut_s <= left_s; --left signal back to PC

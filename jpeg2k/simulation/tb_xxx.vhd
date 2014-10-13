@@ -137,7 +137,7 @@ component jpeg is
 resram : ram
   port map(
      dout => dout_res,
-	  din => rightDut_s,
+	  din => din_res,
 	  addr => addr_res,
 	  we => we_res,
 	  clk_fast => clk_i
@@ -165,9 +165,9 @@ ujpeg: jpeg
         right_s => right_s,
         sam_s => sam_s,
         res_s => res_s,
-        even_odd_s => even_odd_s,
+        even_odd_s => even_odd_r,
 		  fwd_inv_s => fwd_inv_s,
-        updated_s => updated_s,
+        updated_s => updated_r,
         noupdate_s => noupdate_s
   		  );
   -- Component Instantiation
@@ -214,17 +214,18 @@ FsmComb_p : process(state_r,   even_odd_r, reset_sav_r,   sam_addr_r,
 		when ODD_SAMPLES => 
 		   reset_sav_x <= NO;
 			even_odd_x <= NO;
-         if addr_r <= (MIN_ADDR_C + 62) then
+         if addr_r <= (MIN_ADDR_C + 3) then
             --sam_addr_r = sam_addr_r + 1;
 				if addr_r = (LEFT_ADDR_C + sam_addr_r - 1) then
-			       left_x <= x"00A3";
-					 
+			       --left_x <= x"00A3";
+					 left_x <= x"007D";
 			   elsif addr_r = (SAM_ADDR_C + sam_addr_r - 1) then	
                 --sam_x <= dataFromRam_s;	
-                sam_x <= x"00A0";
-					 
+                --sam_x <= x"00A0";
+					 sam_x <= x"007D";
             elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	
-                  right_x <= x"009B";
+                  --right_x <= x"009B";
+						right_x <= x"0075";
 					 --dataFromRam_s  <= dataFromRam_s;
 					 sam_addr_x <= sam_addr_r + 2;
 				    incRes_x <= YES;
@@ -240,21 +241,36 @@ FsmComb_p : process(state_r,   even_odd_r, reset_sav_r,   sam_addr_r,
 			       incRes_x <= NO;
 		   
             end if;
-         elsif addr_r = (MIN_ADDR_C + 63) then
-            sam_addr_x <= 2;
+         elsif addr_r = (MIN_ADDR_C + 4) then
+            --sam_addr_x <= 2;
             even_odd_x <= YES;
 				reset_sav_x <= YES;
-            addr_x <= 0;				
-			   state_x     <= EVEN_SAMPLES;      -- Go to next state.
+            addr_x <= 0;
+            				
+			   state_x     <= DONE;      -- Go to next state.
 			end if;
 		when EVEN_SAMPLES => 
 		   reset_sav_x <= NO;
 			even_odd_x <= YES;
-         if addr_r <= (MIN_ADDR_C + 62) then
+         if addr_r <= (MIN_ADDR_C + 3) then
             --sam_addr_r = sam_addr_r + 1;
+								if addr_r = (LEFT_ADDR_C + sam_addr_r - 1) then   -- 0 + 2 -1 = 1
+			       left_x <= x"00A1";
+					 
+			   elsif addr_r = (SAM_ADDR_C + sam_addr_r - 1) then  -- 1  + 2 - 1 = 2	
+                --sam_x <= dataFromRam_s;	
+                sam_x <= x"00A2";
+					 
+            elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	-- 2 + 2 - 1 = 3
+                  right_x <= x"00A3";
+					 --dataFromRam_s  <= dataFromRam_s;
+					 sam_addr_x <= sam_addr_r + 2;
+				    incRes_x <= YES;
+				    updated_x <= YES;
+				end if;
 				addr_x <= addr_r + 1;         -- and go to next address.
-				sam_addr_x <= sam_addr_r + 2;
-         elsif addr_r = (MIN_ADDR_C + 63) then	
+				--sam_addr_x <= sam_addr_r + 2;
+         elsif addr_r = (MIN_ADDR_C + 4) then	
 			   state_x     <= WRITE_DATA;      -- Go to next state.
 			end if;				
 		when WRITE_DATA =>
@@ -290,11 +306,14 @@ FsmUpdate_p : process(clk_i)
 		
     end if;
   end process;
-  reset_sav_s <= reset_sav_r;
-  even_odd_s <= even_odd_r;
-  updated_s <= updated_r;
-  incRes_s <= incRes_r;
   fwd_inv_s <= '1';
+  reset_sav_s <= reset_sav_r;
+  --even_odd_s <= even_odd_r;
+  
+  --updated_s <= updated_r;
+  --updated_s <= '1';
+  incRes_s <= incRes_r;
+ 
   leftDut_s <=  std_logic_vector((left_r));
   left_s <= signed(leftDut_s); --to jpeg 
   samDut_s <=  std_logic_vector((sam_r));
@@ -336,7 +355,7 @@ FsmUpdate_p : process(clk_i)
 		--sam_s <= x"00A0";
 		--right_s <= x"009B";
 		
-		fwd_inv_s <= '1';
+		--fwd_inv_s <= '1';
 		---updated_s <= '1';
 		wait for 40 ns;
 		--incRes <= '1';

@@ -32,9 +32,9 @@ USB_ID = 0  # USB port index for the XuLA board connected to the host PC.
 JPEG_ID = 4  # This is the identifier for the jpeg in the FPGA.
 
 # Create a jpeg intfc obj with three 17-bit inputs and one 17-bit output.
-even_odd = 1 
+even_odd = 0 
 fwd_inv = 1
-jpeg = XsDut(USB_ID, JPEG_ID, [ 1, 1],  [16, 16, 16, 16, 16, 16])
+jpeg = XsDut(USB_ID, JPEG_ID, [ 1, 1],  [16, 16, 16, 16, 16])
 #                            even_odd fwd_inv lift sum left sam right delayed addr_sam addr_jpeg addr updated noupdate
 # Test the subtractor by iterating through some random inputs.
 
@@ -58,7 +58,7 @@ def loc_jpeg():
             loc_lift = sam_r.int - ( (left_r.int + right_r.int + 2)>>2)
     return loc_lift
 
-sum, left_r, sam_r, right_r, delayed, lift  = jpeg.Exec(even_odd, fwd_inv  )  # Use the jpeg in FPGA.
+sum, left_r, sam_r, right_r, lift   = jpeg.Exec(even_odd, fwd_inv  )  # Use the jpeg in FPGA.
 loc_lift = loc_jpeg()
-print sum.int, left_r, sam_r, right_r, delayed, lift, loc_lift
+print sum.int, left_r, sam_r, right_r, lift, loc_lift 
 
