@@ -1,0 +1,68 @@
+This batch file below is working okay.
+cd "c:\Program Files (x86)\XSTOOLs"
+xsload.exe -usb 0 -f hex -ram "c:\Users\vidal\My Documents\GitHub\jpeg-2000-test\ipython_fixbv\lena64.hex"
+The above batch files loads the sdram.
+
+Using gxsload to upload the bit file to fpga
+gxsload  jpeg2k.bit
+Testing the reading of sdram and computing the my jpeg.
+python pc_mod.py
+##################################################################
+# This program tests the interface between the host PC and the FPGA 
+# on the XuLA board that has been programmed to act as a jpeg_lifting .
+##################################################################
+
+478 0x00a3 0x00a0 0x009b 0x00f0 240
+
+Using xsload to upload the bit file to fpga
+python xsload.py --usb 0 --fpga jpeg2k.bit
+Testing the reading of sdram and computing the my jpeg.
+python pc_mod.py
+##################################################################
+# This program tests the interface between the host PC and the FPGA 
+# on the XuLA board that has been programmed to act as a jpeg_lifting .
+##################################################################
+
+478 0x00a3 0x00a0 0x009b 0x00f0 240
+I was testing the  xsload.py code to determine why it does not upload to ram in Linux.
+I am getting the same error window 8.1 Exception AttributeError: see below.
+
+I reviewed the setup.py and noticed that some libs were missing.
+"install_requires=['pypubsub >= 3.1.2', 'pyusb >= 1.0.0a3', 'bitstring >= 3.1.1', 'intelhex >= 1.4'],"
+pypm list
+as.mklruntime 1.3     Intel MKL runtime files (Windows only)                   
+matplotlib    1.1.1   Python plotting package                                  
+numpy         1.7.1   NumPy: array processing for numbers, strings, records, an
+pil           1.1.7~2 Python Imaging Library                                   
+pip           1.5.6   A tool for installing and managing Python packages.      
+                          
+I executed the following pypm install commands
+pypm install bitstring  >= 3.1.1
+pypm install intelhex >= 1.4
+pypm install pypubsub >= 3.1.2
+pypm install pyusb >= 1.0.0a3
+
+I thought these missing packages were causing the errors.
+
+pypm list showed that intelhex & pypubsub were the correct versions.
+The packages bitstring & pyusb were installed at lower versions.
+
+as.mklruntime 1.3     Intel MKL runtime files (Windows only)                   
+bitstring     3.0.2   Simple construction, analysis and modification of binary 
+intelhex      1.4     Intel HEX file format reader and convertor               
+matplotlib    1.1.1   Python plotting package                                  
+numpy         1.7.1   NumPy: array processing for numbers, strings, records, an
+pil           1.1.7~2 Python Imaging Library                                   
+pip           1.5.6   A tool for installing and managing Python packages.      
+pypubsub      3.1.2   Python Publish-Subscribe Package                         
+pyusb         1.0.0a2 Python USB access module
+
+python xsload.py --usb 0 --ram "lena64.hex"
+
+Exception AttributeError: "'NoneType' object has no attribute 'copy'" in <bound
+method Device.__del__ of <usb.core.Device object at 0x024DDE70>> ignored
+
+python xsload.py --usb 0 --fpga ramintfc_jtag.bit
+Success: Bitstream ramintfc_jtag.bit downloaded into XulA2-LX !
+Exception AttributeError: "'NoneType' object has no attribute 'copy'" in <bound
+method Device.__del__ of <usb.core.Device object at 0x02477E50>> ignored

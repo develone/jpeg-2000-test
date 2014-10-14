@@ -1,0 +1,7 @@
+
+##################################################################
+# This program tests the interface between the host PC and the FPGA 
+# on the XuLA board that has been programmed to act as a jpeg_lifting .
+##################################################################
+
+478 0x00a3 0x00a0 0x009b 0x00f0 240

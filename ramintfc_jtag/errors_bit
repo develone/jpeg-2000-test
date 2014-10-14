@@ -1,0 +1,1 @@
+Exception AttributeError: "'NoneType' object has no attribute 'copy'" in <bound method Device.__del__ of <usb.core.Device object at 0x023D7E50>> ignored
