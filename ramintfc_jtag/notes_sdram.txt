@@ -1,4 +1,31 @@
-SdramCntlPckg
+xshostio.py
+"""Base object for performing USB I/O between XESS board and host PC."""
+DEFAULT_XSUSB_ID = 0
+DEFAULT_MODULE_ID = 255
+USER1_INSTR = XsBitArray('0b000010')
+USER2_INSTR = XsBitArray('0b000011')
+Methods
+initialize  reset   send_rcv           
+
+from xstools.xshostio import * 
+USB_ID = 0  # USB port index for the XuLA board connected to the host PC.
+MODULE_ID = 1
+module = XsHostIo(USB_ID, MODULE_ID)
+print module
+module.initialize()
+
+payload = XsBitArray('0b100010011010')
+num_result_bits = 20
+module.send_rcv(payload, num_result_bits)
+
+XessBoardPckg  VHDL_Lib/BOARD_PACKAGES/XulA2.vhd
+constant SDRAM_DATA_WIDTH_C  : natural := 16;   -- Host & SDRAM data width.
+constant SDRAM_HADDR_WIDTH_C : natural := 24;   -- Host-side address width.
+constant SDRAM_SADDR_WIDTH_C : natural := 13;   -- SDRAM-side address width.
+constant SDRAM_BEG_ADDR_C             : natural := 16#00_0000#;  -- Beginning SDRAM address.
+constant SDRAM_END_ADDR_C             : natural := 16#FF_FFFF#;  -- Ending SDRAM address.  
+
+SdramCntlPckg   VHDL_Lib/SdramCntl.vhd
 constant NOP_CMD_C    : SdramCmdType := "011100";
 constant ACTIVE_CMD_C : SdramCmdType := "001100";
 constant READ_CMD_C   : SdramCmdType := "010100";
