@@ -169,7 +169,17 @@ signal samDut_s                 : std_logic_vector(15 downto 0);  -- Send left b
 signal rightDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
 signal resDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
 
+signal z_o : std_logic_vector(15 downto 0);
+signal sel : STD_LOGIC;
 
+    COMPONENT mux
+    PORT(      
+	     z_o: out std_logic_vector(15 downto 0);
+        left_i: in std_logic_vector(15 downto 0);
+        right_i: in std_logic_vector(15 downto 0);
+        sel : IN  std_logic
+        );
+	END COMPONENT;  
   
 component jpeg is 
     port (
@@ -210,6 +220,23 @@ END COMPONENT;
 
  
 begin
+umux : mux
+	port map (
+		  z_o => z_o,
+	     left_i => leftDut_s,
+--		  right_i => std_logic_vector(right_i),
+		  right_i => leftDelDut_s,
+		  sel => sel);
+	
+DelayBus_u0 : DelayBus
+	generic map (NUM_DELAY_CYCLES_G => 1)
+		port map (
+		      --clk_i => clk_s,
+			   --This clk used during simulation  
+				clk_i => clk_i,
+				bus_i => left_sv,
+				busDelayed_o => leftDelDut_s
+				);
 -------------------------------------------------------------------------
 -- JTAG entry point.
 -------------------------------------------------------------------------
@@ -348,24 +375,24 @@ usave_to_ram : save_to_ram
       sdDqmh_o  => sdDqmh_o, -- SDRAM high-byte databus qualifier is connected on the XuLA2.
       sdDqml_o  => sdDqml_o  -- SDRAM low-byte databus qualifier is connected on the XuLA2.
       );
-DelayBus_u0 : DelayBus
-	generic map (NUM_DELAY_CYCLES_G => 2)
-		port map (
-		      --clk_s => clk_s,
-			   --This clk used during simulation  
-				clk_i => clk_i,
-				bus_i => left_sv,
-				busDelayed_o => leftDelDut_s
-				);
-DelayLine_u1 : DelayLine
-	generic map (NUM_DELAY_CYCLES_G => 2)
-		port map (
-		      --clk_s => clk_s,
-			   --This clk used during simulation  
-				clk_i => clk_i,
-				a_i => sigDel_s,
-				aDelayed_o => sigDelayed_s
-				);
+--DelayBus_u0 : DelayBus
+--	generic map (NUM_DELAY_CYCLES_G => 2)
+--		port map (
+--		      --clk_s => clk_s,
+--			   --This clk used during simulation  
+--				clk_i => clk_i,
+--				bus_i => left_sv,
+--				busDelayed_o => leftDelDut_s
+--				);
+--DelayLine_u1 : DelayLine
+--	generic map (NUM_DELAY_CYCLES_G => 2)
+--		port map (
+--		      --clk_s => clk_s,
+--			   --This clk used during simulation  
+--				clk_i => clk_i,
+--				a_i => sigDel_s,
+--				aDelayed_o => sigDelayed_s
+--				);
   -- Connect the SDRAM controller signals to the FSM signals.
   dataToSdram_s <= std_logic_vector(dataToRam_r);
   dataFromRam_s <= RamWord_t(dataFromSdram_s);
@@ -430,7 +457,7 @@ DelayLine_u1 : DelayLine
 		  -- if 2 the test is 3 & 4
 		  -- if 1 the test is 2 & 3
 
-        elsif addr_r <= (MIN_ADDR_C + 2) then  -- If not the end of row ...
+        elsif addr_r <= (MIN_ADDR_C + 4) then  -- If not the end of row ...
           -- add product of previous RAM address and data read
           -- from that address to the summation ...
 			 if sum_r < 1128 then
@@ -438,16 +465,15 @@ DelayLine_u1 : DelayLine
 			 end if;	  
 			 if addr_r = (LEFT_ADDR_C + sam_addr_r - 1) then
 			      left_x <= dataFromRam_s;
-					
+							
 			 elsif addr_r = (SAM_ADDR_C + sam_addr_r - 1 ) then	
                 sam_x <= dataFromRam_s;	
           elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	
                 right_x <= dataFromRam_s;
 					 updated_x <= YES;
-					 sam_addr_x <= sam_addr_r + 2;
-					 --addrjpeg_x <= addrjpeg_r + 2;
-			  
+					 sam_addr_x <= sam_addr_r + 2;		
 			 
+			   
 			 end if;							
           addr_x <= addr_r + 1;         -- and go to next address.
           if updated_r =  YES then
@@ -459,7 +485,7 @@ DelayLine_u1 : DelayLine
 		   
           end if;
        --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
-		 elsif addr_r = (MIN_ADDR_C + 3) then  -- Else, the final address has been read ...
+		 elsif addr_r = (MIN_ADDR_C + 5) then  -- Else, the final address has been read ...
 		         addr_x <= 0;
 		         sam_addr_x <= 2;
                even_odd_x <= YES;
@@ -471,49 +497,49 @@ DelayLine_u1 : DelayLine
 					state_x     <= DONE;      -- Go to next state.
        end if;
 		when EVEN_SAMPLES =>  -- Read RAM and sum address*data products
-		   reset_sav_x <= NO;
-			even_odd_x <= YES;
-        if done_s = NO then      -- While current RAM read is not complete ...
-          rd_s <= YES;                  -- keep read-enable active.
-		  --this code needs to go thru 1 more than the desire values sam_addr
-		  --0 1 2 3 left_r sam_r right_r
-		  -- if 2 the test is 3 & 4
-		  -- if 1 the test is 2 & 3
-        elsif addr_r <= (MIN_ADDR_C + 3) then  -- If not the end of row ...
-          -- add product of previous RAM address and data read
-          -- from that address to the summation ...
-			 if sum_r < 1128 then
-              sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
-			 end if;	  
-			 if addr_r = (LEFT_ADDR_C + sam_addr_r - 1) then
-			      left_x <= dataFromRam_s;
-					
-			 elsif addr_r = (SAM_ADDR_C + sam_addr_r - 1) then	
-                sam_x <= dataFromRam_s;	
-          elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	
-                right_x <= dataFromRam_s;
-					 leftDel_x <= dataFromRam_s; --saving the right to leftDel_x
-					 sigDelayed_x <= YES;
-					 updated_x <= YES;
-					 sam_addr_x <= sam_addr_r + 2;
-					 --addrjpeg_x <= addrjpeg_r + 2;
-			 end if;							
-          addr_x <= addr_r + 1;         -- and go to next address.
-          if updated_r =  YES then
-			       updated_x <= NO;
-		   
-          end if;
-			 if incRes_r =  YES then
-			       incRes_x <= NO;
-		   
-          end if;          
-       --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
-		 elsif addr_r = (MIN_ADDR_C + 4) then  -- Else, the final address has been read ...
-		         addr_x <= MIN_ADDRJPEG_C;
-               state_x     <= WRITE_DATA;      -- Go to next state.
-		 else 	
-					state_x     <= DONE;      -- Go to next state.
-       end if;
+--		   reset_sav_x <= NO;
+--			even_odd_x <= YES;
+--        if done_s = NO then      -- While current RAM read is not complete ...
+--          rd_s <= YES;                  -- keep read-enable active.
+--		  --this code needs to go thru 1 more than the desire values sam_addr
+--		  --0 1 2 3 left_r sam_r right_r
+--		  -- if 2 the test is 3 & 4
+--		  -- if 1 the test is 2 & 3
+--        elsif addr_r <= (MIN_ADDR_C + 5) then  -- If not the end of row ...
+--          -- add product of previous RAM address and data read
+--          -- from that address to the summation ...
+--			 if sum_r < 1128 then
+--              sum_x  <= sum_r + TO_INTEGER(dataFromRam_s );
+--			 end if;	  
+--			 if addr_r = (LEFT_ADDR_C + sam_addr_r - 1) then
+--			      left_x <= dataFromRam_s;
+--					
+--			 elsif addr_r = (SAM_ADDR_C + sam_addr_r - 1) then	
+--                sam_x <= dataFromRam_s;	
+--          elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	
+--                right_x <= dataFromRam_s;
+--					 leftDel_x <= dataFromRam_s; --saving the right to leftDel_x
+--					 sigDelayed_x <= YES;
+--					 updated_x <= YES;
+--					 sam_addr_x <= sam_addr_r + 2;
+--					 --addrjpeg_x <= addrjpeg_r + 2;
+--			 end if;							
+--          addr_x <= addr_r + 1;         -- and go to next address.
+--          if updated_r =  YES then
+--			       updated_x <= NO;
+--		   
+--          end if;
+--			 if incRes_r =  YES then
+--			       incRes_x <= NO;
+--		   
+--          end if;          
+--       --elsif addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...			 
+--		 elsif addr_r = (MIN_ADDR_C + 4) then  -- Else, the final address has been read ...
+--		         addr_x <= MIN_ADDRJPEG_C;
+--               state_x     <= WRITE_DATA;      -- Go to next state.
+--		 else 	
+--					state_x     <= DONE;      -- Go to next state.
+--       end if;
 				 
       when WRITE_DATA =>                -- Load RAM with values.
         if done_s = NO then  -- While current RAM write is not complete ...
@@ -570,32 +596,31 @@ DelayLine_u1 : DelayLine
   end process;
     reset_sav_s <= reset_sav_r;
     --even_odd_s <= even_odd_r;
-	 fwd_inv_s <= '1';	 
+	 fwd_inv_s <= '1';	
+    --sel  <= '1';	
+    sel  <= '0';	 
     --updated_s <= updated_r; 
 	 --even_odd_s <= '0';
     
     sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
 	 fromsum_s <= sumDut_s; --sum_r back to PC
-    --DelayBus input is updated
-    left_sv <= std_logic_vector((leftDel_r));
-	 --fromleftDelDut_s <= leftDelDut_s; --delayed signal back to PC
-	 --fromsigDelDut_s <= sigDelayed_r;
+ 
 	 leftDut_s <=  std_logic_vector((left_r));
-	 left_s <= signed(leftDut_s); --to jpeg 
-    --fromleftDut_s <= left_s; --left signal back to PC
-	 fromleftDut_s <= leftDut_s; --left signal back to PC
+	 left_s <= signed(z_o); --to jpeg 
+    fromleftDut_s <= z_o; --left signal back to PC
+	 
 	 samDut_s <=  std_logic_vector((sam_r));
 	 sam_s <= signed(samDut_s); --to jpeg  
 	 fromsamDut_s <= samDut_s; --sam signal back to PC
+	 
+	 left_sv <=std_logic_vector((right_r));	 
 	 rightDut_s <=  std_logic_vector((right_r));
 	 right_s <= signed(rightDut_s);  --to jpeg 
-	 fromrightDut_s <= rightDut_s; --right signal back to PC
-    resDut_s <= std_logic_vector(res_s);
+	 --fromrightDut_s <= rightDut_s; --right signal back to PC
+    fromrightDut_s <= leftDelDut_s;--right signal back to PC
+	 resDut_s <= std_logic_vector(res_s);
 	 fromresDut_s <= resDut_s;  --jpeg res back to PC
-	 dataToRam_res_r <= RamWord_t(fromresDut_s); --sending jpeg to store in sdram
-    --save_to_ram should saving
-    --fromramDut_s <= std_logic_vector(dout_res);
-	 --addr_res <= addr_res + 2;
+	  
 	 incRes_s <= incRes_r;
 end Behavioral;
 

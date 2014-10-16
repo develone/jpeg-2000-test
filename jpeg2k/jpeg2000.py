@@ -50,6 +50,10 @@ addr_res_o = Signal(intbv(0)[RAM_ADDR:])
  
 updated_jpeg_s = Signal(bool(0))
 flag = 0
+left_i = Signal(intbv(0, min = 0, max = 2*DATA_WIDTH))
+right_i = Signal(intbv(0, min = 0, max = 2*DATA_WIDTH))
+z_o = Signal(intbv(0, min = 0, max = 2*DATA_WIDTH))
+sel = Signal(bool(0))
 def step1(sam,left,right,flag):
 	if flag == 1:
 		res =  sam - ((left >> 1) + (right >> 1))
@@ -88,6 +92,16 @@ def test_jpeg():
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
 		flag = 0
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
+
+def mux(z_o, left_i, right_i, sel):
+    @always_comb
+    def muxlogic():
+        if sel == 1:
+            z_o.next = left_i
+        else:
+            z_o.next = right_i
+    return muxlogic
+
 def save_to_ram(clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i):
     @always(clk_fast.posedge)
     def xx():
@@ -228,6 +242,8 @@ def convert():
 	#toVHDL(approx, clk_fast, even_odd_s, left_s, sam_s, right_s, we_lf, we_sam, we_rht, we_res, addr_lf, addr_sam, addr_rht, addr_res,  dout_lf, dout_sam, dout_rht, odd, reset_jpeg, updated_s)
 	toVerilog(save_to_ram, clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i)
 	toVHDL(save_to_ram, clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i)
+	toVHDL(mux, z_o, left_i, right_i, sel)
+	toVerilog(mux, z_o, left_i, right_i, sel)
 #convert()
 tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
