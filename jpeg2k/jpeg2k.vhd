@@ -59,14 +59,14 @@ entity jpeg2k is
 end jpeg2k;
 
 architecture Behavioral of jpeg2k is
-signal fromjpeg_s : std_logic_vector(79 downto 0); -- From jpeg to PC.
+signal fromjpeg_s : std_logic_vector(80 downto 0); -- From jpeg to PC.
 alias fromsum_s is fromjpeg_s(15 downto 0); -- sum_r.
 alias fromleftDut_s is fromjpeg_s(31 downto 16); -- left
 alias fromsamDut_s is fromjpeg_s(47 downto 32); -- sam 
 alias fromrightDut_s is fromjpeg_s(63 downto 48); -- right
 --alias fromleftDelDut_s is fromjpeg_s(95 downto 80); -- delayed
 alias fromresDut_s is fromjpeg_s(79 downto 64); -- res_s
---alias fromsigDelDut_s is fromjpeg_s(96); --sigDelayed
+alias fromsel_s is fromjpeg_s(80); --sel back to PC
 signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
 signal tojpeg_s : std_logic_vector(1 downto 0); -- From PC to jpeg.
 alias even_odd_tmp_s is  tojpeg_s(0);
@@ -122,6 +122,7 @@ constant MIN_ADDR_C             : natural   := 0;  -- Process RAM from this addr
 constant LEFT_ADDR_C             : natural   := 0;  -- Process RAM from this address ...
 constant SAM_ADDR_C             : natural   := 1;  -- Process RAM from this address ...
 constant RIGHT_ADDR_C             : natural   := 2;  -- Process RAM from this address ...
+constant RIGHT_USE_C         : natural   := 3;  -- Enable right to jpeg ...
 constant MAX_ADDR_C             : natural   := 8191;  -- ... to this address.
 constant MIN_ADDRJPEG_C             : natural   := 8192;  -- Process RAM from this address ...
 constant MAX_ADDRJPEG_C             : natural   := 16384;  -- ... to this address.
@@ -135,20 +136,12 @@ signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  --
 signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
 signal dataFromRam_s            : RamWord_t;  -- Data read from RAM.
 --Signals constants needed by FsmUpdate_p---------------------------------------	
---signal addr_x : unsigned(13 downto 0) := (others => '0');
---signal sam_addr_x : unsigned(13 downto 0) := (others => '0');
---signal updated_x : std_logic := '0';
-signal sigDelayed_x : std_logic := '0';
-signal addrjpeg_x : unsigned(13 downto 0) := (others => '0');
---signal dataToRam_x : unsigned(15 downto 0) := (others => '0');   
---signal addr_r : unsigned(13 downto 0);
+ 
 signal addr_r, addr_x           : natural range 0 to RAM_SIZE_C-1;  -- RAM address.
---signal sam_addr_r : unsigned(13 downto 0) := (others => '0');
+ 
 signal sam_addr_r, sam_addr_x :  natural range 0 to RAM_SIZE_C-1; 
 signal updated_r, updated_x : std_logic := '0';
-signal sigDelayed_r : std_logic := '0';
-signal addrjpeg_r : unsigned(13 downto 0) := (others => '0');
---signal dataToRam_r : unsigned(15 downto 0) := (others => '0');
+ 
 --Signals constants needed by FsmUpdate_p---------------------------------------
 --Signals constants needed by Sdram---------------------------------------
 signal left_r, sam_r, right_r, left_x, sam_x, right_x    : RamWord_t;
@@ -158,11 +151,11 @@ signal sum_r, sum_x             : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_
 signal dataToRam_res_r, dataToRam_res_x : RamWord_t;  -- Data to write to RAM.
 
 
-signal sigdel_s : std_logic;
-signal sigDelayed_s : std_logic;
-signal left_sv :   STD_LOGIC_VECTOR(15 downto 0) ;
-signal leftDelDut_s :   STD_LOGIC_VECTOR(15 downto 0);
-signal leftDel_r, leftDel_x :   RamWord_t;
+--signal sigdel_s : std_logic;
+--signal sigDelayed_s : std_logic;
+signal left_sv, left_sv_r, left_sv_x :   std_logic_vector(15 downto 0) ;
+signal leftDelDut_s :   std_logic_vector(15 downto 0);
+ 
 
 signal leftDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
 signal samDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
@@ -170,8 +163,15 @@ signal rightDut_s                 : std_logic_vector(15 downto 0);  -- Send left
 signal resDut_s                 : std_logic_vector(15 downto 0);  -- Send left back to PC.
 
 signal z_o : std_logic_vector(15 downto 0);
-signal sel : STD_LOGIC;
-
+signal sel, sel_r, sel_x : STD_LOGIC;
+signal latch_ctrl, latch_ctrl_r, latch_ctrl_x : STD_LOGIC;
+	 COMPONENT latch 
+	    port (
+        q_o : out std_logic_vector(15 downto 0);
+        d_i : in std_logic_vector(15 downto 0);
+        g: in std_logic
+     );
+	  END COMPONENT; 
     COMPONENT mux
     PORT(      
 	     z_o: out std_logic_vector(15 downto 0);
@@ -220,23 +220,30 @@ END COMPONENT;
 
  
 begin
+ulatch : latch
+	port map (
+	q_o => leftDelDut_s,
+	d_i => left_sv_r,
+	g => latch_ctrl_r
+	);
 umux : mux
 	port map (
 		  z_o => z_o,
 	     left_i => leftDut_s,
---		  right_i => std_logic_vector(right_i),
-		  right_i => leftDelDut_s,
+		  --right_i => std_logic_vector(right_i),
+		  right_i =>  leftDelDut_s,
+		  --right_i => rightDut_s,
 		  sel => sel);
 	
-DelayBus_u0 : DelayBus
-	generic map (NUM_DELAY_CYCLES_G => 1)
-		port map (
-		      --clk_i => clk_s,
-			   --This clk used during simulation  
-				clk_i => clk_i,
-				bus_i => left_sv,
-				busDelayed_o => leftDelDut_s
-				);
+--DelayBus_u0 : DelayBus
+--	generic map (NUM_DELAY_CYCLES_G => 7)
+--		port map (
+--		      --clk_i => clk_s,
+--			   --This clk used during simulation  
+--				clk_i => clk_fast,
+--				bus_i => left_sv,
+--				busDelayed_o => leftDelDut_s
+--				);
 -------------------------------------------------------------------------
 -- JTAG entry point.
 -------------------------------------------------------------------------
@@ -375,15 +382,7 @@ usave_to_ram : save_to_ram
       sdDqmh_o  => sdDqmh_o, -- SDRAM high-byte databus qualifier is connected on the XuLA2.
       sdDqml_o  => sdDqml_o  -- SDRAM low-byte databus qualifier is connected on the XuLA2.
       );
---DelayBus_u0 : DelayBus
---	generic map (NUM_DELAY_CYCLES_G => 2)
---		port map (
---		      --clk_s => clk_s,
---			   --This clk used during simulation  
---				clk_i => clk_i,
---				bus_i => left_sv,
---				busDelayed_o => leftDelDut_s
---				);
+ 
 --DelayLine_u1 : DelayLine
 --	generic map (NUM_DELAY_CYCLES_G => 2)
 --		port map (
@@ -405,12 +404,14 @@ usave_to_ram : save_to_ram
   --*********************************************************************
   FsmComb_p : process(state_r, addr_r, dataToRam_r,
                       sum_r, dataFromRam_s, done_s, even_odd_r, reset_sav_r, incRes_r, left_r, sam_r, right_r, sam_addr_r,
-							 dataToRam_res_r, addrjpeg_r, updated_r, 
-							 leftDel_r, sigDelayed_r)
+							 dataToRam_res_r, updated_r, sel_r, left_sv_r, latch_ctrl_r) 
+--							 addrjpeg_r, leftDel_r, sigDelayed_r) 
   begin
     -- Disable RAM reads and writes by default.
     rd_s        <= NO;                  -- Don't write to RAM.
     wr_s        <= NO;                  -- Don't read from RAM.
+	 sel_x <= YES; --using left as input to jpeg 
+	 latch_ctrl_x <= NO;
 	 even_odd_x  <= NO; --wkg on odd samples
 	 reset_sav_x <= YES; --ram addr 1 set to odd
     -- Load the registers with their current values by default.
@@ -424,10 +425,10 @@ usave_to_ram : save_to_ram
 	 sam_addr_x    <= sam_addr_r;
     
     dataToRam_res_x 	  <=  dataToRam_res_r;
-	 addrjpeg_x      <= addrjpeg_r;
+--	 addrjpeg_x      <= addrjpeg_r;
 	 updated_x  <= updated_r;
-	 leftDel_x <= leftDel_r;
-	 sigDelayed_x <= sigDelayed_r;
+--	 leftDel_x <= leftDel_r;
+--	 sigDelayed_x <= sigDelayed_r;
     case state_r is
 
       when INIT =>                      -- Initialize the FSM.
@@ -443,7 +444,8 @@ usave_to_ram : save_to_ram
 		  --addrjpeg_x  <=   MIN_ADDRJPEG_C + 1;
         --state_x     <= WRITE_DATA;      -- Go to next state.
 		  updated_x <= NO;
-        sigDelayed_x <= NO;
+--        sigDelayed_x <= NO;
+		  sel_x <= YES;
         state_x <= ODD_SAMPLES;    -- and go to next state.
 
 		  
@@ -465,20 +467,27 @@ usave_to_ram : save_to_ram
 			 end if;	  
 			 if addr_r = (LEFT_ADDR_C + sam_addr_r - 1) then
 			      left_x <= dataFromRam_s;
+					latch_ctrl_x <= YES;
 							
 			 elsif addr_r = (SAM_ADDR_C + sam_addr_r - 1 ) then	
-                sam_x <= dataFromRam_s;	
+                sam_x <= dataFromRam_s;
+					 latch_ctrl_x <= YES; 
           elsif addr_r = (RIGHT_ADDR_C + sam_addr_r - 1) then	
                 right_x <= dataFromRam_s;
+					 left_sv_x <= std_logic_vector(dataFromRam_s);
+					 latch_ctrl_x <= NO;
 					 updated_x <= YES;
-					 sam_addr_x <= sam_addr_r + 2;		
-			 
+					 sam_addr_x <= sam_addr_r + 2;
+          elsif addr_r = (RIGHT_USE_C + sam_addr_r) then
+					sel_x <= NO; --using right as input to jpeg
+
+					
 			   
 			 end if;							
           addr_x <= addr_r + 1;         -- and go to next address.
           if updated_r =  YES then
 			       updated_x <= NO;
-		   
+					 latch_ctrl_x <= NO;
           end if;
 			 if incRes_r =  YES then
 			       incRes_x <= NO;
@@ -491,6 +500,7 @@ usave_to_ram : save_to_ram
                even_odd_x <= YES;
 				   reset_sav_x <= YES;
                addr_x <= 0;
+					
 					state_x     <= DONE;
                --state_x     <= EVEN_SAMPLES;      -- Go to next state.
 		 else 	
@@ -542,19 +552,19 @@ usave_to_ram : save_to_ram
 --       end if;
 				 
       when WRITE_DATA =>                -- Load RAM with values.
-        if done_s = NO then  -- While current RAM write is not complete ...
-		   
-          wr_s <= YES;                  -- keep write-enable active.
-        elsif addr_r <=  (MIN_ADDRJPEG_C + 2) then  -- If haven't reach final address ...
-          if addr_r = (addrjpeg_r) then
-		          --dataToRam_x <= dataToRam_res_r;
-              addrjpeg_x <= addrjpeg_r + 2;
-          end if;
-		        addr_x <= addr_r + 1;         -- and go to next address.		
-		 	 elsif addr_r <= (MIN_ADDRJPEG_C + 2) then
-          state_x <= DONE;
-        end if;   
- 
+--        if done_s = NO then  -- While current RAM write is not complete ...
+--		   
+--          wr_s <= YES;                  -- keep write-enable active.
+--        elsif addr_r <=  (MIN_ADDRJPEG_C + 2) then  -- If haven't reach final address ...
+--          if addr_r = (addrjpeg_r) then
+--		          --dataToRam_x <= dataToRam_res_r;
+--              addrjpeg_x <= addrjpeg_r + 2;
+--          end if;
+--		        addr_x <= addr_r + 1;         -- and go to next address.		
+--		 	 elsif addr_r <= (MIN_ADDRJPEG_C + 2) then
+--          state_x <= DONE;
+--        end if;   
+-- 
       when DONE =>                      -- Summation complete ...
         null;                           -- so wait here and do nothing.
       when others =>                    -- Erroneous state ...
@@ -582,25 +592,26 @@ usave_to_ram : save_to_ram
 		sam_addr_r  <= sam_addr_x; 
 		
 		dataToRam_res_r  <= dataToRam_res_x;
-		addrjpeg_r      <= addrjpeg_x;
+ 
 		updated_r <= updated_x;
-		leftDel_r <= leftDel_x;
-		sigDelayed_r <= sigDelayed_x;
+		left_sv_r      <= left_sv_x;
 		even_odd_r <= even_odd_x;
 		reset_sav_r <= reset_sav_x;
 		incRes_r    <= incRes_x;
-      left_r      <= left_x;		
-		
+      left_r      <= left_x;
+      sel_r 	<= sel_x;		
+		latch_ctrl_r <= latch_ctrl_x;
 		
     end if;
   end process;
     reset_sav_s <= reset_sav_r;
     --even_odd_s <= even_odd_r;
 	 fwd_inv_s <= '1';	
-    --sel  <= '1';	
+    --sel <= sel_r;	
+	 --fromsel_s <= sel_r;
+    fromsel_s <= '0';
     sel  <= '0';	 
-    --updated_s <= updated_r; 
-	 --even_odd_s <= '0';
+ 
     
     sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
 	 fromsum_s <= sumDut_s; --sum_r back to PC
@@ -613,11 +624,11 @@ usave_to_ram : save_to_ram
 	 sam_s <= signed(samDut_s); --to jpeg  
 	 fromsamDut_s <= samDut_s; --sam signal back to PC
 	 
-	 left_sv <=std_logic_vector((right_r));	 
+--	 left_sv <=  std_logic_vector(right_r);	 
 	 rightDut_s <=  std_logic_vector((right_r));
 	 right_s <= signed(rightDut_s);  --to jpeg 
-	 --fromrightDut_s <= rightDut_s; --right signal back to PC
-    fromrightDut_s <= leftDelDut_s;--right signal back to PC
+	 fromrightDut_s <= rightDut_s; --right signal back to PC
+    
 	 resDut_s <= std_logic_vector(res_s);
 	 fromresDut_s <= resDut_s;  --jpeg res back to PC
 	  
