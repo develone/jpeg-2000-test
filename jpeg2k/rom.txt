@@ -1,0 +1,66 @@
+	leftlatch_ctrl <= '1';
+      addr_rom <=b"000000000000";
+		 wait for 10 ns;
+		x <= dout_rom;
+      wait for 10 ns;
+		leftlatch_ctrl <= '0';
+		left_s <= signed(left_latch);
+		
+	   wait for 10 ns;
+		samlatch_ctrl <= '1';
+		addr_rom <=b"000000000001";
+		wait for 10 ns;
+		samlatch_ctrl <= '0';
+		sam_s <= signed(sam_latch);
+		
+		wait for 10 ns;
+		rightlatch_ctrl <= '1';
+      addr_rom <=b"000000000010";
+		 wait for 10 ns;
+		x <= dout_rom;
+      wait for 10 ns;
+		rightlatch_ctrl <= '0';
+		right_s <= signed(right_latch);
+--
+--		wait for 10 ns;
+-- 
+--		
+--		wait for 10 ns;	
+		
+--	   addr_rom <=b"000000000010";
+--		right_s <= signed(dout_rom);
+		wait for 10 ns;
+		
+		even_odd_s <= '0';
+		updated_s <= '1';
+		fwd_inv_s<= '1';
+		wait for 10 ns;
+		updated_s <= '0';
+		
+		we_res <= '1';
+		
+		addr_res <=  b"000000001";
+
+		leftlatch_ctrl <= '1';
+      addr_rom <=b"000000000010";
+		 wait for 10 ns;
+		x <= dout_rom;
+      wait for 10 ns;
+		leftlatch_ctrl <= '0';
+		left_s <= signed(left_latch);
+		
+	   wait for 10 ns;
+		samlatch_ctrl <= '1';
+		addr_rom <=b"000000000011";
+		wait for 10 ns;
+		samlatch_ctrl <= '0';
+		sam_s <= signed(sam_latch);
+		
+		wait for 10 ns;
+		rightlatch_ctrl <= '1';
+      addr_rom <=b"000000000100";
+		 wait for 10 ns;
+		x <= dout_rom;
+      wait for 10 ns;
+		rightlatch_ctrl <= '0';
+		right_s <= signed(right_latch);
