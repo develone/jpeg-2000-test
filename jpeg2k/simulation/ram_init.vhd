@@ -19,6 +19,7 @@ impure function InitRamFromFile (RamFileName : in string) return RamType is
     FILE RamFile : text is in RamFileName;
     variable RamFileLine : line;
     variable leftRAM : RamType;
+	 variable samRAM : RamType;
 	 variable rightRAM : RamType;
 
 begin
@@ -29,17 +30,20 @@ begin
     return leftRAM;
     end function;
     signal leftRAM : RamType := InitRamFromFile("left.data");
-    begin
+    signal samRAM : RamType := InitRamFromFile("sam.data");
+    signal rightRAM : RamType := InitRamFromFile("right.data");    
+	 begin
     process (clk)
         begin
             if clk'event and clk = '1' then
         if we = '1' then
         leftRAM(conv_integer(addr)) <= to_bitvector(din);
- 
+		  samRAM(conv_integer(addr)) <= to_bitvector(din);
+        rightRAM(conv_integer(addr)) <= to_bitvector(din);
         end if;
         dout <= to_stdlogicvector(leftRAM(conv_integer(addr)));
     end if;
 end process;
-
+ 
  
 end syn;
