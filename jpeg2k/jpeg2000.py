@@ -7,7 +7,7 @@ m = [156.0, 156.0, 156.0, 156.0, 164.0, 164.0, 164.0, 164.0, 164.0, 164.0, 164.0
 DATA_WIDTH = 32768
 RAM_ADDR = 9
 ROM_ADDR = 12
-
+sig_in = Signal(intbv(0)[52:])
 dout_rom = Signal(intbv(0)[16:])
 addr_rom = Signal(intbv(0)[ROM_ADDR:])
 
@@ -171,7 +171,42 @@ def ram(dout, din, addr, we, clk_fast, depth=256):
     return write, read
 
 
-
+#jpeg_signals = (clk_fast, sig_in, noupdate_s, res_s) 
+#10987654321098765432 1098765432109876 5432109876543210
+#0101 0000000010011011 0000000010100000 0000000010100011
+#sig_in <= X"7009b00a000a3"; --0111 res_s 0000000000000010 0002 2
+#--updated_s 1  fwd_inv_s 1 even_odd_s 1
+#sig_in <= X"6009b00a000a3"; --0110 res_s 0000000011110000 00f0  240
+#--updated_s 1  fwd_inv_s 1 even_odd_s 0
+#sig_in <= X"5009b00a000a3"; --0101 res_s  0000000100111110 013e 312
+#--updated_s 1  fwd_inv_s 0 even_odd_s 1
+#sig_in <= X"4009b00a000a3"; --0100 res_s 0000000010011110 009e 158
+#--updated_s 1  fwd_inv_s 0 even_odd_s 0
+def jpeg_process(clk_fast, sig_in,  noupdate_s, res_s):
+    left_s = sig_in(16,0)
+    sam_s = sig_in(32,16)
+    right_s = sig_in(48,32)
+    even_odd_s = sig_in(48)
+    fwd_inv_s = sig_in(49)
+    updated_s = sig_in(50)
+    dum_s = sig_in(52)
+    @always(clk_fast.posedge)
+    def jpeg():
+        if updated_s:
+            noupdate_s.next = 0
+            if even_odd_s:
+                if  fwd_inv_s:
+                    res_s.next =  sam_s - ((left_s >> 1) + (right_s >> 1))
+                else:
+                    res_s.next =  sam_s + ((left_s >> 1) + (right_s >> 1))
+            else:
+                if fwd_inv_s:
+                    res_s.next =  sam_s + ((left_s +  right_s + 2)>>2)
+                else:
+                    res_s.next =  sam_s - ((left_s +  right_s + 2)>>2)
+        else:
+            noupdate_s.next = 1
+    return jpeg
 
 def jpeg(clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s):
 	@always(clk_fast.posedge)
@@ -223,12 +258,14 @@ def testbench():
 		raise StopSimulation
 	return   i_inst, i_inst1, i_inst2, stimulus, clkgen
 def convert():
-	toVerilog(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
-	toVHDL(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
+	#toVerilog(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
+	#toVHDL(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
+	toVHDL(jpeg_process, clk_fast,  sig_in, noupdate_s, res_s)
+	toVerilog(jpeg_process, clk_fast,   sig_in, noupdate_s, res_s)
 	toVerilog(ram, dout, din, addr, we, clk_fast)
 	toVHDL(ram, dout, din, addr, we, clk_fast)
-	toVerilog(save_to_ram, clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i)
-	toVHDL(save_to_ram, clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i)
+	#toVerilog(save_to_ram, clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i)
+	#toVHDL(save_to_ram, clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i)
 	toVHDL(mux, z_o, left_i, right_i, sel)
 	toVerilog(mux, z_o, left_i, right_i, sel)
 	toVerilog(latch, q_o, d_i, g)
