@@ -104,6 +104,26 @@ def test_jpeg():
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
 		flag = 0
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
+jp_lf = Signal(intbv(0)[16:])
+jp_sa = Signal(intbv(0)[16:])
+
+jp_rh = Signal(intbv(0)[16:])
+jp_flgs = Signal(intbv(0)[4:])
+sig_out = Signal(intbv(0)[52:])
+rdy = Signal(bool(0)) 
+def ram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, sig_out):
+    """Combines 3 16 bit plus 4 flags into single value """
+    
+    @always_comb
+    def logic():
+        if rdy: 
+            sig_out.next = concat(jp_flgs, jp_rh, jp_sa, jp_lf)
+        else:
+            sig_out.next = 0
+
+    return logic
+
+
 def latch(q_o, d_i, g):
     @always_comb
     def logic():
@@ -258,21 +278,23 @@ def testbench():
 		raise StopSimulation
 	return   i_inst, i_inst1, i_inst2, stimulus, clkgen
 def convert():
-	#toVerilog(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
-	#toVHDL(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
-	toVHDL(jpeg_process, clk_fast,  sig_in, noupdate_s, res_s)
-	toVerilog(jpeg_process, clk_fast,   sig_in, noupdate_s, res_s)
-	toVerilog(ram, dout, din, addr, we, clk_fast)
-	toVHDL(ram, dout, din, addr, we, clk_fast)
-	#toVerilog(save_to_ram, clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i)
-	#toVHDL(save_to_ram, clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i)
-	toVHDL(mux, z_o, left_i, right_i, sel)
-	toVerilog(mux, z_o, left_i, right_i, sel)
-	toVerilog(latch, q_o, d_i, g)
-	toVHDL(latch, q_o, d_i, g)
-	toVerilog(rom, dout_rom, addr_rom, CONTENT)
-	toVHDL(rom, dout_rom, addr_rom, CONTENT)
-#convert()
+	##toVerilog(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
+	##toVHDL(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
+	#toVHDL(jpeg_process, clk_fast,  sig_in, noupdate_s, res_s)
+	#toVerilog(jpeg_process, clk_fast,   sig_in, noupdate_s, res_s)
+	#toVerilog(ram, dout, din, addr, we, clk_fast)
+	#toVHDL(ram, dout, din, addr, we, clk_fast)
+	##toVerilog(save_to_ram, clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i)
+	##toVHDL(save_to_ram, clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i)
+	##toVHDL(mux, z_o, left_i, right_i, sel)
+	##toVerilog(mux, z_o, left_i, right_i, sel)
+	##toVerilog(latch, q_o, d_i, g)
+	##toVHDL(latch, q_o, d_i, g)
+	#toVerilog(rom, dout_rom, addr_rom, CONTENT)
+	#toVHDL(rom, dout_rom, addr_rom, CONTENT)
+	toVerilog(ram2sig,   jp_lf, jp_sa, jp_rh, jp_flgs, rdy, sig_out )
+	toVHDL(ram2sig,  jp_lf, jp_sa, jp_rh, jp_flgs, rdy, sig_out ) 
+convert()
 tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
 sim.run()
