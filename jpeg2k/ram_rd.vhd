@@ -31,12 +31,12 @@ use work.HostIoPckg.all; -- Package for PC <=> FPGA communications.
 library UNISIM;
 use UNISIM.VComponents.all;
 
-entity pc_fast_blinker_sub is
+entity ram_rd is
     Port ( clk_i : in std_logic;
           blinker_o : out  STD_LOGIC);
-end pc_fast_blinker_sub;
+end ram_rd;
 
-architecture Behavioral of pc_fast_blinker_sub is
+architecture Behavioral of ram_rd is
   signal  clk_fast : std_logic;
   signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
   -- Connections between the shift-register module and the subtractor.
