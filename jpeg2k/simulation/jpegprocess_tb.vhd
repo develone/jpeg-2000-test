@@ -51,9 +51,22 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
 			rdy : in std_logic
         );
     END COMPONENT;
-    
+COMPONENT rom_rd 
+    port (
+        clk_fast: in std_logic;
+		  offset : inout unsigned(11 downto 0);
+        dout_rom : in unsigned(15 downto 0);
+        addr_rom : inout unsigned(11 downto 0);
+        jp_lf: out unsigned(15 downto 0);
+        jp_sa: out unsigned(15 downto 0);
+        jp_rh: out unsigned(15 downto 0);
+		  jp_flgs : in unsigned(3 downto 0) := (others => '0');
+        reset_n: in std_logic
+    );
+end COMPONENT;   
 
    --Inputs
+	signal reset_n : std_logic := '1';
 	signal dout_res : unsigned(15 downto 0);
 	signal din_res : unsigned(15 downto 0);    
 	signal addr_res : unsigned(8 downto 0);
@@ -68,7 +81,8 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
  	--Outputs
    signal sig_out : unsigned(51 downto 0);
     signal dout_rom : unsigned(15 downto 0);
-    signal addr_rom : unsigned(11 downto 0);	 
+    signal addr_rom : unsigned(11 downto 0);	
+    signal offset : unsigned(11 downto 0);	 
     -- Component Declaration for the Unit Under Test (UUT)
  
     COMPONENT jpeg_process
@@ -111,8 +125,8 @@ END COMPONENT;
    signal clk_fast : std_logic := '0';
    signal sig_in : unsigned(51 downto 0) := (others => '0');
  
---   signal fwd_inv_s : std_logic := '0';
---   signal even_odd_s : std_logic := '0';
+   signal fwd_inv_s : std_logic := '0';
+   signal even_odd_s : std_logic := '0';
 --   signal updated_s : std_logic := '0';
 
  	--Outputs
@@ -135,6 +149,18 @@ end COMPONENT;
 
 
 BEGIN
+urom_rd : rom_rd 
+    port  map(
+        clk_fast => clk_fast,
+		  offset =>  offset,
+        dout_rom => dout_rom,
+        addr_rom =>  addr_rom,
+        jp_lf => jp_lf,
+        jp_sa => jp_sa,
+        jp_rh => jp_rh,
+        jp_flgs => jp_flgs,
+        reset_n => reset_n
+    );
   uram2sig: ram2sig PORT MAP (
           jp_lf => jp_lf,
           jp_sa => jp_sa,
@@ -175,7 +201,7 @@ resram : ram
      dout => dout_res,
 	  din => unsigned(res_s),
 	  addr => addr_res,
-	  we => we_res,
+	  we => reset_n,
 	  --clk_fast => clk_i
 	  clk_fast => clk_fast
 	  );	 
@@ -188,49 +214,40 @@ resram : ram
 
       wait for clk_fast_period*10;
 
-      -- insert stimulus here 
+      -- insert stimulus here
+      offset <= X"009";		
+      jp_flgs <= X"6";
+      wait for 10 ns;
+		reset_n <= '0';
+		--this 10 ns is needed
+      wait for 10 ns;
+		rdy <= '1';
+ 		wait for 20 ns;
+		sig_in <= sig_out;
+		rdy <= '0';
+		addr_res <= b"000001001";
+--		we_res <= '1';
+		jp_flgs <= X"7";
+		offset <= X"00A";
+		reset_n <= '1';
+		
+		wait for 20 ns;
+      
  
---		wait for 20 ns;
---		rdy <= '1';
-
-		 
-		addr_rom <= X"000";
-
-		wait for 10 ns;
-      --left
-      jp_lf <= dout_rom;
-		 
-		wait for 10 ns;
- 
-		addr_rom <= X"001";
-		wait for 10 ns;
-		--sam
-		jp_sa <= dout_rom;
-		 
-		wait for 10 ns;
- 
-		addr_rom <= X"002";
-		wait for 10 ns;
-		--right
-		jp_rh <= dout_rom;
---		sig_in <= sig_rom or (sig_in);
-		wait for 10 ns;
-		--flags
-		jp_flgs <= b"0111";
- 
-
+		reset_n <= '0';
+      --this 10 ns is needed
 		wait for 10 ns;
 		rdy <= '1';
  		wait for 20 ns;
 		sig_in <= sig_out;
---		wait for 10 ns;
 		rdy <= '0';
-		addr_res <= b"000000000";
-		we_res <= '1';
-		wait for 20 ns;
-		we_res <= '0';
-		wait for 10 ns;
-      wait;
+		addr_res <= b"000001010";
+--		we_res <= '1';
+		reset_n <= '1';		
+ 
+     
+ 
+       wait;
    end process;
 
 END;

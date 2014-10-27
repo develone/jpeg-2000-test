@@ -10,6 +10,8 @@ ROM_ADDR = 12
 sig_in = Signal(intbv(0)[52:])
 dout_rom = Signal(intbv(0)[16:])
 addr_rom = Signal(intbv(0)[ROM_ADDR:])
+offset = Signal(intbv(0)[ROM_ADDR:])
+reset_n = Signal(bool(1))
 
 dout = Signal(intbv(0)[16:])
 dout_v = Signal(intbv(0)[8:])
@@ -110,7 +112,47 @@ jp_sa = Signal(intbv(0)[16:])
 jp_rh = Signal(intbv(0)[16:])
 jp_flgs = Signal(intbv(0)[4:])
 sig_out = Signal(intbv(0)[52:])
-rdy = Signal(bool(0)) 
+rdy = Signal(bool(0))
+def rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n):
+    even = jp_flgs(0)
+    @always(clk_fast.posedge)
+    def test_process():
+        
+        
+        if (reset_n):
+            jp_lf.next = 0
+            jp_sa.next = 0
+            jp_rh.next = 0
+            #if jp_flgs 6 odd jp_flgs 7 even_odd
+            if (even  == 1):           
+                addr_rom.next = 1 + offset
+            else:
+                addr_rom.next = 0 + offset
+        else:
+            if (even):
+                    if (addr_rom == (1 + offset) ):
+                        jp_lf.next = dout_rom
+                        addr_rom.next = addr_rom + 1
+                    else:
+                        if (addr_rom == (2 + offset)):
+                            jp_sa.next = dout_rom
+                            addr_rom.next = addr_rom + 1
+                        else:
+                            if (addr_rom == (3 + offset)):
+                                jp_rh.next = dout_rom
+            else:
+                if (addr_rom == (0 + offset)):
+                    jp_lf.next = dout_rom
+                    addr_rom.next = addr_rom + 1
+                else:
+                    if (addr_rom == (1 + offset)):
+                        jp_sa.next = dout_rom
+                        addr_rom.next = addr_rom + 1
+                    else:
+                        if (addr_rom == (2 + offset)):
+                            jp_rh.next = dout_rom
+    return test_process
+
 def ram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, sig_out):
     """Combines 3 16 bit plus 4 flags into single value """
     
@@ -293,7 +335,9 @@ def convert():
 	toVerilog(rom, dout_rom, addr_rom, CONTENT)
 	toVHDL(rom, dout_rom, addr_rom, CONTENT)
 	toVerilog(ram2sig,   jp_lf, jp_sa, jp_rh, jp_flgs, rdy, sig_out )
-	toVHDL(ram2sig,  jp_lf, jp_sa, jp_rh, jp_flgs, rdy, sig_out ) 
+	toVHDL(ram2sig,  jp_lf, jp_sa, jp_rh, jp_flgs, rdy, sig_out )
+	toVerilog(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n)
+	toVHDL(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh,  jp_flgs,  reset_n)
 #convert()
 tb_fsm = traceSignals(testbench)
 sim = Simulation(tb_fsm)
