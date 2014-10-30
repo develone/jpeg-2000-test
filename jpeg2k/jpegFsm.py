@@ -75,19 +75,6 @@ def jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_
                 raise ValueError("Undefined state")
     return FSM
  
-#toVHDL(jpegFsm, state_r, reset_fsm_r,  addr_res, offset, offset_r,  jp_flgs, reset_n, rdy )
-#toVerilog(jpegFsm, state_r, reset_fsm_r, addr_res, offset, offset_r,  jp_flgs, reset_n, rdy )
-def jprow(clk_fast,  offset_o,  offset_i  ):
-        
-        @always(clk_fast.posedge)
-        def row_logic():
-            row = 0
-            if row <= 64 :             
-                offset_o.next =  offset_i + 2
-            else:
-                row = 0
-            #reset_fsm_o.next 
-            #sig_o.next = sig_i
-        return row_logic
-toVHDL(jprow, clk_fast, offset_o,  offset_i )  
-toVerilog(jprow, clk_fast, offset_o,  offset_i )            
+toVHDL(jpegFsm, state_r, reset_fsm_r,  addr_res, offset, offset_r,  jp_flgs, reset_n, rdy )
+toVerilog(jpegFsm, state_r, reset_fsm_r, addr_res, offset, offset_r,  jp_flgs, reset_n, rdy )
+            
