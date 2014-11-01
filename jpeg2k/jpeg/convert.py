@@ -11,31 +11,32 @@ import os
 
 from myhdl import *
 
-from stack_myhdl import Stack
+from jpeg_myhdl import Jpeg
 
 def convert(target=toVHDL):
 
-    ToSPieceOut = Signal(intbv(0)[6:])
-    ToSMaskOut = Signal(intbv(0)[16:]) 
-    PieceIn = Signal(intbv(0)[6:])
-    MaskIn = Signal(intbv(0)[16:])
+    #ToSPieceOut = Signal(intbv(0)[6:])
+    #ToSMaskOut = Signal(intbv(0)[16:]) 
+    #PieceIn = Signal(intbv(0)[6:])
+    #MaskIn = Signal(intbv(0)[16:])
     MaskReset = Signal(intbv(0)[16:])
-    Enable = Signal(bool(0))
+    #Enable = Signal(bool(0))
     PushPop = Signal(bool(0))
     Reset = ResetSignal(bool(0), active=1, async=False)
-    Clk = Signal(bool(0))
-    
+    #Clk = Signal(bool(0))
+    clk_fast = Signal(bool(0))    
     target(
-        Stack,
-        ToSPieceOut, 
-        ToSMaskOut, 
-        PieceIn, 
-        MaskIn, 
+        Jpeg,
+        #ToSPieceOut, 
+        #ToSMaskOut, 
+        #PieceIn, 
+        #MaskIn, 
         MaskReset, 
-        Enable, 
+        #Enable, 
         PushPop, 
         Reset,
-        Clk,
+        #Clk,
+        clk_fast,
     )
 
 cwd = os.getcwd()
