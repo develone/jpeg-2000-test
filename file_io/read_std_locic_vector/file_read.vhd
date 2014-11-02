@@ -47,7 +47,7 @@ begin
 receive_data: process
 
 variable l: line;
-variable s: string(y'range);
+variable s: string(1 to 5);
    
 begin                                       
 
