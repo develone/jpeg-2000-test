@@ -28,7 +28,30 @@ architecture Behavioral of DRamSPInf is
   signal dataToRam_r   : RamWord_t;     -- Data to write to RAM.
   signal dataFromRam_s : RamWord_t;     -- Data read from RAM.
   signal sum_r         : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
+component FILE_READ 
+  generic (
+           stim_file:       string  := "sim.dat"
+          );
+  port(
+       CLK              : in  std_logic;
+       RST              : in  std_logic;
+       Y                : out std_logic_vector(15 downto 0);
+       EOG              : out std_logic
+      );
+end component;   
+  signal rst:  std_logic;
+--signal clk:  std_logic := '0';
+	signal eog:  std_logic;
+	signal y:    std_logic_vector(15 downto 0);
 begin
+
+input_stim: FILE_READ 
+  port map(
+       CLK      => clk_i,
+       RST      => rst,
+       Y        => y,
+       EOG      => eog
+      );
 
   --*********************************************************************
   -- RAM is inferred from this process.
@@ -57,18 +80,26 @@ begin
       case state_v is
         when INIT =>
           wr_s        <= YES;           -- Enable writing of RAM.
+			 rst <= YES; 
           addr_r      <= MIN_ADDR_C;    -- Start writing data at this address.
-          dataToRam_r <= TO_UNSIGNED(1, RAM_WIDTH_C);  -- Initial value to write.
+          --dataToRam_r <= TO_UNSIGNED(1, RAM_WIDTH_C);  -- Initial value to write.
           state_v     := WRITE_DATA;    -- Go to next state.
         when WRITE_DATA =>
-          if addr_r < MAX_ADDR_C then   -- If haven't reach final address ...
-            addr_r      <= addr_r + 1;  -- go to next address ...
-            dataToRam_r <= dataToRam_r + 3;            -- and write this value.
+			 if (rst = YES) then
+				addr_r      <= MIN_ADDR_C;
+			 elsif (eog = NO)  then   -- If haven't reach final address ...
+					dataToRam_r <= RamWord_t(y);
+               addr_r      <= addr_r + 1;  -- go to next address ...
+
+            
+            --dataToRam_r <= dataToRam_r + 3;            -- and write this value.
+				
           else  -- Else, the final address has been written...
-            wr_s    <= NO;              -- so turn off writing, ...
-            addr_r  <= MIN_ADDR_C;      -- go back to the start, ...
-            sum_r   <= 0;               -- clear the sum-of-products, ...
-            state_v := READ_AND_SUM_DATA;  -- and go to next state.
+			     wr_s    <= NO;              -- so turn off writing, ...
+              addr_r  <= MIN_ADDR_C;      -- go back to the start, ...
+              sum_r   <= 0;               -- clear the sum-of-products, ...
+              state_v := READ_AND_SUM_DATA;  -- and go to next state.
+			
           end if;
         when READ_AND_SUM_DATA =>
           if addr_r <= MAX_ADDR_C then  -- If haven't reached final address ...

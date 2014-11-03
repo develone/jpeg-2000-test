@@ -55,9 +55,34 @@ ARCHITECTURE behavior OF DRamSPInf_tb IS
 
    -- Clock period definitions
    constant clk_i_period : time := 10 ns;
- 
+component FILE_READ 
+  generic (
+           stim_file:       string  := "sim.dat"
+          );
+  port(
+       CLK              : in  std_logic;
+       RST              : in  std_logic;
+       Y                : out std_logic_vector(15 downto 0);
+       EOG              : out std_logic
+      );
+end component; 
+
+signal rst:  std_logic;
+--signal clk:  std_logic := '0';
+signal eog:  std_logic;
+signal y:    std_logic_vector(15 downto 0);
+
+
 BEGIN
- 
+rst <= '0', '1' after 40 ns, '0' after 100 ns; 
+input_stim: FILE_READ 
+  port map(
+       CLK      => clk_i,
+       RST      => rst,
+       Y        => y,
+       EOG      => eog
+      ); 
+		
 	-- Instantiate the Unit Under Test (UUT)
    uut: DRamSPInf PORT MAP (
           clk_i => clk_i,
