@@ -12,7 +12,7 @@ entity FILE_READ is
   port(
        CLK              : in  std_logic;
        RST              : in  std_logic;
-       Y                : out std_logic_vector(4 downto 0);
+       Y                : out std_logic_vector(15 downto 0);
        EOG              : out std_logic
       );
 end FILE_READ;
@@ -47,7 +47,7 @@ begin
 receive_data: process
 
 variable l: line;
-variable s: string(1 to 5);
+variable s: string(1 to 16);
    
 begin                                       
 

@@ -17,7 +17,7 @@ component FILE_READ
   port(
        CLK              : in  std_logic;
        RST              : in  std_logic;
-       Y                : out std_logic_vector(4 downto 0);
+       Y                : out std_logic_vector(15 downto 0);
        EOG              : out std_logic
       );
 end component;
@@ -26,7 +26,7 @@ end component;
 signal rst:  std_logic;
 signal clk:  std_logic := '0';
 signal eog:  std_logic;
-signal y:    std_logic_vector(4 downto 0);
+signal y:    std_logic_vector(15 downto 0);
 
 begin
 
