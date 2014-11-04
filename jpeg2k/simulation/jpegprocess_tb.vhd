@@ -66,7 +66,7 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
    signal sig_out : unsigned(51 downto 0);
 	signal ttt : std_logic_vector(51 downto 0);
    signal do : std_logic_vector(51 downto 0);	
-	alias tofilewr_s is ttt (51 downto 0); 
+	signal tofilewr_s : std_logic_vector (51 downto 0); 
     signal dout_rom : unsigned(15 downto 0);
     signal addr_rom, addr_rom_r, addr_rom_x : unsigned(11 downto 0);	
 	 --signal addr_rom : unsigned(11 downto 0);	
@@ -171,8 +171,39 @@ END COMPONENT;
    signal state_x :  t_enum_t_State_1;
    --Inputs
    signal clk_fast : std_logic := '0';
-   signal sig_in : unsigned(51 downto 0) := (others => '0');
- 
+	
+   signal sig_in0 : unsigned(51 downto 0) := (others => '0');
+   signal sig_in1 : unsigned(51 downto 0) := (others => '0');
+   signal sig_in2 : unsigned(51 downto 0) := (others => '0');
+   signal sig_in3 : unsigned(51 downto 0) := (others => '0');
+   signal sig_in4 : unsigned(51 downto 0) := (others => '0');
+   signal sig_in5 : unsigned(51 downto 0) := (others => '0');
+   signal sig_in6 : unsigned(51 downto 0) := (others => '0');
+   signal sig_in7 : unsigned(51 downto 0) := (others => '0');
+   signal res_s0 : signed(15 downto 0);	
+	signal res_s1 : signed(15 downto 0);
+	signal res_s2 : signed(15 downto 0);	
+	signal res_s3 : signed(15 downto 0);
+   signal res_s4 : signed(15 downto 0);	
+	signal res_s5 : signed(15 downto 0);
+	signal res_s6 : signed(15 downto 0);	
+	signal res_s7 : signed(15 downto 0);
+   signal sig_in8 : unsigned(51 downto 0) := (others => '0');
+   signal sig_in9 : unsigned(51 downto 0) := (others => '0');
+   signal sig_in10 : unsigned(51 downto 0) := (others => '0');
+   signal sig_in11 : unsigned(51 downto 0) := (others => '0');
+   signal sig_in12 : unsigned(51 downto 0) := (others => '0');
+   signal sig_in13 : unsigned(51 downto 0) := (others => '0');
+   signal sig_in14 : unsigned(51 downto 0) := (others => '0');
+   signal sig_in15 : unsigned(51 downto 0) := (others => '0');
+   signal res_s8 : signed(15 downto 0);	
+	signal res_s9 : signed(15 downto 0);
+	signal res_s10 : signed(15 downto 0);	
+	signal res_s11 : signed(15 downto 0);
+   signal res_s12 : signed(15 downto 0);	
+	signal res_s13: signed(15 downto 0);
+	signal res_s14 : signed(15 downto 0);	
+	signal res_s15 : signed(15 downto 0);
    signal fwd_inv_s : std_logic := '0';
    signal even_odd_s : std_logic := '0';
 --   signal updated_s : std_logic := '0';
@@ -265,17 +296,105 @@ urom : rom
     );
 
 	-- Instantiate the Unit Under Test (UUT)
-   uut: jpeg_process PORT MAP (
+ujpeg0 : jpeg_process PORT MAP (
           clk_fast => clk_fast,
-          sig_in => sig_in,
---          fwd_inv_s => fwd_inv_s,
---          even_odd_s => even_odd_s,
---          updated_s => updated_s,
+          sig_in => sig_in0,
           noupdate_s => noupdate_s,
-          res_s => res_s
+          res_s => res_s0
         );
+ujpeg1 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in1,
+          noupdate_s => noupdate_s,
+          res_s => res_s1
+        );
+ujpeg2 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in2,
+          noupdate_s => noupdate_s,
+          res_s => res_s2
+        );
+ujpeg3 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in3,
+          noupdate_s => noupdate_s,
+          res_s => res_s3
+        );
+ujpeg4 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in4,
+          noupdate_s => noupdate_s,
+          res_s => res_s4
+        );		  
+ujpeg5 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in5,
+          noupdate_s => noupdate_s,
+          res_s => res_s5
+        );
+ujpeg6 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in6,
+          noupdate_s => noupdate_s,
+          res_s => res_s6
+        );
+ujpeg7 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in7,
+          noupdate_s => noupdate_s,
+          res_s => res_s7
+        );	
 
-   -- Clock process definitions
+ujpeg8 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in8,
+          noupdate_s => noupdate_s,
+          res_s => res_s8
+        );
+ujpeg9 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in9,
+          noupdate_s => noupdate_s,
+          res_s => res_s9
+        );
+ujpeg10 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in10,
+          noupdate_s => noupdate_s,
+          res_s => res_s10
+        );
+ujpeg11 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in11,
+          noupdate_s => noupdate_s,
+          res_s => res_s11
+        );
+ujpeg12 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in12,
+          noupdate_s => noupdate_s,
+          res_s => res_s12
+        );		  
+ujpeg13 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in13,
+          noupdate_s => noupdate_s,
+          res_s => res_s13
+        );
+ujpeg14 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in14,
+          noupdate_s => noupdate_s,
+          res_s => res_s14
+        );
+ujpeg15 : jpeg_process PORT MAP (
+          clk_fast => clk_fast,
+          sig_in => sig_in15,
+          noupdate_s => noupdate_s,
+          res_s => res_s15
+        );	
+
+    -- Clock process definitions
    clk_fast_process :process
    begin
 		clk_fast <= '0';
@@ -311,27 +430,146 @@ resram : ram
 		wait for 10 ns;
 		reset_fsm_r <= '1';
       wait for 60 ns;
-		sig_in <= sig_out;
-		tofilewr_s <= x"6009b00a0009b";
-		wait for 10 ns;
+		sig_in0 <= sig_out;
+		
+		offset_i <= X"002";
 		offset_r <= X"002";
 		wait for 10 ns;
 		reset_fsm_r <= '0';
 		wait for 10 ns;
 		reset_fsm_r <= '1';
       wait for 60 ns;
-		sig_in <= sig_out;
-		
-		wait for 10 ns;
+		sig_in1 <= sig_out;
+
+		offset_i <= X"004";
 		offset_r <= X"004";
 		wait for 10 ns;
 		reset_fsm_r <= '0';
 		wait for 10 ns;
 		reset_fsm_r <= '1';
-      wait for 60 ns;
-		sig_in <= sig_out;
+      wait for 60 ns;		
+      sig_in2 <= sig_out;
 		
--- 		offset_r <= X"001";
+		offset_i <= X"004";
+		offset_r <= X"004";
+		wait for 10 ns;
+		reset_fsm_r <= '0';
+		wait for 10 ns;
+		reset_fsm_r <= '1';
+      wait for 60 ns;		
+		sig_in3 <= sig_out;
+		
+		offset_i <= X"006";
+		offset_r <= X"006";
+		wait for 10 ns;
+		reset_fsm_r <= '0';
+		wait for 10 ns;
+		reset_fsm_r <= '1';
+      wait for 60 ns;
+		sig_in4 <= sig_out;
+		
+		offset_i <= X"008";
+		offset_r <= X"008";
+		wait for 10 ns;
+		reset_fsm_r <= '0';
+		wait for 10 ns;
+		reset_fsm_r <= '1';
+      wait for 60 ns;
+		sig_in5 <= sig_out;
+		
+		offset_i <= X"00A";
+		offset_r <= X"00A";
+		wait for 10 ns;
+		reset_fsm_r <= '0';
+		wait for 10 ns;
+		reset_fsm_r <= '1';
+      wait for 60 ns;
+      sig_in6 <= sig_out;
+		
+		offset_i <= X"00b";
+		offset_r <= X"00b";
+		wait for 10 ns;
+		reset_fsm_r <= '0';
+		wait for 10 ns;
+		reset_fsm_r <= '1';
+      wait for 60 ns;		
+		sig_in7 <= sig_out;
+		
+		offset_i <= X"00d";
+		offset_r <= X"00d";
+		wait for 10 ns;
+		reset_fsm_r <= '0';
+		wait for 10 ns;
+		reset_fsm_r <= '1';
+      wait for 60 ns;		
+		sig_in8 <= sig_out;
+		
+		offset_i <= X"00f";
+		offset_r <= X"00f";
+		wait for 10 ns;
+		reset_fsm_r <= '0';
+		wait for 10 ns;
+		reset_fsm_r <= '1';
+      wait for 60 ns;		
+		sig_in9 <= sig_out;
+
+		offset_i <= X"012";
+		offset_r <= X"012";
+		wait for 10 ns;
+		reset_fsm_r <= '0';
+		wait for 10 ns;
+		reset_fsm_r <= '1';
+      wait for 60 ns;		
+      sig_in10 <= sig_out;
+		
+		offset_i <= X"014";
+		offset_r <= X"014";
+		wait for 10 ns;
+		reset_fsm_r <= '0';
+		wait for 10 ns;
+		reset_fsm_r <= '1';
+      wait for 60 ns;		
+		sig_in11 <= sig_out;
+		
+		offset_i <= X"016";
+		offset_r <= X"016";
+		wait for 10 ns;
+		reset_fsm_r <= '0';
+		wait for 10 ns;
+		reset_fsm_r <= '1';
+      wait for 60 ns;
+		sig_in12 <= sig_out;
+		
+		offset_i <= X"018";
+		offset_r <= X"018";
+		wait for 10 ns;
+		reset_fsm_r <= '0';
+		wait for 10 ns;
+		reset_fsm_r <= '1';
+      wait for 60 ns;
+		sig_in13 <= sig_out;
+		
+		offset_i <= X"01a";
+		offset_r <= X"01a";
+		wait for 10 ns;
+		reset_fsm_r <= '0';
+		wait for 10 ns;
+		reset_fsm_r <= '1';
+      wait for 60 ns;
+      sig_in14 <= sig_out;
+		
+		offset_i <= X"01c";
+		offset_r <= X"01c";
+		wait for 10 ns;
+		reset_fsm_r <= '0';
+		wait for 10 ns;
+		reset_fsm_r <= '1';
+      wait for 60 ns;
+		sig_in15 <= sig_out;
+      tofilewr_s <= std_logic_vector(sig_out);		
+--		tofilewr_s <= x"6009b00a0009b";
+--		wait for 10 ns;
+--		offset_r <= X"002";
 --		wait for 10 ns;
 --		reset_fsm_r <= '0';
 --		wait for 10 ns;
@@ -340,22 +578,39 @@ resram : ram
 --		sig_in <= sig_out;
 --		
 --		wait for 10 ns;
---		offset_r <= X"003";
+--		offset_r <= X"004";
 --		wait for 10 ns;
 --		reset_fsm_r <= '0';
 --		wait for 10 ns;
 --		reset_fsm_r <= '1';
 --      wait for 60 ns;
 --		sig_in <= sig_out;
---		
---		wait for 10 ns;
---		offset_r <= X"005";
---		wait for 10 ns;
---		reset_fsm_r <= '0';
---		wait for 10 ns;
---		reset_fsm_r <= '1';
---      wait for 60 ns;
---		sig_in <= sig_out;
+		
+---- 		offset_r <= X"001";
+----		wait for 10 ns;
+----		reset_fsm_r <= '0';
+----		wait for 10 ns;
+----		reset_fsm_r <= '1';
+----      wait for 60 ns;
+----		sig_in <= sig_out;
+----		
+----		wait for 10 ns;
+----		offset_r <= X"003";
+----		wait for 10 ns;
+----		reset_fsm_r <= '0';
+----		wait for 10 ns;
+----		reset_fsm_r <= '1';
+----      wait for 60 ns;
+----		sig_in <= sig_out;
+----		
+----		wait for 10 ns;
+----		offset_r <= X"005";
+----		wait for 10 ns;
+----		reset_fsm_r <= '0';
+----		wait for 10 ns;
+----		reset_fsm_r <= '1';
+----      wait for 60 ns;
+----		sig_in <= sig_out;
      
  
        wait;
