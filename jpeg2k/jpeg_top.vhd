@@ -150,7 +150,7 @@ begin
         -- Need to added after 70 ns to the line below
         -- which will total 80 ns 
         -- cut after 70 ns and paste in the line below  
-        addr_res <= resize(offset_r + 1, 9);
+        addr_res <= resize(offset_r + 1, 9) after 70 ns;
         reset_n <= '0';
         state_r <= ODD_SA;
     else
@@ -165,12 +165,12 @@ begin
                 -- rdy needs to go hi 30 ns after reset_n goes lo
                 -- rdy needs go lo 10 ns before reset_n goes hi
                 -- cut after 70 ns and paste in the line below 
-                reset_n <= '1';
+                reset_n <= '1' after 70 ns;
                 -- The start up value for rdy is 0 __|
                 -- rdy needs to go hi 10 ns after reset_n goes lo
                 -- rdy needs go lo 10 ns before reset_n goes hi
                 -- cut after 60 ns and paste in the line below 
-                rdy <= '0';
+                rdy <= '0' after 60 ns;
                 state_r <= ODD_SA;
             when EVEN_SA =>
                 jp_flgs <= to_unsigned(7, 4);
