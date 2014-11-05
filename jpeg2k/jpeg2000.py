@@ -7,11 +7,16 @@ m = [156.0, 156.0, 156.0, 156.0, 164.0, 164.0, 164.0, 164.0, 164.0, 164.0, 164.0
 DATA_WIDTH = 32768
 RAM_ADDR = 9
 ROM_ADDR = 12
+ACTIVE_LOW = bool(0)
 sig_in = Signal(intbv(0)[52:])
 dout_rom = Signal(intbv(0)[16:])
 addr_rom = Signal(intbv(0)[ROM_ADDR:])
 offset = Signal(intbv(0)[ROM_ADDR:])
+offset_r = Signal(intbv(0)[ROM_ADDR:])
 reset_n = Signal(bool(1))
+t_State = enum('ODD_SA', 'EVEN_SA', 'TRAN_RAM', encoding="one_hot")
+state_r = Signal(t_State.ODD_SA)
+reset_fsm_r = Signal(bool(1))
 
 dout = Signal(intbv(0)[16:])
 dout_v = Signal(intbv(0)[8:])
@@ -231,8 +236,13 @@ def ram(dout, din, addr, we, clk_fast, depth=256):
         dout.next = mem[addr]
 
     return write, read
-
-
+def jpeg_top(clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_out, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r ):
+	  
+	instance_4 = jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_n, rdy )
+	instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s)
+	instance_2 = ram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, sig_out)
+	instance_1 = rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n) 
+	return instance_1, instance_2, instance_3, instance_4
 #jpeg_signals = (clk_fast, sig_in, noupdate_s, res_s) 
 #10987654321098765432 1098765432109876 5432109876543210
 #0101 0000000010011011 0000000010100000 0000000010100011
@@ -269,7 +279,60 @@ def jpeg_process(clk_fast, sig_in,  noupdate_s, res_s):
         else:
             noupdate_s.next = 1
     return jpeg
+def jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_n, rdy ):
+    #addr_rom = addr_rom
+    addr_res = addr_res
+    #offset_x = offset_r
+    
+    jp_flgs = jp_flgs
+    state_x = state_r
+ 
+    @always_comb
+    def FSM():
 
+         
+        if reset_fsm_r == ACTIVE_LOW:
+            """The start up value for reset_n is 1 |__
+            Need to added after 70 ns to the line below
+            which will total 80 ns 
+            cut after 70 ns and paste in the line below  """
+             
+            addr_res.next = offset_r + 1
+            reset_n.next = 0
+            state_x.next = t_State.ODD_SA
+ 
+        else:
+ 
+            if state_r == t_State.ODD_SA:
+                rdy.next = 1
+                jp_flgs.next = 6
+                
+                offset.next = offset_r
+                """ The start up value for reset_n is 1 |__
+                Need to added after 70 ns to the line below
+                which will total 80 ns
+                rdy needs to go hi 30 ns after reset_n goes lo
+                rdy needs go lo 10 ns before reset_n goes hi
+                cut after 70 ns and paste in the line below """
+                reset_n.next = 1
+                """The start up value for rdy is 0 __|
+                rdy needs to go hi 10 ns after reset_n goes lo
+                rdy needs go lo 10 ns before reset_n goes hi
+                cut after 60 ns and paste in the line below """
+                rdy.next = 0
+                
+                state_x.next = t_State.ODD_SA
+            elif state_r == t_State.EVEN_SA:
+                jp_flgs.next = 7
+                #offset.next = 1
+                state_x.next = t_State.ODD_SA
+
+            elif state_r == t_State.TRAN_RAM:
+                 
+                state_x.next = t_State.ODD_SA
+            else:
+                raise ValueError("Undefined state")
+    return FSM
 def jpeg(clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s):
 	@always(clk_fast.posedge)
 	def hdl():
@@ -322,8 +385,8 @@ def testbench():
 def convert():
 	##toVerilog(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
 	##toVHDL(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
-	toVHDL(jpeg_process, clk_fast,  sig_in, noupdate_s, res_s)
-	toVerilog(jpeg_process, clk_fast,   sig_in, noupdate_s, res_s)
+	##toVHDL(jpeg_process, clk_fast,  sig_in, noupdate_s, res_s)
+	##toVerilog(jpeg_process, clk_fast,   sig_in, noupdate_s, res_s)
 	toVerilog(ram, dout, din, addr, we, clk_fast)
 	toVHDL(ram, dout, din, addr, we, clk_fast)
 	##toVerilog(save_to_ram, clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i)
@@ -334,12 +397,14 @@ def convert():
 	##toVHDL(latch, q_o, d_i, g)
 	toVerilog(rom, dout_rom, addr_rom, CONTENT)
 	toVHDL(rom, dout_rom, addr_rom, CONTENT)
-	toVerilog(ram2sig,   jp_lf, jp_sa, jp_rh, jp_flgs, rdy, sig_out )
-	toVHDL(ram2sig,  jp_lf, jp_sa, jp_rh, jp_flgs, rdy, sig_out )
-	toVerilog(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n)
-	toVHDL(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh,  jp_flgs,  reset_n)
+	##toVerilog(ram2sig,   jp_lf, jp_sa, jp_rh, jp_flgs, rdy, sig_out )
+	##toVHDL(ram2sig,  jp_lf, jp_sa, jp_rh, jp_flgs, rdy, sig_out )
+	#toVerilog(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n)
+	#toVHDL(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh,  jp_flgs,  reset_n)
+	toVHDL(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_out, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r)
+	toVerilog(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_out, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r)
 #convert()
-tb_fsm = traceSignals(testbench)
-sim = Simulation(tb_fsm)
-sim.run()
+#tb_fsm = traceSignals(testbench)
+#sim = Simulation(tb_fsm)
+#sim.run()
 #test_jpeg()
