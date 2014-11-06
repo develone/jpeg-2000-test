@@ -254,14 +254,10 @@ def jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_
 
          
         if reset_fsm_r == ACTIVE_LOW:
-            """The start up value for reset_n is 1 |__
-            Need to added after 70 ns to the line below
-            which will total 80 ns 
-            cut after 70 ns and paste in the line below  """
-             
             addr_res.next = offset_r + 1
             reset_n.next = 0
             state_x.next = t_State.ODD_SA
+            rdy.next = 0
  
         else:
  
@@ -271,17 +267,12 @@ def jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_
                 
                 offset.next = offset_r
                 """ The start up value for reset_n is 1 |__
-                Need to added after 70 ns to the line below
-                which will total 80 ns
-                rdy needs to go hi 30 ns after reset_n goes lo
-                rdy needs go lo 10 ns before reset_n goes hi
-                cut after 70 ns and paste in the line below """
+                Need to added after 20 ns to the line below
+                which will total 40 ns
+
+                cut after 20 ns and paste in the line below """
                 reset_n.next = 1
-                """The start up value for rdy is 0 __|
-                rdy needs to go hi 10 ns after reset_n goes lo
-                rdy needs go lo 10 ns before reset_n goes hi
-                cut after 60 ns and paste in the line below """
-                rdy.next = 0
+
                 
                 state_x.next = t_State.ODD_SA
             elif state_r == t_State.EVEN_SA:
@@ -347,7 +338,7 @@ def convert():
 	#toVHDL(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh,  jp_flgs,  reset_n)
 	toVHDL(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r, addr_not_reached, sig_out_valid )
 	toVerilog(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r, addr_not_reached, sig_out_valid)
-convert()
+#convert()
 #tb_fsm = traceSignals(testbench)
 #sim = Simulation(tb_fsm)
 #sim.run()
