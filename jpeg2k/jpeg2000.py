@@ -8,6 +8,13 @@ DATA_WIDTH = 32768
 RAM_ADDR = 9
 ROM_ADDR = 12
 ACTIVE_LOW = bool(0)
+clk_fast = Signal(bool(0))
+noupdate_s = Signal(bool(0))		
+jp_lf = Signal(intbv(0)[16:])
+jp_sa = Signal(intbv(0)[16:])
+jp_rh = Signal(intbv(0)[16:])
+jp_flgs = Signal(intbv(0)[4:])
+rdy = Signal(bool(0))
 sig_in = Signal(intbv(0)[52:])
 dout_rom = Signal(intbv(0)[16:])
 addr_rom = Signal(intbv(0)[ROM_ADDR:])
@@ -17,7 +24,8 @@ reset_n = Signal(bool(1))
 t_State = enum('ODD_SA', 'EVEN_SA', 'TRAN_RAM', encoding="one_hot")
 state_r = Signal(t_State.ODD_SA)
 reset_fsm_r = Signal(bool(1))
-
+addr_not_reached = Signal(bool(1))
+sig_out_valid = Signal(bool(1))
 dout = Signal(intbv(0)[16:])
 dout_v = Signal(intbv(0)[8:])
 din = Signal(intbv(0)[16:])
@@ -39,7 +47,6 @@ addr_sam = Signal(intbv(0)[RAM_ADDR:])
 addr_rht = Signal(intbv(0)[RAM_ADDR:])
 addr_res = Signal(intbv(0)[RAM_ADDR:])
 
-#clk = Signal(bool(0))
 left = (intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 right = (intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 sam = (intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
@@ -53,8 +60,7 @@ res_s = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 updated_s = Signal(bool(0))
 even_odd_s = Signal(bool(0))
 fwd_inv_s = Signal(bool(0))
-clk_fast = Signal(bool(0))
-noupdate_s = Signal(bool(0))
+
 
 odd_i = Signal(bool(0))
 incRes_i = Signal(bool(0))
@@ -111,14 +117,8 @@ def test_jpeg():
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
 		flag = 0
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
-jp_lf = Signal(intbv(0)[16:])
-jp_sa = Signal(intbv(0)[16:])
 
-jp_rh = Signal(intbv(0)[16:])
-jp_flgs = Signal(intbv(0)[4:])
-sig_out = Signal(intbv(0)[52:])
-rdy = Signal(bool(0))
-def rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n):
+def rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached):
     even = jp_flgs(0)
     @always(clk_fast.posedge)
     def test_process():
@@ -128,6 +128,7 @@ def rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, 
             jp_lf.next = 0
             jp_sa.next = 0
             jp_rh.next = 0
+            addr_not_reached.next = 0
             #if jp_flgs 6 odd jp_flgs 7 even_odd
             if (even  == 1):           
                 addr_rom.next = 1 + offset
@@ -145,6 +146,7 @@ def rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, 
                         else:
                             if (addr_rom == (3 + offset)):
                                 jp_rh.next = dout_rom
+                                addr_not_reached.next = 1
             else:
                 if (addr_rom == (0 + offset)):
                     jp_lf.next = dout_rom
@@ -156,59 +158,22 @@ def rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, 
                     else:
                         if (addr_rom == (2 + offset)):
                             jp_rh.next = dout_rom
+                            addr_not_reached.next = 1
     return test_process
 
-def ram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, sig_out):
+def ram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached, sig_out_valid, sig_in):
     """Combines 3 16 bit plus 4 flags into single value """
     
     @always_comb
     def logic():
-        if rdy: 
-            sig_out.next = concat(jp_flgs, jp_rh, jp_sa, jp_lf)
+        if rdy:
+			if addr_not_reached:
+				sig_in.next = concat(jp_flgs, jp_rh, jp_sa, jp_lf)
+				sig_out_valid.next = 0
         else:
-            sig_out.next = 0
+            sig_in.next = 0
 
-    return logic
-
-
-def latch(q_o, d_i, g):
-    @always_comb
-    def logic():
-        if g == 1:
-            q_o.next = d_i
-    return logic
- 
-
-def mux(z_o, left_i, right_i, sel):
-    @always_comb
-    def muxlogic():
-        if sel == 1:
-            z_o.next = left_i
-        else:
-            z_o.next = right_i
-    return muxlogic
-
-def save_to_ram(clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i):
-    @always(clk_fast.posedge)
-    def xx():
-        if (reset_sav_i == 1):
-            we_s_o.next = 0
-            if (odd_i == 1):
-                addr_res_o.next = 1
-            else:
-                addr_res_o.next = 2
-        elif (incRes_i == 1):
-            we_s_o.next = 0
-            addr_res_o.next = addr_res_o + 2
-            
-        else:    
-            we_s_o.next = 1
-            dout_res_o.next = res_i
-        
-            
-    return xx		
-
-	
+    return logic	
 def rom(dout_rom, addr_rom, CONTENT):
     """ ROM model """
 
@@ -218,9 +183,6 @@ def rom(dout_rom, addr_rom, CONTENT):
 
     return read
 
-
-	
-	
 def ram(dout, din, addr, we, clk_fast, depth=256):
     """  Ram model """
     
@@ -236,12 +198,12 @@ def ram(dout, din, addr, we, clk_fast, depth=256):
         dout.next = mem[addr]
 
     return write, read
-def jpeg_top(clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_out, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r ):
+def jpeg_top(clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r, addr_not_reached, sig_out_valid ):
 	  
 	instance_4 = jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_n, rdy )
 	instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s)
-	instance_2 = ram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, sig_out)
-	instance_1 = rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n) 
+	instance_2 = ram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached, sig_out_valid, sig_in)
+	instance_1 = rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached) 
 	return instance_1, instance_2, instance_3, instance_4
 #jpeg_signals = (clk_fast, sig_in, noupdate_s, res_s) 
 #10987654321098765432 1098765432109876 5432109876543210
@@ -333,25 +295,7 @@ def jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_
             else:
                 raise ValueError("Undefined state")
     return FSM
-def jpeg(clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s):
-	@always(clk_fast.posedge)
-	def hdl():
-		if updated_s:
-			noupdate_s.next = 0
-			if even_odd_s:
-				if  fwd_inv_s:
-					res_s.next =  sam_s - ((left_s >> 1) + (right_s >> 1))
-				else:
-					res_s.next =  sam_s + ((left_s >> 1) + (right_s >> 1))
-			else:
-				if fwd_inv_s:
-					res_s.next =  sam_s + ((left_s +  right_s + 2)>>2)
-				else:
-					res_s.next =  sam_s - ((left_s +  right_s + 2)>>2)
-		else:
-			noupdate_s.next = 1
 
-	return hdl
 def testbench():
 	i_inst = jpeg( clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
 	i_inst1 = latch( q_o, d_i, g)
@@ -401,9 +345,9 @@ def convert():
 	##toVHDL(ram2sig,  jp_lf, jp_sa, jp_rh, jp_flgs, rdy, sig_out )
 	#toVerilog(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n)
 	#toVHDL(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh,  jp_flgs,  reset_n)
-	toVHDL(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_out, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r)
-	toVerilog(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_out, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r)
-#convert()
+	toVHDL(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r, addr_not_reached, sig_out_valid )
+	toVerilog(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r, addr_not_reached, sig_out_valid)
+convert()
 #tb_fsm = traceSignals(testbench)
 #sim = Simulation(tb_fsm)
 #sim.run()

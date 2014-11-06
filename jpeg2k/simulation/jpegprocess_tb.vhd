@@ -44,39 +44,28 @@ END jpegprocess_tb;
 
 ARCHITECTURE behavior OF jpegprocess_tb IS 
  
-signal state_r : t_enum_t_State_1 := ODD_SA; 
+   signal state_r : t_enum_t_State_1 := ODD_SA; 
 
    --Inputs
-	signal reset_n, reset_fsm_r  : std_logic := '1';
+	signal reset_n, reset_fsm_r, addr_not_reached, sig_out_valid  : std_logic := '1';
 
 	signal dout_res : unsigned(15 downto 0);
 --	signal din_res : unsigned(15 downto 0);    
 	signal addr_res : unsigned(8 downto 0);
---   signal addr_res_r, addr_res_x : unsigned(11 downto 0);
---	signal we_res : std_logic; 
+ 
  
    signal jp_lf : unsigned(15 downto 0) := (others => '0');
    signal jp_sa: unsigned(15 downto 0) := (others => '0');
 	signal jp_rh : unsigned(15 downto 0) := (others => '0');
    signal jp_flgs : unsigned(3 downto 0) := (others => '0');
-
+	signal addr_rom : unsigned(11 downto 0);	
+   signal offset, offset_r  : unsigned(11 downto 0);	 
    signal rdy : std_logic := '1';
- 	--Outputs
-   signal sig_out : unsigned(51 downto 0);
-
---	signal tofilewr_s : std_logic_vector (51 downto 0); 
-    signal dout_rom : unsigned(15 downto 0);
---    signal addr_rom, addr_rom_r, addr_rom_x : unsigned(11 downto 0);	
-	 signal addr_rom : unsigned(11 downto 0);	
-    signal offset, offset_r  : unsigned(11 downto 0);	 
-	 
---	 signal offset_i, offset_o : unsigned(11 downto 0);	 
-    -- Component Declaration for the Unit Under Test (UUT)
- 
-	 
-
-
-
+	signal dout_rom : unsigned(15 downto 0);
+	signal clk_fast : std_logic := '0';
+   signal sig_in : unsigned(51 downto 0) := (others => '0');	
+   signal noupdate_s : std_logic;
+   signal res_s : signed(15 downto 0);
 
 COMPONENT ram
     PORT(
@@ -87,17 +76,6 @@ COMPONENT ram
          clk_fast : IN  std_logic
         );
 END COMPONENT;    
-
---   signal state_x :  t_enum_t_State_1;
-   --Inputs
-   signal clk_fast : std_logic := '0';
-   signal sig_in : unsigned(51 downto 0) := (others => '0');	
-
-
- 	--Outputs
-   signal noupdate_s : std_logic;
-   signal res_s : signed(15 downto 0);
- 
    -- Clock period definitions
    constant clk_fast_period : time := 10 ns;
 COMPONENT rom 
@@ -119,14 +97,15 @@ COMPONENT jpeg_top
         jp_flgs: inout unsigned(3 downto 0);
         reset_n: inout std_logic;
         rdy: inout std_logic;
-        sig_out: out unsigned(51 downto 0);
-        sig_in: in unsigned(51 downto 0);
+        sig_in: inout unsigned(51 downto 0);
         noupdate_s: out std_logic;
         res_s: out signed (15 downto 0);
         state_r: inout t_enum_t_State_1;
         reset_fsm_r: in std_logic;
         addr_res: out unsigned(8 downto 0);
-        offset_r: in unsigned(11 downto 0)
+        offset_r: in unsigned(11 downto 0);
+		  addr_not_reached: inout std_logic;
+		  sig_out_valid: out std_logic
     );
 end COMPONENT;
  
@@ -147,14 +126,16 @@ ujpeg_top : jpeg_top
 		jp_flgs => jp_flgs,
 		reset_n => reset_n,
 		rdy => rdy,
-		sig_out => sig_out,
+--		sig_out => sig_out,
 		sig_in => sig_in,
 		noupdate_s => noupdate_s,
 		res_s => res_s,
 		state_r => state_r,
 		reset_fsm_r =>  reset_fsm_r,      	
 		addr_res => addr_res, 
-		offset_r => offset_r
+		offset_r => offset_r,
+		addr_not_reached => addr_not_reached,
+		sig_out_valid => sig_out_valid	
 	);
 
 
@@ -198,38 +179,28 @@ resram : ram
       wait for clk_fast_period*10;
 
       -- insert stimulus here
---		offset_i <= X"000";
+ 
 		offset_r <= X"000";
 		wait for 10 ns;
 		reset_fsm_r <= '0';
 		wait for 10 ns;
 		reset_fsm_r <= '1';
       wait for 60 ns;
-		sig_in <= sig_out;
-		
---		offset_i <= X"002";
+ 
 		offset_r <= X"002";
 		wait for 10 ns;
 		reset_fsm_r <= '0';
 		wait for 10 ns;
 		reset_fsm_r <= '1';
       wait for 60 ns;
-		sig_in <= sig_out;
-
---		offset_i <= X"004";
+ 
 		offset_r <= X"004";
 		wait for 10 ns;
 		reset_fsm_r <= '0';
 		wait for 10 ns;
 		reset_fsm_r <= '1';
       wait for 60 ns;		
-      sig_in <= sig_out;
-		
-
-	
-
-     
- 
+  
        wait;
    end process;
 
