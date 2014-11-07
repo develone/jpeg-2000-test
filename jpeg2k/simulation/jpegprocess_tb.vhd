@@ -44,7 +44,7 @@ END jpegprocess_tb;
 
 ARCHITECTURE behavior OF jpegprocess_tb IS 
  
-   signal state_r : t_enum_t_State_1 := ODD_SA; 
+   signal state_r : t_enum_t_State_1 := INIT; 
 
    --Inputs
 	signal reset_n, reset_fsm_r, addr_not_reached, sig_out_valid  : std_logic := '1';
@@ -59,7 +59,7 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
 	signal jp_rh : unsigned(15 downto 0) := (others => '0');
    signal jp_flgs : unsigned(3 downto 0) := (others => '0');
 	signal addr_rom : unsigned(11 downto 0);	
-   signal offset, offset_r  : unsigned(11 downto 0);	 
+   signal offset, offset_r  : unsigned(11 downto 0) := (others => '0');	 
    signal rdy : std_logic := '1';
 	signal dout_rom : unsigned(15 downto 0);
 	signal clk_fast : std_logic := '0';
@@ -103,7 +103,7 @@ COMPONENT jpeg_top
         state_r: inout t_enum_t_State_1;
         reset_fsm_r: in std_logic;
         addr_res: out unsigned(8 downto 0);
-        offset_r: in unsigned(11 downto 0);
+        offset_r: inout unsigned(11 downto 0);
 		  addr_not_reached: inout std_logic;
 		  sig_out_valid: out std_logic
     );
@@ -180,27 +180,27 @@ resram : ram
 
       -- insert stimulus here
  
-		offset_r <= X"000";
+--		offset_r <= X"000";
 		wait for 10 ns;
 		reset_fsm_r <= '0';
 		wait for 10 ns;
 		reset_fsm_r <= '1';
-      wait for 60 ns;
- 
-		offset_r <= X"002";
-		wait for 10 ns;
-		reset_fsm_r <= '0';
-		wait for 10 ns;
-		reset_fsm_r <= '1';
-      wait for 60 ns;
- 
-		offset_r <= X"004";
-		wait for 10 ns;
-		reset_fsm_r <= '0';
-		wait for 10 ns;
-		reset_fsm_r <= '1';
-      wait for 60 ns;		
-  
+--      wait for 60 ns;
+---- 
+--		offset_r <= X"002";
+--		wait for 10 ns;
+----		reset_fsm_r <= '0';
+----		wait for 10 ns;
+----		reset_fsm_r <= '1';
+--      wait for 60 ns;
+---- 
+--		offset_r <= X"004";
+--		wait for 10 ns;
+----		reset_fsm_r <= '0';
+----		wait for 10 ns;
+----		reset_fsm_r <= '1';
+--      wait for 60 ns;		
+--  
        wait;
    end process;
 

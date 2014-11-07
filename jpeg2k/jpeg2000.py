@@ -21,7 +21,7 @@ addr_rom = Signal(intbv(0)[ROM_ADDR:])
 offset = Signal(intbv(0)[ROM_ADDR:])
 offset_r = Signal(intbv(0)[ROM_ADDR:])
 reset_n = Signal(bool(1))
-t_State = enum('ODD_SA', 'EVEN_SA', 'TRAN_RAM', encoding="one_hot")
+t_State = enum('INIT', 'ODD_SA', 'EVEN_SA', 'TRAN_RAM', encoding="one_hot")
 state_r = Signal(t_State.ODD_SA)
 reset_fsm_r = Signal(bool(1))
 addr_not_reached = Signal(bool(1))
@@ -200,11 +200,12 @@ def ram(dout, din, addr, we, clk_fast, depth=256):
     return write, read
 def jpeg_top(clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r, addr_not_reached, sig_out_valid ):
 	  
-	instance_4 = jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s )
+	instance_4 = jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s, addr_not_reached )
 	instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s)
 	instance_2 = ram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached, sig_out_valid, sig_in)
-	instance_1 = rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached) 
-	return instance_1, instance_2, instance_3, instance_4
+	instance_1 = rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached)
+	instance_5 = jpegfsmupdate(clk_fast, offset, offset_r)
+	return instance_1, instance_2, instance_3, instance_4, instance_5
 #jpeg_signals = (clk_fast, sig_in, noupdate_s, res_s) 
 #10987654321098765432 1098765432109876 5432109876543210
 #0101 0000000010011011 0000000010100000 0000000010100011
@@ -241,7 +242,7 @@ def jpeg_process(clk_fast, sig_in,  noupdate_s, res_s):
         else:
             noupdate_s.next = 1
     return jpeg
-def jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s ):
+def jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s, addr_not_reached ):
     #addr_rom = addr_rom
     addr_res = addr_res
     #offset_x = offset_r
@@ -255,35 +256,65 @@ def jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_
          
         if reset_fsm_r == ACTIVE_LOW:
             addr_res.next = offset_r + 1
-            reset_n.next = 0
-            state_x.next = t_State.ODD_SA
-            rdy.next = 0
+            """This is used for testing ODD_SA only 1 can be used for now"""
+            offset.next = 0
+            """This is used for testing EVEN_SA only 1 can be used for now"""
+            offset.next = 1
+            #reset_n.next = 0
+            state_x.next = t_State.INIT
+            #rdy.next = 0
  
         else:
- 
-            if state_r == t_State.ODD_SA:
-                rdy.next = 1
-                jp_flgs.next = 6
-                
-                offset.next = offset_r
-
-                if (noupdate_s != 1):
+			if state_r == t_State.INIT:
+				reset_n.next = 0
+				rdy.next = 0
+				offset.next = 0
+				"""This is used for testing ODD_SA only 1 can be used for now"""
+				state_x.next = t_State.ODD_SA
+				"""This is used for testing EVEN_SA only 1 can be used for now"""
+				state_x.next = t_State.EVEN_SA
+			elif state_r == t_State.ODD_SA:
+				rdy.next = 1
+				jp_flgs.next = 6
+				offset.next = offset_r
+				if (noupdate_s != 1):
 					reset_n.next = 1
-
-                
-                state_x.next = t_State.ODD_SA
-            elif state_r == t_State.EVEN_SA:
-                jp_flgs.next = 7
-                #offset.next = 1
-                state_x.next = t_State.ODD_SA
-
-            elif state_r == t_State.TRAN_RAM:
-                 
-                state_x.next = t_State.ODD_SA
-            else:
-                raise ValueError("Undefined state")
+				if (offset_r <= 4):
+					if ((noupdate_s != 1) and (addr_not_reached)):
+						offset.next = offset_r + 2
+						addr_res.next = offset_r + 1
+						rdy.next = 0
+						"""cut after 30 ns and paste in the line below"""
+						reset_n.next = 0
+				else:
+					"""Need to setup for next state"""
+					state_x.next = t_State.ODD_SA
+			elif state_r == t_State.EVEN_SA:
+				rdy.next = 1
+				jp_flgs.next = 7
+				offset.next = offset_r
+				if (noupdate_s != 1):
+					reset_n.next = 1
+				if (offset_r <= 4):
+					if ((noupdate_s != 1) and (addr_not_reached)):
+						offset.next = offset_r + 2
+						addr_res.next = offset_r + 1
+						rdy.next = 0
+						"""cut after 30 ns and paste in the line below"""
+						reset_n.next = 0
+				else:
+					"""Need to setup for next state"""
+					state_x.next = t_State.EVEN_SA
+			elif state_r == t_State.TRAN_RAM:
+				state_x.next = t_State.INIT
+			else:
+				raise ValueError("Undefined state")
     return FSM
-
+def jpegfsmupdate(clk_fast, offset, offset_r):
+	@always(clk_fast.posedge)
+	def logic():
+		offset_r.next = offset
+	return logic
 def testbench():
 	i_inst = jpeg( clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
 	i_inst1 = latch( q_o, d_i, g)
@@ -335,7 +366,7 @@ def convert():
 	#toVHDL(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh,  jp_flgs,  reset_n)
 	toVHDL(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r, addr_not_reached, sig_out_valid )
 	toVerilog(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r, addr_not_reached, sig_out_valid)
-#convert()
+convert()
 #tb_fsm = traceSignals(testbench)
 #sim = Simulation(tb_fsm)
 #sim.run()
