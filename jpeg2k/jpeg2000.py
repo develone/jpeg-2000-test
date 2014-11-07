@@ -200,7 +200,7 @@ def ram(dout, din, addr, we, clk_fast, depth=256):
     return write, read
 def jpeg_top(clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r, addr_not_reached, sig_out_valid ):
 	  
-	instance_4 = jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_n, rdy )
+	instance_4 = jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s )
 	instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s)
 	instance_2 = ram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached, sig_out_valid, sig_in)
 	instance_1 = rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached) 
@@ -241,7 +241,7 @@ def jpeg_process(clk_fast, sig_in,  noupdate_s, res_s):
         else:
             noupdate_s.next = 1
     return jpeg
-def jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_n, rdy ):
+def jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s ):
     #addr_rom = addr_rom
     addr_res = addr_res
     #offset_x = offset_r
@@ -266,12 +266,9 @@ def jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_
                 jp_flgs.next = 6
                 
                 offset.next = offset_r
-                """ The start up value for reset_n is 1 |__
-                Need to added after 20 ns to the line below
-                which will total 40 ns
 
-                cut after 20 ns and paste in the line below """
-                reset_n.next = 1
+                if (noupdate_s != 1):
+					reset_n.next = 1
 
                 
                 state_x.next = t_State.ODD_SA

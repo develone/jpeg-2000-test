@@ -98,7 +98,7 @@ COMPONENT jpeg_top
         reset_n: inout std_logic;
         rdy: inout std_logic;
         sig_in: inout unsigned(51 downto 0);
-        noupdate_s: out std_logic;
+        noupdate_s: inout std_logic;
         res_s: out signed (15 downto 0);
         state_r: inout t_enum_t_State_1;
         reset_fsm_r: in std_logic;
