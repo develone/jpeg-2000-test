@@ -54,6 +54,7 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
 	signal addr_res : unsigned(8 downto 0);
  
  
+ 
    signal jp_lf : unsigned(15 downto 0) := (others => '0');
    signal jp_sa: unsigned(15 downto 0) := (others => '0');
 	signal jp_rh : unsigned(15 downto 0) := (others => '0');
@@ -102,7 +103,8 @@ COMPONENT jpeg_top
         res_s: out signed (15 downto 0);
         state_r: inout t_enum_t_State_1;
         reset_fsm_r: in std_logic;
-        addr_res: out unsigned(8 downto 0);
+        addr_res: inout unsigned(8 downto 0);
+ 
         offset_r: inout unsigned(11 downto 0);
 		  addr_not_reached: inout std_logic;
 		  sig_out_valid: out std_logic
@@ -132,7 +134,8 @@ ujpeg_top : jpeg_top
 		res_s => res_s,
 		state_r => state_r,
 		reset_fsm_r =>  reset_fsm_r,      	
-		addr_res => addr_res, 
+		addr_res => addr_res,
+ 		
 		offset_r => offset_r,
 		addr_not_reached => addr_not_reached,
 		sig_out_valid => sig_out_valid	

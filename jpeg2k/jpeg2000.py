@@ -46,7 +46,7 @@ addr_lf = Signal(intbv(0)[RAM_ADDR:])
 addr_sam = Signal(intbv(0)[RAM_ADDR:])
 addr_rht = Signal(intbv(0)[RAM_ADDR:])
 addr_res = Signal(intbv(0)[RAM_ADDR:])
-
+addr_res_r = Signal(intbv(0)[RAM_ADDR:])
 left = (intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 right = (intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
 sam = (intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
@@ -118,10 +118,10 @@ def test_jpeg():
 		flag = 0
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
 
-def rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached):
+def jpegrom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached):
     even = jp_flgs(0)
     @always(clk_fast.posedge)
-    def test_process():
+    def rom_rd():
         
         
         if (reset_n):
@@ -159,13 +159,13 @@ def rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, 
                         if (addr_rom == (2 + offset)):
                             jp_rh.next = dout_rom
                             addr_not_reached.next = 1
-    return test_process
+    return rom_rd
 
-def ram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached, sig_out_valid, sig_in):
+def jpegram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached, sig_out_valid, sig_in):
     """Combines 3 16 bit plus 4 flags into single value """
     
     @always_comb
-    def logic():
+    def ram2sig():
         if rdy:
 			if addr_not_reached:
 				sig_in.next = concat(jp_flgs, jp_rh, jp_sa, jp_lf)
@@ -173,7 +173,7 @@ def ram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached, sig_out_valid, 
         else:
             sig_in.next = 0
 
-    return logic	
+    return ram2sig	
 def rom(dout_rom, addr_rom, CONTENT):
     """ ROM model """
 
@@ -198,13 +198,13 @@ def ram(dout, din, addr, we, clk_fast, depth=256):
         dout.next = mem[addr]
 
     return write, read
-def jpeg_top(clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r, addr_not_reached, sig_out_valid ):
+def jpeg_top(clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res, offset_r, addr_not_reached, sig_out_valid ):
 	  
-	instance_4 = jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s, addr_not_reached )
+	instance_4 = jpegFsm( state_r, reset_fsm_r, addr_res, addr_res_r,  offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s, addr_not_reached )
 	instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s)
-	instance_2 = ram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached, sig_out_valid, sig_in)
-	instance_1 = rom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached)
-	instance_5 = jpegfsmupdate(clk_fast, offset, offset_r)
+	instance_2 = jpegram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached, sig_out_valid, sig_in)
+	instance_1 = jpegrom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached)
+	instance_5 = jpegfsmupdate(clk_fast, offset, offset_r, addr_res)
 	return instance_1, instance_2, instance_3, instance_4, instance_5
 #jpeg_signals = (clk_fast, sig_in, noupdate_s, res_s) 
 #10987654321098765432 1098765432109876 5432109876543210
@@ -242,24 +242,26 @@ def jpeg_process(clk_fast, sig_in,  noupdate_s, res_s):
         else:
             noupdate_s.next = 1
     return jpeg
-def jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s, addr_not_reached ):
+def jpegFsm( state_r, reset_fsm_r, addr_res, addr_res_r, offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s, addr_not_reached ):
     #addr_rom = addr_rom
-    addr_res = addr_res
+    #addr_res = addr_res
     #offset_x = offset_r
     
     jp_flgs = jp_flgs
     state_x = state_r
  
     @always_comb
-    def FSM():
+    def Fsm():
 
          
         if reset_fsm_r == ACTIVE_LOW:
-            addr_res.next = offset_r + 1
+            #addr_res.next = addr_res_r + 1
             """This is used for testing ODD_SA only 1 can be used for now"""
             offset.next = 0
+            addr_res.next = 0
             """This is used for testing EVEN_SA only 1 can be used for now"""
             offset.next = 1
+            addr_res.next = 1
             #reset_n.next = 0
             state_x.next = t_State.INIT
             #rdy.next = 0
@@ -269,6 +271,7 @@ def jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_
 				reset_n.next = 0
 				rdy.next = 0
 				offset.next = 0
+				addr_res.next = 0
 				"""This is used for testing ODD_SA only 1 can be used for now"""
 				state_x.next = t_State.ODD_SA
 				"""This is used for testing EVEN_SA only 1 can be used for now"""
@@ -309,12 +312,12 @@ def jpegFsm( state_r, reset_fsm_r, addr_res,  offset, offset_r,  jp_flgs, reset_
 				state_x.next = t_State.INIT
 			else:
 				raise ValueError("Undefined state")
-    return FSM
-def jpegfsmupdate(clk_fast, offset, offset_r):
+    return Fsm
+def jpegfsmupdate(clk_fast, offset, offset_r, addr_res):
 	@always(clk_fast.posedge)
-	def logic():
+	def fsmupdate():
 		offset_r.next = offset
-	return logic
+	return fsmupdate
 def testbench():
 	i_inst = jpeg( clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
 	i_inst1 = latch( q_o, d_i, g)
@@ -364,8 +367,8 @@ def convert():
 	##toVHDL(ram2sig,  jp_lf, jp_sa, jp_rh, jp_flgs, rdy, sig_out )
 	#toVerilog(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n)
 	#toVHDL(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh,  jp_flgs,  reset_n)
-	toVHDL(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r, addr_not_reached, sig_out_valid )
-	toVerilog(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res,  offset_r, addr_not_reached, sig_out_valid)
+	toVHDL(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res, offset_r, addr_not_reached, sig_out_valid )
+	toVerilog(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, reset_fsm_r, addr_res, offset_r, addr_not_reached, sig_out_valid)
 convert()
 #tb_fsm = traceSignals(testbench)
 #sim = Simulation(tb_fsm)
