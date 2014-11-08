@@ -261,7 +261,7 @@ def jpegFsm( state_r, reset_fsm_r, addr_res, addr_res_r, offset, offset_r,  jp_f
             addr_res.next = 0
             """This is used for testing EVEN_SA only 1 can be used for now"""
             offset.next = 1
-            addr_res.next = 1
+            addr_res.next = 2
             #reset_n.next = 0
             state_x.next = t_State.INIT
             #rdy.next = 0
@@ -282,7 +282,7 @@ def jpegFsm( state_r, reset_fsm_r, addr_res, addr_res_r, offset, offset_r,  jp_f
 				offset.next = offset_r
 				if (noupdate_s != 1):
 					reset_n.next = 1
-				if (offset_r <= 4):
+				if (offset_r <= 58):
 					if ((noupdate_s != 1) and (addr_not_reached)):
 						offset.next = offset_r + 2
 						addr_res.next = offset_r + 1
@@ -298,7 +298,7 @@ def jpegFsm( state_r, reset_fsm_r, addr_res, addr_res_r, offset, offset_r,  jp_f
 				offset.next = offset_r
 				if (noupdate_s != 1):
 					reset_n.next = 1
-				if (offset_r <= 4):
+				if (offset_r <= 60):
 					if ((noupdate_s != 1) and (addr_not_reached)):
 						offset.next = offset_r + 2
 						addr_res.next = offset_r + 1
