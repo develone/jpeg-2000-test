@@ -181,9 +181,7 @@ resram : ram
 
       -- insert stimulus here
  
--- 
---		reset_fsm_r <= '0';
---		wait for 10 ns;
+ 
 		reset_fsm_r <= '1';
       wait;
    end process;
