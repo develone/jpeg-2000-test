@@ -22,7 +22,7 @@ addr_rom_r = Signal(intbv(0)[ROM_ADDR:])
 offset = Signal(intbv(0)[ROM_ADDR:])
 offset_r = Signal(intbv(0)[ROM_ADDR:])
 reset_n = Signal(bool(1))
-t_State = enum('INIT', 'ODD_SA', 'EVEN_SA', 'TRAN_RAM', encoding="one_hot")
+t_State = enum('INIT', 'ODD_SA', 'EVEN_SA', 'TR_RES', 'TR_INIT', 'TRAN_RAM', encoding="one_hot")
 state_r = Signal(t_State.ODD_SA)
 state_x = Signal(t_State.ODD_SA)
 reset_fsm_r = Signal(bool(1))
@@ -296,12 +296,24 @@ def jpegFsm( state_r, state_x, reset_fsm_r, addr_res, addr_res_r, offset, offset
 						reset_n.next = 1
 				else:
 					"""Need to setup for next state"""
+					rdy.next = 1
 					reset_n.next = 1
 					rdy.next = 0
 					offset.next = 0
 					addr_res.next = 0
 					#addr_rom.next = 0
-					state_x.next = t_State.ODD_SA
+					state_x.next = t_State.TR_RES
+			elif state_r == t_State.TR_RES:
+				offset.next = offset_r
+				addr_res.next = 0
+				state_x.next = t_State.TR_INIT
+			elif state_r == t_State.TR_INIT:
+				reset_n.next = 1
+				rdy.next = 0
+				offset.next = 0
+				addr_res.next = 0
+				 
+				state_x.next = t_State.ODD_SA
 			elif state_r == t_State.TRAN_RAM:
 				state_x.next = t_State.INIT
 			else:
