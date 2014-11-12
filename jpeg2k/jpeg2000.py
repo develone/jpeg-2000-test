@@ -9,6 +9,10 @@ RAM_ADDR = 9
 ROM_ADDR = 12
 ACTIVE_LOW = bool(0)
 clk_fast = Signal(bool(0))
+rst = Signal(bool(0))
+rst_file_in = Signal(bool(1))
+eog = Signal(bool(0))
+y = Signal(intbv(0)[16:])
 noupdate_s = Signal(bool(0))		
 jp_lf = Signal(intbv(0)[16:])
 jp_sa = Signal(intbv(0)[16:])
@@ -38,10 +42,18 @@ we = Signal(bool(0))
 we_lf = Signal(bool(0))
 we_sam = Signal(bool(0))
 we_rht = Signal(bool(0))
-we_res = Signal(bool(0))
+
 dout_lf = Signal(intbv(0)[16:])
 dout_sam = Signal(intbv(0)[16:])
 dout_rht = Signal(intbv(0)[16:])
+
+
+addr_sdram = Signal(intbv(0)[6:])
+addr_res = Signal(intbv(0)[6:])
+we_res = Signal(bool(0))
+we_sdram = Signal(bool(0))
+din_sdram = Signal(intbv(0)[16:])
+dout_sdram = Signal(intbv(0)[16:])
 dout_res = Signal(intbv(0)[16:])
 
 addr_lf = Signal(intbv(0)[RAM_ADDR:])
@@ -119,7 +131,23 @@ def test_jpeg():
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
 		flag = 0
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
-
+def read_file_sdram(clk_fast, rst, eog, we_sdram, addr_sdram, rst_file_in):
+	@always(clk_fast.negedge)
+	def file_rd():
+		if (rst_file_in == 0):
+			rst.next = 1
+			addr_sdram.next = 0
+			we_sdram.next = 1
+		else:
+			if (rst == 1):
+				rst.next = 0
+			elif (eog == 0):
+				if (addr_sdram <= 48):
+					 addr_sdram.next = addr_sdram + 1
+			else:
+				we_sdram.next = 0
+	return file_rd
+		
 def jpegrom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached):
     even = jp_flgs(0)
     @always(clk_fast.posedge)
@@ -186,7 +214,20 @@ def rom(dout_rom, addr_rom, CONTENT):
         dout_rom.next = CONTENT[int(addr_rom)]
 
     return read
-
+def sdram(dout_sdram, din_sdram, addr_sdram, we_sdram, clk_fast, depth=256):
+    """  Ram model """
+    
+    mem = [Signal(intbv(0)[16:]) for i in range(depth)]
+    
+    @always(clk_fast.posedge)
+    def write():
+        if we_sdram:
+            mem[addr_sdram].next = din_sdram
+                
+    @always_comb
+    def read():
+        dout_sdram.next = mem[addr_sdram]
+    return write, read
 def ram(dout, din, addr, we, clk_fast, depth=256):
     """  Ram model """
     
@@ -203,13 +244,15 @@ def ram(dout, din, addr, we, clk_fast, depth=256):
 
     return write, read
 #def jpeg_top(clk_fast, offset, dout_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached, addr_rom, addr_rom_r ):
-def jpeg_top(clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached, addr_rom_r):	  
+def jpeg_top(clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached, addr_rom_r, dout_sdram, din_sdram, addr_sdram, we_sdram, rst, eog, rst_file_in):	  
 	instance_4 = jpegFsm( state_r, state_x, reset_fsm_r, addr_res, addr_res_r,  offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s, addr_not_reached, addr_rom, addr_rom_r )
 	instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s)
 	instance_2 = jpegram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached,  sig_in)
 	instance_1 = jpegrom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached)
 	instance_5 = jpegfsmupdate(clk_fast, offset, offset_r, state_r, state_x, addr_res)
-	return instance_1, instance_2, instance_3, instance_4, instance_5
+	instance_6 = sdram(dout_sdram, din_sdram, addr_sdram, we_sdram, clk_fast, depth=48)
+	instance_7 = read_file_sdram(clk_fast, rst, eog, we_sdram, addr_sdram, rst_file_in)
+	return instance_1, instance_2, instance_3, instance_4, instance_5, instance_6, instance_7
 #jpeg_signals = (clk_fast, sig_in, noupdate_s, res_s) 
 #10987654321098765432 1098765432109876 5432109876543210
 #0101 0000000010011011 0000000010100000 0000000010100011
@@ -362,6 +405,10 @@ def convert():
 	##toVHDL(jpeg, clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
 	##toVHDL(jpeg_process, clk_fast,  sig_in, noupdate_s, res_s)
 	##toVerilog(jpeg_process, clk_fast,   sig_in, noupdate_s, res_s)
+	
+	#toVHDL(sdram, dout_sdram, din_sdram, addr_sdram, we_sdram, clk_fast, depth=48)
+	#toVerilog(sdram, dout_sdram, din_sdram, addr_sdram, we_sdram, clk_fast, depth=48)
+	#toVHDL(ram, dout, din, addr, we, clk_fast)
 	toVerilog(ram, dout, din, addr, we, clk_fast)
 	toVHDL(ram, dout, din, addr, we, clk_fast)
 	##toVerilog(save_to_ram, clk_fast, dout_res_o, res_i, we_s_o, reset_sav_i, addr_res_o, incRes_i, odd_i)
@@ -370,15 +417,16 @@ def convert():
 	##toVerilog(mux, z_o, left_i, right_i, sel)
 	##toVerilog(latch, q_o, d_i, g)
 	##toVHDL(latch, q_o, d_i, g)
-	toVerilog(rom, dout_rom, addr_rom, CONTENT)
-	toVHDL(rom, dout_rom, addr_rom, CONTENT)
+	#toVerilog(rom, dout_rom, addr_rom, CONTENT)
+	#toVHDL(rom, dout_rom, addr_rom, CONTENT)
 	##toVerilog(ram2sig,   jp_lf, jp_sa, jp_rh, jp_flgs, rdy, sig_out )
 	##toVHDL(ram2sig,  jp_lf, jp_sa, jp_rh, jp_flgs, rdy, sig_out )
 	#toVerilog(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n)
 	#toVHDL(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh,  jp_flgs,  reset_n)
-	toVHDL(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached, addr_rom_r)
-	toVerilog(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached, addr_rom_r  )
-convert()
+	toVHDL(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached, addr_rom_r, dout_sdram, din_sdram, addr_sdram, we_sdram, rst, eog, rst_file_in)
+	toVerilog(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached, addr_rom_r, dout_sdram, din_sdram, addr_sdram, we_sdram, rst, eog, rst_file_in  )
+#convert()
+#toVHDL(read_file_sdram, clk_fast, rst, eog, y, addr_sdram, din_sdram, rst_file_in)
 #tb_fsm = traceSignals(testbench)
 #sim = Simulation(tb_fsm)
 #sim.run()
