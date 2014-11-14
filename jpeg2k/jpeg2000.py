@@ -7,6 +7,7 @@ m = [156.0, 156.0, 156.0, 156.0, 164.0, 164.0, 164.0, 164.0, 164.0, 164.0, 164.0
 DATA_WIDTH = 32768
 RAM_ADDR = 9
 ROM_ADDR = 12
+JPEG_RAM_ADDR = 6
 ACTIVE_LOW = bool(0)
 clk_fast = Signal(bool(0))
 rst = Signal(bool(0))
@@ -20,9 +21,16 @@ jp_rh = Signal(intbv(0)[16:])
 jp_flgs = Signal(intbv(0)[4:])
 rdy = Signal(bool(0))
 sig_in = Signal(intbv(0)[52:])
-dout_rom = Signal(intbv(0)[16:])
-addr_rom = Signal(intbv(0)[ROM_ADDR:])
-addr_rom_r = Signal(intbv(0)[ROM_ADDR:])
+wr_s = Signal(bool(0))
+y = Signal(intbv(0)[16:])
+dataToRam_r = Signal(intbv(0)[16:])
+dataFromRam_s = Signal(intbv(0)[16:])
+sel = Signal(bool(0))
+addr_r = Signal(intbv(0)[JPEG_RAM_ADDR:])
+addr_r1 = Signal(intbv(0)[JPEG_RAM_ADDR:])
+addr_r2 = Signal(intbv(0)[JPEG_RAM_ADDR:])
+addr_rom_r = Signal(intbv(0)[JPEG_RAM_ADDR:])
+
 offset = Signal(intbv(0)[ROM_ADDR:])
 offset_r = Signal(intbv(0)[ROM_ADDR:])
 reset_n = Signal(bool(1))
@@ -31,7 +39,8 @@ state_r = Signal(t_State.ODD_SA)
 state_x = Signal(t_State.ODD_SA)
 reset_fsm_r = Signal(bool(1))
 addr_not_reached = Signal(bool(1))
- 
+
+addr_res = Signal(intbv(0)[JPEG_RAM_ADDR:]) 
 dout = Signal(intbv(0)[16:])
 dout_v = Signal(intbv(0)[8:])
 din = Signal(intbv(0)[16:])
@@ -42,14 +51,11 @@ we = Signal(bool(0))
 we_lf = Signal(bool(0))
 we_sam = Signal(bool(0))
 we_rht = Signal(bool(0))
-
+dout_rom = Signal(intbv(0)[16:])
+addr_rom = Signal(intbv(0)[ROM_ADDR:])
 dout_lf = Signal(intbv(0)[16:])
 dout_sam = Signal(intbv(0)[16:])
 dout_rht = Signal(intbv(0)[16:])
-
-
-addr_sdram = Signal(intbv(0)[6:])
-addr_res = Signal(intbv(0)[6:])
 we_res = Signal(bool(0))
 we_sdram = Signal(bool(0))
 din_sdram = Signal(intbv(0)[16:])
@@ -89,7 +95,7 @@ flag = 0
 left_i = Signal(intbv(0, min = 0, max = 2*DATA_WIDTH))
 right_i = Signal(intbv(0, min = 0, max = 2*DATA_WIDTH))
 z_o = Signal(intbv(0, min = 0, max = 2*DATA_WIDTH))
-sel = Signal(bool(0))
+
 d_i = Signal(intbv(0, min = 0, max = 2*DATA_WIDTH))
 q_o = Signal(intbv(0, min = 0, max = 2*DATA_WIDTH))
 g = Signal(bool(0))
@@ -131,27 +137,36 @@ def test_jpeg():
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
 		flag = 0
 		print i, flag, sam, left, right, step2(sam,left,right,flag)
-def read_file_sdram(clk_fast, rst, eog, we_sdram, addr_sdram, rst_file_in):
+	
+def read_file_sdram(clk_fast, rst, eog, wr_s, rst_file_in, addr_r1, addr_r2, sel, dataToRam_r, y):
+	addr_r = Signal(intbv(0)[6:])
 	@always(clk_fast.negedge)
 	def file_rd():
 		if (rst_file_in == 0):
 			rst.next = 1
-			addr_sdram.next = 0
-			we_sdram.next = 1
+			addr_r.next = 0
+			wr_s.next = 1
 		else:
 			if (rst == 1):
 				rst.next = 0
 			elif (eog == 0):
-				if (addr_sdram <= 48):
-					 addr_sdram.next = addr_sdram + 1
+				if (addr_r <= 48):
+					dataToRam_r.next = y
+					addr_r.next = addr_r + 1
 			else:
-				we_sdram.next = 0
+				wr_s.next = 0
 	return file_rd
-		
-def jpegrom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached):
+	@always_comb
+	def muxLogic():
+		addr_r.next = addr_r1
+		if sel == 1:
+			addr_r.next = addr_r2
+	return muxLogic	
+
+def jpegsdram_rd (clk_fast, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached, addr_r1, addr_r2, sel):
     even = jp_flgs(0)
     @always(clk_fast.posedge)
-    def rom_rd():
+    def sdram_rd():
         
         
         if (reset_n):
@@ -161,36 +176,41 @@ def jpegrom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_fl
             addr_not_reached.next = 0
             #if jp_flgs 6 odd jp_flgs 7 even_odd
             if (even  == 1):           
-                addr_rom.next = 1 + offset
+                addr_r.next = 1 + offset
             else:
-                addr_rom.next = 0 + offset
+                addr_r.next = 0 + offset
         else:
             if (even):
-                    if (addr_rom == (1 + offset) ):
-                        jp_lf.next = dout_rom
-                        addr_rom.next = addr_rom + 1
+                    if (addr_r == (1 + offset) ):
+                        jp_lf.next = dataFromRam_s
+                        addr_r.next = addr_r + 1
                     else:
-                        if (addr_rom == (2 + offset)):
-                            jp_sa.next = dout_rom
-                            addr_rom.next = addr_rom + 1
+                        if (addr_r == (2 + offset)):
+                            jp_sa.next = dataFromRam_s
+                            addr_r.next = addr_r + 1
                         else:
-                            if (addr_rom == (3 + offset)):
-                                jp_rh.next = dout_rom
+                            if (addr_r == (3 + offset)):
+                                jp_rh.next = dataFromRam_s
                                 addr_not_reached.next = 1
             else:
-                if (addr_rom == (0 + offset)):
-                    jp_lf.next = dout_rom
-                    addr_rom.next = addr_rom + 1
+                if (addr_r == (0 + offset)):
+                    jp_lf.next = dataFromRam_s
+                    addr_r.next = addr_r + 1
                 else:
-                    if (addr_rom == (1 + offset)):
-                        jp_sa.next = dout_rom
-                        addr_rom.next = addr_rom + 1
+                    if (addr_r == (1 + offset)):
+                        jp_sa.next = dataFromRam_s
+                        addr_r.next = addr_r + 1
                     else:
-                        if (addr_rom == (2 + offset)):
-                            jp_rh.next = dout_rom
+                        if (addr_r == (2 + offset)):
+                            jp_rh.next = dataFromRam_s
                             addr_not_reached.next = 1
-    return rom_rd
-
+    return sdram_rd
+    @always_comb
+    def muxLogic():
+        addr_r.next = addr_r1
+        if sel == 1:
+            addr_r.next = addr_r2
+    return muxLogic	
 def jpegram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached,  sig_in):
     """Combines 3 16 bit plus 4 flags into single value """
     
@@ -214,7 +234,7 @@ def rom(dout_rom, addr_rom, CONTENT):
         dout_rom.next = CONTENT[int(addr_rom)]
 
     return read
-def sdram(dout_sdram, din_sdram, addr_sdram, we_sdram, clk_fast, depth=256):
+def sdram(dout_sdram, din_sdram, addr_r, we_sdram, clk_fast, depth=256):
     """  Ram model """
     
     mem = [Signal(intbv(0)[16:]) for i in range(depth)]
@@ -222,11 +242,11 @@ def sdram(dout_sdram, din_sdram, addr_sdram, we_sdram, clk_fast, depth=256):
     @always(clk_fast.posedge)
     def write():
         if we_sdram:
-            mem[addr_sdram].next = din_sdram
+            mem[addr_r].next = din_sdram
                 
     @always_comb
     def read():
-        dout_sdram.next = mem[addr_sdram]
+        dout_sdram.next = mem[addr_r]
     return write, read
 def ram(dout, din, addr, we, clk_fast, depth=256):
     """  Ram model """
@@ -243,16 +263,22 @@ def ram(dout, din, addr, we, clk_fast, depth=256):
         dout.next = mem[addr]
 
     return write, read
-#def jpeg_top(clk_fast, offset, dout_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached, addr_rom, addr_rom_r ):
-def jpeg_top(clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached, addr_rom_r, dout_sdram, din_sdram, addr_sdram, we_sdram, rst, eog, rst_file_in):	  
-	instance_4 = jpegFsm( state_r, state_x, reset_fsm_r, addr_res, addr_res_r,  offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s, addr_not_reached, addr_rom, addr_rom_r )
+ 
+"""def jpeg_top(clk_fast, offset, dout_sdram, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in,
+			 noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached,
+			 addr_rom_r, din_sdram, addr_sdram, we_sdram, rst, eog, rst_file_in):"""
+def jpeg_top(clk_fast, offset, dataFromRam_s, addr_r, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in,
+			 noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached,
+			 addr_rom_r, dataToRam_r, addr_sdram, wr_s, rst, eog, rst_file_in, addr_r1, addr_r2, sel, y):	  
+	instance_4 = jpegFsm( state_r, state_x, reset_fsm_r, addr_res, addr_res_r,  offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s, addr_not_reached, addr_r, addr_rom_r )
 	instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s)
 	instance_2 = jpegram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached,  sig_in)
-	instance_1 = jpegrom_rd (clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached)
+	instance_1 = jpegsdram_rd (clk_fast, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached, addr_r1, addr_r2, sel)
 	instance_5 = jpegfsmupdate(clk_fast, offset, offset_r, state_r, state_x, addr_res)
-	instance_6 = sdram(dout_sdram, din_sdram, addr_sdram, we_sdram, clk_fast, depth=48)
-	instance_7 = read_file_sdram(clk_fast, rst, eog, we_sdram, addr_sdram, rst_file_in)
-	return instance_1, instance_2, instance_3, instance_4, instance_5, instance_6, instance_7
+	#instance_6 = sdram(dout_sdram, din_sdram, addr_r, we_sdram, clk_fast, depth=48)
+	instance_7 = read_file_sdram(clk_fast, rst, eog, wr_s, rst_file_in, addr_r1, addr_r2, sel, dataToRam_r, y)
+	#instance_8 = mux2(addr_r1, addr_r2, sel, addr_r)
+	return instance_1, instance_2, instance_3, instance_4, instance_5, instance_7
 #jpeg_signals = (clk_fast, sig_in, noupdate_s, res_s) 
 #10987654321098765432 1098765432109876 5432109876543210
 #0101 0000000010011011 0000000010100000 0000000010100011
@@ -291,7 +317,7 @@ def jpeg_process(clk_fast, sig_in,  noupdate_s, res_s):
     return jpeg
 def jpegFsm( state_r, state_x, reset_fsm_r, addr_res, addr_res_r, offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s, addr_not_reached, addr_rom, addr_rom_r ):
 	offset.next = offset_r
-	addr_rom.next = addr_rom
+	addr_rom.next = addr_r
 	addr_res.next = addr_res_r
 	state_x.next = state_r
 	@always_comb
@@ -368,7 +394,7 @@ def jpegfsmupdate(clk_fast, offset, offset_r, state_r, state_x, addr_res):
 		offset_r.next = offset
 		state_r.next = state_x
 		addr_res_r.next = addr_res
-		addr_rom_r.next = addr_rom
+		addr_rom_r.next = addr_r
 	return fsmupdate
 def testbench():
 	i_inst = jpeg( clk_fast, left_s, right_s, sam_s, res_s, even_odd_s , fwd_inv_s, updated_s, noupdate_s)
@@ -423,9 +449,13 @@ def convert():
 	##toVHDL(ram2sig,  jp_lf, jp_sa, jp_rh, jp_flgs, rdy, sig_out )
 	#toVerilog(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n)
 	#toVHDL(rom_rd, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa, jp_rh,  jp_flgs,  reset_n)
-	toVHDL(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached, addr_rom_r, dout_sdram, din_sdram, addr_sdram, we_sdram, rst, eog, rst_file_in)
-	toVerilog(jpeg_top, clk_fast, offset, dout_rom, addr_rom, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in, noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached, addr_rom_r, dout_sdram, din_sdram, addr_sdram, we_sdram, rst, eog, rst_file_in  )
-#convert()
+	toVHDL(jpeg_top, clk_fast, offset, dout_sdram, addr_r, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in,
+		   noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached,
+		   addr_rom_r, dataToRam_r, addr_r, wr_s, rst, eog, rst_file_in, addr_r1, addr_r2, sel, y)
+	toVerilog(jpeg_top, clk_fast, offset, dataFromRam_s, addr_r, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_n, rdy, sig_in,
+			  noupdate_s, res_s,  state_r, state_x, reset_fsm_r, addr_res, offset_r, addr_not_reached,
+			  addr_rom_r, dataToRam_r, addr_r, we_sdram, rst, eog, rst_file_in, addr_r1, addr_r2, sel, y)
+convert()
 #toVHDL(read_file_sdram, clk_fast, rst, eog, y, addr_sdram, din_sdram, rst_file_in)
 #tb_fsm = traceSignals(testbench)
 #sim = Simulation(tb_fsm)
