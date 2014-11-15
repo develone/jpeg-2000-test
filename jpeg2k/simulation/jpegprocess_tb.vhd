@@ -47,32 +47,25 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
    signal state_r : t_enum_t_State_1 := INIT;
    signal state_x : t_enum_t_State_1 := INIT; 	
 	signal reset_n, reset_fsm_r, addr_not_reached  : std_logic := '1';
-   signal dout_res : unsigned(15 downto 0);   
-	signal addr_res : unsigned(8 downto 0);
+  
+	signal addr_res : unsigned(5 downto 0);
    signal jp_lf : unsigned(15 downto 0) := (others => '0');
    signal jp_sa: unsigned(15 downto 0) := (others => '0');
 	signal jp_rh : unsigned(15 downto 0) := (others => '0');
    signal jp_flgs : unsigned(3 downto 0) := (others => '0');
-	signal offset, offset_r  : unsigned(11 downto 0) := (others => '0');	 
+	signal offset, offset_r  : unsigned(5 downto 0) := (others => '0');	 
    signal rdy : std_logic := '1';
 	signal clk_fast : std_logic := '0';
    signal sig_in : unsigned(51 downto 0) := (others => '0');	
    signal noupdate_s : std_logic;
    signal res_s : signed(15 downto 0);
---	signal wr_romram          : std_logic  := '1';     -- Write-enable control.
---	signal we_sdram          : std_logic  := '1';     -- Write-enable control.
---	signal dout_rom : unsigned(15 downto 0);
---	signal dout_sdram : unsigned(15 downto 0);
---	signal din_sdram : unsigned(15 downto 0);
---   signal din_fsm : unsigned(15 downto 0);
---	signal dout_fsm : unsigned(15 downto 0);
---	signal addr_rom : unsigned(11 downto 0);
-	signal addr_sdram : unsigned(5 downto 0);
+ 
+ 
 	signal addr_r : unsigned(5 downto 0);
 	signal addr_r1 : unsigned(5 downto 0);
 	signal addr_r2 : unsigned(5 downto 0);
 	signal sel : std_logic := '0';
-	signal addr_rom_r : unsigned(5 downto 0);
+ 
 	--Signals to match DRamSPInf_tb.vhd 
 signal rst:  std_logic;
 signal rst_file_in : std_logic := '1';
@@ -106,50 +99,41 @@ component FILE_READ
       );
 end component; 
 
---COMPONENT ram
---    PORT(
---         dout : OUT  unsigned(15 downto 0) := (others => '0');
---         din : IN  unsigned(15 downto 0) := (others => '0');
---         addr : IN  unsigned(8 downto 0) := (others => '0');
---         we : IN  std_logic;
---         clk_fast : IN  std_logic
---        );
---END COMPONENT;    
+   
    -- Clock period definitions
    constant clk_fast_period : time := 10 ns;
 
 COMPONENT jpeg_top 
     port (
-        clk_fast: in std_logic;
-        offset: inout unsigned(11 downto 0);
+		  clk_fast: in std_logic;
+        rst: inout std_logic;
+        eog: in std_logic;
+        wr_s: out std_logic;
+        rst_file_in: in std_logic;
+        addr_r: out unsigned(5 downto 0);
+        dataToRam_r: out unsigned(15 downto 0);
+        y: in unsigned(15 downto 0);
+        addr_r1: inout unsigned(5 downto 0);
+        addr_r2: inout unsigned(5 downto 0);
+        sel: in std_logic;
+        sig_in: inout unsigned(51 downto 0);
+        noupdate_s: inout std_logic;
+        res_s: out signed (15 downto 0);
+        offset: inout unsigned(5 downto 0);
         dataFromRam_s: in unsigned(15 downto 0);
-        addr_r: inout unsigned(5 downto 0);
         jp_lf: inout unsigned(15 downto 0);
         jp_sa: inout unsigned(15 downto 0);
         jp_rh: inout unsigned(15 downto 0);
         jp_flgs: inout unsigned(3 downto 0);
         reset_n: inout std_logic;
+        addr_not_reached: inout std_logic;
         rdy: inout std_logic;
-        sig_in: inout unsigned(51 downto 0);
-        noupdate_s: inout std_logic;
-        res_s: out signed (15 downto 0);
         state_r: inout t_enum_t_State_1;
         state_x: inout t_enum_t_State_1;
         reset_fsm_r: in std_logic;
-        addr_res: inout unsigned(8 downto 0);
-        offset_r: inout unsigned(11 downto 0);
-        addr_not_reached: inout std_logic;
-        addr_rom_r: out unsigned(5 downto 0);
-        dataToRam_r: out unsigned(15 downto 0);
-        addr_sdram: inout unsigned(5 downto 0);
-        wr_s: out std_logic;
-        rst: inout std_logic;
-        eog: in std_logic;
-        rst_file_in: in std_logic;
-        addr_r1: in unsigned(5 downto 0);
-        addr_r2: in unsigned(5 downto 0);
-        sel: in std_logic;
-        y: in unsigned(15 downto 0)          
+        addr_res: inout unsigned(5 downto 0);
+        addr_res_r: inout unsigned(5 downto 0);
+        offset_r: inout unsigned(5 downto 0)		  
     );
 end COMPONENT;
  
@@ -203,9 +187,9 @@ ujpeg_top : jpeg_top
 		addr_res => addr_res,
  		offset_r => offset_r,
 		addr_not_reached => addr_not_reached,
-		addr_rom_r =>  addr_rom_r,
+ 
  		dataToRam_r => dataToRam_r,
-		addr_sdram => addr_sdram,
+ 
 		wr_s => wr_s,
 		rst => rst,
 		eog => eog,
@@ -239,7 +223,9 @@ ujpeg_top : jpeg_top
       -- hold reset state for 100 ns.
  
       wait for 100 ns;	
+		sel <= '0';
 --		reset_fsm_r <= '0';
+ 
 		rst_file_in <= '0';
 
       wait for clk_fast_period*10;
