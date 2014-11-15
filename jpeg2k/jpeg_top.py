@@ -1,6 +1,6 @@
 from myhdl import *
 DATA_WIDTH = 32768
-JPEG_RAM_ADDR = 6
+JPEG_RAM_ADDR = 7
 ACTIVE_LOW = bool(0)
 rst = Signal(bool(0))
 rst_file_in = Signal(bool(1))
@@ -53,7 +53,7 @@ def read_file_sdram(clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, 
 			if (rst == 1):
 				rst.next = 0
 			elif (eog == 0):
-				if (addr_r <= 48):
+				if (addr_r <= 120):
 					dataToRam_r.next = y
 					addr_r.next = addr_r + 1
 			else:
@@ -90,7 +90,7 @@ def jpegFsm( state_r, state_x, reset_fsm_r, addr_res, addr_res_r, offset, offset
 				reset_n.next = 0
 				jp_flgs.next = 6
 				offset.next = offset_r
-				if (offset_r <= 10):
+				if (offset_r <= 80):
 					if ((noupdate_s != 1) and (addr_not_reached)):
 						offset.next = offset_r + 2
 						addr_res.next = addr_res_r + 2
@@ -108,7 +108,7 @@ def jpegFsm( state_r, state_x, reset_fsm_r, addr_res, addr_res_r, offset, offset
 				reset_n.next = 0
 				jp_flgs.next = 7
 				offset.next = offset_r
-				if (offset_r <= 12):
+				if (offset_r <= 96):
 					if ((noupdate_s != 1) and (addr_not_reached)):
 						offset.next = offset_r + 2
 						addr_res.next = addr_res_r + 2

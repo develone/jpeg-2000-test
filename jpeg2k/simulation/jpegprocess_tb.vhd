@@ -48,12 +48,12 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
    signal state_x : t_enum_t_State_1 := INIT; 	
 	signal reset_n, reset_fsm_r, addr_not_reached  : std_logic := '1';
   
-	signal addr_res : unsigned(5 downto 0);
+	signal addr_res : unsigned(6 downto 0);
    signal jp_lf : unsigned(15 downto 0) := (others => '0');
    signal jp_sa: unsigned(15 downto 0) := (others => '0');
 	signal jp_rh : unsigned(15 downto 0) := (others => '0');
    signal jp_flgs : unsigned(3 downto 0) := (others => '0');
-	signal offset, offset_r  : unsigned(5 downto 0) := (others => '0');	 
+	signal offset, offset_r  : unsigned(6 downto 0) := (others => '0');	 
    signal rdy : std_logic := '1';
 	signal clk_fast : std_logic := '0';
    signal sig_in : unsigned(51 downto 0) := (others => '0');	
@@ -61,9 +61,9 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
    signal res_s : signed(15 downto 0);
  
  
-	signal addr_r : unsigned(5 downto 0);
-	signal addr_r1 : unsigned(5 downto 0);
-	signal addr_r2 : unsigned(5 downto 0);
+	signal addr_r : unsigned(6 downto 0);
+	signal addr_r1 : unsigned(6 downto 0);
+	signal addr_r2 : unsigned(6 downto 0);
 	signal sel : std_logic := '0';
  
 	--Signals to match DRamSPInf_tb.vhd 
@@ -74,7 +74,7 @@ signal eog:  std_logic;
 signal y:    std_logic_vector(15 downto 0);
   constant NO          : std_logic := '0';
   constant YES         : std_logic := '1';
-  constant RAM_SIZE_C  : natural   := 48;  -- Number of words in RAM.
+  constant RAM_SIZE_C  : natural   := 120;  -- Number of words in RAM.
   constant RAM_WIDTH_C : natural   := 16;   -- Width of RAM words.
   constant MIN_ADDR_C  : natural   := 1;   -- Process RAM from this address ...
   constant MAX_ADDR_C  : natural   := 5;   -- ... to this address.
@@ -110,16 +110,16 @@ COMPONENT jpeg_top
         eog: in std_logic;
         wr_s: out std_logic;
         rst_file_in: in std_logic;
-        addr_r: out unsigned(5 downto 0);
+        addr_r: out unsigned(6 downto 0);
         dataToRam_r: out unsigned(15 downto 0);
         y: in unsigned(15 downto 0);
-        addr_r1: inout unsigned(5 downto 0);
-        addr_r2: inout unsigned(5 downto 0);
+        addr_r1: inout unsigned(6 downto 0);
+        addr_r2: inout unsigned(6 downto 0);
         sel: in std_logic;
         sig_in: inout unsigned(51 downto 0);
         noupdate_s: inout std_logic;
         res_s: out signed (15 downto 0);
-        offset: inout unsigned(5 downto 0);
+        offset: inout unsigned(6 downto 0);
         dataFromRam_s: in unsigned(15 downto 0);
         jp_lf: inout unsigned(15 downto 0);
         jp_sa: inout unsigned(15 downto 0);
@@ -131,9 +131,9 @@ COMPONENT jpeg_top
         state_r: inout t_enum_t_State_1;
         state_x: inout t_enum_t_State_1;
         reset_fsm_r: in std_logic;
-        addr_res: inout unsigned(5 downto 0);
-        addr_res_r: inout unsigned(5 downto 0);
-        offset_r: inout unsigned(5 downto 0)		  
+        addr_res: inout unsigned(6 downto 0);
+        addr_res_r: inout unsigned(6 downto 0);
+        offset_r: inout unsigned(6 downto 0)		  
     );
 end COMPONENT;
  
@@ -237,7 +237,7 @@ ujpeg_top : jpeg_top
 		wait for 10 ns;
  
 		--reset_fsm_r <= '1';
-		wait for 600 ns;
+		wait for 1400 ns;
 		sel <= '1';
 		reset_fsm_r <= '0';
 		wait for 10 ns;
