@@ -24,8 +24,11 @@ jp_sa = Signal(intbv(0)[16:])
 jp_rh = Signal(intbv(0)[16:])
 jp_flgs = Signal(intbv(0)[4:])
 dataFromRam_s = Signal(intbv(0)[16:])
+din_res = Signal(intbv(0)[16:])
+dout_res = Signal(intbv(0)[16:])
 offset = Signal(intbv(0)[JPEG_RAM_ADDR:])
 reset_n = Signal(bool(1))
+we_res = Signal(bool(1))
 addr_not_reached = Signal(bool(1))
 
 rdy = Signal(bool(0))
@@ -226,8 +229,22 @@ def jpegram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached,  sig_in):
             sig_in.next = 0
     return ram2sig
 #def test_instances(clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y, addr_r1, addr_r2, sel, sig_in, noupdate_s, res_s, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached, rdy, state_r, state_x, reset_fsm_r, addr_res, addr_res_r, offset_r, addr_rom, addr_rom_r):
+def ramres(dout_res, din_res, addr_res, we_res, clk_fast, depth=256):
+    """  Ram model """
+    
+    mem = [Signal(intbv(0)[16:]) for i in range(depth)]
+    
+    @always(clk_fast.posedge)
+    def write():
+        if we_res:
+            mem[addr_res].next = din_res
+                
+    @always_comb
+    def read():
+        dout_res.next = mem[addr_res]
 
-def jpeg_top(clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y, addr_r1, addr_r2, sel, sig_in, noupdate_s, res_s, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached, rdy, state_r, state_x, reset_fsm_r, addr_res, addr_res_r, offset_r):
+    return write, read
+def jpeg_top(clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y, addr_r1, addr_r2, sel, sig_in, noupdate_s, res_s, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached, rdy, state_r, state_x, reset_fsm_r, addr_res, addr_res_r, offset_r, dout_res, din_res, we_res):
     instance_1 = read_file_sdram(clk_fast, rst, eog, wr_s, rst_file_in, addr_r1, dataToRam_r, y)
     instance_2 = mux2(addr_r, addr_r1, addr_r2, sel)
     instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s)
@@ -235,7 +252,9 @@ def jpeg_top(clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y, addr
     instance_5 = jpegram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached,  sig_in)
     instance_6 = jpegFsm(state_r, state_x, reset_fsm_r, addr_res, addr_res_r, offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s, addr_not_reached )
     instance_7 = jpegfsmupdate(clk_fast, offset, offset_r, state_r, state_x, addr_res, addr_res_r )
-    return instance_1, instance_2, instance_3, instance_4, instance_5, instance_6, instance_7
+    instance_8 = ramres(dout_res, din_res, addr_res, we_res, clk_fast, depth=256)
+    return instance_1, instance_2, instance_3, instance_4, instance_5, instance_6, instance_7, instance_8
+
 #toVHDL(read_file_sdram, clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y)
 #toVHDL(mux2, addr_r, addr_r1, addr_r2, sel)
 #toVHDL(jpeg_process, clk_fast, sig_in,  noupdate_s, res_s)
@@ -243,4 +262,4 @@ def jpeg_top(clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y, addr
 #toVHDL(jpegram2sig, jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached,  sig_in)
 #toVHDL(jpegfsmupdate, clk_fast, offset, offset_r, state_r, state_x, addr_res, addr_res_r )
 #toVHDL(jpegFsm, state_r, state_x, reset_fsm_r, addr_res, addr_res_r, offset, offset_r,  jp_flgs, reset_n, rdy,  noupdate_s, addr_not_reached )
-toVHDL(jpeg_top, clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y, addr_r1, addr_r2, sel, sig_in,  noupdate_s, res_s, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached, rdy, state_r, state_x, reset_fsm_r, addr_res, addr_res_r, offset_r)
+toVHDL(jpeg_top, clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y, addr_r1, addr_r2, sel, sig_in,  noupdate_s, res_s, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs, reset_n, addr_not_reached, rdy, state_r, state_x, reset_fsm_r, addr_res, addr_res_r, offset_r, dout_res, din_res, we_res)

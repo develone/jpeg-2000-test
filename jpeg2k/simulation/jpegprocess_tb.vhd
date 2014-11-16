@@ -43,7 +43,7 @@ ENTITY jpegprocess_tb IS
 END jpegprocess_tb;
 
 ARCHITECTURE behavior OF jpegprocess_tb IS 
-	signal dataToRam_r, dataFromRam_s : unsigned(15 downto 0);
+	signal dataToRam_r, dataFromRam_s, dout_res : unsigned(15 downto 0);
    signal state_r : t_enum_t_State_1 := INIT;
    signal state_x : t_enum_t_State_1 := INIT; 	
 	signal reset_n, reset_fsm_r, addr_not_reached  : std_logic := '1';
@@ -65,7 +65,7 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
 	signal addr_r1 : unsigned(8 downto 0);
 	signal addr_r2 : unsigned(8 downto 0);
 	signal sel : std_logic := '0';
- 
+ 	signal we_res : std_logic := '1';
 	--Signals to match DRamSPInf_tb.vhd 
 signal rst:  std_logic;
 signal rst_file_in : std_logic := '1';
@@ -133,7 +133,10 @@ COMPONENT jpeg_top
         reset_fsm_r: in std_logic;
         addr_res: inout unsigned(8 downto 0);
         addr_res_r: inout unsigned(8 downto 0);
-        offset_r: inout unsigned(8 downto 0)		  
+        offset_r: inout unsigned(8 downto 0);
+		  dout_res: out unsigned(15 downto 0);
+        din_res: in unsigned(15 downto 0);
+        we_res: in std_logic		  
     );
 end COMPONENT;
  
@@ -185,11 +188,12 @@ ujpeg_top : jpeg_top
 		state_x => state_x,
 		reset_fsm_r =>  reset_fsm_r,      	
 		addr_res => addr_res,
+		din_res => unsigned(res_s),
  		offset_r => offset_r,
 		addr_not_reached => addr_not_reached,
  
  		dataToRam_r => dataToRam_r,
- 
+		we_res => we_res,
 		wr_s => wr_s,
 		rst => rst,
 		eog => eog,
@@ -197,7 +201,9 @@ ujpeg_top : jpeg_top
 		addr_r1 => addr_r1,
 		addr_r2 => addr_r2,
 		sel => sel,
-		y => unsigned(y)		
+		y => unsigned(y),
+		dout_res => dout_res
+	
 	);
 
 
