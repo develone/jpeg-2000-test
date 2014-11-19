@@ -46,26 +46,33 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
 	signal dataToRam_r, dataFromRam_s, dout_res : unsigned(15 downto 0);
    signal state_r : t_enum_t_State_1 := INIT;
    signal state_x : t_enum_t_State_1 := INIT; 	
-	signal reset_n, reset_fsm_r, addr_not_reached  : std_logic := '1';
-  
+	signal reset_row, reset_row_r, reset_fsm_r : std_logic := '1';
+	signal reset_col, reset_col_r : std_logic := '1';
+   signal addr_not_reached,  addr_not_reached1, addr_not_reached2 : std_logic := '1';
 	signal addr_res : unsigned(8 downto 0);
    signal jp_lf : unsigned(15 downto 0) := (others => '0');
    signal jp_sa: unsigned(15 downto 0) := (others => '0');
 	signal jp_rh : unsigned(15 downto 0) := (others => '0');
    signal jp_flgs : unsigned(3 downto 0) := (others => '0');
+	signal jp_col_lf : unsigned(15 downto 0) := (others => '0');
+   signal jp_col_sa: unsigned(15 downto 0) := (others => '0');
+	signal jp_col_rh : unsigned(15 downto 0) := (others => '0');
+   signal jp_col_flgs : unsigned(3 downto 0) := (others => '0');
 	signal offset, offset_r  : unsigned(8 downto 0) := (others => '0');	 
    signal rdy : std_logic := '1';
 	signal clk_fast : std_logic := '0';
-   signal sig_in : unsigned(51 downto 0) := (others => '0');	
+   signal sig_in, sig_in1, sig_in2 : unsigned(51 downto 0) := (others => '0');	
    signal noupdate_s : std_logic;
    signal res_s : signed(15 downto 0);
- 
- 
+   signal index, index_r : unsigned(8 downto 0);
+ 	signal row, row_r : unsigned(3 downto 0);
 	signal addr_r : unsigned(8 downto 0);
 	signal addr_r1 : unsigned(8 downto 0);
 	signal addr_r2 : unsigned(8 downto 0);
-	signal sel : std_logic := '0';
+	signal addr_r3 : unsigned(8 downto 0);	
+	signal sel, sel_col : std_logic := '0';
  	signal we_res : std_logic := '1';
+	signal pass1_done, pass1_done_r : std_logic := '0';
 	--Signals to match DRamSPInf_tb.vhd 
 signal rst:  std_logic;
 signal rst_file_in : std_logic := '1';
@@ -105,7 +112,7 @@ end component;
 
 COMPONENT jpeg_top 
     port (
-		  clk_fast: in std_logic;
+        clk_fast: in std_logic;
         rst: inout std_logic;
         eog: in std_logic;
         wr_s: out std_logic;
@@ -115,8 +122,12 @@ COMPONENT jpeg_top
         y: in unsigned(15 downto 0);
         addr_r1: inout unsigned(8 downto 0);
         addr_r2: inout unsigned(8 downto 0);
-        sel: in std_logic;
+        addr_r3: inout unsigned(8 downto 0);
+        sel: inout std_logic;
+        sel_col: inout std_logic;
         sig_in: inout unsigned(51 downto 0);
+		  sig_in1: inout unsigned(51 downto 0);
+        sig_in2: inout unsigned(51 downto 0);
         noupdate_s: inout std_logic;
         res_s: out signed (15 downto 0);
         offset: inout unsigned(8 downto 0);
@@ -125,8 +136,17 @@ COMPONENT jpeg_top
         jp_sa: inout unsigned(15 downto 0);
         jp_rh: inout unsigned(15 downto 0);
         jp_flgs: inout unsigned(3 downto 0);
-        reset_n: inout std_logic;
+        jp_col_lf: inout unsigned(15 downto 0);
+        jp_col_sa: inout unsigned(15 downto 0);
+        jp_col_rh: inout unsigned(15 downto 0);
+        jp_col_flgs: inout unsigned(3 downto 0);
+        reset_row: inout std_logic;
+        reset_row_r: inout std_logic;
+        reset_col: inout std_logic;
+        reset_col_r: inout std_logic;
         addr_not_reached: inout std_logic;
+        addr_not_reached1: inout std_logic;
+        addr_not_reached2: inout std_logic;
         rdy: inout std_logic;
         state_r: inout t_enum_t_State_1;
         state_x: inout t_enum_t_State_1;
@@ -134,9 +154,15 @@ COMPONENT jpeg_top
         addr_res: inout unsigned(8 downto 0);
         addr_res_r: inout unsigned(8 downto 0);
         offset_r: inout unsigned(8 downto 0);
-		  dout_res: out unsigned(15 downto 0);
+        dout_res: out unsigned(15 downto 0);
         din_res: in unsigned(15 downto 0);
-        we_res: in std_logic		  
+        we_res: in std_logic;
+        pass1_done: inout std_logic;
+        pass1_done_r: inout std_logic;
+		  index: inout unsigned(8 downto 0);
+        index_r: inout unsigned(8 downto 0);
+        row: inout unsigned(3 downto 0);
+        row_r: out unsigned(3 downto 0)
     );
 end COMPONENT;
  
@@ -179,9 +205,17 @@ ujpeg_top : jpeg_top
 		jp_sa => jp_sa,
 		jp_rh => jp_rh,
 		jp_flgs => jp_flgs,
-		reset_n => reset_n,
+		jp_col_lf => jp_col_lf,
+		jp_col_sa => jp_col_sa,
+		jp_col_rh => jp_col_rh,
+		jp_col_flgs => jp_col_flgs,
+		reset_row => reset_row,
+		reset_col => reset_col,
+		reset_col_r => reset_col_r,		
 		rdy => rdy,
 		sig_in => sig_in,
+		sig_in1 => sig_in1,
+		sig_in2 => sig_in2,
 		noupdate_s => noupdate_s,
 		res_s => res_s,
 		state_r => state_r,
@@ -191,7 +225,8 @@ ujpeg_top : jpeg_top
 		din_res => unsigned(res_s),
  		offset_r => offset_r,
 		addr_not_reached => addr_not_reached,
- 
+		addr_not_reached1 => addr_not_reached1,
+		addr_not_reached2 => addr_not_reached2,		
  		dataToRam_r => dataToRam_r,
 		we_res => we_res,
 		wr_s => wr_s,
@@ -200,9 +235,17 @@ ujpeg_top : jpeg_top
 		rst_file_in => rst_file_in,
 		addr_r1 => addr_r1,
 		addr_r2 => addr_r2,
+		addr_r3 => addr_r3,
 		sel => sel,
+		sel_col => sel_col,
 		y => unsigned(y),
-		dout_res => dout_res
+		dout_res => dout_res,
+		pass1_done => pass1_done,
+		pass1_done_r => pass1_done_r,
+		index => index,
+		index_r => index_r,
+		row => row,
+		row_r => row_r
 	
 	);
 
@@ -229,7 +272,7 @@ ujpeg_top : jpeg_top
       -- hold reset state for 100 ns.
  
       wait for 100 ns;	
-		sel <= '0';
+--		sel <= '0';
 --		reset_fsm_r <= '0';
  
 		rst_file_in <= '0';
@@ -244,7 +287,7 @@ ujpeg_top : jpeg_top
  
 		--reset_fsm_r <= '1';
 		wait for 2700 ns;
-		sel <= '1';
+--		sel <= '1';
 		reset_fsm_r <= '0';
 		wait for 10 ns;
 		reset_fsm_r <= '1';
