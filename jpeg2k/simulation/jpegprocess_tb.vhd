@@ -54,10 +54,10 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
    signal jp_sa: unsigned(15 downto 0) := (others => '0');
 	signal jp_rh : unsigned(15 downto 0) := (others => '0');
    signal jp_flgs : unsigned(3 downto 0) := (others => '0');
-	signal jp_col_lf : unsigned(15 downto 0) := (others => '0');
-   signal jp_col_sa: unsigned(15 downto 0) := (others => '0');
-	signal jp_col_rh : unsigned(15 downto 0) := (others => '0');
-   signal jp_col_flgs : unsigned(3 downto 0) := (others => '0');
+	signal jp_row_lf : unsigned(15 downto 0) := (others => '0');
+   signal jp_row_sa: unsigned(15 downto 0) := (others => '0');
+	signal jp_row_rh : unsigned(15 downto 0) := (others => '0');
+   signal jp_row_flgs : unsigned(3 downto 0) := (others => '0');
 	signal offset, offset_r  : unsigned(8 downto 0) := (others => '0');	 
    signal rdy : std_logic := '1';
 	signal clk_fast : std_logic := '0';
@@ -65,12 +65,12 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
    signal noupdate_s : std_logic;
    signal res_s : signed(15 downto 0);
    signal index, index_r : unsigned(8 downto 0);
- 	signal row, row_r : unsigned(3 downto 0);
+ 	signal col, col_r : unsigned(3 downto 0);
 	signal addr_r : unsigned(8 downto 0);
 	signal addr_r1 : unsigned(8 downto 0);
 	signal addr_r2 : unsigned(8 downto 0);
 	signal addr_r3 : unsigned(8 downto 0);	
-	signal sel, sel_col : std_logic := '0';
+	signal sel, sel_row : std_logic := '0';
  	signal we_res : std_logic := '1';
 	signal pass1_done, pass1_done_r : std_logic := '0';
 	--Signals to match DRamSPInf_tb.vhd 
@@ -124,7 +124,7 @@ COMPONENT jpeg_top
         addr_r2: inout unsigned(8 downto 0);
         addr_r3: inout unsigned(8 downto 0);
         sel: inout std_logic;
-        sel_col: inout std_logic;
+        sel_row: inout std_logic;
         sig_in: inout unsigned(51 downto 0);
 		  sig_in1: inout unsigned(51 downto 0);
         sig_in2: inout unsigned(51 downto 0);
@@ -136,10 +136,10 @@ COMPONENT jpeg_top
         jp_sa: inout unsigned(15 downto 0);
         jp_rh: inout unsigned(15 downto 0);
         jp_flgs: inout unsigned(3 downto 0);
-        jp_col_lf: inout unsigned(15 downto 0);
-        jp_col_sa: inout unsigned(15 downto 0);
-        jp_col_rh: inout unsigned(15 downto 0);
-        jp_col_flgs: inout unsigned(3 downto 0);
+        jp_row_lf: inout unsigned(15 downto 0);
+        jp_row_sa: inout unsigned(15 downto 0);
+        jp_row_rh: inout unsigned(15 downto 0);
+        jp_row_flgs: inout unsigned(3 downto 0);
         reset_row: inout std_logic;
         reset_row_r: inout std_logic;
         reset_col: inout std_logic;
@@ -161,8 +161,8 @@ COMPONENT jpeg_top
         pass1_done_r: inout std_logic;
 		  index: inout unsigned(8 downto 0);
         index_r: inout unsigned(8 downto 0);
-        row: inout unsigned(3 downto 0);
-        row_r: out unsigned(3 downto 0)
+        col: inout unsigned(3 downto 0);
+        col_r: out unsigned(3 downto 0)
     );
 end COMPONENT;
  
@@ -205,10 +205,10 @@ ujpeg_top : jpeg_top
 		jp_sa => jp_sa,
 		jp_rh => jp_rh,
 		jp_flgs => jp_flgs,
-		jp_col_lf => jp_col_lf,
-		jp_col_sa => jp_col_sa,
-		jp_col_rh => jp_col_rh,
-		jp_col_flgs => jp_col_flgs,
+		jp_row_lf => jp_row_lf,
+		jp_row_sa => jp_row_sa,
+		jp_row_rh => jp_row_rh,
+		jp_row_flgs => jp_row_flgs,
 		reset_row => reset_row,
 		reset_col => reset_col,
 		reset_col_r => reset_col_r,		
@@ -237,15 +237,15 @@ ujpeg_top : jpeg_top
 		addr_r2 => addr_r2,
 		addr_r3 => addr_r3,
 		sel => sel,
-		sel_col => sel_col,
+		sel_row => sel_row,
 		y => unsigned(y),
 		dout_res => dout_res,
 		pass1_done => pass1_done,
 		pass1_done_r => pass1_done_r,
 		index => index,
 		index_r => index_r,
-		row => row,
-		row_r => row_r
+		col => col,
+		col_r => col_r
 	
 	);
 
