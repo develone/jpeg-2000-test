@@ -65,7 +65,7 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
    signal noupdate_s : std_logic;
    signal res_s : signed(15 downto 0);
    signal index, index_r : unsigned(8 downto 0);
- 	signal col, col_r : unsigned(3 downto 0);
+ 	signal col, col_r : unsigned(3 downto 0):= (others => '0');
 	signal addr_r : unsigned(8 downto 0);
 	signal addr_r1 : unsigned(8 downto 0);
 	signal addr_r2 : unsigned(8 downto 0);
@@ -162,7 +162,7 @@ COMPONENT jpeg_top
 		  index: inout unsigned(8 downto 0);
         index_r: inout unsigned(8 downto 0);
         col: inout unsigned(3 downto 0);
-        col_r: out unsigned(3 downto 0)
+        col_r: inout unsigned(3 downto 0)
     );
 end COMPONENT;
  
