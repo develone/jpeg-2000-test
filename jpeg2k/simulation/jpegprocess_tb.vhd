@@ -70,7 +70,8 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
 	signal addr_r1 : unsigned(8 downto 0);
 	signal addr_r2 : unsigned(8 downto 0);
 	signal addr_r3 : unsigned(8 downto 0);	
-	signal sel, sel_row : std_logic := '0';
+	signal addr_r4 : unsigned(8 downto 0);	
+	signal sel, sel_row, sel_tr : std_logic := '0';
  	signal we_res : std_logic := '1';
 	signal pass1_done, pass1_done_r : std_logic := '0';
 	--Signals to match DRamSPInf_tb.vhd 
@@ -88,7 +89,7 @@ signal y:    std_logic_vector(15 downto 0);
   subtype RamWord_t is unsigned(RAM_WIDTH_C-1 downto 0);   -- RAM word type.
   type Ram_t is array (0 to RAM_SIZE_C-1) of RamWord_t;  -- array of RAM words type.
   signal ram_r         : Ram_t;         -- RAM declaration.
-  signal wr_s          : std_logic;     -- Write-enable control.
+  signal wr_s, wr_s1, wr_s2          : std_logic;     -- Write-enable control.
 --  signal addr_r        : natural range 0 to RAM_SIZE_C-1;  -- RAM address.
 --  signal dataToRam_r   : RamWord_t;     -- Data to write to RAM.
 --  signal dataFromRam_s : RamWord_t;     -- Data read from RAM.
@@ -119,10 +120,13 @@ COMPONENT jpeg_top
         rst_file_in: in std_logic;
         addr_r: out unsigned(8 downto 0);
         dataToRam_r: out unsigned(15 downto 0);
+--		  dataToRam_r1: out unsigned(15 downto 0);
+--		  dataToRam_r2: out unsigned(15 downto 0);
         y: in unsigned(15 downto 0);
         addr_r1: inout unsigned(8 downto 0);
         addr_r2: inout unsigned(8 downto 0);
         addr_r3: inout unsigned(8 downto 0);
+		  addr_r4: inout unsigned(8 downto 0);
         sel: inout std_logic;
         sel_row: inout std_logic;
         sig_in: inout unsigned(51 downto 0);
@@ -154,15 +158,18 @@ COMPONENT jpeg_top
         addr_res: inout unsigned(8 downto 0);
         addr_res_r: inout unsigned(8 downto 0);
         offset_r: inout unsigned(8 downto 0);
-        dout_res: out unsigned(15 downto 0);
+        dout_res: inout unsigned(15 downto 0);
         din_res: in unsigned(15 downto 0);
-        we_res: in std_logic;
+        we_res: inout std_logic;
         pass1_done: inout std_logic;
         pass1_done_r: inout std_logic;
 		  index: inout unsigned(8 downto 0);
         index_r: inout unsigned(8 downto 0);
         col: inout unsigned(3 downto 0);
-        col_r: inout unsigned(3 downto 0)
+        col_r: inout unsigned(3 downto 0);
+		  wr_s1: inout std_logic;
+        wr_s2: inout std_logic;
+        sel_tr: inout std_logic
     );
 end COMPONENT;
  
@@ -245,8 +252,10 @@ ujpeg_top : jpeg_top
 		index => index,
 		index_r => index_r,
 		col => col,
-		col_r => col_r
-	
+		col_r => col_r,
+	   wr_s1 => wr_s1,
+      wr_s2 => wr_s2 ,
+      sel_tr => sel_tr 
 	);
 
 
