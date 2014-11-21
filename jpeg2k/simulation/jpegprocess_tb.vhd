@@ -71,7 +71,7 @@ ARCHITECTURE behavior OF jpegprocess_tb IS
 	signal addr_r2 : unsigned(8 downto 0);
 	signal addr_r3 : unsigned(8 downto 0);	
 	signal addr_r4 : unsigned(8 downto 0);	
-	signal sel, sel_row, sel_tr : std_logic := '0';
+	signal muxsel  : unsigned(2 downto 0) := (others => '0');
  	signal we_res : std_logic := '1';
 	signal pass1_done, pass1_done_r : std_logic := '0';
 	--Signals to match DRamSPInf_tb.vhd 
@@ -127,8 +127,9 @@ COMPONENT jpeg_top
         addr_r2: inout unsigned(8 downto 0);
         addr_r3: inout unsigned(8 downto 0);
 		  addr_r4: inout unsigned(8 downto 0);
-        sel: inout std_logic;
-        sel_row: inout std_logic;
+		  muxsel: inout unsigned(2 downto 0);
+        muxsel_r: out unsigned(2 downto 0);
+ 
         sig_in: inout unsigned(51 downto 0);
 		  sig_in1: inout unsigned(51 downto 0);
         sig_in2: inout unsigned(51 downto 0);
@@ -168,8 +169,8 @@ COMPONENT jpeg_top
         col: inout unsigned(3 downto 0);
         col_r: inout unsigned(3 downto 0);
 		  wr_s1: inout std_logic;
-        wr_s2: inout std_logic;
-        sel_tr: inout std_logic
+        wr_s2: inout std_logic
+ 
     );
 end COMPONENT;
  
@@ -243,8 +244,7 @@ ujpeg_top : jpeg_top
 		addr_r1 => addr_r1,
 		addr_r2 => addr_r2,
 		addr_r3 => addr_r3,
-		sel => sel,
-		sel_row => sel_row,
+		muxsel => muxsel,
 		y => unsigned(y),
 		dout_res => dout_res,
 		pass1_done => pass1_done,
@@ -254,8 +254,7 @@ ujpeg_top : jpeg_top
 		col => col,
 		col_r => col_r,
 	   wr_s1 => wr_s1,
-      wr_s2 => wr_s2 ,
-      sel_tr => sel_tr 
+      wr_s2 => wr_s2
 	);
 
 
