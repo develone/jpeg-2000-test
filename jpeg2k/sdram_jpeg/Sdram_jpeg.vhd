@@ -2,12 +2,12 @@
 -- SDRAM, single-port, instantiated.
 --*********************************************************************
 
-library IEEE;
+library IEEE,XESS;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.NUMERIC_STD.all;
-use work.ClkgenPckg.all;     -- For the clock generator module.
-use work.SdramCntlPckg.all;  -- For the SDRAM controller module.
-use work.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module.
+use XESS.ClkgenPckg.all;     -- For the clock generator module.
+use XESS.SdramCntlPckg.all;  -- For the SDRAM controller module.
+use XESS.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module.
 
 entity SdramSPInst is
   port (
