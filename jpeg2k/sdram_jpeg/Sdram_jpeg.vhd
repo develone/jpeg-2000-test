@@ -28,6 +28,10 @@ entity SdramSPInst is
 end entity;
 
 architecture Behavioral of SdramSPInst is
+  constant SDRAM_PIPE_EN_C : boolean := true;
+  constant SDRAM_IN_PHASE_C : boolean := true;
+  constant SDRAM_ENABLE_REFRESH_C : boolean := true;
+  constant SDRAM_MULTIPLE_ACTIVE_ROWS_C : boolean := true;
   constant NO                     : std_logic := '0';
   constant YES                    : std_logic := '1';
   constant RAM_SIZE_C             : natural   := 1048576;  -- Number of words in RAM.
@@ -46,6 +50,8 @@ architecture Behavioral of SdramSPInst is
   signal addr0_r, addr0_x : unsigned(23 downto 0);
 --  signal dataToRam0_r, dataToRam0_x : RamWord_t;  -- Data to write to RAM.
   signal dataToRam0_r, dataToRam0_x : unsigned(15 downto 0);
+    signal dataFromRam0_r, dataFromRam0_x : unsigned(15 downto 0);
+	 signal dataFromRam1_r, dataFromRam1_x : unsigned(15 downto 0);
 --  signal dataFromRam0_s            : RamWord_t;  -- Data read from RAM.
   signal dataFromRam0_s            : unsigned(15 downto 0);
   signal addr1_r, addr1_x : unsigned(23 downto 0);
@@ -55,11 +61,12 @@ architecture Behavioral of SdramSPInst is
   signal dataFromRam1_s             : unsigned(15 downto 0);
   -- Convert the busses for connection to the SDRAM controller.
   signal addrSdram0_s              : unsigned(23 downto 0);  -- Address.
-  signal dataToSdram0_s            : std_logic_vector(sdData_io'range);  -- Data.
-  signal dataFromSdram0_s          : std_logic_vector(sdData_io'range);  -- Data.
-  signal addrSdram1_s              : unsigned(23 downto 0);  -- Address.
-  signal dataToSdram1_s            : std_logic_vector(sdData_io'range);  -- Data.
-  signal dataFromSdram1_s          : std_logic_vector(sdData_io'range);  -- Data.
+  signal dataToSdram0_s            : std_logic_vector(15 downto 0);
+  signal dataFromSdram0_s          : std_logic_vector(15 downto 0);  -- Data.
+
+  signal addrSdram1_s              : unsigned(23 downto 0);  -- Address.   signal dataToSdram1_s            : std_logic_vector(15 downto 0);
+  signal dataToSdram1_s            : std_logic_vector(15 downto 0);
+  signal dataFromSdram1_s          : std_logic_vector(15 downto 0);  -- Data.
 
   -- FSM state.
   type state_t is (INIT, WRITE_DATA, READ_AND_SUM_DATA, DONE);  -- FSM states.
@@ -68,6 +75,8 @@ architecture Behavioral of SdramSPInst is
   signal sum_r, sum_x             : natural range 0 to (2**RAM_WIDTH_C) - 1;
   signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
+  signal PORT_TIME_SLOTS_G      : std_logic_vector(15 downto 0) := "1111000011110000";
+  --constant PIPE_EN_G  : std_logic := '1';  
 begin
 
   --*********************************************************************
@@ -90,7 +99,13 @@ begin
   DualPortSdram_u0 : DualPortSdram
     generic map(
       FREQ_G       => 100.0,  -- Use clock freq. to compute timing parameters.
-      DATA_WIDTH_G => RAM_WIDTH_C       -- Width of data words.
+      DATA_WIDTH_G => RAM_WIDTH_C,       -- Width of data words.
+		PORT_TIME_SLOTS_G => PORT_TIME_SLOTS_G,
+	   PIPE_EN_G => SDRAM_PIPE_EN_C,
+		IN_PHASE_G => SDRAM_IN_PHASE_C,
+		ENABLE_REFRESH_G => SDRAM_ENABLE_REFRESH_C,
+		MULTIPLE_ACTIVE_ROWS_G => SDRAM_MULTIPLE_ACTIVE_ROWS_C
+
       )
     port map(
       clk_i     => clk_s,
@@ -122,21 +137,20 @@ begin
 
   -- Connect the SDRAM controller signals to the FSM signals.     
   dataToSdram0_s <= std_logic_vector(dataToRam0_r);
-  dataFromRam0_s <= RamWord_t(dataFromSdram0_s);
---  addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
-    addrSdram0_s <= addr0_r;
+  dataFromRam0_s <= unsigned(dataFromSdram0_s);
+  addrSdram0_s <= addr0_r;
+  
   dataToSdram1_s <= std_logic_vector(dataToRam1_r);
-  dataFromRam1_s <= RamWord_t(dataFromSdram1_s);
---  addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
-    addrSdram1_s <= addr1_r;
+  dataFromRam1_s <= unsigned(dataFromSdram1_s);
+  addrSdram1_s <= addr1_r;
   --*********************************************************************
   -- State machine that initializes RAM and then reads RAM to compute
   -- the sum of products of the RAM address and data. This section
   -- is combinatorial logic that sets the control bits for each state 
   -- and determines the next state.
   --*********************************************************************
-  FsmComb_p : process(state_r, addr0_r, dataToRam0_r, dataToRam1_r,
-                      sum_r, dataFromRam0_s, dataFromRam1_s, done0_s)
+  FsmComb_p : process(state_r, addr0_r, addr1_r, dataToRam0_r, dataToRam1_r,
+                      sum_r, dataFromRam0_s, dataFromRam0_r, dataFromRam1_r, done0_s, done1_s)
   begin
     -- Disable RAM reads and writes by default.
     rd0_s        <= NO;                  -- Don't write to RAM.
@@ -149,26 +163,39 @@ begin
     sum_x       <= sum_r;
     dataToRam0_x <= dataToRam0_r;
     dataToRam1_x <= dataToRam1_r;
+	 dataFromRam0_x <= dataFromRam0_r;
+	 dataFromRam1_x <= dataFromRam1_r;
     state_x     <= state_r;
 
     case state_r is
 
       when INIT =>                      -- Initialize the FSM.
-        addr0_x      <= X"000001";      -- Start writing data at this address.
-        dataToRam0_x <= TO_UNSIGNED(1, RAM_WIDTH_C);  -- Initial value to write.
-        state_x     <= WRITE_DATA;      -- Go to next state.
+        addr0_x      <= X"00_0000";      -- Start writing data at this address.
+		  addr1_x      <= X"08_0000";      -- Start writing data at this address.
+--        dataToRam1_x <= TO_UNSIGNED(1, RAM_WIDTH_C);  -- Initial value to write.
+        state_x     <= READ_AND_SUM_DATA;      -- Go to next state.
 
       when WRITE_DATA =>                -- Load RAM with values.
-        if done0_s = NO then  -- While current RAM write is not complete ...
-          wr0_s <= YES;                  -- keep write-enable active.
-        elsif addr0_r < MAX_ADDR_C then  -- If haven't reach final address ...
-          addr0_x      <= addr0_r + 1;    -- go to next address ...
-          dataToRam0_x <= dataToRam0_r + 3;  -- and write this value.
-        else                 -- Else, the final address has been written ...
-          addr0_x  <= X"000001";        -- go back to the start, ...
-          sum_x   <= 0;                 -- clear the sum-of-products, ...
-          state_x <= READ_AND_SUM_DATA;    -- and go to next state.
-        end if;
+		    if ((done0_s = '0') and (done1_s = '0')) then
+                    wr1_s <= '1';
+                    rd0_s <= '1';
+          elsif (addr0_r <= 256) then
+                    dataToRam1_x <= dataFromRam0_s;
+                    addr0_x <= (addr0_r + 1);
+                    addr1_x <= (addr1_r + 1);
+          else
+                    state_x <= DONE;
+          end if;
+--        if done0_s = NO then  -- While current RAM write is not complete ...
+--          wr0_s <= YES;                  -- keep write-enable active.
+--        elsif addr0_r < MAX_ADDR_C then  -- If haven't reach final address ...
+--          addr0_x      <= addr0_r + 1;    -- go to next address ...
+--          dataToRam0_x <= dataToRam0_r + 3;  -- and write this value.
+--        else                 -- Else, the final address has been written ...
+--          addr0_x  <= X"000001";        -- go back to the start, ...
+--          sum_x   <= 0;                 -- clear the sum-of-products, ...
+--          state_x <= READ_AND_SUM_DATA;    -- and go to next state.
+--        end if;
 		  
       when READ_AND_SUM_DATA =>  -- Read RAM and sum address*data products
         if done0_s = NO then      -- While current RAM read is not complete ...
@@ -180,7 +207,7 @@ begin
           addr0_x <= addr0_r + 1;         -- and go to next address.
           if addr0_r = MAX_ADDR_C then  -- Else, the final address has been read ...
 --            state_x <= DONE;            -- so go to the next state.
-          state_x <= DONE; 
+          state_x <= WRITE_DATA; 
           end if;
         end if;
 
@@ -201,7 +228,11 @@ begin
   begin
     if rising_edge(clk_s) then
       addr0_r      <= addr0_x;
+		addr1_r      <= addr1_x;
       dataToRam0_r <= dataToRam0_x;
+		dataToRam1_r <= dataToRam1_x;
+      dataFromRam0_r <= dataFromRam0_x;
+		dataFromRam1_r <= dataFromRam1_x;
       state_r     <= state_x;
       sum_r       <= sum_x;
     end if;
