@@ -45,7 +45,8 @@ END jpegprocess_tb;
 ARCHITECTURE behavior OF jpegprocess_tb IS 
 	signal dataToRam_r, dataFromRam_s, dout_res : unsigned(15 downto 0);
    signal state_r : t_enum_t_State_1 := INIT;
-   signal state_x : t_enum_t_State_1 := INIT; 	
+   signal state_x : t_enum_t_State_1 := INIT; 
+   signal reset_ctn : unsigned(3 downto 0):= (others => '0');	
 	signal reset_row, reset_row_r, reset_fsm_r : std_logic := '1';
 	signal reset_col, reset_col_r : std_logic := '1';
    signal addr_not_reached,  addr_not_reached1, addr_not_reached2 : std_logic := '1';
@@ -155,7 +156,7 @@ COMPONENT jpeg_top
         rdy: inout std_logic;
         state_r: inout t_enum_t_State_1;
         state_x: inout t_enum_t_State_1;
-        reset_fsm_r: in std_logic;
+        reset_fsm_r: inout std_logic;
         addr_res: inout unsigned(8 downto 0);
         addr_res_r: inout unsigned(8 downto 0);
         offset_r: inout unsigned(8 downto 0);
@@ -169,7 +170,8 @@ COMPONENT jpeg_top
         col: inout unsigned(3 downto 0);
         col_r: inout unsigned(3 downto 0);
 		  wr_s1: inout std_logic;
-        wr_s2: inout std_logic
+        wr_s2: inout std_logic;
+		  reset_ctn: inout unsigned(3 downto 0)
  
     );
 end COMPONENT;
@@ -254,7 +256,8 @@ ujpeg_top : jpeg_top
 		col => col,
 		col_r => col_r,
 	   wr_s1 => wr_s1,
-      wr_s2 => wr_s2
+      wr_s2 => wr_s2,
+		reset_ctn => reset_ctn
 	);
 
 
@@ -296,9 +299,9 @@ ujpeg_top : jpeg_top
 		--reset_fsm_r <= '1';
 		wait for 2700 ns;
 --		sel <= '1';
-		reset_fsm_r <= '0';
-		wait for 10 ns;
-		reset_fsm_r <= '1';
+--		reset_fsm_r <= '0';
+--		wait for 10 ns;
+--		reset_fsm_r <= '1';
       wait;
    end process;
 

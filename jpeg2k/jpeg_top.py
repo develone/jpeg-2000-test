@@ -1,8 +1,11 @@
 from myhdl import *
+reset_dly_c = 10
 DATA_WIDTH = 32768
 JPEG_RAM_ADDR = 9
 ROW_NUM = 4
 ACTIVE_LOW = bool(0)
+NO = bool(0)
+YES = bool(1)
 rst = Signal(bool(0))
 rst_file_in = Signal(bool(1))
 eog = Signal(bool(0))
@@ -59,6 +62,7 @@ addr_not_reached = Signal(bool(1))
 addr_not_reached1 = Signal(bool(1))
 addr_not_reached2 = Signal(bool(1))
 rdy = Signal(bool(0))
+reset_ctn = Signal(intbv(0)[4:])
 reset_fsm_r = Signal(bool(1))
 pass1_done = Signal(bool(1))
 pass1_done_r = Signal(bool(1))
@@ -74,6 +78,14 @@ addr_res_r = Signal(intbv(0)[JPEG_RAM_ADDR:])
 addr_res1 = Signal(intbv(0)[JPEG_RAM_ADDR:])
 addr_res2 = Signal(intbv(0)[JPEG_RAM_ADDR:])
 reset_col = Signal(bool(1))
+def resetFsm(clk_fast, reset_fsm_r, reset_ctn):
+    @always(clk_fast.posedge)
+    def rtl():
+        reset_fsm_r.next = YES
+        if (reset_ctn < reset_dly_c):
+            reset_fsm_r.next = NO
+            reset_ctn.next = reset_ctn + 1
+    return rtl
 def trram2sdram(wr_s, dout_res, addr_res, addr_r, dataToRam_r):
 	@always(clk_fast.negedge)
 	def trram():
@@ -499,7 +511,7 @@ def ramres(dout_res, din_res, addr_res, we_res, clk_fast, depth=256):
         dout_res.next = mem[addr_res]
 
     return write, read
-def jpeg_top(clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y, addr_r1, addr_r2, addr_r3, addr_r4, muxsel, muxsel_r, sig_in, sig_in1, sig_in2, noupdate_s, res_s, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs, jp_row_lf, jp_row_sa, jp_row_rh, jp_row_flgs, reset_col, reset_col_r, reset_row, reset_row_r, addr_not_reached, addr_not_reached1, addr_not_reached2, rdy, state_r, state_x, reset_fsm_r, addr_res, addr_res1, addr_res2, addr_res_r, offset_r, dout_res, din_res, we_res, pass1_done, pass1_done_r, index, index_r, col, col_r, wr_s1, wr_s2):
+def jpeg_top(clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y, addr_r1, addr_r2, addr_r3, addr_r4, muxsel, muxsel_r, sig_in, sig_in1, sig_in2, noupdate_s, res_s, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs, jp_row_lf, jp_row_sa, jp_row_rh, jp_row_flgs, reset_col, reset_col_r, reset_row, reset_row_r, addr_not_reached, addr_not_reached1, addr_not_reached2, rdy, state_r, state_x, reset_fsm_r, addr_res, addr_res1, addr_res2, addr_res_r, offset_r, dout_res, din_res, we_res, pass1_done, pass1_done_r, index, index_r, col, col_r, wr_s1, wr_s2, reset_ctn):
     instance_1 = read_file_sdram(clk_fast, rst, eog, wr_s1, rst_file_in, addr_r1, dataToRam_r1, y)
     instance_2 = mux2(addr_r, addr_r1, addr_r2, addr_r3, addr_r4, muxsel, addr_not_reached, addr_not_reached1, addr_not_reached2, sig_in, sig_in1, sig_in2, wr_s, wr_s1, wr_s2, addr_res, addr_res1, addr_res2, dataToRam_r, dataToRam_r1, dataToRam_r2)
     instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s)
@@ -511,7 +523,8 @@ def jpeg_top(clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y, addr
     instance_9 = jpegsdram_rd_col(clk_fast, offset, dataFromRam_s, jp_row_lf, jp_row_sa, jp_row_rh, jp_row_flgs, reset_row, addr_r3, addr_not_reached2)
     instance_10 = jpegram2sigcol(jp_row_lf, jp_row_sa ,jp_row_rh, jp_row_flgs, rdy, addr_not_reached2,  sig_in2)
     instance_11 = trram2sdram(wr_s2, dout_res, addr_res2, addr_r4, dataToRam_r2)
-    return instance_1, instance_2, instance_3, instance_4, instance_5, instance_6, instance_7, instance_8, instance_9, instance_10, instance_11
+    instance_12 = resetFsm(clk_fast, reset_fsm_r, reset_ctn)
+    return instance_1, instance_2, instance_3, instance_4, instance_5, instance_6, instance_7, instance_8, instance_9, instance_10, instance_11, instance_12
 
 #toVHDL(read_file_sdram, clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y)
 #toVHDL(mux2, addr_r, addr_r1, addr_r2, addr_r3, sel, sel_row, addr_not_reached, addr_not_reached1, addr_not_reached2)
@@ -520,4 +533,4 @@ def jpeg_top(clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y, addr
 #toVHDL(jpegram2sig, jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached,  sig_in)
 #toVHDL(jpegfsmupdate, clk_fast, offset, offset_r, state_r, state_x, addr_res, addr_res_r )
 #toVHDL(jpegFsm, state_r, state_x, reset_fsm_r, addr_res, addr_res_r, offset, offset_r,  jp_flgs, reset_col, rdy,  noupdate_s, addr_not_reached )
-toVHDL(jpeg_top, clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y, addr_r1, addr_r2, addr_r3, addr_r4, muxsel, muxsel_r, sig_in, sig_in1, sig_in2, noupdate_s, res_s, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs, jp_row_lf, jp_row_sa, jp_row_rh, jp_row_flgs, reset_col, reset_col_r, reset_row, reset_row_r, addr_not_reached, addr_not_reached1, addr_not_reached2, rdy, state_r, state_x, reset_fsm_r, addr_res, addr_res1, addr_res2, addr_res_r, offset_r, dout_res, din_res, we_res, pass1_done, pass1_done_r, index, index_r, col, col_r, wr_s1, wr_s2)
+toVHDL(jpeg_top, clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y, addr_r1, addr_r2, addr_r3, addr_r4, muxsel, muxsel_r, sig_in, sig_in1, sig_in2, noupdate_s, res_s, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs, jp_row_lf, jp_row_sa, jp_row_rh, jp_row_flgs, reset_col, reset_col_r, reset_row, reset_row_r, addr_not_reached, addr_not_reached1, addr_not_reached2, rdy, state_r, state_x, reset_fsm_r, addr_res, addr_res1, addr_res2, addr_res_r, offset_r, dout_res, din_res, we_res, pass1_done, pass1_done_r, index, index_r, col, col_r, wr_s1, wr_s2, reset_ctn)
