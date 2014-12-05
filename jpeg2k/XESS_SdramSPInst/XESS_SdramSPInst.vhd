@@ -126,7 +126,8 @@ begin
       when INIT =>                      -- Initialize the FSM.
         addr_x      <= MIN_ADDR_C;      -- Start writing data at this address.
         dataToRam_x <= TO_UNSIGNED(1, RAM_WIDTH_C);  -- Initial value to write.
-        state_x     <= WRITE_DATA;      -- Go to next state.
+--        state_x     <= WRITE_DATA;      -- Go to next state.
+        state_x     <= READ_AND_SUM_DATA;      -- Go to next state.
 
       when WRITE_DATA =>                -- Load RAM with values.
         if done_s = NO then  -- While current RAM write is not complete ...
