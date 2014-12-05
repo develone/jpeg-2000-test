@@ -2,14 +2,14 @@
 -- SDRAM, single-port, instantiated.
 --*********************************************************************
 
-library IEEE;
+library IEEE,XESS;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.NUMERIC_STD.all;
-use work.ClkgenPckg.all;     -- For the clock generator module.
-use work.SdramCntlPckg.all;  -- For the SDRAM controller module.
-use work.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module.
+use XESS.ClkgenPckg.all;     -- For the clock generator module.
+use XESS.SdramCntlPckg.all;  -- For the SDRAM controller module.
+use XESS.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module.
 
-entity SdramSPInst is
+entity XESS_SdramSPInst is
   port (
     fpgaClk_i : in    std_logic;  -- 12 MHz clock input from external clock source.
     sdClk_o   : out   std_logic;  -- 100 MHz clock to SDRAM.
@@ -27,7 +27,7 @@ entity SdramSPInst is
     );
 end entity;
 
-architecture Behavioral of SdramSPInst is
+architecture Behavioral of XESS_SdramSPInst is
   constant NO                     : std_logic := '0';
   constant YES                    : std_logic := '1';
   constant RAM_SIZE_C             : natural   := 256;  -- Number of words in RAM.
