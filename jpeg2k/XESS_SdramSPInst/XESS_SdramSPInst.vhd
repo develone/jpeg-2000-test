@@ -8,7 +8,8 @@ use IEEE.NUMERIC_STD.all;
 use XESS.ClkgenPckg.all;     -- For the clock generator module.
 use XESS.SdramCntlPckg.all;  -- For the SDRAM controller module.
 use XESS.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module.
-
+--use work.jpeg_top.all;
+use work.pck_myhdl_09.all;
 entity XESS_SdramSPInst is
   port (
     fpgaClk_i : in    std_logic;  -- 12 MHz clock input from external clock source.
@@ -41,13 +42,16 @@ architecture Behavioral of XESS_SdramSPInst is
   signal wr_s                     : std_logic;  -- Write-enable control.
   signal rd_s                     : std_logic;  -- Read-enable control.
   signal done_s                   : std_logic;  -- SDRAM R/W operation done signal.
-  signal addr_r, addr_x           : natural range 0 to RAM_SIZE_C-1;  -- RAM address.
-  signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
+  signal addr_r, addr_x           : unsigned(23 downto 0);  -- RAM address.
+  signal dataToRam_r, dataToRam_x : unsigned(15 downto 0);  -- Data to write to RAM.
+ 
   signal dataFromRam_s            : RamWord_t;  -- Data read from RAM.
   -- Convert the busses for connection to the SDRAM controller.
-  signal addrSdram_s              : std_logic_vector(23 downto 0);  -- Address.
-  signal dataToSdram_s            : std_logic_vector(sdData_io'range);  -- Data.
+ 
   signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  -- Data.
+  signal addrSdram_s              : unsigned(23 downto 0);  -- Address.
+  signal dataToSdram_s            : unsigned(15 downto 0);  -- Data.
+ 
   -- FSM state.
   type state_t is (INIT, WRITE_DATA, READ_AND_SUM_DATA, DONE);  -- FSM states.
   signal state_r, state_x         : state_t   := INIT;  -- FSM starts off in init state.
@@ -55,8 +59,29 @@ architecture Behavioral of XESS_SdramSPInst is
   signal sum_r, sum_x             : natural range 0 to  (2**RAM_WIDTH_C) - 1;
   signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
-begin
+component jpeg_top is
+    port (
+        clk_fast: in std_logic;
+        addr_r: out unsigned(23 downto 0);
+        addr_x: in unsigned(23 downto 0);
+        dataToRam_r: out unsigned(15 downto 0);
+        dataToRam_x: in unsigned(15 downto 0)
+    );
+end component jpeg_top;
 
+begin
+  --*********************************************************************
+  -- Instantiate the jpeg_top step1JPEG_TOP_INSTANCE_7_FSMUPDATE
+  -- updates signals for the FSM.
+  --*********************************************************************
+jpeg_top_u0 : jpeg_top
+  port map (
+     clk_fast => clk_s,
+	  addr_r => addr_r,
+	  addr_x => addr_x,
+	  dataToRam_r => dataToRam_r,
+	  dataToRam_x => dataToRam_x
+  );
   --*********************************************************************
   -- Generate a 100 MHz clock from the 12 MHz input clock and send it out
   -- to the SDRAM. Then feed it back in to clock the internal logic.
@@ -85,8 +110,8 @@ begin
       rd_i      => rd_s,
       wr_i      => wr_s,
       done_o    => done_s,
-      addr_i    => addrSdram_s,
-      data_i    => dataToSdram_s,
+      addr_i    => std_logic_vector(addrSdram_s),
+      data_i    => std_logic_vector(dataToSdram_s),
       data_o    => dataFromSdram_s,
       -- SDRAM side.
       sdCke_o   => sdCke_o, -- SDRAM clock-enable pin is connected on the XuLA2.
@@ -101,11 +126,12 @@ begin
       sdDqml_o  => sdDqml_o  -- SDRAM low-byte databus qualifier is connected on the XuLA2.
       );
 
-  -- Connect the SDRAM controller signals to the FSM signals.     
-  dataToSdram_s <= std_logic_vector(dataToRam_r);
+  -- Connect the SDRAM controller signals to the FSM signals. 
+  dataToSdram_s <= dataToRam_r;  
+--  dataToSdram_s <= std_logic_vector(dataToRam_r);
   dataFromRam_s <= RamWord_t(dataFromSdram_s);
-  addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
-
+--  addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
+  addrSdram_s   <= addr_r;
   --*********************************************************************
   -- State machine that initializes RAM and then reads RAM to compute
   -- the sum of products of the RAM address and data. This section
@@ -127,7 +153,7 @@ begin
     case state_r is
 
       when INIT =>                      -- Initialize the FSM.
-        addr_x      <= MIN_ADDR_C;      -- Start writing data at this address.
+        addr_x      <= X"00_0000";      -- Start writing data at this address.
         dataToRam_x <= TO_UNSIGNED(1, RAM_WIDTH_C);  -- Initial value to write.
 --        state_x     <= WRITE_DATA;      -- Go to next state.
         state_x     <= READ_AND_SUM_DATA;      -- Go to next state.
@@ -139,7 +165,7 @@ begin
           addr_x      <= addr_r + 1;    -- go to next address ...
           dataToRam_x <= dataToRam_r + 3;  -- and write this value.
         else                 -- Else, the final address has been written ...
-          addr_x  <= MIN_ADDR_C;        -- go back to the start, ...
+          addr_x  <= X"00_0000";        -- go back to the start, ...
           sum_x   <= 0;                 -- clear the sum-of-products, ...
           state_x <= READ_AND_SUM_DATA;    -- and go to next state.
         end if;
@@ -173,8 +199,8 @@ begin
   FsmUpdate_p : process(clk_s)
   begin
     if rising_edge(clk_s) then
-      addr_r      <= addr_x;
-      dataToRam_r <= dataToRam_x;
+--      addr_r      <= addr_x;
+--      dataToRam_r <= dataToRam_x;
       state_r     <= state_x;
       sum_r       <= sum_x;
     end if;
