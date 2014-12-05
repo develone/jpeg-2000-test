@@ -30,7 +30,9 @@ end entity;
 architecture Behavioral of XESS_SdramSPInst is
   constant NO                     : std_logic := '0';
   constant YES                    : std_logic := '1';
-  constant RAM_SIZE_C             : natural   := 256;  -- Number of words in RAM.
+  --00_0000 to 03_FFFF is total memory allocated
+  --00_0000 to 01_FFFF is where lena256.hex is initially installed
+  constant RAM_SIZE_C             : natural   := 262144;  -- Number of words in RAM.
   constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
   constant MIN_ADDR_C             : natural   := 1;  -- Process RAM from this address ...
   constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
@@ -49,7 +51,8 @@ architecture Behavioral of XESS_SdramSPInst is
   -- FSM state.
   type state_t is (INIT, WRITE_DATA, READ_AND_SUM_DATA, DONE);  -- FSM states.
   signal state_r, state_x         : state_t   := INIT;  -- FSM starts off in init state.
-  signal sum_r, sum_x             : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
+--  signal sum_r, sum_x             : natural range 0 to RAM_SIZE_C * (2**RAM_WIDTH_C) - 1;
+  signal sum_r, sum_x             : natural range 0 to  (2**RAM_WIDTH_C) - 1;
   signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
 begin
