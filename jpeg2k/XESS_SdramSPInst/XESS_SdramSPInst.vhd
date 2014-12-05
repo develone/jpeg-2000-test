@@ -43,6 +43,9 @@ architecture Behavioral of XESS_SdramSPInst is
   signal rd_s                     : std_logic;  -- Read-enable control.
   signal done_s                   : std_logic;  -- SDRAM R/W operation done signal.
   signal addr_r, addr_x           : unsigned(23 downto 0);  -- RAM address.
+  signal addr_r1, addr_r2           : unsigned(23 downto 0);  -- RAM address.
+  signal offset           : unsigned(23 downto 0);  -- RAM address.
+  signal muxsel  : std_logic :=  '0';
   signal dataToRam_r, dataToRam_x : unsigned(15 downto 0);  -- Data to write to RAM.
  
   signal dataFromRam_s            : RamWord_t;  -- Data read from RAM.
@@ -59,13 +62,39 @@ architecture Behavioral of XESS_SdramSPInst is
   signal sum_r, sum_x             : natural range 0 to  (2**RAM_WIDTH_C) - 1;
   signal sumDut_s                 : std_logic_vector(15 downto 0);  -- Send sum back to PC.
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
+  signal sig_in : unsigned(51 downto 0) := (others => '0');
+  signal noupdate_s : std_logic;
+  signal res_s : signed(15 downto 0) := (others => '0');
+  signal jp_lf : unsigned(15 downto 0) := (others => '0');
+  signal jp_sa: unsigned(15 downto 0) := (others => '0');
+  signal jp_rh : unsigned(15 downto 0) := (others => '0');
+  signal jp_flgs : unsigned(3 downto 0) := (others => '0');
+  signal reset_col : std_logic := '1';
+  signal rdy : std_logic := '1';
+  signal addr_not_reached : std_logic := '0';
+  
 component jpeg_top is
     port (
         clk_fast: in std_logic;
         addr_r: out unsigned(23 downto 0);
         addr_x: in unsigned(23 downto 0);
+        addr_r1: inout unsigned(23 downto 0);
+        addr_r2: inout unsigned(23 downto 0);
+        muxsel: in std_logic;
         dataToRam_r: out unsigned(15 downto 0);
-        dataToRam_x: in unsigned(15 downto 0)
+        dataToRam_x: in unsigned(15 downto 0);
+        sig_in: inout unsigned(51 downto 0);
+        noupdate_s: out std_logic;
+        res_s: out signed (15 downto 0);
+        jp_lf: inout unsigned(15 downto 0);
+        jp_sa: inout unsigned(15 downto 0);
+        jp_rh: inout unsigned(15 downto 0);
+        jp_flgs: in unsigned(3 downto 0);
+		  reset_col: in std_logic;
+        rdy: in std_logic;
+        addr_not_reached: inout std_logic;
+		  offset: in unsigned(23 downto 0);
+        dataFromRam_s: in unsigned(15 downto 0)		  
     );
 end component jpeg_top;
 
@@ -79,8 +108,24 @@ jpeg_top_u0 : jpeg_top
      clk_fast => clk_s,
 	  addr_r => addr_r,
 	  addr_x => addr_x,
+	  addr_r1 => addr_r1,
+     addr_r2 => addr_r2,
+	  muxsel => muxsel,
 	  dataToRam_r => dataToRam_r,
-	  dataToRam_x => dataToRam_x
+	  dataToRam_x => dataToRam_x,
+	  sig_in => sig_in,
+	  noupdate_s => noupdate_s,
+	  res_s => res_s,
+	  jp_lf => jp_lf,
+	  jp_sa => jp_sa,
+	  jp_rh => jp_rh,
+	  jp_flgs => jp_flgs,
+	  reset_col => reset_col,
+	  rdy => rdy,
+	  addr_not_reached => addr_not_reached,
+     offset => offset,
+     dataFromRam_s => dataFromRam_s
+	  
   );
   --*********************************************************************
   -- Generate a 100 MHz clock from the 12 MHz input clock and send it out
