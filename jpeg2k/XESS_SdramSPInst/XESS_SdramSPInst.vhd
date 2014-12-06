@@ -73,7 +73,7 @@ architecture Behavioral of XESS_SdramSPInst is
   signal rdy : std_logic := '1';
   signal addr_not_reached : std_logic := '0';
   
-component jpeg_top is
+component xess_jpeg_top is
     port (
         clk_fast: in std_logic;
         addr_r: out unsigned(23 downto 0);
@@ -96,14 +96,14 @@ component jpeg_top is
 		  offset: in unsigned(23 downto 0);
         dataFromRam_s: in unsigned(15 downto 0)		  
     );
-end component jpeg_top;
+end component xess_jpeg_top;
 
 begin
   --*********************************************************************
   -- Instantiate the jpeg_top step1JPEG_TOP_INSTANCE_7_FSMUPDATE
   -- updates signals for the FSM.
   --*********************************************************************
-jpeg_top_u0 : jpeg_top
+xess_jpeg_top_u0 : xess_jpeg_top
   port map (
      clk_fast => clk_s,
 	  addr_r => addr_r,
