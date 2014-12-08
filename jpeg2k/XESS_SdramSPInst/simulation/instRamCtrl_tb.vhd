@@ -89,6 +89,7 @@ component simul
         rd_s: out std_logic;
         sum_r: inout unsigned(15 downto 0);
         sum_x: inout unsigned(15 downto 0)
+ 
     );
 end component; 
 BEGIN
@@ -114,6 +115,7 @@ port map (
 			rd_s => rd_s,
 			sum_r => sum_r,
 			sum_x => sum_x
+ 
 			);
  		 
 	-- Instantiate the Unit Under Test (UUT)
@@ -142,6 +144,7 @@ port map (
       -- insert stimulus here 
       dataFromRam_s <= X"009c";
 --		wait for 100 ns;
+      muxsel <= '0';
 		done_s <= '1';
       wait;
    end process;
