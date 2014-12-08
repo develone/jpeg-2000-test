@@ -180,33 +180,34 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFrom
         dataToRam_x.next = dataToRam_r
         dataFromRam_x.next = dataFromRam_r
         if state_r == t_State.INIT:
-            addr_x.next = 1
+            addr_x.next = 112
             state_x.next = t_State.CK_SDRAM
         elif state_r == t_State.CK_SDRAM:
             if (done_s == NO):
                rd_s.next = YES 
             elif addr_r <= 5:
                 addr_x.next = addr_r + 1
-                sum_x.next = sum_r + dataFromRam_s
+                #sum_x.next = sum_r + dataFromRam_s
             else:
-                addr_x.next = 2
-                state_x.next = t_State.EVEN_SAMPLES
+                addr_x.next = 112
+                sum_x.next = dataFromRam_s
+                state_x.next = t_State.DONE
         elif state_r == t_State.ODD_SAMPLES:
             if addr_r == 1:
                 addr_x.next = 2
-                state_x.next = t_State.EVEN_SAMPLES
+                state_x.next = t_State.DONE
         elif state_r == t_State.EVEN_SAMPLES:
             if (done_s == NO):
                rd_s.next = YES 
             elif addr_r <= 505:
                 addr_x.next = addr_r + 256
             else:
-                state_x.next = t_State.WR_DATA    
+                state_x.next = t_State.DONE   
         elif state_r == t_State.WR_DATA:
             if addr_r == 1:
                 addr_x.next = 8
             else:
-                state_x.next = t_State.INTERLACE
+                state_x.next = t_State.DONE
         elif state_r == t_State.INTERLACE:
             if addr_r == 16:
                 state_x.next = t_State.DONE
