@@ -20,7 +20,7 @@ entity SdramSPInst is
     sdCas_bo  : out   std_logic;  -- SDRAM column address strobe.
     sdWe_bo   : out   std_logic;  -- SDRAM write-enable.
     sdBs_o    : out   std_logic_vector(1 downto 0);  -- SDRAM bank-address.
-    sdAddr_o  : out   std_logic_vector(12 downto 0);  -- SDRAM address bus.
+    sdAddr_o  : out   std_logic_vector(11 downto 0);  -- SDRAM address bus.
     sdData_io : inout std_logic_vector(15 downto 0);    -- SDRAM data bus.
     sdDqmh_o  : out   std_logic;  -- SDRAM high-byte databus qualifier.
     sdDqml_o  : out   std_logic  -- SDRAM low-byte databus qualifier.
@@ -43,7 +43,7 @@ architecture Behavioral of SdramSPInst is
   signal dataToRam_r, dataToRam_x : RamWord_t;  -- Data to write to RAM.
   signal dataFromRam_s            : RamWord_t;  -- Data read from RAM.
   -- Convert the busses for connection to the SDRAM controller.
-  signal addrSdram_s              : std_logic_vector(23 downto 0);  -- Address.
+  signal addrSdram_s              : std_logic_vector(22 downto 0);  -- Address.
   signal dataToSdram_s            : std_logic_vector(sdData_io'range);  -- Data.
   signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  -- Data.
   -- FSM state.
@@ -69,12 +69,18 @@ begin
 
   --*********************************************************************
   -- Instantiate the SDRAM controller that connects to the FSM
-  -- and interfaces to the external SDRAM chip.
+  -- and interfaces to the external SDRAM chip. (Some of the generic
+  -- parameters had to change because the Verilog description is for
+  -- an 8M x 16 SDRAM instead of the 16M x 16 used on the XuLA2.
   --*********************************************************************
   SdramCntl_u0 : SdramCntl
     generic map(
-      FREQ_G       => 100.0,  -- Use clock freq. to compute timing parameters.
-      DATA_WIDTH_G => RAM_WIDTH_C       -- Width of data words.
+      FREQ_G        => 100.0,  -- Use clock freq. to compute timing parameters.
+      DATA_WIDTH_G  => RAM_WIDTH_C, -- Width of data words.
+      NROWS_G       => 4096,  -- Number of rows in SDRAM array.
+      NCOLS_G       => 512,  -- Number of columns in SDRAM array.
+      HADDR_WIDTH_G => 23,   -- Host-side address width.
+      SADDR_WIDTH_G => 12   -- SDRAM-side address width.
       )
     port map(
       clk_i     => clk_s,
