@@ -2,12 +2,12 @@
 -- SDRAM, single-port, instantiated.
 --*********************************************************************
 
-library IEEE,XESS;
+library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.NUMERIC_STD.all;
-use XESS.ClkgenPckg.all;     -- For the clock generator module.
-use XESS.SdramCntlPckg.all;  -- For the SDRAM controller module.
-use XESS.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module.
+use work.ClkgenPckg.all;     -- For the clock generator module.
+use work.SdramCntlPckg.all;  -- For the SDRAM controller module.
+use work.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module.
  
 use work.pck_myhdl_09.all;
 use work.pck_xess_jpeg_top.all;
@@ -22,7 +22,7 @@ entity XESS_SdramSPInst is
     sdCas_bo  : out   std_logic;  -- SDRAM column address strobe.
     sdWe_bo   : out   std_logic;  -- SDRAM write-enable.
     sdBs_o    : out   std_logic_vector(1 downto 0);  -- SDRAM bank-address.
-    sdAddr_o  : out   std_logic_vector(12 downto 0);  -- SDRAM address bus.
+    sdAddr_o  : out   std_logic_vector(11 downto 0);  -- SDRAM address bus.
     sdData_io : inout std_logic_vector(15 downto 0);    -- SDRAM data bus.
     sdDqmh_o  : out   std_logic;  -- SDRAM high-byte databus qualifier.
     sdDqml_o  : out   std_logic  -- SDRAM low-byte databus qualifier.
@@ -57,15 +57,15 @@ architecture Behavioral of XESS_SdramSPInst is
   alias fromsdramaddrDut_s is sumDut_s(15 downto 0);
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
   signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  -- Data.
-  signal addrSdram_s              : unsigned(23 downto 0);  -- Address.
+  signal addrSdram_s              : unsigned(22 downto 0);  -- Address.
   signal dataToSdram_s            : unsigned(15 downto 0);  -- Data.
   signal dataFromRam_r, dataFromRam_r1, dataFromRam_r2  : unsigned(15 downto 0); 
   signal sum_r, sum_x             : unsigned( 15 downto 0);
   signal wr_s                     : std_logic;  -- Write-enable control.
   signal rd_s                     : std_logic;  -- Read-enable control.
   signal done_s                   : std_logic;  -- SDRAM R/W operation done signal.
-  signal addr_r, addr_x           : unsigned(23 downto 0);  -- RAM address.
-  signal addr_r1, addr_r2           : unsigned(23 downto 0);  -- RAM address.
+  signal addr_r, addr_x           : unsigned(22 downto 0);  -- RAM address.
+  signal addr_r1, addr_r2           : unsigned(22 downto 0);  -- RAM address.
   signal dataToRam_r, dataToRam_x, dataFromRam_s : unsigned(15 downto 0);  -- Data to write to RAM.
 --signal needed by XESS_SdramSPinst.vhd and xess_jpeg_top.vhd***************************
 
@@ -81,19 +81,19 @@ architecture Behavioral of XESS_SdramSPInst is
   signal reset_col : std_logic := '1';
   signal rdy : std_logic := '1';
   signal addr_not_reached : std_logic := '0';
-  signal offset           : unsigned(23 downto 0);  -- RAM address.
+  signal offset           : unsigned(22 downto 0);  -- RAM address.
   signal muxsel  : std_logic :=  '0';
 --signal needed by xess_jpeg_top.vhd***************************  
 
 component xess_jpeg_top is
     port (
         clk_fast: in std_logic;
-        addr_r: out unsigned(23 downto 0);
-        addr_x: in unsigned(23 downto 0);
+        addr_r: out unsigned(22 downto 0);
+        addr_x: in unsigned(22 downto 0);
 		  state_r: inout t_enum_t_State_1;
         state_x: inout t_enum_t_State_1;
-        addr_r1: inout unsigned(23 downto 0);
-        addr_r2: inout unsigned(23 downto 0);
+        addr_r1: inout unsigned(22 downto 0);
+        addr_r2: inout unsigned(22 downto 0);
         muxsel: in std_logic;
         dataToRam_r: out unsigned(15 downto 0);
         dataToRam_x: in unsigned(15 downto 0);
@@ -110,7 +110,7 @@ component xess_jpeg_top is
 		  reset_col: in std_logic;
         rdy: in std_logic;
         addr_not_reached: inout std_logic;
-		  offset: in unsigned(23 downto 0);
+		  offset: in unsigned(22 downto 0);
         dataFromRam_s: in unsigned(15 downto 0);
         done_s: in std_logic;
         wr_s: out std_logic;
@@ -181,7 +181,12 @@ xess_jpeg_top_u0 : xess_jpeg_top
   SdramCntl_u0 : SdramCntl
     generic map(
       FREQ_G       => 100.0,  -- Use clock freq. to compute timing parameters.
-      DATA_WIDTH_G => RAM_WIDTH_C       -- Width of data words.
+      DATA_WIDTH_G => RAM_WIDTH_C,       -- Width of data words.
+		
+		NROWS_G       => 4096,  -- Number of rows in SDRAM array.
+      NCOLS_G       => 512,  -- Number of columns in SDRAM array.
+      HADDR_WIDTH_G => 23,   -- Host-side address width.
+      SADDR_WIDTH_G => 12   -- SDRAM-side address width.
       )
     port map(
       clk_i     => clk_s,

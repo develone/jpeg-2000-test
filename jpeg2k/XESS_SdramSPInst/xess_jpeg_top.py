@@ -1,7 +1,8 @@
 from myhdl import *
 reset_dly_c = 10
 DATA_WIDTH = 32768
-JPEG_RAM_ADDR = 24
+JPEG_RAM_ADDR = 23
+JPEG_RES_RAM_ADDR = 9
 ROW_NUM = 4
 ACTIVE_LOW = bool(0)
 NO = bool(0)
@@ -83,7 +84,7 @@ offset = Signal(intbv(0)[JPEG_RAM_ADDR:])
 offset_r = Signal(intbv(0)[JPEG_RAM_ADDR:])
 #t_State = enum('INIT', 'ODD_SA', 'EVEN_SA','ODD_SA_COL', 'EVEN_SA_COL', 'TR_RES', 'TR_INIT', 'TRAN_RAM', 'DONE_PASS1', encoding="one_hot")
 #t_State = enum('INIT', 'WRITE_DATA', 'READ_AND_SUM_DATA', 'DONE', encoding="one_hot")
-t_State = enum('INIT', 'CK_SDRAM', 'ODD_SAMPLES', 'EVEN_SAMPLES', 'WR_DATA', 'INTERLACE', 'DONE', encoding="one_hot")
+t_State = enum('INIT', 'WRITE', 'READ_AND_SUM_DATA', 'CK_SDRAM_RD', 'CK_SDRAM_WR', 'ODD_SAMPLES', 'EVEN_SAMPLES', 'WR_DATA', 'INTERLACE', 'DONE', encoding="one_hot")
 #print t_State, t_State.INIT
 state_r = Signal(t_State.INIT)
 state_x = Signal(t_State.INIT)
@@ -92,8 +93,8 @@ even_odd_r = Signal(bool(0))
 even_odd_x = Signal(bool(0))
 #print  t_State.INIT, t_State.READ_AND_SUM_DATA, state_r, state_x
 done_s = Signal(bool(0))
-addr_res = Signal(intbv(0)[JPEG_RAM_ADDR:])
-addr_res_r = Signal(intbv(0)[JPEG_RAM_ADDR:])
+addr_res_x = Signal(intbv(0)[JPEG_RES_RAM_ADDR:])
+addr_res_r = Signal(intbv(0)[JPEG_RES_RAM_ADDR:])
 addr_res1 = Signal(intbv(0)[JPEG_RAM_ADDR:])
 addr_res2 = Signal(intbv(0)[JPEG_RAM_ADDR:])
 reset_col = Signal(bool(1))
@@ -168,10 +169,11 @@ def mux2(addr_r, addr_r1, addr_r2, addr_r3, addr_r4, muxsel, addr_not_reached, a
 			dataToRam_r.next = dataToRam_r2
 	return muxLogic
 
-def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r, dataFromRam_x, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x):
+def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r, dataFromRam_x, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x, din_res, dout_res, addr_res_r, addr_res_x, we_res):
     
     @always_comb
     def FSM():
+        addr_res_x.next = addr_res_r
         addr_x.next = addr_r
         state_x.next = state_r
         sum_x.next = sum_r
@@ -180,17 +182,49 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFrom
         dataToRam_x.next = dataToRam_r
         dataFromRam_x.next = dataFromRam_r
         if state_r == t_State.INIT:
-            addr_x.next = 112
-            state_x.next = t_State.CK_SDRAM
-        elif state_r == t_State.CK_SDRAM:
+            addr_x.next = 1
+            dataToRam_x.next = 1
+            addr_res_x.next = 0
+            state_x.next = t_State.WRITE
+        elif state_r == t_State.WRITE:
             if (done_s == NO):
-               rd_s.next = YES 
-            elif addr_r <= 5:
+                wr_s.next = YES
+            elif (addr_r == 1):
                 addr_x.next = addr_r + 1
-                #sum_x.next = sum_r + dataFromRam_s
+                dataToRam_x.next = dataToRam_r + 3
             else:
-                addr_x.next = 112
+                addr_x.next = 1
+                sum_x.next = 0
+                state_x.next = t_State.READ_AND_SUM_DATA
+        elif state_r == t_State.READ_AND_SUM_DATA:
+            if (done_s == NO):
+                rd_s.next = YES
+            elif (addr_r <= 5):
+                sum_x.next = sum_r + (dataFromRam_s * addr_r)
+                addr_x.next = addr_r + 1
+                if (addr_r == 5):
+                    state_x.next = t_State.DONE   
+        elif state_r == t_State.CK_SDRAM_RD:
+            if (done_s == NO):
+               rd_s.next = YES
+               we_res.next = YES
+            elif addr_r <= 256 :
+                addr_x.next = addr_r + 1
+                addr_res_x.next = addr_res_r + 1
+                din_res.next = dataFromRam_s
+            else:
                 sum_x.next = dataFromRam_s
+                addr_x.next = 131072
+                addr_res_x.next = 0
+                
+                wr_s.next = 0
+                we_res.next = 0
+                state_x.next = t_State.CK_SDRAM_WR
+        elif state_r == t_State.CK_SDRAM_WR:
+            if (addr_res_r <=255):
+                dataFromRam_x.next = dout_res
+                addr_x.next = addr_r + 1
+            else:
                 state_x.next = t_State.DONE
         elif state_r == t_State.ODD_SAMPLES:
             if addr_r == 1:
@@ -450,9 +484,10 @@ def jpegFsm(state_r, state_x, muxsel, reset_fsm_r, dataToRam_r, dataFromRam_s, d
 #		muxsel_r.next = muxsel
 #		col_r.next = col
 #	return fsmupdate
-def jpegfsmupdate(clk_fast, addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r, dataFromRam_x,  sum_r, sum_x ):
+def jpegfsmupdate(clk_fast, addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r, dataFromRam_x,  sum_r, sum_x, addr_res_r, addr_res_x ):
     @always(clk_fast.posedge)
     def fsmupdate():
+        addr_res_r.next = addr_res_x
         addr_r.next = addr_x
         dataToRam_r.next = dataToRam_x
         dataFromRam_r.next = dataFromRam_x
@@ -619,21 +654,21 @@ def ramres(dout_res, din_res, addr_res, we_res, clk_fast, depth=256):
     return write, read
 #return instance_2, instance_3, instance_4, instance_5, instance_7
 #def xess_jpeg_top(clk_fast, addr_r, addr_x, addr_r1, addr_r2, muxsel, dataToRam_r, dataToRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s):
-def xess_jpeg_top(clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, muxsel, dataToRam_r, dataToRam_x, dataFromRam_r,  dataFromRam_r1, dataFromRam_r2, dataFromRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x ):
+def xess_jpeg_top(clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, muxsel, dataToRam_r, dataToRam_x, dataFromRam_r,  dataFromRam_r1, dataFromRam_r2, dataFromRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x, dout_res, din_res, addr_res_r,addr_res_x, we_res ):
     #instance_1 = read_file_sdram(clk_fast, rst, eog, wr_s1, rst_file_in, addr_r1, dataToRam_r1, y)
     #instance_2 = mux2(addr_r, addr_r1, addr_r2, addr_r3, addr_r4, muxsel, addr_not_reached, addr_not_reached1, addr_not_reached2, sig_in, sig_in1, sig_in2, wr_s, wr_s1, wr_s2, addr_res, addr_res1, addr_res2, dataToRam_r, dataToRam_r1, dataToRam_r2)
     instance_2 = muxaddr(addr_r, addr_r1, addr_r2, muxsel, dataFromRam_r, dataFromRam_r1, dataFromRam_r2 )
     instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s)
     instance_4 = jpegsdram_rd(clk_fast, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs, reset_col, addr_r2, addr_not_reached)
     instance_5 = jpegram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached, sig_in)
-    instance_6 = RamCtrl(addr_r1, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r1, dataFromRam_x,  dataFromRam_s,  done_s, wr_s, rd_s, sum_r, sum_x )
-    instance_7 = jpegfsmupdate(clk_fast, addr_r1, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r1, dataFromRam_x, sum_r, sum_x )
-    #instance_8 = ramres(dout_res, din_res, addr_res1, we_res, clk_fast, depth=256)
+    instance_6 = RamCtrl(addr_r1, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r1, dataFromRam_x,  dataFromRam_s,  done_s, wr_s, rd_s, sum_r, sum_x, din_res, dout_res, addr_res_r, addr_res_x, we_res )
+    instance_7 = jpegfsmupdate(clk_fast, addr_r1, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r1, dataFromRam_x, sum_r, sum_x, addr_res_r, addr_res_x)
+    instance_8 = ramres(dout_res, din_res, addr_res_x, we_res, clk_fast, depth=256)
     #instance_9 = jpegsdram_rd_col(clk_fast, offset, dataFromRam_s, jp_row_lf, jp_row_sa, jp_row_rh, jp_row_flgs, reset_row, addr_r3, addr_not_reached2)
     #instance_10 = jpegram2sigcol(jp_row_lf, jp_row_sa ,jp_row_rh, jp_row_flgs, rdy, addr_not_reached2,  sig_in2)
     #instance_11 = trram2sdram(wr_s2, dout_res, addr_res2, addr_r4, dataToRam_r2)
     #instance_12 = resetFsm(clk_fast, reset_fsm_r, reset_ctn)
-    return instance_2, instance_3, instance_4, instance_5, instance_6, instance_7
+    return instance_2, instance_3, instance_4, instance_5, instance_6, instance_7, instance_8
 def simul(clk_fast, addr_r, addr_r1, addr_x, state_r, state_x, addr_r2, muxsel, dataToRam_r, dataToRam_x, dataFromRam_r,  dataFromRam_r1, dataFromRam_r2, dataFromRam_x, dataFromRam_s,  done_s, wr_s, rd_s, sum_r, sum_x ):
     instance_2 = muxaddr(addr_r, addr_r1, addr_r2, muxsel, dataFromRam_r, dataFromRam_r1, dataFromRam_r2 )
     instance_6 = RamCtrl(addr_r1, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r1, dataFromRam_x, dataFromRam_s,  done_s, wr_s, rd_s, sum_r, sum_x)
@@ -650,6 +685,6 @@ def simul(clk_fast, addr_r, addr_r1, addr_x, state_r, state_x, addr_r2, muxsel, 
 #toVHDL(jpegfsmupdate, clk_fast, offset, offset_r, state_r, state_x, addr_res, addr_res_r )
 #toVHDL(jpegFsm, state_r, state_x, reset_fsm_r, addr_res, addr_res_r, offset, offset_r,  jp_flgs, reset_col, rdy,  noupdate_s, addr_not_reached )
 #toVHDL(jpeg_top, clk_fast, addr_r, addr_x, addr_r1, addr_r2, muxsel, dataToRam_r, dataToRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, state_r, state_x, reset_fsm_r, done_s)
-toVHDL(xess_jpeg_top, clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, muxsel, dataToRam_r,  dataFromRam_r1, dataFromRam_r2, dataToRam_x, dataFromRam_x, dataFromRam_r, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x )
+toVHDL(xess_jpeg_top, clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, muxsel, dataToRam_r,  dataFromRam_r1, dataFromRam_r2, dataToRam_x, dataFromRam_x, dataFromRam_r, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x, dout_res, din_res, addr_res_r, addr_res_x, we_res )
 #toVerilog(xess_jpeg_top, clk_fast, addr_r, addr_x, addr_r1, addr_r2, muxsel, dataToRam_r, dataToRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, state, even_odd_r, even_odd_x)
 #toVHDL(xess_jpeg_top, clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, muxsel, dataToRam_r, dataToRam_x, dataToRam_r2, dataToRam_x, dataFromRam_r, dataFromRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x)
