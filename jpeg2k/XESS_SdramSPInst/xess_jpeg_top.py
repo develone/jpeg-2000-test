@@ -182,27 +182,27 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFrom
         dataToRam_x.next = dataToRam_r
         dataFromRam_x.next = dataFromRam_r
         if state_r == t_State.INIT:
-            addr_x.next = 1
+            addr_x.next = 131072
             dataToRam_x.next = 1
             addr_res_x.next = 0
             state_x.next = t_State.WRITE
         elif state_r == t_State.WRITE:
             if (done_s == NO):
                 wr_s.next = YES
-            elif (addr_r == 1):
+            elif (addr_r <= 131088):
                 addr_x.next = addr_r + 1
                 dataToRam_x.next = dataToRam_r + 3
             else:
-                addr_x.next = 1
+                addr_x.next = 131072
                 sum_x.next = 0
                 state_x.next = t_State.READ_AND_SUM_DATA
         elif state_r == t_State.READ_AND_SUM_DATA:
             if (done_s == NO):
                 rd_s.next = YES
-            elif (addr_r <= 5):
-                sum_x.next = sum_r + (dataFromRam_s * addr_r)
+            elif (addr_r <= 131088):
+                sum_x.next = sum_r + (dataFromRam_s )
                 addr_x.next = addr_r + 1
-                if (addr_r == 5):
+                if (addr_r == 131088):
                     state_x.next = t_State.DONE   
         elif state_r == t_State.CK_SDRAM_RD:
             if (done_s == NO):

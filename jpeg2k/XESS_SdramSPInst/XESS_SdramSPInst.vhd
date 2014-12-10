@@ -52,9 +52,9 @@ architecture Behavioral of XESS_SdramSPInst is
 
 --signal needed by XESS_SdramSPinst.vhd and xess_jpeg_top.vhd*************************** 
   signal clk_s                    : std_logic;  -- Internal clock.
-  signal sumDut_s                 : std_logic_vector(31 downto 0);  -- Send sum back to PC.
-  alias fromsdramdataDut_s is sumDut_s(31 downto 16);
-  alias fromsdramaddrDut_s is sumDut_s(15 downto 0);
+  signal sumDut_s                 : std_logic_vector(38 downto 0);  -- Send sum back to PC.
+  alias fromsdramdataDut_s is sumDut_s(38 downto 23);
+  alias fromsdramaddrDut_s is sumDut_s(22 downto 0);
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
   signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  -- Data.
   signal addrSdram_s              : unsigned(22 downto 0);  -- Address.
@@ -295,7 +295,8 @@ xess_jpeg_top_u0 : xess_jpeg_top
   --*********************************************************************
   --sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
   --sumDut_s <= std_logic_vector(sum_r);
-  fromsdramaddrDut_s <= std_logic_vector(resize(addr_r,16));
+  fromsdramaddrDut_s <= std_logic_vector(addr_r);
+--  fromsdramaddrDut_s <= std_logic_vector(resize(addr_r,16));
   fromsdramdataDut_s <= std_logic_vector(sum_r);
   HostIoToDut_u2 : HostIoToDut
     generic map (SIMPLE_G => true)
