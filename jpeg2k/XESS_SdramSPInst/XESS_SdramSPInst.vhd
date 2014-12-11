@@ -96,16 +96,17 @@ component xess_jpeg_top is
     port (
         clk_fast: in std_logic;
         addr_r: out unsigned(22 downto 0);
-        addr_x: in unsigned(22 downto 0);
-		  state_r: inout t_enum_t_State_1;
+        addr_x: inout unsigned(22 downto 0);
+        state_r: inout t_enum_t_State_1;
         state_x: inout t_enum_t_State_1;
         addr_r1: inout unsigned(22 downto 0);
         addr_r2: inout unsigned(22 downto 0);
-        dataToRam_r: out unsigned(15 downto 0);
-        dataToRam_x: in unsigned(15 downto 0);
-		  dataFromRam_r: out unsigned(15 downto 0);
+        dataToRam_r: inout unsigned(15 downto 0);
+        dataToRam_x: inout unsigned(15 downto 0);
+        dataFromRam_r: out unsigned(15 downto 0);
         dataFromRam_r1: inout unsigned(15 downto 0);
         dataFromRam_r2: in unsigned(15 downto 0);
+        dataFromRam_x: inout unsigned(15 downto 0);
         sig_in: inout unsigned(51 downto 0);
         noupdate_s: out std_logic;
         res_s: out signed (15 downto 0);
@@ -113,10 +114,10 @@ component xess_jpeg_top is
         jp_sa: inout unsigned(15 downto 0);
         jp_rh: inout unsigned(15 downto 0);
         jp_flgs: in unsigned(3 downto 0);
-		  reset_col: in std_logic;
+        reset_col: in std_logic;
         rdy: in std_logic;
         addr_not_reached: inout std_logic;
-		  offset: in unsigned(22 downto 0);
+        offset: in unsigned(22 downto 0);
         dataFromRam_s: in unsigned(15 downto 0);
         done_s: in std_logic;
         wr_s: out std_logic;
@@ -132,7 +133,7 @@ component xess_jpeg_top is
         addr_res_r: inout unsigned(8 downto 0);
         addr_res_x: inout unsigned(8 downto 0);
         we_res: inout std_logic;
-		  muxsel_r: inout std_logic;
+        muxsel_r: inout std_logic;
         muxsel_x: inout std_logic
  	  
     );
