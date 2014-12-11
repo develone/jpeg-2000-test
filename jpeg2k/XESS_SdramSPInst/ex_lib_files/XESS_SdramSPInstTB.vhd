@@ -27,7 +27,13 @@
 --------------------------------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
+use IEEE.NUMERIC_STD.all;
+use work.ClkgenPckg.all;     -- For the clock generator module.
+use work.SdramCntlPckg.all;  -- For the SDRAM controller module.
+use work.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module.
  
+use work.pck_myhdl_09.all;
+use work.pck_xess_jpeg_top.all; 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --USE ieee.numeric_std.ALL;
@@ -99,9 +105,115 @@ ARCHITECTURE behavior OF XESS_SdramSPInstTb IS
    -- appropriate port name 
  
    constant fpgaClk_period : time := 83.3333 ns; -- 12 MHz XuLA clock.
- 
+--signal needed by XESS_SdramSPinst.vhd and xess_jpeg_top.vhd*************************** 
+  signal clk_s                    : std_logic;  -- Internal clock.
+  signal sumDut_s                 : std_logic_vector(38 downto 0);  -- Send sum back to PC.
+  alias fromsdramdataDut_s is sumDut_s(38 downto 23);
+  alias fromsdramaddrDut_s is sumDut_s(22 downto 0);
+  signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
+  signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  -- Data.
+  signal addrSdram_s              : unsigned(22 downto 0);  -- Address.
+  signal dataToSdram_s            : unsigned(15 downto 0);  -- Data.
+  signal dataFromRam_r, dataFromRam_r1, dataFromRam_r2  : unsigned(15 downto 0); 
+  signal sum_r, sum_x             : unsigned( 15 downto 0);
+  signal wr_s                     : std_logic;  -- Write-enable control.
+  signal rd_s                     : std_logic;  -- Read-enable control.
+  signal done_s                   : std_logic;  -- SDRAM R/W operation done signal.
+  signal addr_r, addr_x           : unsigned(22 downto 0);  -- RAM address.
+  signal addr_r1, addr_r2           : unsigned(22 downto 0);  -- RAM address.
+  signal dataToRam_r, dataToRam_x, dataFromRam_s : unsigned(15 downto 0);  -- Data to write to RAM.
+--signal needed by XESS_SdramSPinst.vhd and xess_jpeg_top.vhd***************************
+
+----signal needed by xess_jpeg_top.vhd***************************
+--  signal state_r, state_x         : t_enum_t_State_1   := INIT;  -- FSM starts off in init state.
+--  signal sig_in : unsigned(51 downto 0) := (others => '0');
+--  signal noupdate_s : std_logic;
+--  signal res_s : signed(15 downto 0) := (others => '0');
+--  signal jp_lf : unsigned(15 downto 0) := (others => '0');
+--  signal jp_sa: unsigned(15 downto 0) := (others => '0');
+--  signal jp_rh : unsigned(15 downto 0) := (others => '0');
+--  signal jp_flgs : unsigned(3 downto 0) := (others => '0');
+--  signal reset_col : std_logic := '1';
+--  signal rdy : std_logic := '1';
+--  signal addr_not_reached : std_logic := '0';
+--  signal offset           : unsigned(22 downto 0);  -- RAM address.
+--  signal muxsel  : std_logic :=  '0';
+----signal needed by xess_jpeg_top.vhd***************************
+--component xess_jpeg_top is
+--    port (
+--        clk_fast: in std_logic;
+--        addr_r: out unsigned(22 downto 0);
+--        addr_x: in unsigned(22 downto 0);
+--		  state_r: inout t_enum_t_State_1;
+--        state_x: inout t_enum_t_State_1;
+--        addr_r1: inout unsigned(22 downto 0);
+--        addr_r2: inout unsigned(22 downto 0);
+--        muxsel: in std_logic;
+--        dataToRam_r: out unsigned(15 downto 0);
+--        dataToRam_x: in unsigned(15 downto 0);
+--		  dataFromRam_r: out unsigned(15 downto 0);
+--        dataFromRam_r1: inout unsigned(15 downto 0);
+--        dataFromRam_r2: in unsigned(15 downto 0);
+--        sig_in: inout unsigned(51 downto 0);
+--        noupdate_s: out std_logic;
+--        res_s: out signed (15 downto 0);
+--        jp_lf: inout unsigned(15 downto 0);
+--        jp_sa: inout unsigned(15 downto 0);
+--        jp_rh: inout unsigned(15 downto 0);
+--        jp_flgs: in unsigned(3 downto 0);
+--		  reset_col: in std_logic;
+--        rdy: in std_logic;
+--        addr_not_reached: inout std_logic;
+--		  offset: in unsigned(22 downto 0);
+--        dataFromRam_s: in unsigned(15 downto 0);
+--        done_s: in std_logic;
+--        wr_s: out std_logic;
+--        rd_s: out std_logic;
+--        sum_r: inout unsigned(15 downto 0);
+--        sum_x: inout unsigned(15 downto 0)
+-- 	  
+--    );
+--end component xess_jpeg_top; 
 BEGIN
- 
+--muxsel <= '0';
+--  --*********************************************************************
+--  -- Instantiate the jpeg_top step1JPEG_TOP_INSTANCE_7_FSMUPDATE
+--  -- updates signals for the FSM.
+--  --*********************************************************************
+--xess_jpeg_top_u0 : xess_jpeg_top
+--  port map (
+--     clk_fast => clk_s,
+--	  addr_r => addr_r,
+--	  addr_x => addr_x,
+--	  state_r => state_r,
+--	  state_x => state_x,
+--	  addr_r1 => addr_r1,
+--     addr_r2 => addr_r2,
+--	  muxsel => muxsel,
+--	  dataToRam_r => dataToRam_r,
+--	  dataToRam_x => dataToRam_x,
+--	  dataFromRam_r =>  dataFromRam_r,
+--	  dataFromRam_r1 =>  dataFromRam_r1,
+--	  dataFromRam_r2  => dataFromRam_r2,
+--	  sig_in => sig_in,
+--	  noupdate_s => noupdate_s,
+--	  res_s => res_s,
+--	  jp_lf => jp_lf,
+--	  jp_sa => jp_sa,
+--	  jp_rh => jp_rh,
+--	  jp_flgs => jp_flgs,
+--	  reset_col => reset_col,
+--	  rdy => rdy,
+--	  addr_not_reached => addr_not_reached,
+--     offset => offset,
+--     dataFromRam_s => dataFromRam_s,
+--	  done_s => done_s,
+--	  wr_s => wr_s,
+--	  rd_s => rd_s,
+--	  sum_r => sum_r,
+--	  sum_x => sum_x
+--   
+--  ); 
 	-- Instantiate the Unit Under Test (UUT)
    uut: XESS_SdramSPInst PORT MAP (
           fpgaClk_i => fpgaClk_i, -- 12 MHz XuLA clock.
