@@ -1,4 +1,103 @@
 from myhdl import *
+
+import fifo_down_if
+import fifo_up_if
+
+class fifo_upstream_interface(object):
+    def __init__(self):
+        self.wr_en  = Signal(bool(0))
+        self.din    = Signal(intbv(0)[16:])
+        #self.wr_clk_fast = Signal(bool(0))
+        self.full   = Signal(bool(0)) 
+        #self.rst    = Signal(bool(0))
+
+#end class fifo_upstream_interface
+    
+def fifo_up_if_ex(clk_fast, rst, din, wr_en, full): #rst is asynch, all other
+                                               #signals are synchronous
+    @always_seq(clk_fast.posedge, reset=rst)
+    def fifo_wr():
+        if( full==False and wr_en==True):
+            din.next = din
+        #How to assert full signal???
+        #Temporarily tied to 0        
+        full.next = False      
+    return fifo_wr
+class fifo_downstream_interface(object):
+    def __init__(self):
+        self.rd_en  = Signal(bool(0))
+        self.dout    = Signal(intbv(0)[16:])
+        self.empty   = Signal(bool(0)) 
+
+#end class fifo_downstream_interface
+    
+def fifo_down_if_ex(clk_fast, rst, dout, rd_en, empty): #rst is asynch, all other
+                                               #signals are synchronous
+    @always_seq(clk_fast.posedge, reset=rst)
+    def fifo_rd():
+        if( empty ==False and rd_en==True):
+            dout.next = dout
+        #How to assert empty signal???
+        #Temporarily tied to 0        
+        empty.next = False      
+    return fifo_rd
+def test():
+    clk_fast = Signal(bool(0))
+    rst = ResetSignal(0,active=1,async=True) #Xilinx spec didn't mention
+                                             #specifically about reset
+                                             #polarity
+                                             
+    up_interface = fifo_up_if.fifo_upstream_interface() #defining signals for the fifo
+                                             #upstream interface
+    def _test():
+        #instantiating dut
+        dut = fifo_up_if.fifo_up_if_ex(clk_fast,
+                            rst,
+                            up_interface.din,
+                            up_interface.wr_en,
+                            up_interface.full
+                            )
+                        
+        @always(delay(5))
+        def clk_fast_driver():
+            clk_fast.next = not clk_fast
+        
+        
+        @instance
+        def tb_stim():
+            rst.next = rst.active
+            yield delay(20)
+            rst.next = not rst.active
+            yield delay(20)
+            yield clk_fast.posedge
+            
+            for i in range(50):
+                up_interface.wr_en.next = True
+                up_interface.din.next = i
+                yield clk_fast.posedge
+                up_interface.wr_en.next = False
+                yield clk_fast.posedge    
+	    
+	    raise StopSimulation	
+        
+        return dut, clk_fast_driver, tb_stim
+
+    #Simulation(traceSignals(_test)).run()
+clk_fast = Signal(bool(0))
+rst = ResetSignal(0,active=1,async=True)
+up_interface = fifo_up_if.fifo_upstream_interface()
+dn_interface = fifo_down_if.fifo_downstream_interface()
+
+
+def fifos():
+   
+    #print instance_13, instance_14
+    instance_13 = fifo_up_if_ex(clk_fast,rst,up_interface.din,up_interface.wr_en,up_interface.full)        
+    instance_14 = fifo_down_if_ex(clk_fast, rst, dn_interface.dout, dn_interface.rd_en, dn_interface.empty)
+    print instance_13, instance_14
+    return instance_13, instance_14
+ 
+toVHDL(fifos)
 reset_dly_c = 10
 DATA_WIDTH = 32768
 JPEG_RAM_ADDR = 23
@@ -675,8 +774,11 @@ def ramres(dout_res_r, din_res_r, addr_res_r, we_res, clk_fast, depth=256):
     return write, read
 #return instance_2, instance_3, instance_4, instance_5, instance_7
 #def xess_jpeg_top(clk_fast, addr_r, addr_x, addr_r1, addr_r2, muxsel, dataToRam_r, dataToRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s):
-def xess_jpeg_top(clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, dataToRam_r, dataToRam_x, dataFromRam_r,  dataFromRam_r1, dataFromRam_r2, dataFromRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x, dout_res_r, dout_res_r1, dout_res_r2, dout_res_x, din_res_r, din_res_x, addr_res_r,addr_res_x, we_res, muxsel_r, muxsel_x ):
+def xess_jpeg_top(clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, dataToRam_r, dataToRam_x, dataFromRam_r,  dataFromRam_r1, dataFromRam_r2, dataFromRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x, dout_res_r, dout_res_r1, dout_res_r2, dout_res_x, din_res_r, din_res_x, addr_res_r,addr_res_x, we_res, muxsel_r, muxsel_x, rst ):
     #instance_1 = read_file_sdram(clk_fast, rst, eog, wr_s1, rst_file_in, addr_r1, dataToRam_r1, y)
+    #instance_13 = fifo_up_if_ex(clk_fast,rst,up_interface.din,up_interface.wr_en,up_interface.full)        
+    #instance_14 = fifo_down_if_ex(clk_fast, rst, dn_interface.dout, dn_interface.rd_en, dn_interface.empty)
+    #print instance_13, instance_14
     #instance_2 = mux2(addr_r, addr_r1, addr_r2, addr_r3, addr_r4, muxsel, addr_not_reached, addr_not_reached1, addr_not_reached2, sig_in, sig_in1, sig_in2, wr_s, wr_s1, wr_s2, addr_res, addr_res1, addr_res2, dataToRam_r, dataToRam_r1, dataToRam_r2)
     instance_2 = muxaddr(addr_r, addr_r1, addr_r2, muxsel_r, dataFromRam_r, dataFromRam_r1, dataFromRam_r2, dout_res_r, dout_res_r1, dout_res_r2 )
     instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s)
@@ -689,6 +791,7 @@ def xess_jpeg_top(clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, 
     #instance_10 = jpegram2sigcol(jp_row_lf, jp_row_sa ,jp_row_rh, jp_row_flgs, rdy, addr_not_reached2,  sig_in2)
     #instance_11 = trram2sdram(wr_s2, dout_res, addr_res2, addr_r4, dataToRam_r2)
     #instance_12 = resetFsm(clk_fast, reset_fsm_r, reset_ctn)
+    #return instance_2, instance_3, instance_4, instance_5, instance_6, instance_7, instance_8, instance_13, instance_14
     return instance_2, instance_3, instance_4, instance_5, instance_6, instance_7, instance_8
 def simul(clk_fast, addr_r, addr_r1, addr_x, state_r, state_x, addr_r2, muxsel, dataToRam_r, dataToRam_x, dataFromRam_r,  dataFromRam_r1, dataFromRam_r2, dataFromRam_x, dataFromRam_s,  done_s, wr_s, rd_s, sum_r, sum_x ):
     instance_2 = muxaddr(addr_r, addr_r1, addr_r2, muxsel, dataFromRam_r, dataFromRam_r1, dataFromRam_r2 )
@@ -706,6 +809,6 @@ def simul(clk_fast, addr_r, addr_r1, addr_x, state_r, state_x, addr_r2, muxsel, 
 #toVHDL(jpegfsmupdate, clk_fast, offset, offset_r, state_r, state_x, addr_res, addr_res_r )
 #toVHDL(jpegFsm, state_r, state_x, reset_fsm_r, addr_res, addr_res_r, offset, offset_r,  jp_flgs, reset_col, rdy,  noupdate_s, addr_not_reached )
 #toVHDL(jpeg_top, clk_fast, addr_r, addr_x, addr_r1, addr_r2, muxsel, dataToRam_r, dataToRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, state_r, state_x, reset_fsm_r, done_s)
-toVHDL(xess_jpeg_top, clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, dataToRam_r,  dataFromRam_r1, dataFromRam_r2, dataToRam_x, dataFromRam_x, dataFromRam_r, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x, dout_res_r, dout_res_r1, dout_res_r2, dout_res_x, din_res_r, din_res_x, addr_res_r, addr_res_x, we_res, muxsel_r, muxsel_x )
+toVHDL(xess_jpeg_top, clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, dataToRam_r,  dataFromRam_r1, dataFromRam_r2, dataToRam_x, dataFromRam_x, dataFromRam_r, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x, dout_res_r, dout_res_r1, dout_res_r2, dout_res_x, din_res_r, din_res_x, addr_res_r, addr_res_x, we_res, muxsel_r, muxsel_x, rst )
 #toVerilog(xess_jpeg_top, clk_fast, addr_r, addr_x, addr_r1, addr_r2, muxsel, dataToRam_r, dataToRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, state, even_odd_r, even_odd_x)
 #toVHDL(xess_jpeg_top, clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, muxsel, dataToRam_r, dataToRam_x, dataToRam_r2, dataToRam_x, dataFromRam_r, dataFromRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x)

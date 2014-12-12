@@ -92,6 +92,36 @@ architecture Behavioral of XESS_SdramSPInst is
   signal we_res: std_logic := '1';
 --signal needed by xess_jpeg_top.vhd***************************  
 
+--signal needed by fifos***************************
+--	signal rst: std_logic := '0';
+--	signal din: unsigned(15 downto 0):= (others => '0');
+--	signal wr_en : std_logic := '0';
+--	signal rd_en : std_logic := '0';
+--	signal full : std_logic := '0';
+--	signal empty : std_logic := '0';
+--	signal dout: unsigned(15 downto 0):= (others => '0');
+--signal needed by fifos***************************
+
+--component fifo_up_if_ex is
+--    port (
+--        clk_fast: in std_logic;
+--        rst: in std_logic;
+--        din: inout unsigned(15 downto 0);
+--        wr_en: in std_logic;
+--        full: inout std_logic
+--    );
+--end component fifo_up_if_ex;
+
+--component fifo_down_if_ex is
+--    port (
+--        clk_fast: in std_logic;
+--        rst: in std_logic;
+--        dout: inout unsigned(15 downto 0);
+--        rd_en: in std_logic;
+--        empty: inout std_logic
+--    );
+--end component fifo_down_if_ex;
+ 
 component xess_jpeg_top is
     port (
         clk_fast: in std_logic;
@@ -188,6 +218,23 @@ xess_jpeg_top_u0 : xess_jpeg_top
      muxsel_x => muxsel_x 
    
   );
+--  fifo_up_if_ex_u0 : fifo_up_if_ex
+--    port map(
+--	   clk_fast => clk_s,
+--		rst => rst,
+--		din => din,
+--		wr_en => wr_en,
+--		full => full
+--		);
+--  fifo_down_if_ex_u0 : fifo_down_if_ex
+--    port map(
+--	   clk_fast => clk_s,
+--		rst => rst,
+--		dout => dout,
+--		rd_en => rd_en,
+--		empty => empty
+--		);
+		
   --*********************************************************************
   -- Generate a 100 MHz clock from the 12 MHz input clock and send it out
   -- to the SDRAM. Then feed it back in to clock the internal logic.
@@ -327,6 +374,7 @@ xess_jpeg_top_u0 : xess_jpeg_top
 --  fromsdramaddrDut_s <= std_logic_vector(resize(addr_r,16));
   fromsdramdataDut_s <= std_logic_vector(sum_r);
   fromramdataDut_s <= std_logic_vector(dout_res_r2);
+  din <= dataFromRam_s;
   HostIoToDut_u2 : HostIoToDut
     generic map (SIMPLE_G => true)
     port map (
