@@ -219,7 +219,7 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFrom
                 addr_res_x.next = addr_res_r + 1
                 addr_x.next = addr_r + 1
                 if (addr_r == 131088):
-                    muxsel_x.next = YES
+                    #muxsel_x.next = YES
                     we_res.next = NO
                     state_x.next = t_State.DONE   
         elif state_r == t_State.CK_SDRAM_RD:
