@@ -42,7 +42,15 @@ ENTITY XESS_SdramSPInstTb IS
 END XESS_SdramSPInstTb;
  
 ARCHITECTURE behavior OF XESS_SdramSPInstTb IS 
- 
+  constant NO                     : std_logic := '0';
+  constant YES                    : std_logic := '1';
+  --00_0000 to 03_FFFF is total memory allocated
+  --00_0000 to 01_FFFF is where lena256.hex is initially installed
+  constant RAM_SIZE_C             : natural   := 262144;  -- Number of words in RAM.
+  constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
+  constant MIN_ADDR_C             : natural   := 1;  -- Process RAM from this address ...
+  constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
+  subtype RamWord_t is unsigned(RAM_WIDTH_C-1 downto 0);  -- RAM word type. 
     -- Component Declaration for the Unit Under Test (UUT)
  
     COMPONENT XESS_SdramSPInst
@@ -272,7 +280,41 @@ xess_jpeg_top_u0 : xess_jpeg_top
      Dqm(0) => sdDqml_o, -- Lower-byte databus qualifier.
      Dqm(1) => sdDqmh_o  -- Upper-byte databus qualifier.
      );
-
+ --*********************************************************************
+  -- Instantiate the SDRAM controller that connects to the FSM
+  -- and interfaces to the external SDRAM chip.
+  --*********************************************************************
+  SdramCntl_u0 : SdramCntl
+    generic map(
+      FREQ_G       => 100.0,  -- Use clock freq. to compute timing parameters.
+      DATA_WIDTH_G => RAM_WIDTH_C,       -- Width of data words.
+		
+		NROWS_G       => 4096,  -- Number of rows in SDRAM array.
+      NCOLS_G       => 512,  -- Number of columns in SDRAM array.
+      HADDR_WIDTH_G => 23,   -- Host-side address width.
+      SADDR_WIDTH_G => 12   -- SDRAM-side address width.
+      )
+    port map(
+      clk_i     => clk_s,
+      -- FSM side.
+      rd_i      => rd_s,
+      wr_i      => wr_s,
+      done_o    => done_s,
+      addr_i    => std_logic_vector(addrSdram_s),
+      data_i    => std_logic_vector(dataToSdram_s),
+      data_o    => dataFromSdram_s,
+      -- SDRAM side.
+      sdCke_o   => sdCke_o, -- SDRAM clock-enable pin is connected on the XuLA2.
+      sdCe_bo   => sdCe_bo, -- SDRAM chip-enable is connected on the XuLA2.
+      sdRas_bo  => sdRas_bo,
+      sdCas_bo  => sdCas_bo,
+      sdWe_bo   => sdWe_bo,
+      sdBs_o    => sdBs_o, -- Both SDRAM bank selects are connected on the XuLA2.
+      sdAddr_o  => sdAddr_o,
+      sdData_io => sdData_io,
+      sdDqmh_o  => sdDqmh_o, -- SDRAM high-byte databus qualifier is connected on the XuLA2.
+      sdDqml_o  => sdDqml_o  -- SDRAM low-byte databus qualifier is connected on the XuLA2.
+      );
    -- Clock process definitions.
    -- This generates the 12 MHz clock.
    fpgaClk_process :process
