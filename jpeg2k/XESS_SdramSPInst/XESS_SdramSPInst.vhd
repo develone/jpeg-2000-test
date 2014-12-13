@@ -91,9 +91,17 @@ architecture Behavioral of XESS_SdramSPInst is
   signal addr_res_x: unsigned(8 downto 0):= (others => '0');
   signal we_res: std_logic := '1';
   signal rst: std_logic := '0';
---signal needed by xess_jpeg_top.vhd***************************  
+--signal needed by xess_jpeg_top.vhd*************************** 
 
- 
+--signal needed by FIFO*************************** 
+signal instance_6_dn_interface_rd_en: std_logic;
+signal instance_6_up_interface_wr_en: std_logic;
+signal instance_14_dout: unsigned(15 downto 0);
+signal instance_14_empty: std_logic;
+signal instance_13_full: std_logic;
+signal instance_13_din: unsigned(15 downto 0); 
+--signal needed by FIFO*************************** 
+
  
 component xess_jpeg_top is
     port (

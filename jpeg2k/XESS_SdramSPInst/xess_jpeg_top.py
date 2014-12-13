@@ -41,6 +41,8 @@ def fifo_down_if_ex(clk_fast, rst, dout, rd_en, empty): #rst is asynch, all othe
         #Temporarily tied to 0        
         empty.next = False      
     return fifo_rd
+up_interface = fifo_up_if.fifo_upstream_interface()
+dn_interface = fifo_down_if.fifo_downstream_interface()
 def test():
     clk_fast = Signal(bool(0))
     rst = ResetSignal(0,active=1,async=True) #Xilinx spec didn't mention
@@ -85,8 +87,6 @@ def test():
     #Simulation(traceSignals(_test)).run()
 clk_fast = Signal(bool(0))
 rst = ResetSignal(0,active=1,async=True)
-up_interface = fifo_up_if.fifo_upstream_interface()
-dn_interface = fifo_down_if.fifo_downstream_interface()
 
 
 def fifos():
@@ -291,6 +291,8 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFrom
     
     @always_comb
     def FSM():
+        up_interface.wr_en.next = NO
+        dn_interface.rd_en.next = NO
         muxsel_x.next = muxsel_r
         din_res_x.next = din_res_r
         dout_res_x.next = dout_res_r
@@ -303,7 +305,7 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFrom
         dataToRam_x.next = dataToRam_r
         dataFromRam_x.next = dataFromRam_r
         if state_r == t_State.INIT:
-            #up_interface.wr_en.next = YES
+            up_interface.wr_en.next = YES
             rst.next = YES
             addr_x.next = 131072
             dataToRam_x.next = 1
@@ -311,6 +313,9 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFrom
             muxsel_x.next = 0
             state_x.next = t_State.WRITE
         elif state_r == t_State.WRITE:
+            """This appears to be needed in every state since it us set hi
+            in the INIT state"""
+            rst.next = NO
             if (done_s == NO):
                 rst.next = NO
                 wr_s.next = YES
@@ -828,5 +833,6 @@ def xess_jpeg_top(clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, 
 
 
 toVHDL(xess_jpeg_top, clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, dataToRam_r,  dataFromRam_r1, dataFromRam_r2, dataToRam_x, dataFromRam_x, dataFromRam_r, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x, dout_res_r, dout_res_r1, dout_res_r2, dout_res_x, din_res_r, din_res_x, addr_res_r, addr_res_x, we_res, muxsel_r, muxsel_x, rst)
+
 #toVerilog(xess_jpeg_top, clk_fast, addr_r, addr_x, addr_r1, addr_r2, muxsel, dataToRam_r, dataToRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, state, even_odd_r, even_odd_x)
 #toVHDL(xess_jpeg_top, clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, muxsel, dataToRam_r, dataToRam_x, dataToRam_r2, dataToRam_x, dataFromRam_r, dataFromRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x)

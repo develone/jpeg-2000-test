@@ -155,6 +155,15 @@ ARCHITECTURE behavior OF XESS_SdramSPInstTb IS
   signal we_res: std_logic := '1';
   signal rst: std_logic := '0';  
 ----signal needed by xess_jpeg_top.vhd*************************** 
+
+--signal needed by FIFO*************************** 
+signal instance_6_dn_interface_rd_en: std_logic;
+signal instance_6_up_interface_wr_en: std_logic;
+signal instance_14_dout: unsigned(15 downto 0);
+signal instance_14_empty: std_logic;
+signal instance_13_full: std_logic;
+signal instance_13_din: unsigned(15 downto 0);
+--signal needed by FIFO*************************** 
 component xess_jpeg_top is
     port (
         clk_fast: in std_logic;
@@ -340,7 +349,22 @@ xess_jpeg_top_u0 : xess_jpeg_top
       wait for fpgaClk_period*10;
 
       -- insert stimulus here 
+		instance_6_dn_interface_rd_en <= '0';
+		instance_6_up_interface_wr_en <= '1';
+		wait for 20 ns;
+		instance_13_din <= X"0001";
+		wait for 20 ns;
+		instance_13_din <= X"0002";
+		wait for 20 ns;
+		
+		instance_13_din <= X"0003";
+		wait for 20 ns;
+		instance_13_din <= X"0004";
+		wait for 20 ns;
 
+		instance_6_up_interface_wr_en <= '0';
+		instance_6_dn_interface_rd_en <= '1';
+		
       wait;
    end process;
 
