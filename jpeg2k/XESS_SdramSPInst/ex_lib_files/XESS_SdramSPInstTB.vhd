@@ -153,6 +153,7 @@ ARCHITECTURE behavior OF XESS_SdramSPInstTb IS
   signal addr_res_r: unsigned(8 downto 0):= (others => '0');
   signal addr_res_x: unsigned(8 downto 0):= (others => '0');
   signal we_res: std_logic := '1';
+  signal rst: std_logic := '0';  
 ----signal needed by xess_jpeg_top.vhd*************************** 
 component xess_jpeg_top is
     port (
@@ -196,7 +197,8 @@ component xess_jpeg_top is
         addr_res_x: inout unsigned(8 downto 0);
         we_res: inout std_logic;
         muxsel_r: inout std_logic;
-        muxsel_x: inout std_logic
+        muxsel_x: inout std_logic;
+		  rst: inout std_logic
     );
 end component xess_jpeg_top; 
 BEGIN
@@ -245,7 +247,8 @@ xess_jpeg_top_u0 : xess_jpeg_top
 	  addr_res_x => addr_res_x,
 	  we_res => we_res,
 	  muxsel_r => muxsel_r, 
-     muxsel_x => muxsel_x 
+     muxsel_x => muxsel_x,
+	  rst => rst	  
   ); 
 	-- Instantiate the Unit Under Test (UUT)
    uut: XESS_SdramSPInst PORT MAP (
