@@ -52,9 +52,9 @@ architecture Behavioral of XESS_SdramSPInst is
 
 --signal needed by XESS_SdramSPinst.vhd and xess_jpeg_top.vhd*************************** 
   signal clk_s                    : std_logic;  -- Internal clock.
-  signal sumDut_s                 : std_logic_vector(63 downto 0);  -- Send sum back to PC.
-  alias fromramaddrDut_s is sumDut_s(63 downto 55);
-  alias fromramdataDut_s is sumDut_s(54 downto 39);
+  signal sumDut_s                 : std_logic_vector(54 downto 0);  -- Send sum back to PC.
+ 
+  alias fromfifodataDut_s is sumDut_s(54 downto 39);
   alias fromsdramdataDut_s is sumDut_s(38 downto 23);
   alias fromsdramaddrDut_s is sumDut_s(22 downto 0);
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
@@ -85,11 +85,7 @@ architecture Behavioral of XESS_SdramSPInst is
   signal addr_not_reached : std_logic := '0';
   signal offset           : unsigned(22 downto 0);  -- RAM address.
   signal muxsel_r, muxsel_x  : std_logic :=  '0';
-  signal dout_res_r, dout_res_r1, dout_res_r2 : unsigned(15 downto 0):= (others => '0');
-  signal din_res_r, din_res_x: unsigned(15 downto 0):= (others => '0');
-  signal addr_res_r: unsigned(8 downto 0):= (others => '0');
-  signal addr_res_x: unsigned(8 downto 0):= (others => '0');
-  signal we_res: std_logic := '1';
+  
   signal rst: std_logic := '0';
 --signal needed by xess_jpeg_top.vhd*************************** 
 
@@ -135,19 +131,9 @@ component xess_jpeg_top is
         rd_s: out std_logic;
         sum_r: inout unsigned(15 downto 0);
         sum_x: inout unsigned(15 downto 0);
-        dout_res_r: out unsigned(15 downto 0);
-        dout_res_r1: inout unsigned(15 downto 0);
-        dout_res_r2: inout unsigned(15 downto 0);
-        dout_res_x: inout unsigned(15 downto 0);
-        din_res_r: inout unsigned(15 downto 0);
-        din_res_x: inout unsigned(15 downto 0);
-        addr_res_r: inout unsigned(8 downto 0);
-        addr_res_x: inout unsigned(8 downto 0);
-        we_res: inout std_logic;
         muxsel_r: inout std_logic;
         muxsel_x: inout std_logic;
-		  rst: inout std_logic
- 	  
+        rst: inout std_logic  
     );
 end component xess_jpeg_top;
 
@@ -188,17 +174,10 @@ xess_jpeg_top_u0 : xess_jpeg_top
 	  rd_s => rd_s,
 	  sum_r => sum_r,
 	  sum_x => sum_x,
-	  dout_res_r => dout_res_r,
-	  dout_res_r1 => dout_res_r1,
-	  dout_res_r2 => dout_res_r2,
-	  din_res_r => din_res_r,
-	  din_res_x => din_res_x,
-	  addr_res_r => addr_res_r,
-	  addr_res_x => addr_res_x,
-	  we_res => we_res,
+ 
 	  muxsel_r => muxsel_r, 
      muxsel_x => muxsel_x,
-     rst => rst	  
+     rst => rst
    
   );
  
@@ -338,10 +317,8 @@ xess_jpeg_top_u0 : xess_jpeg_top
   --sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
   --sumDut_s <= std_logic_vector(sum_r);
   fromsdramaddrDut_s <= std_logic_vector(addr_r);
-  fromramaddrDut_s <= std_logic_vector(addr_res_r);
---  fromsdramaddrDut_s <= std_logic_vector(resize(addr_r,16));
   fromsdramdataDut_s <= std_logic_vector(sum_r);
-  fromramdataDut_s <= std_logic_vector(dout_res_r2);
+  fromfifodataDut_s <= std_logic_vector(instance_14_dout);
 --  din <= dataFromRam_s;
   HostIoToDut_u2 : HostIoToDut
     generic map (SIMPLE_G => true)
