@@ -111,8 +111,8 @@ def fifo_mem_generic(
 def convert():
     DSZ = 8
     ASZ = 9
-
-    clk     = Signal(False)
+    rclk     = Signal(False)
+    wclk     = Signal(False)
     wr      = Signal(False)
     din     = Signal(intbv(0)[DSZ:])
     dout    = Signal(intbv(0)[DSZ:])
@@ -120,7 +120,7 @@ def convert():
     addr_r  = Signal(intbv(0)[ASZ:])
 
     #toVerilog(fifo_mem_generic, clk, wr, din, dout, addr_w, addr_r)
-    toVHDL(fifo_mem_generic, clk, wr, din, dout, addr_w, addr_r)
+    toVHDL(fifo_mem_generic, rclk, wclk, wr, din, dout, addr_w, addr_r)
 
 if __name__ == '__main__':
     convert()
