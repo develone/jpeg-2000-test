@@ -26,7 +26,7 @@ def fifo_mem_generic(
     dout,         # data out (write data)
     addr_r,       # read address
     
-    DSZ = 8,      # Data Size
+    DSZ = 16,      # Data Size
     ASZ = 9       # Address Size
     ):
     """
@@ -34,29 +34,30 @@ def fifo_mem_generic(
     """
     mem = [Signal(intbv(0)[DSZ:]) for ii in range(2**ASZ)]
     #_addr_r = Signal(intbv(0)[ASZ:])
-    _addr_w = Signal(intbv(0)[ASZ:])
-    _din    = Signal(intbv(0)[DSZ:])
-    _dout   = Signal(intbv(0)[DSZ:])
-    _wr     = Signal(False)
+    add_w_r = Signal(intbv(0)[ASZ:])
+    din_r    = Signal(intbv(0)[DSZ:])
+    din_x    = Signal(intbv(0)[DSZ:])
+    dout_r   = Signal(intbv(0)[DSZ:])
+    wr_r     = Signal(False)
 
     @always_comb
     def dout_rtl():
-        dout.next = _dout
+        dout.next = dout_r
         
     @always(rclk.posedge)
     def rd_rtl():
-        _dout.next = mem[int(addr_r)]        
+        dout_r.next = mem[int(addr_r)]        
         
     @always(wclk.posedge)
     def wr_rtl():
-        _wr.next     = wr
-        _addr_w.next = addr_w
-        _din.next    = din
+        wr_r.next     = wr
+        add_w_r.next = addr_w
+        din_r.next    = din
 
     @always(wclk.posedge)
     def rtl_mem():
-        if _wr:
-            mem[int(_addr_w)].next = _din
+        if wr_r:
+            mem[int(add_w_r)].next = din_x
 
     # Debug Only
     m0  = Signal(intbv(0)[8:])
@@ -109,7 +110,7 @@ def fifo_mem_generic(
 # ....
 
 def convert():
-    DSZ = 8
+    DSZ = 16
     ASZ = 9
     rclk     = Signal(False)
     wclk     = Signal(False)
@@ -120,7 +121,9 @@ def convert():
     addr_r  = Signal(intbv(0)[ASZ:])
 
     #toVerilog(fifo_mem_generic, clk, wr, din, dout, addr_w, addr_r)
-    toVHDL(fifo_mem_generic, rclk, wclk, wr, din, dout, addr_w, addr_r)
+    toVerilog(fifo_mem_generic, wclk, wr, din, addr_w, rclk, dout, addr_r)
+    toVHDL(fifo_mem_generic, wclk, wr, din, addr_w, rclk, dout, addr_r)
+    
 
 if __name__ == '__main__':
     convert()
