@@ -1,48 +1,51 @@
 from myhdl import *
+ASZ = 8
+DSZ = 16
+enw_r = Signal(bool(0))
+enr_r = Signal(bool(0))
+empty_r = Signal(bool(0))
+full_r = Signal(bool(0))
+dataout_r = Signal(intbv(0)[DSZ:])
+datain_r = Signal(intbv(0)[DSZ:])
 
-import fifo_down_if
-import fifo_up_if
+enw_x = Signal(bool(0))
+enr_x = Signal(bool(0))
+empty_x = Signal(bool(0))
+full_x = Signal(bool(0))
+dataout_x = Signal(intbv(0)[DSZ:])
+datain_x = Signal(intbv(0)[DSZ:])
 
-class fifo_upstream_interface(object):
-    def __init__(self):
-        self.wr_en  = Signal(bool(0))
-        self.din    = Signal(intbv(0)[16:])
-        #self.wr_clk_fast = Signal(bool(0))
-        self.full   = Signal(bool(0)) 
-        #self.rst    = Signal(bool(0))
+readptr = Signal(intbv(0)[ASZ:])
+writeptr = Signal(intbv(0)[ASZ:])
+mem = [Signal(intbv(0)[DSZ:]) for ii in range(2**ASZ)]
+def jpegfifo(clk_fast, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r ):
+    """Following the code being converted requires the that both readptr
+    writeptr be initialized :="00000000" """
+    readptr = Signal(intbv(0)[ASZ:])
+    writeptr = Signal(intbv(0)[ASZ:])
+    mem = [Signal(intbv(0)[DSZ:]) for ii in range(2**ASZ)]
+    @always(clk_fast.posedge)
+    def rtl():
+        if ( enr_r == YES):
+            dataout_x.next = mem[int(readptr)]
+            readptr.next = readptr + 1
+        if (enw_r == YES):
+            mem[int(writeptr)].next = datain_x    
+            writeptr.next = writeptr + 1
+        if  (readptr == 255):
+                readptr.next = 0
+        if (writeptr == 255):
+            full_x.next = YES
+            writeptr.next = 0
+        else:
+            full_x.next = NO
+        if (writeptr == 0):
+            empty_x.next = YES
+        else:
+            empty_x.next = NO
+        
 
-#end class fifo_upstream_interface
-    
-def fifo_up_if_ex(clk_fast, rst, din, wr_en, full): #rst is asynch, all other
-                                               #signals are synchronous
-    @always_seq(clk_fast.posedge, reset=rst)
-    def fifo_wr():
-        if( full==False and wr_en==True):
-            din.next = din
-        #How to assert full signal???
-        #Temporarily tied to 0        
-        full.next = False      
-    return fifo_wr
-class fifo_downstream_interface(object):
-    def __init__(self):
-        self.rd_en  = Signal(bool(0))
-        self.dout    = Signal(intbv(0)[16:])
-        self.empty   = Signal(bool(0)) 
-
-#end class fifo_downstream_interface
-    
-def fifo_down_if_ex(clk_fast, rst, dout, rd_en, empty): #rst is asynch, all other
-                                               #signals are synchronous
-    @always_seq(clk_fast.posedge, reset=rst)
-    def fifo_rd():
-        if( empty ==False and rd_en==True):
-            dout.next = dout
-        #How to assert empty signal???
-        #Temporarily tied to 0        
-        empty.next = False      
-    return fifo_rd
-up_interface = fifo_up_if.fifo_upstream_interface()
-dn_interface = fifo_down_if.fifo_downstream_interface()
+    return rtl 
  
 clk_fast = Signal(bool(0))
 rst = ResetSignal(0,active=1,async=True)
@@ -239,8 +242,11 @@ def mux2(addr_r, addr_r1, addr_r2, addr_r3, addr_r4, muxsel, addr_not_reached, a
 
 #instance_6_dn_interface_rd_en, instance_14_dout, instance_6_dn_interface_wr_en,
 #instance_13_din, instance_13_full, instance_14_empty):
-def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r, dataFromRam_x,
-            dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x, muxsel_r, muxsel_x, rst):
+def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
+            dataFromRam_r, dataFromRam_x, dataFromRam_s, done_s,
+            wr_s, rd_s, sum_r, sum_x, muxsel_r, muxsel_x,
+            empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
+            empty_x, full_x, enr_x, enw_x, dataout_x, datain_x):
  
     @always_comb
     def FSM():
@@ -255,10 +261,15 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFrom
         rd_s.next = NO
         dataToRam_x.next = dataToRam_r
         dataFromRam_x.next = dataFromRam_r
+        #empty_x.next = empty_r
+        #full_x.next = full_r
+        enr_x.next = enr_r
+        enw_x.next = enw_r
+        #dataout_x.next = dataout_r
+        datain_x.next = datain_r
         if state_r == t_State.INIT:
-            #up_interface.wr_en.next = YES
-            #dn_interface.rd_en.next = NO
-            rst.next = YES
+            enr_x.next = NO
+            enw_x.next = NO
             addr_x.next = 131072
             dataToRam_x.next = 1
  
@@ -266,11 +277,7 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFrom
             state_x.next = t_State.WRITE
             #instance_6_dn_interface_wr_en.next = YES
         elif state_r == t_State.WRITE:
-            """This appears to be needed in every state since it us set hi
-            in the INIT state"""
-            rst.next = NO
             if (done_s == NO):
-                rst.next = NO
                 wr_s.next = YES
             elif (addr_r <= 131088):
                 addr_x.next = addr_r + 1
@@ -278,14 +285,14 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFrom
             else:
                 addr_x.next = 131072
                 
-             
+                enw_x.next = YES
                 sum_x.next = 0
                 state_x.next = t_State.READ_AND_SUM_DATA
         elif state_r == t_State.READ_AND_SUM_DATA:
             if (done_s == NO):
                 rd_s.next = YES
             elif (addr_r <= 131088):
-                #instance_13_din.next = (dataFromRam_s )
+                datain_x.next = (dataFromRam_s )
                
                 sum_x.next = sum_r + (dataFromRam_s )
                  
@@ -343,7 +350,12 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFrom
     return FSM
     
  
-def jpegfsmupdate(clk_fast, addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r, dataFromRam_x,  sum_r, sum_x, muxsel_r, muxsel_x ):
+def jpegfsmupdate(clk_fast, addr_r, addr_x, state_r,
+                  state_x, dataToRam_r, dataToRam_x,
+                  dataFromRam_r, dataFromRam_x,
+                  sum_r, sum_x, muxsel_r, muxsel_x,
+                  empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
+                  empty_x, full_x, enr_x, enw_x, dataout_x, datain_x):
     @always(clk_fast.posedge)
     def fsmupdate():
         muxsel_r.next = muxsel_x
@@ -353,6 +365,12 @@ def jpegfsmupdate(clk_fast, addr_r, addr_x, state_r, state_x, dataToRam_r, dataT
         dataFromRam_r.next = dataFromRam_x
         state_r.next = state_x
         sum_r.next = sum_x
+        empty_r.next = empty_x
+        full_r.next = full_x
+        enr_r.next = enr_x
+        enw_r.next = enw_x
+        dataout_r.next = dataout_x
+        datain_r.next = datain_x
     return fsmupdate
 def jpeg_process(clk_fast, sig_in,  noupdate_s, res_s):
     left_s = sig_in(16,0)
@@ -515,7 +533,9 @@ def ramres(dout_res_r, din_res_r, addr_res_r, we_res, clk_fast, depth=256):
 def simul(clk_fast, addr_r, addr_r1, addr_x, state_r, state_x, addr_r2, muxsel, dataToRam_r, dataToRam_x, dataFromRam_r,  dataFromRam_r1, dataFromRam_r2, dataFromRam_x, dataFromRam_s,  done_s, wr_s, rd_s, sum_r, sum_x ):
     instance_2 = muxaddr(addr_r, addr_r1, addr_r2, muxsel, dataFromRam_r, dataFromRam_r1, dataFromRam_r2 )
     instance_6 = RamCtrl(addr_r1, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r1, dataFromRam_x, dataFromRam_s,  done_s, wr_s, rd_s, sum_r, sum_x)
-    instance_7 = jpegfsmupdate(clk_fast, addr_r1, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r1, dataFromRam_x, sum_r, sum_x)
+    instance_7 = jpegfsmupdate(clk_fast, addr_r1, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
+                               dataFromRam_r1, dataFromRam_x, sum_r, sum_x,
+                               )
     return instance_2, instance_6, instance_7
 #return instance_2, instance_3, instance_4, instance_5, instance_7
 #def xess_jpeg_top(clk_fast, addr_r, addr_x, addr_r1, addr_r2, muxsel, dataToRam_r, dataToRam_x, sig_in, noupdate_s, res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s):
@@ -543,10 +563,18 @@ def xess_jpeg_top(clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2,
                   dataFromRam_r2, dataFromRam_x, sig_in, noupdate_s, res_s,
                   jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached,
                   offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x,
-                  muxsel_r, muxsel_x, rst  ):
-    
-    instance_13 = fifo_up_if.fifo_up_if_ex(clk_fast,rst,up_interface.din,up_interface.wr_en,up_interface.full)        
-    instance_14 = fifo_down_if.fifo_down_if_ex(clk_fast, rst, dn_interface.dout, dn_interface.rd_en, dn_interface.empty)
+                  muxsel_r, muxsel_x,
+                  empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
+                  empty_x, full_x, enr_x, enw_x, dataout_x, datain_x):
+    instance_1 = jpegfifo(clk_fast,
+                          empty_r,
+                          full_r,
+                          enr_r,
+                          enw_r,
+                          dataout_r,
+                          datain_r) 
+    #instance_13 = fifo_up_if.fifo_up_if_ex(clk_fast,rst,up_interface.din,up_interface.wr_en,up_interface.full)        
+    #instance_14 = fifo_down_if.fifo_down_if_ex(clk_fast, rst, dn_interface.dout, dn_interface.rd_en, dn_interface.empty)
     
     instance_2 = muxaddr(addr_r, addr_r1, addr_r2, muxsel_r, dataFromRam_r, dataFromRam_r1, dataFromRam_r2 )
     instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s)
@@ -555,16 +583,24 @@ def xess_jpeg_top(clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2,
     instance_5 = jpegram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached, sig_in)
     instance_6 = RamCtrl(addr_r1, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r1,
                          dataFromRam_x,  dataFromRam_s,  done_s, wr_s, rd_s, sum_r, sum_x,
-                         muxsel_r, muxsel_x, rst  )
-    instance_7 = jpegfsmupdate(clk_fast, addr_r1, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
-                               dataFromRam_r1, dataFromRam_x, sum_r, sum_x, muxsel_r, muxsel_x)
+                         muxsel_r, muxsel_x,
+                         empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
+                         empty_x, full_x, enr_x, enw_x, dataout_x, datain_x)
+    instance_7 = jpegfsmupdate(clk_fast, addr_r1, addr_x, state_r, state_x,
+                               dataToRam_r, dataToRam_x,
+                               dataFromRam_r1, dataFromRam_x, sum_r, sum_x,
+                               muxsel_r, muxsel_x,
+                               empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
+                               empty_x, full_x, enr_x, enw_x, dataout_x, datain_x)
    
-    return instance_2, instance_3, instance_4, instance_5, instance_6, instance_7, instance_13, instance_14
+    return instance_1, instance_2, instance_3, instance_4, instance_5, instance_6, instance_7
 
 
 toVHDL(xess_jpeg_top, clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, dataToRam_r,
        dataFromRam_r1, dataFromRam_r2, dataToRam_x, dataFromRam_x, dataFromRam_r, sig_in, noupdate_s,
        res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s,
-       done_s, wr_s, rd_s, sum_r, sum_x, muxsel_r, muxsel_x, rst )
+       done_s, wr_s, rd_s, sum_r, sum_x, muxsel_r, muxsel_x,
+       empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
+       empty_x, full_x, enr_x, enw_x, dataout_x, datain_x)
 
  

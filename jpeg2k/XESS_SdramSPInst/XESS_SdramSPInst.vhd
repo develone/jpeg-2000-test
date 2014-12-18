@@ -7,8 +7,7 @@ use IEEE.STD_LOGIC_1164.all;
 use IEEE.NUMERIC_STD.all;
 use work.ClkgenPckg.all;     -- For the clock generator module.
 use work.SdramCntlPckg.all;  -- For the SDRAM controller module.
-use work.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module.
- 
+use work.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module.  
 use work.pck_myhdl_09.all;
 use work.pck_xess_jpeg_top.all;
 entity XESS_SdramSPInst is
@@ -85,19 +84,23 @@ architecture Behavioral of XESS_SdramSPInst is
   signal addr_not_reached : std_logic := '0';
   signal offset           : unsigned(22 downto 0);  -- RAM address.
   signal muxsel_r, muxsel_x  : std_logic :=  '0';
-  
-  signal rst: std_logic := '0';
 --signal needed by xess_jpeg_top.vhd*************************** 
 
 --signal needed by FIFO*************************** 
-signal instance_6_dn_interface_rd_en: std_logic;
-signal instance_6_up_interface_wr_en: std_logic;
-signal instance_14_dout: unsigned(15 downto 0);
-signal instance_14_empty: std_logic;
-signal instance_13_full: std_logic;
-signal instance_13_din: unsigned(15 downto 0); 
+  signal empty_r:  std_logic:= '0';
+  signal full_r:  std_logic:= '0';
+  signal enr_r:  std_logic:= '0';
+  signal enw_r:  std_logic:= '0';
+  signal dataout_r:  unsigned(15 downto 0):= (others => '0');
+  signal datain_r:  unsigned(15 downto 0):= (others => '0');
+  signal empty_x:  std_logic:= '0';
+  signal full_x:  std_logic:= '0';
+  signal enr_x:  std_logic:= '0';
+  signal enw_x:  std_logic:= '0';
+  signal dataout_x:  unsigned(15 downto 0):= (others => '0');
+  signal datain_x:  unsigned(15 downto 0):= (others => '0'); 
 --signal needed by FIFO*************************** 
-
+ 
  
 component xess_jpeg_top is
     port (
@@ -133,7 +136,18 @@ component xess_jpeg_top is
         sum_x: inout unsigned(15 downto 0);
         muxsel_r: inout std_logic;
         muxsel_x: inout std_logic;
-        rst: inout std_logic  
+        empty_r: out std_logic;
+        full_r: out std_logic;
+        enr_r: inout std_logic;
+        enw_r: inout std_logic;
+        dataout_r: out unsigned(15 downto 0);
+        datain_r: inout unsigned(15 downto 0);
+        empty_x: inout std_logic;
+        full_x: inout std_logic;
+        enr_x: inout std_logic;
+        enw_x: inout std_logic;
+        dataout_x: inout unsigned(15 downto 0);
+        datain_x: inout unsigned(15 downto 0)
     );
 end component xess_jpeg_top;
 
@@ -177,7 +191,18 @@ xess_jpeg_top_u0 : xess_jpeg_top
  
 	  muxsel_r => muxsel_r, 
      muxsel_x => muxsel_x,
-     rst => rst
+	  empty_r => empty_r,
+	  full_r => full_r,
+	  enr_r => enr_r,
+	  enw_r => enw_r,
+	  dataout_r => dataout_r,
+	  datain_r => datain_r,
+	  empty_x => empty_x,
+	  full_x => full_x,
+	  enr_x => enr_x,
+	  enw_x => enw_x,
+	  dataout_x => dataout_x,
+	  datain_x => datain_x
    
   );
  
@@ -318,7 +343,7 @@ xess_jpeg_top_u0 : xess_jpeg_top
   --sumDut_s <= std_logic_vector(sum_r);
   fromsdramaddrDut_s <= std_logic_vector(addr_r);
   fromsdramdataDut_s <= std_logic_vector(sum_r);
-  fromfifodataDut_s <= std_logic_vector(instance_14_dout);
+  --fromfifodataDut_s <= std_logic_vector(instance_14_dout);
 --  din <= dataFromRam_s;
   HostIoToDut_u2 : HostIoToDut
     generic map (SIMPLE_G => true)
