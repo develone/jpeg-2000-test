@@ -269,33 +269,30 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
         datain_x.next = datain_r
         if state_r == t_State.INIT:
             enr_x.next = NO
-            enw_x.next = NO
+            enw_x.next = YES
             addr_x.next = 131072
             dataToRam_x.next = 1
- 
+            datain_x.next = 1
             muxsel_x.next = 0
             state_x.next = t_State.WRITE
-            #instance_6_dn_interface_wr_en.next = YES
         elif state_r == t_State.WRITE:
             if (done_s == NO):
                 wr_s.next = YES
             elif (addr_r <= 131088):
                 addr_x.next = addr_r + 1
                 dataToRam_x.next = dataToRam_r + 3
+                datain_x.next = dataToRam_r + 3
             else:
                 addr_x.next = 131072
                 
-                enw_x.next = YES
+                enr_x.next = YES
                 sum_x.next = 0
                 state_x.next = t_State.READ_AND_SUM_DATA
         elif state_r == t_State.READ_AND_SUM_DATA:
             if (done_s == NO):
                 rd_s.next = YES
             elif (addr_r <= 131088):
-                datain_x.next = (dataFromRam_s )
-               
                 sum_x.next = sum_r + (dataFromRam_s )
-                 
                 addr_x.next = addr_r + 1
                 if (addr_r == 131088):
                     #muxsel_x.next = YES
