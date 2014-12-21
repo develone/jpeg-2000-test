@@ -269,7 +269,7 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
         datain_x.next = datain_r
         if state_r == t_State.INIT:
             enr_x.next = NO
-            enw_x.next = YES
+            enw_x.next = NO
             addr_x.next = 131072
             dataToRam_x.next = 1
             datain_x.next = 1
@@ -278,6 +278,7 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
         elif state_r == t_State.WRITE:
             if (done_s == NO):
                 wr_s.next = YES
+                enw_x.next = YES
             elif (addr_r <= 131088):
                 addr_x.next = addr_r + 1
                 dataToRam_x.next = dataToRam_r + 3
@@ -285,34 +286,31 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
             else:
                 addr_x.next = 131072
                 
-                enr_x.next = YES
+                #enr_x.next = YES
                 sum_x.next = 0
                 state_x.next = t_State.READ_AND_SUM_DATA
         elif state_r == t_State.READ_AND_SUM_DATA:
             if (done_s == NO):
                 rd_s.next = YES
+                enr_x.next = YES
+                enw_x.next = NO
             elif (addr_r <= 131088):
                 sum_x.next = sum_r + (dataFromRam_s )
                 addr_x.next = addr_r + 1
                 if (addr_r == 131088):
                     #muxsel_x.next = YES
-                     
-                    state_x.next = t_State.DONE   
+                    addr_x.next = 0 
+                    state_x.next = t_State.CK_SDRAM_RD
         elif state_r == t_State.CK_SDRAM_RD:
             if (done_s == NO):
-               rd_s.next = YES
+               enw_x.next = YES
+               wr_s.next = YES
                
-            elif addr_r <= 256 :
+            elif addr_r <= 6 :
                 addr_x.next = addr_r + 1
- 
+                dataToRam_x.next = dataout_r
             else:
-                sum_x.next = dataFromRam_s
-                addr_x.next = 131072
-            
-                
-                wr_s.next = 0
-                 
-                state_x.next = t_State.CK_SDRAM_WR
+                state_x.next = t_State.DONE
         elif state_r == t_State.CK_SDRAM_WR:
             if (addr_r <=255):
                 

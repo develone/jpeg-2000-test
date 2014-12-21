@@ -140,7 +140,7 @@ component xess_jpeg_top is
         full_r: out std_logic;
         enr_r: inout std_logic;
         enw_r: inout std_logic;
-        dataout_r: out unsigned(15 downto 0);
+        dataout_r: inout unsigned(15 downto 0);
         datain_r: inout unsigned(15 downto 0);
         empty_x: inout std_logic;
         full_x: inout std_logic;
