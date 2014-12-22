@@ -270,46 +270,52 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
         if state_r == t_State.INIT:
             enr_x.next = NO
             enw_x.next = NO
-            addr_x.next = 131072
-            dataToRam_x.next = 1
-            datain_x.next = 1
+            addr_x.next = 0
+            dataToRam_x.next = 0
+            datain_x.next = 0
             muxsel_x.next = 0
             state_x.next = t_State.WRITE
         elif state_r == t_State.WRITE:
             if (done_s == NO):
                 wr_s.next = YES
-                enw_x.next = YES
-            elif (addr_r <= 131088):
-                addr_x.next = addr_r + 1
-                dataToRam_x.next = dataToRam_r + 3
-                datain_x.next = dataToRam_r + 3
-            else:
-                addr_x.next = 131072
+                enw_x.next = NO
                 
-                #enr_x.next = YES
-                sum_x.next = 0
+            elif (addr_r <= 255):
+                enw_x.next = YES
+                addr_x.next = addr_r + 1
+                dataToRam_x.next = dataToRam_r + 1
+                datain_x.next = dataToRam_r + 1
+            else:
+                addr_x.next = 0
+                enw_x.next = NO
+                enr_x.next = NO
+                #sum_x.next = 0
                 state_x.next = t_State.READ_AND_SUM_DATA
         elif state_r == t_State.READ_AND_SUM_DATA:
             if (done_s == NO):
-                rd_s.next = YES
+                wr_s.next = YES
+                enr_x.next = NO
+                #enw_x.next = NO
+            elif (addr_r <= 255):
                 enr_x.next = YES
-                enw_x.next = NO
-            elif (addr_r <= 131088):
-                sum_x.next = sum_r + (dataFromRam_s )
+                dataToRam_x.next = dataout_r
+                #sum_x.next = sum_r + (dataFromRam_s )
                 addr_x.next = addr_r + 1
-                if (addr_r == 131088):
+                if (addr_r == 255):
                     #muxsel_x.next = YES
+                    enr_x.next = NO
                     addr_x.next = 0 
-                    state_x.next = t_State.CK_SDRAM_RD
+                    state_x.next = t_State.DONE
         elif state_r == t_State.CK_SDRAM_RD:
             if (done_s == NO):
-               enw_x.next = YES
-               wr_s.next = YES
+               #enr_x.next = YES
+               rd_s.next = YES
                
-            elif addr_r <= 6 :
+            elif addr_r <= 255 :
                 addr_x.next = addr_r + 1
-                dataToRam_x.next = dataout_r
+                #dataToRam_x.next = dataout_r
             else:
+                
                 state_x.next = t_State.DONE
         elif state_r == t_State.CK_SDRAM_WR:
             if (addr_r <=255):
