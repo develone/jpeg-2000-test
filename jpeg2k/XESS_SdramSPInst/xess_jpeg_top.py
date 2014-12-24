@@ -1,5 +1,6 @@
 from myhdl import *
-ASZ = 8
+reset_dly_c = 10
+ASZ = 10
 DSZ = 16
 enw_r = Signal(bool(0))
 enr_r = Signal(bool(0))
@@ -23,28 +24,27 @@ def jpegfifo(clk_fast, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r ):
     writeptr be initialized :="00000000" """
     readptr = Signal(intbv(0)[ASZ:])
     writeptr = Signal(intbv(0)[ASZ:])
+    reset_ctn = Signal(intbv(val=0, min=0, max=16))
     mem = [Signal(intbv(0)[DSZ:]) for ii in range(2**ASZ)]
     @always(clk_fast.posedge)
-    def rtl():
+    def rtl():     
+        if (reset_ctn < reset_dly_c):
+            readptr.next = 0
+            writeptr.next = 0
+            reset_ctn.next = reset_ctn + 1
         if ( enr_r == YES):
             dataout_x.next = mem[int(readptr)]
             readptr.next = readptr + 1
         if (enw_r == YES):
             mem[int(writeptr)].next = datain_x    
             writeptr.next = writeptr + 1
-        if  (readptr == 255):
-                readptr.next = 0
-        if (writeptr == 255):
+        if  (readptr == 1023):
+            readptr.next = 0
+        if (writeptr == 1023):
             full_x.next = YES
             writeptr.next = 0
         else:
-            full_x.next = NO
-        if (writeptr == 0):
-            empty_x.next = YES
-        else:
             empty_x.next = NO
-        
-
     return rtl 
  
 clk_fast = Signal(bool(0))
@@ -117,7 +117,7 @@ sig_in1 = Signal(intbv(0)[52:])
 sig_in2 = Signal(intbv(0)[52:])
 noupdate_s = Signal(bool(0))
 res_s = Signal(intbv(0, min = -DATA_WIDTH, max = DATA_WIDTH))
-
+res_u = Signal(intbv(0)[16:])
 jp_lf = Signal(intbv(0)[16:])
 jp_sa = Signal(intbv(0)[16:])
 jp_rh = Signal(intbv(0)[16:])
@@ -167,6 +167,7 @@ addr_res_r = Signal(intbv(0)[JPEG_RES_RAM_ADDR:])
 addr_res1 = Signal(intbv(0)[JPEG_RAM_ADDR:])
 addr_res2 = Signal(intbv(0)[JPEG_RAM_ADDR:])
 reset_col = Signal(bool(1))
+ 
 def resetFsm(clk_fast, reset_fsm_r, reset_ctn):
     @always(clk_fast.posedge)
     def rtl():
@@ -175,20 +176,7 @@ def resetFsm(clk_fast, reset_fsm_r, reset_ctn):
             reset_fsm_r.next = NO
             reset_ctn.next = reset_ctn + 1
     return rtl
-def trram2sdram(wr_s, dout_res, addr_res, addr_r, dataToRam_r):
-	@always(clk_fast.negedge)
-	def trram():
-		
-		
-		if (addr_r <= 256):
-			wr_s.next = 1
-			dataToRam_r.next = dout_res
-			addr_r.next = addr_r + 1
-			addr_res.next = addr_res + 1
-		else:
-			wr_s.next = 0
-		
-	return trram
+ 
 def read_file_sdram(clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y):
 	@always(clk_fast.negedge)
 	def file_rd():
@@ -250,8 +238,7 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
  
     @always_comb
     def FSM():
-        #up_interface.wr_en.next = NO
-        #dn_interface.rd_en.next = NO
+ 
         muxsel_x.next = muxsel_r
  
         addr_x.next = addr_r
@@ -261,8 +248,7 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
         rd_s.next = NO
         dataToRam_x.next = dataToRam_r
         dataFromRam_x.next = dataFromRam_r
-        #empty_x.next = empty_r
-        #full_x.next = full_r
+ 
         enr_x.next = enr_r
         enw_x.next = enw_r
         #dataout_x.next = dataout_r
@@ -270,7 +256,7 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
         if state_r == t_State.INIT:
             enr_x.next = NO
             enw_x.next = NO
-            addr_x.next = 0
+            addr_x.next = 131072
             dataToRam_x.next = 0
             datain_x.next = 0
             muxsel_x.next = 0
@@ -278,48 +264,54 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
         elif state_r == t_State.WRITE:
             if (done_s == NO):
                 wr_s.next = YES
-                enw_x.next = NO
+                #enw_x.next = NO
                 
-            elif (addr_r <= 255):
-                enw_x.next = YES
+            elif (addr_r <= 131077):
+                #enw_x.next = YES
                 addr_x.next = addr_r + 1
                 dataToRam_x.next = dataToRam_r + 1
-                datain_x.next = dataToRam_r + 1
+                #datain_x.next = dataToRam_r + 1
             else:
-                addr_x.next = 0
+                addr_x.next = 131072
                 enw_x.next = NO
                 enr_x.next = NO
-                #sum_x.next = 0
+                sum_x.next = 0
                 state_x.next = t_State.READ_AND_SUM_DATA
         elif state_r == t_State.READ_AND_SUM_DATA:
             if (done_s == NO):
-                wr_s.next = YES
-                enr_x.next = NO
+                rd_s.next = YES
+                #enr_x.next = NO
                 #enw_x.next = NO
-            elif (addr_r <= 255):
-                enr_x.next = YES
-                dataToRam_x.next = dataout_r
-                #sum_x.next = sum_r + (dataFromRam_s )
+            elif (addr_r <= 131077):
+                #enr_x.next = YES
+                #dataToRam_x.next = dataout_r
+                sum_x.next = sum_r + (dataFromRam_s )
                 addr_x.next = addr_r + 1
-                if (addr_r == 255):
-                    #muxsel_x.next = YES
-                    enr_x.next = NO
-                    addr_x.next = 0 
-                    state_x.next = t_State.DONE
+            else:
+                #muxsel_x.next = YES
+                enr_x.next = NO
+                addr_x.next = 0 
+                state_x.next = t_State.CK_SDRAM_RD
         elif state_r == t_State.CK_SDRAM_RD:
             if (done_s == NO):
                #enr_x.next = YES
                rd_s.next = YES
-               
-            elif addr_r <= 255 :
+               enw_x.next = NO
+            elif addr_r <= 1023 :
+                enw_x.next = YES
                 addr_x.next = addr_r + 1
+                datain_x.next = dataFromRam_s
                 #dataToRam_x.next = dataout_r
             else:
-                
-                state_x.next = t_State.DONE
+                addr_x.next = 131072
+                state_x.next = t_State.CK_SDRAM_WR
         elif state_r == t_State.CK_SDRAM_WR:
-            if (addr_r <=255):
-                
+            if (done_s == NO):
+                wr_s.next = YES
+                enr_x.next = NO
+            elif (addr_r <= 132095):
+                enr_x.next = YES
+                dataToRam_x.next =  dataout_r
                 addr_x.next = addr_r + 1
             else:
                 state_x.next = t_State.DONE
@@ -343,8 +335,8 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
             if addr_r == 16:
                 state_x.next = t_State.DONE
         elif state_r == t_State.DONE:
-            if addr_r.next == 1:
-                state_x.next = t_State.INIT
+            #if addr_r.next == 1:
+            state_x.next = t_State.INIT
 
             
             
@@ -373,7 +365,7 @@ def jpegfsmupdate(clk_fast, addr_r, addr_x, state_r,
         dataout_r.next = dataout_x
         datain_r.next = datain_x
     return fsmupdate
-def jpeg_process(clk_fast, sig_in,  noupdate_s, res_s):
+def jpeg_process(clk_fast, sig_in,  noupdate_s, res_s, res_u):
     left_s = sig_in(16,0)
     sam_s = sig_in(32,16)
     right_s = sig_in(48,32)
@@ -395,6 +387,7 @@ def jpeg_process(clk_fast, sig_in,  noupdate_s, res_s):
                     res_s.next =  sam_s + ((left_s +  right_s + 2)>>2)
                 else:
                     res_s.next =  sam_s - ((left_s +  right_s + 2)>>2)
+            res_u.next = res_s
         else:
             noupdate_s.next = 1
     return jpeg
@@ -561,12 +554,13 @@ def simul(clk_fast, addr_r, addr_r1, addr_x, state_r, state_x, addr_r2, muxsel, 
     #instance_12 = resetFsm(clk_fast, reset_fsm_r, reset_ctn)
 def xess_jpeg_top(clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2,
                   dataToRam_r, dataToRam_x, dataFromRam_r,  dataFromRam_r1,
-                  dataFromRam_r2, dataFromRam_x, sig_in, noupdate_s, res_s,
+                  dataFromRam_r2, dataFromRam_x, sig_in, noupdate_s, res_s, res_u,
                   jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached,
                   offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x,
                   muxsel_r, muxsel_x,
                   empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
-                  empty_x, full_x, enr_x, enw_x, dataout_x, datain_x):
+                  empty_x, full_x, enr_x, enw_x, dataout_x, datain_x,
+                  ):
     instance_1 = jpegfifo(clk_fast,
                           empty_r,
                           full_r,
@@ -578,7 +572,7 @@ def xess_jpeg_top(clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2,
     #instance_14 = fifo_down_if.fifo_down_if_ex(clk_fast, rst, dn_interface.dout, dn_interface.rd_en, dn_interface.empty)
     
     instance_2 = muxaddr(addr_r, addr_r1, addr_r2, muxsel_r, dataFromRam_r, dataFromRam_r1, dataFromRam_r2 )
-    instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s)
+    instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s, res_u)
     instance_4 = jpegsdram_rd(clk_fast, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs,
                               reset_col, addr_r2, addr_not_reached)
     instance_5 = jpegram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached, sig_in)
@@ -593,15 +587,17 @@ def xess_jpeg_top(clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2,
                                muxsel_r, muxsel_x,
                                empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
                                empty_x, full_x, enr_x, enw_x, dataout_x, datain_x)
-   
+    #instance_8 = resetptr(clk_fast, readptr, writeptr, reset_ctn)
+       
     return instance_1, instance_2, instance_3, instance_4, instance_5, instance_6, instance_7
 
 
 toVHDL(xess_jpeg_top, clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, dataToRam_r,
        dataFromRam_r1, dataFromRam_r2, dataToRam_x, dataFromRam_x, dataFromRam_r, sig_in, noupdate_s,
-       res_s, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s,
+       res_s, res_u, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s,
        done_s, wr_s, rd_s, sum_r, sum_x, muxsel_r, muxsel_x,
        empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
-       empty_x, full_x, enr_x, enw_x, dataout_x, datain_x)
+       empty_x, full_x, enr_x, enw_x, dataout_x, datain_x,
+       )
 
  
