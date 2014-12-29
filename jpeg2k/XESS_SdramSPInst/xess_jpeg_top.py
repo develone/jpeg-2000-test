@@ -329,16 +329,16 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
             if (done_s == NO):
                rd_s.next = YES
                reset_col.next = 0
-            elif (offset_r <= 65278):
+            elif (offset_r <= 65534):
                 reset_col.next = 1
                 jp_flgs.next = 6
                 if (addr_not_reached == 1):
                     offset_x.next = offset_r + 256
                     row_x.next = row_r + 1
-                if (row_r == 254):
-                    if (col_r <= 254):
+                if (row_r == 255):
+                    if (col_r < 255):
                         row_x.next = 0
-                        offset_x.next = offset_r - 65022
+                        offset_x.next = offset_r - 65280
                         col_x.next = col_r + 1
                     else:
                         offset_x.next = 0
@@ -350,16 +350,16 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
             if (done_s == NO):
                rd_s.next = YES
                reset_col.next = 0
-            elif (offset_r <= 65278):
+            elif (offset_r <= 65534):
                 reset_col.next = 1
                 jp_flgs.next = 7
                 if (addr_not_reached == 1):
                     offset_x.next = offset_r + 256
                     row_x.next = row_r + 1
-                if (row_r == 254):
-                    if (col_r <= 254):
+                if (row_r == 255):
+                    if (col_r < 255):
                         row_x.next = 0
-                        offset_x.next = offset_r - 65022
+                        offset_x.next = offset_r - 65280
                         col_x.next = col_r + 1 
                     else:
                         offset_x.next = 0
