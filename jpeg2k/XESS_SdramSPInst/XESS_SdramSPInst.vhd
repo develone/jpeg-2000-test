@@ -51,9 +51,12 @@ architecture Behavioral of XESS_SdramSPInst is
 
 --signal needed by XESS_SdramSPinst.vhd and xess_jpeg_top.vhd*************************** 
   signal clk_s                    : std_logic;  -- Internal clock.
-  signal sumDut_s                 : std_logic_vector(54 downto 0);  -- Send sum back to PC.
- 
-  alias fromfifodataDut_s is sumDut_s(54 downto 39);
+  signal sumDut_s                 : std_logic_vector(106 downto 0);  -- Send sum back to PC.
+  alias fromjpflgsDut_s is sumDut_s(106 downto 103);
+  alias fromjprhDut_s is sumDut_s(102 downto 87);
+  alias fromjpsaDut_s is sumDut_s(86 downto 71);
+  alias fromjplfDut_s is sumDut_s(70 downto 55);
+  alias fromresdataDut_s is sumDut_s(54 downto 39);
   alias fromsdramdataDut_s is sumDut_s(38 downto 23);
   alias fromsdramaddrDut_s is sumDut_s(22 downto 0);
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
@@ -75,15 +78,17 @@ architecture Behavioral of XESS_SdramSPInst is
   signal sig_in : unsigned(51 downto 0) := (others => '0');
   signal noupdate_s : std_logic;
   signal res_s : signed(15 downto 0) := (others => '0');
+  signal res_u : unsigned(15 downto 0) := (others => '0');
   signal jp_lf : unsigned(15 downto 0) := (others => '0');
   signal jp_sa: unsigned(15 downto 0) := (others => '0');
   signal jp_rh : unsigned(15 downto 0) := (others => '0');
   signal jp_flgs : unsigned(3 downto 0) := (others => '0');
-  signal reset_col : std_logic := '1';
+  signal reset_col : std_logic := '0';
   signal rdy : std_logic := '1';
   signal addr_not_reached : std_logic := '0';
-  signal offset           : unsigned(22 downto 0);  -- RAM address.
+  signal offset_r, offset_x           : unsigned(22 downto 0);  -- RAM address.
   signal muxsel_r, muxsel_x  : std_logic :=  '0';
+  signal col_r, col_x, row_r, row_x : unsigned(7 downto 0) := (others => '0');
 --signal needed by xess_jpeg_top.vhd*************************** 
 
 --signal needed by FIFO*************************** 
@@ -99,6 +104,7 @@ architecture Behavioral of XESS_SdramSPInst is
   signal enw_x:  std_logic:= '0';
   signal dataout_x:  unsigned(15 downto 0):= (others => '0');
   signal datain_x:  unsigned(15 downto 0):= (others => '0'); 
+ 
 --signal needed by FIFO*************************** 
  
  
@@ -119,15 +125,17 @@ component xess_jpeg_top is
         dataFromRam_x: inout unsigned(15 downto 0);
         sig_in: inout unsigned(51 downto 0);
         noupdate_s: out std_logic;
-        res_s: out signed (15 downto 0);
+        res_s: inout signed (15 downto 0);
+		  res_u: out unsigned(15 downto 0);
         jp_lf: inout unsigned(15 downto 0);
         jp_sa: inout unsigned(15 downto 0);
         jp_rh: inout unsigned(15 downto 0);
-        jp_flgs: in unsigned(3 downto 0);
-        reset_col: in std_logic;
+        jp_flgs: inout unsigned(3 downto 0);
+        reset_col: inout std_logic;
         rdy: in std_logic;
         addr_not_reached: inout std_logic;
-        offset: in unsigned(22 downto 0);
+        offset_r: inout unsigned(22 downto 0);
+        offset_x: inout unsigned(22 downto 0);
         dataFromRam_s: in unsigned(15 downto 0);
         done_s: in std_logic;
         wr_s: out std_logic;
@@ -147,7 +155,12 @@ component xess_jpeg_top is
         enr_x: inout std_logic;
         enw_x: inout std_logic;
         dataout_x: inout unsigned(15 downto 0);
-        datain_x: inout unsigned(15 downto 0)
+        datain_x: inout unsigned(15 downto 0);
+		  col_r: inout unsigned(7 downto 0);
+        col_x: inout unsigned(7 downto 0);
+		  row_r: inout unsigned(7 downto 0);
+        row_x: inout unsigned(7 downto 0)
+ 
     );
 end component xess_jpeg_top;
 
@@ -174,6 +187,7 @@ xess_jpeg_top_u0 : xess_jpeg_top
 	  sig_in => sig_in,
 	  noupdate_s => noupdate_s,
 	  res_s => res_s,
+	  res_u => res_u,
 	  jp_lf => jp_lf,
 	  jp_sa => jp_sa,
 	  jp_rh => jp_rh,
@@ -181,7 +195,8 @@ xess_jpeg_top_u0 : xess_jpeg_top
 	  reset_col => reset_col,
 	  rdy => rdy,
 	  addr_not_reached => addr_not_reached,
-     offset => offset,
+     offset_r => offset_r,
+	  offset_x => offset_x,
      dataFromRam_s => dataFromRam_s,
 	  done_s => done_s,
 	  wr_s => wr_s,
@@ -202,7 +217,12 @@ xess_jpeg_top_u0 : xess_jpeg_top
 	  enr_x => enr_x,
 	  enw_x => enw_x,
 	  dataout_x => dataout_x,
-	  datain_x => datain_x
+	  datain_x => datain_x,
+	  col_x => col_x,
+	  col_r => col_r,
+	  row_x => row_x,
+	  row_r => row_r 
+	  
    
   );
  
@@ -343,8 +363,12 @@ xess_jpeg_top_u0 : xess_jpeg_top
   --sumDut_s <= std_logic_vector(sum_r);
   fromsdramaddrDut_s <= std_logic_vector(addr_r);
   fromsdramdataDut_s <= std_logic_vector(sum_r);
-  --fromfifodataDut_s <= std_logic_vector(instance_14_dout);
---  din <= dataFromRam_s;
+  fromresdataDut_s <= std_logic_vector(res_s);
+  fromjplfDut_s <= std_logic_vector(jp_lf);
+  fromjpsaDut_s <= std_logic_vector(jp_sa);
+  fromjprhDut_s <= std_logic_vector(jp_rh);
+  fromjpflgsDut_s <= std_logic_vector(jp_flgs);
+
   HostIoToDut_u2 : HostIoToDut
     generic map (SIMPLE_G => true)
     port map (

@@ -54,7 +54,7 @@ reset_dly_c = 10
 DATA_WIDTH = 32768
 JPEG_RAM_ADDR = 23
 JPEG_RES_RAM_ADDR = 9
-ROW_NUM = 4
+ROW_NUM = 8
 ACTIVE_LOW = bool(0)
 NO = bool(0)
 YES = bool(1)
@@ -101,8 +101,10 @@ sel_row = Signal(bool(0))
 sel_r = Signal(bool(0))
 sel_tr = Signal(bool(0))
 sel_row_r = Signal(bool(0))
-col = Signal(intbv(0)[ROW_NUM:])
+col_x = Signal(intbv(0)[ROW_NUM:])
 col_r = Signal(intbv(0)[ROW_NUM:])
+row_x = Signal(intbv(0)[ROW_NUM:])
+row_r = Signal(intbv(0)[ROW_NUM:])
 
 index_r = Signal(intbv(0)[JPEG_RAM_ADDR:])
 index = Signal(intbv(0)[JPEG_RAM_ADDR:])
@@ -149,7 +151,7 @@ pass1_done = Signal(bool(1))
 pass1_done_r = Signal(bool(1))
 addr_rom = Signal(intbv(0)[JPEG_RAM_ADDR:])
 addr_rom_r = Signal(intbv(0)[JPEG_RAM_ADDR:])
-offset = Signal(intbv(0)[JPEG_RAM_ADDR:])
+offset_x = Signal(intbv(0)[JPEG_RAM_ADDR:])
 offset_r = Signal(intbv(0)[JPEG_RAM_ADDR:])
 #t_State = enum('INIT', 'ODD_SA', 'EVEN_SA','ODD_SA_COL', 'EVEN_SA_COL', 'TR_RES', 'TR_INIT', 'TRAN_RAM', 'DONE_PASS1', encoding="one_hot")
 #t_State = enum('INIT', 'WRITE_DATA', 'READ_AND_SUM_DATA', 'DONE', encoding="one_hot")
@@ -234,7 +236,9 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
             dataFromRam_r, dataFromRam_x, dataFromRam_s, done_s,
             wr_s, rd_s, sum_r, sum_x, muxsel_r, muxsel_x,
             empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
-            empty_x, full_x, enr_x, enw_x, dataout_x, datain_x):
+            empty_x, full_x, enr_x, enw_x, dataout_x, datain_x,
+            offset_r, offset_x, reset_col, jp_flgs,
+            col_r, col_x, row_r, row_x, addr_not_reached):
  
     @always_comb
     def FSM():
@@ -253,26 +257,32 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
         enw_x.next = enw_r
         #dataout_x.next = dataout_r
         datain_x.next = datain_r
+        offset_x.next = offset_r
+        col_x.next = col_r
+        row_x.next = row_r
         if state_r == t_State.INIT:
             enr_x.next = NO
             enw_x.next = NO
-            addr_x.next = 131072
+            addr_x.next = 65536
             dataToRam_x.next = 0
             datain_x.next = 0
             muxsel_x.next = 0
+            offset_x.next = 0
+            col_x.next = 0
+            row_x.next = 0
             state_x.next = t_State.WRITE
         elif state_r == t_State.WRITE:
             if (done_s == NO):
                 wr_s.next = YES
                 #enw_x.next = NO
                 
-            elif (addr_r <= 131077):
+            elif (addr_r <= 65541):
                 #enw_x.next = YES
                 addr_x.next = addr_r + 1
                 dataToRam_x.next = dataToRam_r + 1
                 #datain_x.next = dataToRam_r + 1
             else:
-                addr_x.next = 131072
+                addr_x.next = 65536
                 enw_x.next = NO
                 enr_x.next = NO
                 sum_x.next = 0
@@ -282,16 +292,16 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
                 rd_s.next = YES
                 #enr_x.next = NO
                 #enw_x.next = NO
-            elif (addr_r <= 131077):
+            elif (addr_r <= 65541):
                 #enr_x.next = YES
                 #dataToRam_x.next = dataout_r
                 sum_x.next = sum_r + (dataFromRam_s )
                 addr_x.next = addr_r + 1
             else:
-                #muxsel_x.next = YES
+                muxsel_x.next = 1
                 enr_x.next = NO
                 addr_x.next = 0 
-                state_x.next = t_State.CK_SDRAM_RD
+                state_x.next = t_State.EVEN_SAMPLES
         elif state_r == t_State.CK_SDRAM_RD:
             if (done_s == NO):
                #enr_x.next = YES
@@ -316,16 +326,46 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
             else:
                 state_x.next = t_State.DONE
         elif state_r == t_State.ODD_SAMPLES:
-            if addr_r == 1:
-                addr_x.next = 2
-                state_x.next = t_State.DONE
+            if (done_s == NO):
+               rd_s.next = YES
+               reset_col.next = 0
+            elif (offset_r <= 65278):
+                reset_col.next = 1
+                jp_flgs.next = 6
+                if (addr_not_reached == 1):
+                    offset_x.next = offset_r + 256
+                    row_x.next = row_r + 1
+                if (row_r == 254):
+                    if (col_r <= 254):
+                        row_x.next = 0
+                        offset_x.next = offset_r - 65022
+                        col_x.next = col_r + 1
+                    else:
+                        offset_x.next = 0
+                        row_x.next = 0
+                        col_x.next = 0
+                        state_x.next = t_State.DONE
+
         elif state_r == t_State.EVEN_SAMPLES:
             if (done_s == NO):
-               rd_s.next = YES 
-            elif addr_r <= 505:
-                addr_x.next = addr_r + 256
-            else:
-                state_x.next = t_State.DONE   
+               rd_s.next = YES
+               reset_col.next = 0
+            elif (offset_r <= 65278):
+                reset_col.next = 1
+                jp_flgs.next = 7
+                if (addr_not_reached == 1):
+                    offset_x.next = offset_r + 256
+                    row_x.next = row_r + 1
+                if (row_r == 254):
+                    if (col_r <= 254):
+                        row_x.next = 0
+                        offset_x.next = offset_r - 65022
+                        col_x.next = col_r + 1 
+                    else:
+                        offset_x.next = 0
+                        row_x.next = 0
+                        col_x.next = 0
+                        state_x.next = t_State.ODD_SAMPLES  
         elif state_r == t_State.WR_DATA:
             if addr_r == 1:
                 addr_x.next = 8
@@ -348,7 +388,8 @@ def jpegfsmupdate(clk_fast, addr_r, addr_x, state_r,
                   dataFromRam_r, dataFromRam_x,
                   sum_r, sum_x, muxsel_r, muxsel_x,
                   empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
-                  empty_x, full_x, enr_x, enw_x, dataout_x, datain_x):
+                  empty_x, full_x, enr_x, enw_x, dataout_x, datain_x,
+                  offset_r, offset_x, col_r, col_x, row_r, row_x):
     @always(clk_fast.posedge)
     def fsmupdate():
         muxsel_r.next = muxsel_x
@@ -364,6 +405,9 @@ def jpegfsmupdate(clk_fast, addr_r, addr_x, state_r,
         enw_r.next = enw_x
         dataout_r.next = dataout_x
         datain_r.next = datain_x
+        offset_r.next = offset_x
+        col_r.next = col_x
+        row_r.next = row_x
     return fsmupdate
 def jpeg_process(clk_fast, sig_in,  noupdate_s, res_s, res_u):
     left_s = sig_in(16,0)
@@ -391,57 +435,49 @@ def jpeg_process(clk_fast, sig_in,  noupdate_s, res_s, res_u):
         else:
             noupdate_s.next = 1
     return jpeg
-def jpegsdram_rd(clk_fast, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs, reset_col, addr_r, addr_not_reached):
+def jpegsdram_rd(clk_fast, offset_x, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs, reset_col, addr_r, addr_not_reached):
     even = jp_flgs(0)
     @always(clk_fast.posedge)
     def sdram_rd():
         
         
-        if (reset_col):
+        if (  reset_col):
             jp_lf.next = 0
             jp_sa.next = 0
             jp_rh.next = 0
             addr_not_reached.next = 0
-            #if jp_flgs 6 odd jp_flgs 7 even_odd
+            #if jp_flgs 6 odd jp_flgs 7 even
             if (even  == 1):           
-                addr_r.next = 1 + offset
+                addr_r.next = 1 + offset_x
             else:
-                addr_r.next = 0 + offset
+                addr_r.next = 0 + offset_x
         else:
             if (even):
-                    if (addr_r == (1 + offset) ):
+                    if (addr_r == (1 + offset_x) ):
                         jp_lf.next = dataFromRam_s
-                        #addr_r.next = addr_r + 1
-                        addr_r.next = addr_r + 16
+                        addr_r.next = addr_r + 256
                     else:
-						#if (addr_r == (2 + offset)):
-                        if (addr_r == (17 + offset)):
+                        if (addr_r == (257 + offset_x)):
                             jp_sa.next = dataFromRam_s
-                            #addr_r.next = addr_r + 1
-                            addr_r.next = addr_r + 16
+                            addr_r.next = addr_r + 256
                         else:
-							#if (addr_r == (3 + offset)):
-                            if (addr_r == (33 + offset)):
+                            if (addr_r == (513 + offset_x)):
                                 jp_rh.next = dataFromRam_s
                                 addr_not_reached.next = 1
             else:
-                if (addr_r == (0 + offset)):
+                if (addr_r == (0 + offset_x)):
                     jp_lf.next = dataFromRam_s
-                    #addr_r.next = addr_r + 1
-                    addr_r.next = addr_r + 16
+                    addr_r.next = addr_r + 256
                 else:
-					#if (addr_r == (1 + offset)):
-                    if (addr_r == (16 + offset)):
+                    if (addr_r == (256 + offset_x)):
                         jp_sa.next = dataFromRam_s
-                        #addr_r.next = addr_r + 1
-                        addr_r.next = addr_r + 16
+                        addr_r.next = addr_r + 256
                     else:
-						#if (addr_r == (2 + offset)):
-                        if (addr_r == (32 + offset)):
+                        if (addr_r == (512 + offset_x)):
                             jp_rh.next = dataFromRam_s
                             addr_not_reached.next = 1
     return sdram_rd
-def jpegsdram_rd_col(clk_fast, offset, dataFromRam_s, jp_row_lf, jp_row_sa, jp_row_rh, jp_row_flgs, reset_row, addr_r, addr_not_reached):
+def jpegsdram_rd_col(clk_fast, offset_x, dataFromRam_s, jp_row_lf, jp_row_sa, jp_row_rh, jp_row_flgs, reset_row, addr_r, addr_not_reached):
     even = jp_row_flgs(0)
     @always(clk_fast.posedge)
     def sdram_rd_col():
@@ -454,32 +490,32 @@ def jpegsdram_rd_col(clk_fast, offset, dataFromRam_s, jp_row_lf, jp_row_sa, jp_r
             addr_not_reached.next = 0
             #if jp_row_flgs 6 odd jp_row_flgs 7 even_odd
             if (even  == 1):           
-                addr_r.next = 1 + offset
+                addr_r.next = 1 + offset_x
             else:
-                addr_r.next = 0 + offset
+                addr_r.next = 0 + offset_x
         else:
             if (even):
-                    if (addr_r == (1 + offset) ):
+                    if (addr_r == (1 + offset_x) ):
                         jp_row_lf.next = dataFromRam_s
                         addr_r.next = addr_r + 1
                     else:
-                        if (addr_r == (2 + offset)):
+                        if (addr_r == (2 + offset_x)):
                             jp_row_sa.next = dataFromRam_s
                             addr_r.next = addr_r + 1
                         else:
-                            if (addr_r == (3 + offset)):
+                            if (addr_r == (3 + offset_x)):
                                 jp_row_rh.next = dataFromRam_s
                                 addr_not_reached.next = 1
             else:
-                if (addr_r == (0 + offset)):
+                if (addr_r == (0 + offset_x)):
                     jp_row_lf.next = dataFromRam_s
                     addr_r.next = addr_r + 1
                 else:
-                    if (addr_r == (1 + offset)):
+                    if (addr_r == (1 + offset_x)):
                         jp_row_sa.next = dataFromRam_s
                         addr_r.next = addr_r + 1
                     else:
-                        if (addr_r == (2 + offset)):
+                        if (addr_r == (2 + offset_x)):
                             jp_row_rh.next = dataFromRam_s
                             addr_not_reached.next = 1
     return sdram_rd_col
@@ -556,11 +592,11 @@ def xess_jpeg_top(clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2,
                   dataToRam_r, dataToRam_x, dataFromRam_r,  dataFromRam_r1,
                   dataFromRam_r2, dataFromRam_x, sig_in, noupdate_s, res_s, res_u,
                   jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached,
-                  offset, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x,
+                  offset_r, offset_x, dataFromRam_s, done_s, wr_s, rd_s, sum_r, sum_x,
                   muxsel_r, muxsel_x,
                   empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
                   empty_x, full_x, enr_x, enw_x, dataout_x, datain_x,
-                  ):
+                  col_r, col_x, row_r, row_x):
     instance_1 = jpegfifo(clk_fast,
                           empty_r,
                           full_r,
@@ -573,20 +609,23 @@ def xess_jpeg_top(clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2,
     
     instance_2 = muxaddr(addr_r, addr_r1, addr_r2, muxsel_r, dataFromRam_r, dataFromRam_r1, dataFromRam_r2 )
     instance_3 = jpeg_process(clk_fast, sig_in,  noupdate_s, res_s, res_u)
-    instance_4 = jpegsdram_rd(clk_fast, offset, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs,
+    instance_4 = jpegsdram_rd(clk_fast, offset_x, dataFromRam_s, jp_lf, jp_sa, jp_rh, jp_flgs,
                               reset_col, addr_r2, addr_not_reached)
     instance_5 = jpegram2sig(jp_lf, jp_sa ,jp_rh, jp_flgs, rdy, addr_not_reached, sig_in)
     instance_6 = RamCtrl(addr_r1, addr_x, state_r, state_x, dataToRam_r, dataToRam_x, dataFromRam_r1,
                          dataFromRam_x,  dataFromRam_s,  done_s, wr_s, rd_s, sum_r, sum_x,
                          muxsel_r, muxsel_x,
                          empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
-                         empty_x, full_x, enr_x, enw_x, dataout_x, datain_x)
+                         empty_x, full_x, enr_x, enw_x, dataout_x, datain_x,
+                         offset_r, offset_x, reset_col, jp_flgs,
+                         col_r, col_x, row_r, row_x, addr_not_reached)
     instance_7 = jpegfsmupdate(clk_fast, addr_r1, addr_x, state_r, state_x,
                                dataToRam_r, dataToRam_x,
                                dataFromRam_r1, dataFromRam_x, sum_r, sum_x,
                                muxsel_r, muxsel_x,
                                empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
-                               empty_x, full_x, enr_x, enw_x, dataout_x, datain_x)
+                               empty_x, full_x, enr_x, enw_x, dataout_x, datain_x,
+                               offset_r, offset_x, col_r, col_x, row_r, row_x)
     #instance_8 = resetptr(clk_fast, readptr, writeptr, reset_ctn)
        
     return instance_1, instance_2, instance_3, instance_4, instance_5, instance_6, instance_7
@@ -594,10 +633,10 @@ def xess_jpeg_top(clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2,
 
 toVHDL(xess_jpeg_top, clk_fast, addr_r, addr_x, state_r, state_x, addr_r1, addr_r2, dataToRam_r,
        dataFromRam_r1, dataFromRam_r2, dataToRam_x, dataFromRam_x, dataFromRam_r, sig_in, noupdate_s,
-       res_s, res_u, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset, dataFromRam_s,
+       res_s, res_u, jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached, offset_r, offset_x, dataFromRam_s,
        done_s, wr_s, rd_s, sum_r, sum_x, muxsel_r, muxsel_x,
        empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
        empty_x, full_x, enr_x, enw_x, dataout_x, datain_x,
-       )
+       col_r, col_x, row_r, row_x)
 
  
