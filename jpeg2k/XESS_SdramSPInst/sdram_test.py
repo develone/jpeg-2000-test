@@ -29,8 +29,7 @@ USB_ID = 0  # This is the USB port index for the XuLA board connected to the hos
 DUT_ID = 255  # This is the default identifier for the DUT in the FPGA.
 
 # Create an interface object to the FPGA with one 16-bit input and one 1-bit output.
-dut = XsDutIo(USB_ID, DUT_ID, [23, 16, 16, 16, 16, 16, 4, 52], [1])
-addr, sum, jpeg, lf, sa, rh, flgs, sig_in = dut.Read(); # Read the 16-bit summation from the FPGA.
+dut = XsDutIo(USB_ID, DUT_ID, [23, 16, 16, 16, 16, 16, 4], [1])
+addr, sum, jpeg, lf, sa, rh, flgs = dut.Read(); # Read the 16-bit summation from the FPGA.
 #print 'Sum = %d\r' % sum.unsigned
 print addr, sum, jpeg.unsigned, lf, sa, rh, flgs
-print sig_in
