@@ -172,7 +172,21 @@ ARCHITECTURE behavior OF XESS_SdramSPInstTb IS
   signal datain_x:  unsigned(15 downto 0):= (others => '0'); 
   
 --signal needed by FIFO*************************** 
- 
+signal rst:  std_logic;
+--signal clk:  std_logic := '0';
+signal eog:  std_logic;
+signal y:    std_logic_vector(15 downto 0);
+component FILE_READ 
+  generic (
+           stim_file:       string  := "sim.dat"
+          );
+  port(
+       CLK              : in  std_logic;
+       RST              : in  std_logic;
+       Y                : out std_logic_vector(15 downto 0);
+       EOG              : out std_logic
+      );
+end component; 
  
 component xess_jpeg_top is
     port (
@@ -230,6 +244,14 @@ component xess_jpeg_top is
 end component xess_jpeg_top;
  
 BEGIN
+
+input_stim: FILE_READ 
+  port map(
+		 CLK      => clk_s,
+       RST      => rst,
+       Y        => y,
+       EOG      => eog
+      ); 
 --muxsel <= '0';
 --  --*********************************************************************
 --  -- Instantiate the jpeg_top step1JPEG_TOP_INSTANCE_7_FSMUPDATE
@@ -385,16 +407,10 @@ xess_jpeg_top_u0 : xess_jpeg_top
       wait for fpgaClk_period*10;
 
       -- insert stimulus here 
---      jp_lf <= X"00A3";
---		jp_sa <= X"00A0";
---		jp_rh <= X"00A3";
---		jp_flgs <= X"7";
---		rdy <= '1';
---		addr_not_reached <= '1';
---		wait for 40 ns ;
---		rdy <= '0';
---		addr_not_reached <= '0';
-		sig_in <= X"7_00A3_00A0_00B0";
+		rst <= '1';
+		wait for 40 ns ;
+		rst <= '0';
+ 
       wait;
    end process;
 
