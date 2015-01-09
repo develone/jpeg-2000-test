@@ -128,13 +128,13 @@ ARCHITECTURE behavior OF XESS_SdramSPInstTb IS
   signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  -- Data.
   signal addrSdram_s              : unsigned(22 downto 0);  -- Address.
   signal dataToSdram_s            : unsigned(15 downto 0);  -- Data.
-  signal dataFromRam_r, dataFromRam_r1, dataFromRam_r2  : unsigned(15 downto 0); 
+  signal dataFromRam_r  : unsigned(15 downto 0); 
   signal sum_r, sum_x             : unsigned( 15 downto 0);
   signal wr_s                     : std_logic;  -- Write-enable control.
   signal rd_s                     : std_logic;  -- Read-enable control.
   signal done_s                   : std_logic;  -- SDRAM R/W operation done signal.
   signal addr_r, addr_x           : unsigned(22 downto 0);  -- RAM address.
-  signal addr_r1, addr_r2           : unsigned(22 downto 0);  -- RAM address.
+ 
   signal dataToRam_r, dataToRam_x, dataFromRam_s : unsigned(15 downto 0);  -- Data to write to RAM.
 ----signal needed by XESS_SdramSPinst.vhd and xess_jpeg_top.vhd***************************
 --
@@ -152,8 +152,10 @@ ARCHITECTURE behavior OF XESS_SdramSPInstTb IS
   signal rdy : std_logic := '1';
   signal addr_not_reached : std_logic := '0';
   signal offset_r, offset_x           : unsigned(22 downto 0);  -- RAM address.
-  signal muxsel_r, muxsel_x  : std_logic :=  '0';
+ 
   signal col_r, col_x, row_r, row_x : unsigned(7 downto 0) := (others => '0');
+  signal dout_rom : unsigned(15 downto 0) := (others => '0');
+  signal addr_rom_r, addr_rom_x : unsigned(11 downto 0) := (others => '0');
 ----signal needed by xess_jpeg_top.vhd*************************** 
 
   
@@ -172,49 +174,31 @@ ARCHITECTURE behavior OF XESS_SdramSPInstTb IS
   signal datain_x:  unsigned(15 downto 0):= (others => '0'); 
   
 --signal needed by FIFO*************************** 
-signal rst:  std_logic;
---signal clk:  std_logic := '0';
-signal eog:  std_logic;
-signal y:    std_logic_vector(15 downto 0);
-component FILE_READ 
-  generic (
-           stim_file:       string  := "sim.dat"
-          );
-  port(
-       CLK              : in  std_logic;
-       RST              : in  std_logic;
-       Y                : out std_logic_vector(15 downto 0);
-       EOG              : out std_logic
-      );
-end component; 
+
  
 component xess_jpeg_top is
     port (
-        clk_fast: in std_logic;
-        addr_r: out unsigned(22 downto 0);
+         clk_fast: in std_logic;
+        addr_r: inout unsigned(22 downto 0);
         addr_x: inout unsigned(22 downto 0);
         state_r: inout t_enum_t_State_1;
         state_x: inout t_enum_t_State_1;
-        addr_r1: inout unsigned(22 downto 0);
-        addr_r2: inout unsigned(22 downto 0);
         dataToRam_r: inout unsigned(15 downto 0);
         dataToRam_x: inout unsigned(15 downto 0);
-        dataFromRam_r: out unsigned(15 downto 0);
-        dataFromRam_r1: inout unsigned(15 downto 0);
-        dataFromRam_r2: in unsigned(15 downto 0);
+        dataFromRam_r: inout unsigned(15 downto 0);
         dataFromRam_x: inout unsigned(15 downto 0);
         sig_in: inout unsigned(51 downto 0);
         noupdate_s: out std_logic;
         res_s: inout signed (15 downto 0);
-		  res_u: out unsigned(15 downto 0);
+        res_u: out unsigned(15 downto 0);
         jp_lf: inout unsigned(15 downto 0);
         jp_sa: inout unsigned(15 downto 0);
         jp_rh: inout unsigned(15 downto 0);
         jp_flgs: inout unsigned(3 downto 0);
-        reset_col: inout std_logic;
-        rdy: in std_logic;
+        reset_col: out std_logic;
+        rdy: inout std_logic;
         addr_not_reached: inout std_logic;
-		  offset_r: inout unsigned(22 downto 0);
+        offset_r: inout unsigned(22 downto 0);
         offset_x: inout unsigned(22 downto 0);
         dataFromRam_s: in unsigned(15 downto 0);
         done_s: in std_logic;
@@ -222,8 +206,6 @@ component xess_jpeg_top is
         rd_s: out std_logic;
         sum_r: inout unsigned(15 downto 0);
         sum_x: inout unsigned(15 downto 0);
-        muxsel_r: inout std_logic;
-        muxsel_x: inout std_logic;
         empty_r: out std_logic;
         full_r: out std_logic;
         enr_r: inout std_logic;
@@ -236,22 +218,19 @@ component xess_jpeg_top is
         enw_x: inout std_logic;
         dataout_x: inout unsigned(15 downto 0);
         datain_x: inout unsigned(15 downto 0);
-		  col_r: inout unsigned(7 downto 0);
+        col_r: inout unsigned(7 downto 0);
         col_x: inout unsigned(7 downto 0);
-		  row_r: inout unsigned(7 downto 0);
-        row_x: inout unsigned(7 downto 0)
+        row_r: inout unsigned(7 downto 0);
+        row_x: inout unsigned(7 downto 0);
+        dout_rom: inout unsigned(15 downto 0);
+        addr_rom_r: inout unsigned(11 downto 0);
+        addr_rom_x: inout unsigned(11 downto 0)
     );
 end component xess_jpeg_top;
  
 BEGIN
 
-input_stim: FILE_READ 
-  port map(
-		 CLK      => clk_s,
-       RST      => rst,
-       Y        => y,
-       EOG      => eog
-      ); 
+
 --muxsel <= '0';
 --  --*********************************************************************
 --  -- Instantiate the jpeg_top step1JPEG_TOP_INSTANCE_7_FSMUPDATE
@@ -264,13 +243,11 @@ xess_jpeg_top_u0 : xess_jpeg_top
 	  addr_x => addr_x,
 	  state_r => state_r,
 	  state_x => state_x,
-	  addr_r1 => addr_r1,
-     addr_r2 => addr_r2,
+ 
 	  dataToRam_r => dataToRam_r,
 	  dataToRam_x => dataToRam_x,
 	  dataFromRam_r =>  dataFromRam_r,
-	  dataFromRam_r1 =>  dataFromRam_r1,
-	  dataFromRam_r2  => dataFromRam_r2,
+ 
 	  sig_in => sig_in,
 	  noupdate_s => noupdate_s,
 	  res_s => res_s,
@@ -291,8 +268,7 @@ xess_jpeg_top_u0 : xess_jpeg_top
 	  sum_r => sum_r,
 	  sum_x => sum_x,
  
-	  muxsel_r => muxsel_r, 
-     muxsel_x => muxsel_x,
+
 	  empty_r => empty_r,
 	  full_r => full_r,
 	  enr_r => enr_r,
@@ -308,7 +284,11 @@ xess_jpeg_top_u0 : xess_jpeg_top
 	  col_x => col_x,
 	  col_r => col_r,
 	  row_x => row_x,
-	  row_r => row_r   
+	  row_r => row_r,
+     dout_rom => dout_rom,
+	  addr_rom_r => addr_rom_r,
+	  addr_rom_x => addr_rom_x
+
   ); 
 	-- Instantiate the Unit Under Test (UUT)
    uut: XESS_SdramSPInst PORT MAP (
@@ -407,9 +387,9 @@ xess_jpeg_top_u0 : xess_jpeg_top
       wait for fpgaClk_period*10;
 
       -- insert stimulus here 
-		rst <= '1';
-		wait for 40 ns ;
-		rst <= '0';
+--		rst <= '1';
+		wait for 10 ns ;
+--		rst <= '0';
  
       wait;
    end process;
