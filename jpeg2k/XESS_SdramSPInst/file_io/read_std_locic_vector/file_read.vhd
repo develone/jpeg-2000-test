@@ -3,16 +3,17 @@ use ieee.std_logic_1164.all;
 
 use std.textio.all;
 use work.txt_util.all;
- 
+use IEEE.NUMERIC_STD.all; 
  
 entity FILE_READ is
   generic (
-           stim_file:       string  := "sim2.dat"
+           stim_file:       string  := "sim.dat"
           );
   port(
        CLK              : in  std_logic;
        RST              : in  std_logic;
-       Y                : out std_logic_vector(15 downto 0);
+       Y                : inout std_logic_vector(15 downto 0);
+		 Y_u                : inout unsigned(15 downto 0);
        EOG              : out std_logic
       );
 end FILE_READ;
@@ -64,7 +65,7 @@ begin
      readline(stimulus, l);
      read(l, s);
      Y <= to_std_logic_vector(s);
-     
+     Y_u <= unsigned(Y);
      wait until CLK = '1';
 
    end loop;
