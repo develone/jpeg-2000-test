@@ -291,7 +291,7 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
                 index2_x.next = 1
                 index2_x.next = 257
                 index3_x.next = 513
-                state_x.next = t_State.EVEN_SAMPLES
+                state_x.next = t_State.READ_ROM_TO_FIFO
         elif state_r == t_State.CK_SDRAM_RD:
             if (done_s == NO):
                #enr_x.next = YES
@@ -386,29 +386,15 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
                     addr_not_reached.next = YES
                     rdy.next = YES
                     index3_x.next = index3_r + 768
-                if (noupdate_s == NO):
-                    
-                    enw_x.next = YES
-                    datain_x.next = res_u
-                    """ Writing jpeg results to FIFO"""
-                    addr_x.next = 65535
             else:
-                if (done_s == NO):
-                    wr_s.next = YES
-                    enr_x.next = NO
-                elif( addr_r <= 65790):
-                    addr_x.next = addr_r + 1
-                    enr_x.next = YES
-                    dataToRam_x.next = dataout_r
-                else:   
-                    offset_x.next = (offset_r - 65278)
-                    index1_x.next = index1_r - 65278
-                    index2_x.next = index2_r - 65278
-                    index3_x.next = index3_r - 64510
-                    row_x.next = 0
-                    col_x.next = col_r + 1
-                    if (col_r == 254):
-                        state_x.next = t_State.INIT
+                offset_x.next = (offset_r - 65278)
+                index1_x.next = index1_r - 65278
+                index2_x.next = index2_r - 65278
+                index3_x.next = index3_r - 64510
+                row_x.next = 0
+                col_x.next = col_r + 1
+                if (col_r == 254):
+                    state_x.next = t_State.INIT
         elif state_r == t_State.WR_DATA:
             if addr_r == 1:
                 addr_x.next = 8

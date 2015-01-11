@@ -371,6 +371,12 @@ xess_jpeg_top_u0 : xess_jpeg_top
       sdDqmh_o  => sdDqmh_o, -- SDRAM high-byte databus qualifier is connected on the XuLA2.
       sdDqml_o  => sdDqml_o  -- SDRAM low-byte databus qualifier is connected on the XuLA2.
       );
+	-- Connect the SDRAM controller signals to the FSM signals. 
+  dataToSdram_s <= dataToRam_r;  
+--  dataToSdram_s <= std_logic_vector(dataToRam_r);
+  dataFromRam_s <= RamWord_t(dataFromSdram_s);
+--  addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
+  addrSdram_s   <= addr_r;
    -- Clock process definitions.
    -- This generates the 12 MHz clock.
    fpgaClk_process :process
