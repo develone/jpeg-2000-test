@@ -133,8 +133,9 @@ ARCHITECTURE behavior OF XESS_SdramSPInstTb IS
   signal wr_s                     : std_logic;  -- Write-enable control.
   signal rd_s                     : std_logic;  -- Read-enable control.
   signal done_s                   : std_logic;  -- SDRAM R/W operation done signal.
-  signal addr_r, addr_x           : unsigned(22 downto 0);  -- RAM address.
- 
+  signal addr_r, addr_x, index3           : unsigned(22 downto 0);  -- RAM address.
+  signal index1_r, index2_r, index3_r           : unsigned(22 downto 0):= (others => '0'); 
+  signal index1_x, index2_x, index3_x           : unsigned(22 downto 0):= (others => '0');
   signal dataToRam_r, dataToRam_x, dataFromRam_s : unsigned(15 downto 0);  -- Data to write to RAM.
 ----signal needed by XESS_SdramSPinst.vhd and xess_jpeg_top.vhd***************************
 --
@@ -188,9 +189,9 @@ component xess_jpeg_top is
         dataFromRam_r: inout unsigned(15 downto 0);
         dataFromRam_x: inout unsigned(15 downto 0);
         sig_in: inout unsigned(51 downto 0);
-        noupdate_s: out std_logic;
+        noupdate_s: inout std_logic;
         res_s: inout signed (15 downto 0);
-        res_u: out unsigned(15 downto 0);
+        res_u: inout unsigned(15 downto 0);
         jp_lf: inout unsigned(15 downto 0);
         jp_sa: inout unsigned(15 downto 0);
         jp_rh: inout unsigned(15 downto 0);
@@ -224,7 +225,13 @@ component xess_jpeg_top is
         row_x: inout unsigned(7 downto 0);
         dout_rom: inout unsigned(15 downto 0);
         addr_rom_r: inout unsigned(11 downto 0);
-        addr_rom_x: inout unsigned(11 downto 0)
+        addr_rom_x: inout unsigned(11 downto 0);
+	     index1_r: inout unsigned(22 downto 0);
+        index2_r: inout unsigned(22 downto 0);
+        index3_r: inout unsigned(22 downto 0);
+        index1_x: inout unsigned(22 downto 0);
+        index2_x: inout unsigned(22 downto 0);
+        index3_x: inout unsigned(22 downto 0)	
     );
 end component xess_jpeg_top;
  
@@ -287,7 +294,13 @@ xess_jpeg_top_u0 : xess_jpeg_top
 	  row_r => row_r,
      dout_rom => dout_rom,
 	  addr_rom_r => addr_rom_r,
-	  addr_rom_x => addr_rom_x
+	  addr_rom_x => addr_rom_x,
+	  index1_r => index1_r,
+	  index2_r => index2_r,
+	  index3_r => index3_r,
+	  index1_x => index1_x,
+	  index2_x => index2_x,
+	  index3_x => index3_x
 
   ); 
 	-- Instantiate the Unit Under Test (UUT)
