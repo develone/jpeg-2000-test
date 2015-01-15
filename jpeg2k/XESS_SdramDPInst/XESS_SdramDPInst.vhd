@@ -65,7 +65,9 @@ architecture Behavioral of XESS_SdramDPInst is
   signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  -- Data.
   signal dataFromSdram0_s          : std_logic_vector(sdData_io'range);  -- Data.
   signal dataFromSdram1_s          : std_logic_vector(sdData_io'range);  -- Data.
-  signal addrSdram_s              : unsigned(22 downto 0);  -- Address.
+  signal addrSdram_s              : std_logic_vector(22 downto 0);  -- Address.
+  signal addrSdram0_s              :std_logic_vector(22 downto 0);  -- Address.
+  signal addrSdram1_s              : std_logic_vector(22 downto 0);  -- Address.
   signal dataToSdram_s            : unsigned(15 downto 0);  -- Data.
   signal dataToSdram0_s            : unsigned(15 downto 0);  -- Data.
   signal dataToSdram1_s            : unsigned(15 downto 0);  -- Data.
@@ -101,8 +103,9 @@ architecture Behavioral of XESS_SdramDPInst is
   signal index1_r, index2_r, index3_r           : unsigned(22 downto 0):= (others => '0'); 
   signal index1_x, index2_x, index3_x           : unsigned(22 downto 0):= (others => '0');
   signal dataToRam_r, dataToRam_x, dataFromRam_s : unsigned(15 downto 0);  -- Data to write to RAM.
-  signal dataToRam0_r, dataToRam0_x, dataFromRam0_s : unsigned(15 downto 0);  -- Data to write to RAM.
-  signal dataToRam1_r, dataToRam1_x, dataFromRam1_s : unsigned(15 downto 0);  -- Data to write to RAM.
+  signal dataToRam0_r, dataToRam0_x, dataFromRam0_s  : unsigned(15 downto 0);  -- Data to write to RAM.
+  signal dataToRam1_r, dataToRam1_x, dataFromRam1_s  : unsigned(15 downto 0);  -- Data to write to RAM.
+ 
   signal data0_i, data1_i  : std_logic_vector(15 downto 0);  -- Data to write to RAM.
   signal data0_o, data1_o  : std_logic_vector(15 downto 0);  -- Data to write to RAM.
           -- Host-side port 0.
@@ -175,19 +178,13 @@ architecture Behavioral of XESS_SdramDPInst is
  
 component xess_jpeg_top is
     port (
-         clk_fast: in std_logic;
-        addr_r: inout unsigned(22 downto 0);
-        addr_x: inout unsigned(22 downto 0);
+        clk_fast: in std_logic;
         addr0_r: inout unsigned(22 downto 0);
         addr0_x: inout unsigned(22 downto 0);
         addr1_r: inout unsigned(22 downto 0);
         addr1_x: inout unsigned(22 downto 0);
         state_r: inout t_enum_t_State_1;
         state_x: inout t_enum_t_State_1;
-        dataToRam_r: inout unsigned(15 downto 0);
-        dataToRam_x: inout unsigned(15 downto 0);
-        dataFromRam_r: inout unsigned(15 downto 0);
-        dataFromRam_x: inout unsigned(15 downto 0);
         dataToRam0_r: inout unsigned(15 downto 0);
         dataToRam0_x: inout unsigned(15 downto 0);
         dataFromRam0_r: inout unsigned(15 downto 0);
@@ -212,9 +209,6 @@ component xess_jpeg_top is
         dataFromRam_s: in unsigned(15 downto 0);
         dataFromRam0_s: in unsigned(15 downto 0);
         dataFromRam1_s: in unsigned(15 downto 0);
-        done_s: in std_logic;
-        wr_s: out std_logic;
-        rd_s: out std_logic;
         done1_s: in std_logic;
         wr1_s: out std_logic;
         rd1_s: out std_logic;
@@ -312,14 +306,20 @@ begin
 xess_jpeg_top_u0 : xess_jpeg_top
   port map (
      clk_fast => clk_s,
-	  addr_r => addr_r,
-	  addr_x => addr_x,
+	  addr0_r => addr0_r,
+	  addr0_x => addr0_x,
+	  addr1_r => addr_r,
+	  addr1_x => addr1_x,
 	  state_r => state_r,
 	  state_x => state_x,
  
-	  dataToRam_r => dataToRam_r,
-	  dataToRam_x => dataToRam_x,
-	  dataFromRam_r =>  dataFromRam_r,
+	  dataToRam0_r => dataToRam0_r,
+	  dataToRam0_x => dataToRam0_x,
+	  dataFromRam0_r =>  dataFromRam0_r,
+	  
+	  dataToRam1_r => dataToRam1_r,
+	  dataToRam1_x => dataToRam1_x,
+	  dataFromRam1_r =>  dataFromRam1_r,
  
 	  sig_in => sig_in,
 	  noupdate_s => noupdate_s,
@@ -335,11 +335,11 @@ xess_jpeg_top_u0 : xess_jpeg_top
      offset_r => offset_r,
 	  offset_x => offset_x,
      dataFromRam_s => dataFromRam_s,
-	  dataFromRam0_s => dataFromRam0_s,
-	  dataFromRam1_s => dataFromRam1_s,
-	  wr_s => wr_s,
-	  rd_s => rd_s,
-	  done_s => done_s,
+	  dataFromRam0_s => unsigned(dataFromRam0_s),
+	  dataFromRam1_s => unsigned(dataFromRam1_s),
+--	  wr_s => wr_s,
+--	  rd_s => rd_s,
+--	  done_s => done_s,
 	  wr0_s => wr0_s,
 	  rd0_s => rd0_s,
 	  done0_s => done0_s,	  
@@ -438,29 +438,29 @@ DualPort_u0 : DualPort
     port map( 
 	 clk_i => clk_s,
 	 rst0_i => rst0_i,
-	 rd0_i => rd0_i,
-	 wr0_i => wr0_i,
+	 rd0_i => rd0_s,
+	 wr0_i => wr0_s,
     earlyOpBegun0_o => earlyOpBegun0_o,
     opBegun0_o => opBegun0_o,
     rdPending0_o => rdPending0_o,
-    done0_o => done0_o,	 
+    done0_o => done0_s,	 
 	 rdDone0_o => rdDone_o,
-    addr0_i => addr0_i,
-	 data0_i => data0_i,
-	 data0_o => data0_o,
+    addr0_i => std_logic_vector(addrSdram0_s),
+	 data0_i => std_logic_vector(dataToSdram0_s),
+	 data0_o => dataFromSdram0_s,
 	 status0_o => status0_o,
 	 
 	 rst1_i => rst1_i,
-	 rd1_i => rd1_i,
-	 wr1_i => wr1_i,
+	 rd1_i => rd1_s,
+	 wr1_i => wr1_s,
     earlyOpBegun1_o => earlyOpBegun1_o,
     opBegun1_o => opBegun1_o,
     rdPending1_o => rdPending1_o,
-    done1_o => done1_o,	 
+    done1_o => done1_s,	 
 	 rdDone1_o => rdDone_i,
-    addr1_i => addr1_i,
-	 data1_i => data1_i,
-	 data1_o => data1_o,	 
+    addr1_i => std_logic_vector(addrSdram1_s),
+	 data1_i => std_logic_vector(dataToSdram1_s),
+	 data1_o => dataFromSdram1_s,	 
 	 status1_o => status1_o,
 	 rst_o => rst_s,	
     rd_o => rd_s,
@@ -472,15 +472,18 @@ DualPort_u0 : DualPort
 	 rdDone_i => rdDone_s,
 	 status_i => status_s,
 	 data_i    => std_logic_vector(dataToSdram_s),
-    data_o    => dataFromSdram_s
---	 addr_o  => std_logic_vector(addrSdram_s)
+    data_o    => dataFromSdram_s,
+	 addr_o  => addrSdram_s
 	 );
   -- Connect the SDRAM controller signals to the FSM signals. 
-  dataToSdram_s <= dataToRam0_r;  
+  dataToSdram0_s <= dataToRam0_r; 
+  dataToSdram1_s <= dataToRam1_r;  
 --  dataToSdram_s <= std_logic_vector(dataToRam_r);
-  dataFromRam0_s <= RamWord_t(dataFromSdram_s);
+  dataFromRam0_s <= unsigned(dataFromSdram0_s);
+  dataFromRam1_s <= RamWord_t(dataFromSdram1_s);
 --  addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
-  addrSdram_s   <= addr0_r;
+  addrSdram0_s   <= std_logic_vector(addr0_r);
+  addrSdram1_s   <= std_logic_vector(addr1_r);
 --addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr0_r,16));
  
   --*********************************************************************
