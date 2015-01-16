@@ -126,7 +126,7 @@ ARCHITECTURE behavior OF XESS_SdramDPInstTb IS
   alias fromsdramdataDut_s is sumDut_s(38 downto 23);
   alias fromsdramaddrDut_s is sumDut_s(22 downto 0);
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
-  signal dataFromSdram_s          : std_logic_vector(sdData_io'range);  -- Data.
+  signal dataFromSdram_s          : std_logic_vector(15 downto 0):= (others => '0');  -- Data.
   signal dataFromSdram0_s          : std_logic_vector(sdData_io'range);  -- Data.
   signal dataFromSdram1_s          : std_logic_vector(sdData_io'range);  -- Data.
   signal addrSdram_s              : std_logic_vector(22 downto 0);  -- Address.
@@ -195,10 +195,10 @@ ARCHITECTURE behavior OF XESS_SdramDPInstTb IS
   signal      opBegun_o      :   std_logic:= NO;
   signal    rdPending_o    :   std_logic:= NO;
   signal status_i       :   std_logic_vector(3 downto 0):="0000";
-  signal status_s       :   std_logic_vector(3 downto 0):="0000";  
-  signal rdDone_s       :   std_logic:= NO;
-  signal rdDone_i       :   std_logic:= NO;
+  signal status_o       :   std_logic_vector(3 downto 0):="0000";  
   signal rdDone_o       :   std_logic:= NO;
+  signal rdDone_i       :   std_logic:= NO;
+ 
   signal   rst_s          :   std_logic                                  := NO;  -- reset.
   ----signal needed by XESS_SdramDPInst.vhd and xess_jpeg_top.vhd***************************
 --
@@ -497,10 +497,15 @@ xess_jpeg_top_u0 : xess_jpeg_top
       rd_i      => rd_s,
       wr_i      => wr_s,
       done_o    => done_s,
---      addr_i    => std_logic_vector(addrSdram_s),
---      data_i    => std_logic_vector(dataToSdram_s),
---      data_o    => dataFromSdram_s,
-      -- SDRAM side.
+      addr_i    => std_logic_vector(addrSdram_s),
+      data_i    => std_logic_vector(dataToSdram_s),
+      data_o    => dataFromSdram_s,
+		earlyOpBegun_o => earlyOpBegun_o,
+		opBegun_o => opBegun_o,
+		rdPending_o => rdPending_o,
+		rdDone_o => rdDone_o,
+		status_o => status_o,
+		-- SDRAM side.
       sdCke_o   => sdCke_o, -- SDRAM clock-enable pin is connected on the XuLA2.
       sdCe_bo   => sdCe_bo, -- SDRAM chip-enable is connected on the XuLA2.
       sdRas_bo  => sdRas_bo,
@@ -514,7 +519,7 @@ xess_jpeg_top_u0 : xess_jpeg_top
       );
 DualPort_u0 : DualPort 
     generic map(
-      PIPE_EN_G  =>       true,
+--      PIPE_EN_G  =>       true,
       PORT_TIME_SLOTS_G => "1111000011110000",
       DATA_WIDTH_G     => 16,
       HADDR_WIDTH_G     => 23
@@ -550,18 +555,19 @@ DualPort_u0 : DualPort
     rd_o => rd_s,
     wr_o	=> wr_s,
 	 done_i => done_s,
-	 earlyOpBegun_i => earlyOpBegun_s,
-	 opBegun_i => opBegun_s,
-	 rdPending_i => rdPending_s,
-	 rdDone_i => rdDone_s,
-	 status_i => status_s,
+	 earlyOpBegun_i => earlyOpBegun_o,
+	 opBegun_i => opBegun_o,
+	 rdPending_i => rdPending_o,
+	 rdDone_i => rdDone_o,
+	 status_i => status_o,
 	 data_i    => std_logic_vector(dataToSdram_s),
     data_o    => dataFromSdram_s,
 	 addr_o  => addrSdram_s
 	 );
   -- Connect the SDRAM controller signals to the FSM signals. 
   dataToSdram_s <= dataToRam0_r; 
-  addrSdram0_s   <= std_logic_vector(addr0_r); 
+  addrSdram0_s   <= std_logic_vector(addr0_r);
+  dataFromRam0_s <=unsigned(dataFromSdram0_s);
 --  dataFromRam0_s <= unsigned(dataFromSdram0_s);
 --  dataToSdram1_s <= dataToRam1_r;  
 --  dataToSdram_s <= std_logic_vector(dataToRam_r);
