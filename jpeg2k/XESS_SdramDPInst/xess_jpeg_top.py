@@ -207,7 +207,6 @@ def RamCtrl(addr0_r, addr0_x,
         
             dataToRam0_r, dataToRam0_x,
             dataToRam1_r, dataToRam1_x,
-            dataFromRam_s,
             dataFromRam0_r, dataFromRam0_x,  dataFromRam0_s,
             dataFromRam1_r, dataFromRam1_x,  dataFromRam1_s,
             done0_s, wr0_s, rd0_s, done1_s, wr1_s, rd1_s, sum_r, sum_x,
@@ -393,13 +392,13 @@ def RamCtrl(addr0_r, addr0_x,
                 offset_x.next = (offset_r + 256)
                 row_x.next = row_r + 1
                 if (addr0_r == TEST1):
-                    jp_lf.next = dataFromRam_s
+                    jp_lf.next = dataFromRam0_s
                     index1_x.next = index1_r + 768
                 if (addr0_r == TEST2):
-                    jp_sa.next = dataFromRam_s
+                    jp_sa.next = dataFromRam0_s
                     index2_x.next = index2_r + 768 
                 if (addr0_r == TEST3):
-                    jp_rh.next = dataFromRam_s
+                    jp_rh.next = dataFromRam0_s
                     addr_not_reached.next = YES
                     rdy.next = YES
                     index3_x.next = index3_r + 768
@@ -620,7 +619,7 @@ def xess_jpeg_top(clk_fast,
                   sig_in, noupdate_s, res_s, res_u,
                   jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached,
                   offset_r, offset_x,
-                  dataFromRam_s, dataFromRam0_s, dataFromRam1_s,
+                  dataFromRam0_s, dataFromRam1_s,
                   done1_s, wr1_s, rd1_s,
                   done0_s, wr0_s, rd0_s, sum_r, sum_x,
                   empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,
@@ -654,7 +653,6 @@ def xess_jpeg_top(clk_fast,
             
             dataToRam0_r, dataToRam0_x,
             dataToRam1_r, dataToRam1_x,
-            dataFromRam_s,
             dataFromRam0_r, dataFromRam0_x,  dataFromRam0_s,
             dataFromRam1_r, dataFromRam1_x,  dataFromRam1_s,
             done0_s, wr0_s, rd0_s, done1_s, wr1_s, rd1_s, sum_r, sum_x,
@@ -693,7 +691,7 @@ toVHDL(xess_jpeg_top, clk_fast,
                   sig_in, noupdate_s, res_s, res_u,
                   jp_lf, jp_sa ,jp_rh, jp_flgs, reset_col, rdy, addr_not_reached,
                   offset_r, offset_x,
-                  dataFromRam_s, dataFromRam0_s, dataFromRam1_s,
+                  dataFromRam0_s, dataFromRam1_s,
                   done1_s, wr1_s, rd1_s,
                   done0_s, wr0_s, rd0_s, sum_r, sum_x,
                   empty_r, full_r, enr_r, enw_r, dataout_r, datain_r,

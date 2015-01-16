@@ -135,7 +135,7 @@ ARCHITECTURE behavior OF XESS_SdramDPInstTb IS
   signal dataToSdram_s            : unsigned(15 downto 0);  -- Data.
   signal dataToSdram0_s            : unsigned(15 downto 0);  -- Data.
   signal dataToSdram1_s            : unsigned(15 downto 0);  -- Data.
-  signal dataFromRam_r  : unsigned(15 downto 0); 
+   
   signal dataFromRam0_r  : unsigned(15 downto 0);
   signal dataFromRam1_r  : unsigned(15 downto 0);   
 --  signal dataToSdram1_s            : unsigned(15 downto 0);  -- Data.
@@ -158,7 +158,7 @@ ARCHITECTURE behavior OF XESS_SdramDPInstTb IS
   signal done1_o                   : std_logic:= NO;  -- SDRAM R/W operation done signal.
   signal done0_s                   : std_logic:= NO;  -- SDRAM R/W operation done signal.
   signal done1_s                   : std_logic:= NO;  -- SDRAM R/W operation done signal.
-  signal addr_r, addr_x           : unsigned(22 downto 0):= (others => '0');  -- RAM address.
+ 
   signal addr0_r, addr0_x           : unsigned(22 downto 0):= (others => '0');  -- RAM address.
   signal addr1_r, addr1_x           : unsigned(22 downto 0):= (others => '0');  -- RAM address.
   signal addr_i           : std_logic_vector(22 downto 0):= (others => '0');  -- RAM address.
@@ -166,12 +166,11 @@ ARCHITECTURE behavior OF XESS_SdramDPInstTb IS
   signal addr1_i           : std_logic_vector(22 downto 0):= (others => '0');  -- RAM address. 
   signal index1_r, index2_r, index3_r           : unsigned(22 downto 0):= (others => '0'); 
   signal index1_x, index2_x, index3_x           : unsigned(22 downto 0):= (others => '0');
-  signal dataToRam_r, dataToRam_x, dataFromRam_s : unsigned(15 downto 0);  -- Data to write to RAM.
+  signal dataFromRam_s : unsigned(15 downto 0);  -- Data to write to RAM.
   signal dataToRam0_r, dataToRam0_x, dataFromRam0_s  : unsigned(15 downto 0);  -- Data to write to RAM.
   signal dataToRam1_r, dataToRam1_x, dataFromRam1_s  : unsigned(15 downto 0);  -- Data to write to RAM.
  
-  signal data0_i, data1_i  : std_logic_vector(15 downto 0);  -- Data to write to RAM.
-  signal data0_o, data1_o  : std_logic_vector(15 downto 0);  -- Data to write to RAM.
+ 
           -- Host-side port 0.
   signal   rst0_i          :   std_logic                                  := NO;  -- reset.
   signal   earlyOpBegun0_o :  std_logic:= NO;
@@ -271,7 +270,7 @@ component xess_jpeg_top is
         addr_not_reached: inout std_logic;
         offset_r: inout unsigned(22 downto 0);
         offset_x: inout unsigned(22 downto 0);
-        dataFromRam_s: in unsigned(15 downto 0);
+ 
         dataFromRam0_s: in unsigned(15 downto 0);
         dataFromRam1_s: in unsigned(15 downto 0);
         done1_s: in std_logic;
@@ -375,7 +374,7 @@ xess_jpeg_top_u0 : xess_jpeg_top
      clk_fast => clk_s,
 	  addr0_r => addr0_r,
 	  addr0_x => addr0_x,
-	  addr1_r => addr_r,
+	  addr1_r => addr1_r,
 	  addr1_x => addr1_x,
 	  state_r => state_r,
 	  state_x => state_x,
@@ -401,7 +400,7 @@ xess_jpeg_top_u0 : xess_jpeg_top
 	  addr_not_reached => addr_not_reached,
      offset_r => offset_r,
 	  offset_x => offset_x,
-     dataFromRam_s => dataFromRam_s,
+ 
 	  dataFromRam0_s => dataFromRam0_s,
 	  dataFromRam1_s => dataFromRam1_s,
 --	  wr_s => wr_s,
@@ -498,9 +497,9 @@ xess_jpeg_top_u0 : xess_jpeg_top
       rd_i      => rd_s,
       wr_i      => wr_s,
       done_o    => done_s,
-      addr_i    => std_logic_vector(addrSdram_s),
-      data_i    => std_logic_vector(dataToSdram_s),
-      data_o    => dataFromSdram_s,
+--      addr_i    => std_logic_vector(addrSdram_s),
+--      data_i    => std_logic_vector(dataToSdram_s),
+--      data_o    => dataFromSdram_s,
       -- SDRAM side.
       sdCke_o   => sdCke_o, -- SDRAM clock-enable pin is connected on the XuLA2.
       sdCe_bo   => sdCe_bo, -- SDRAM chip-enable is connected on the XuLA2.
@@ -561,14 +560,16 @@ DualPort_u0 : DualPort
 	 addr_o  => addrSdram_s
 	 );
   -- Connect the SDRAM controller signals to the FSM signals. 
-  dataToSdram0_s <= dataToRam0_r; 
-  dataToSdram1_s <= dataToRam1_r;  
+  dataToSdram_s <= dataToRam0_r; 
+  addrSdram0_s   <= std_logic_vector(addr0_r); 
+--  dataFromRam0_s <= unsigned(dataFromSdram0_s);
+--  dataToSdram1_s <= dataToRam1_r;  
 --  dataToSdram_s <= std_logic_vector(dataToRam_r);
-  dataFromRam0_s <= unsigned(dataFromSdram0_s);
-  dataFromRam1_s <= RamWord_t(dataFromSdram1_s);
+
+--  dataFromRam1_s <= RamWord_t(dataFromSdram1_s);
 --  addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
-  addrSdram0_s   <= std_logic_vector(addr0_r);
-  addrSdram1_s   <= std_logic_vector(addr1_r);
+
+--  addrSdram1_s   <= std_logic_vector(addr1_r);
 --addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr0_r,16));
  
    -- Clock process definitions.
