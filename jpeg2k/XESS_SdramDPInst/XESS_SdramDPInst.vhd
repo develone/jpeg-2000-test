@@ -62,13 +62,13 @@ architecture Behavioral of XESS_SdramDPInst is
   alias fromsdramdataDut_s is sumDut_s(38 downto 23);
   alias fromsdramaddrDut_s is sumDut_s(22 downto 0);
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
-  signal dataFromSdram_s          : std_logic_vector(15 downto 0):= (others => '0');  -- Data.
+
   signal dataFromSdram0_s          : std_logic_vector(sdData_io'range);  -- Data.
   signal dataFromSdram1_s          : std_logic_vector(sdData_io'range);  -- Data.
-  signal addrSdram_s              : std_logic_vector(22 downto 0);  -- Address.
+
   signal addrSdram0_s              :std_logic_vector(22 downto 0);  -- Address.
   signal addrSdram1_s              : std_logic_vector(22 downto 0);  -- Address.
-  signal dataToSdram_s            : unsigned(15 downto 0);  -- Data.
+
   signal dataToSdram0_s            : unsigned(15 downto 0);  -- Data.
   signal dataToSdram1_s            : unsigned(15 downto 0);  -- Data.
    
@@ -79,27 +79,20 @@ architecture Behavioral of XESS_SdramDPInst is
   signal sum_r, sum_x             : unsigned( 15 downto 0);
  
   
-  signal wr_s                     : std_logic:= NO;  -- Write-enable control.
-  signal rd_s                     : std_logic:= NO;  -- Read-enable control.
-  signal wr0_i                     : std_logic:= NO;  -- Write-enable control.
-  signal rd0_i                     : std_logic:= NO;  -- Read-enable control.
-  signal wr1_i                     : std_logic:= NO;  -- Write-enable control.
-  signal rd1_i                     : std_logic:= NO;  -- Read-enable control.
+ 
+  
   signal wr0_s                     : std_logic:= NO;  -- Write-enable control.
   signal rd0_s                     : std_logic:= NO;  -- Read-enable control.
   signal wr1_s                     : std_logic:= NO;  -- Write-enable control.
   signal rd1_s                     : std_logic:= NO;  -- Read-enable control.
   signal done_s                   : std_logic:= NO;  -- SDRAM R/W operation done signal.
-  signal done0_o                   : std_logic:= NO;  -- SDRAM R/W operation done signal.
-  signal done1_o                   : std_logic:= NO;  -- SDRAM R/W operation done signal.
+ 
   signal done0_s                   : std_logic:= NO;  -- SDRAM R/W operation done signal.
   signal done1_s                   : std_logic:= NO;  -- SDRAM R/W operation done signal.
  
   signal addr0_r, addr0_x           : unsigned(22 downto 0):= (others => '0');  -- RAM address.
   signal addr1_r, addr1_x           : unsigned(22 downto 0):= (others => '0');  -- RAM address.
-  signal addr_i           : std_logic_vector(22 downto 0):= (others => '0');  -- RAM address.
-  signal addr0_i           : std_logic_vector(22 downto 0):= (others => '0');  -- RAM address.
-  signal addr1_i           : std_logic_vector(22 downto 0):= (others => '0');  -- RAM address. 
+
   signal index1_r, index2_r, index3_r           : unsigned(22 downto 0):= (others => '0'); 
   signal index1_x, index2_x, index3_x           : unsigned(22 downto 0):= (others => '0');
   signal dataFromRam_s : unsigned(15 downto 0);  -- Data to write to RAM.
@@ -123,17 +116,17 @@ architecture Behavioral of XESS_SdramDPInst is
   signal   status1_o       :  std_logic_vector(3 downto 0):="0000";  -- diagnostic status of the SDRAM controller FSM
   signal   earlyOpBegun_i :   std_logic:= NO;
   signal   earlyOpBegun_s :   std_logic:= NO;
-  signal      opBegun_i      :   std_logic:= NO;
-  signal      opBegun_s      :   std_logic:= NO;
-  signal    rdPending_i    :   std_logic:= NO;
-  signal    rdPending_s    :   std_logic:= NO;
-  signal   earlyOpBegun_o :   std_logic:= NO;
-  signal      opBegun_o      :   std_logic:= NO;
-  signal    rdPending_o    :   std_logic:= NO;
-  signal status_i       :   std_logic_vector(3 downto 0):="0000";
-  signal status_o       :   std_logic_vector(3 downto 0):="0000";  
-  signal rdDone_o       :   std_logic:= NO;
-  signal rdDone_i       :   std_logic:= NO;
+--  signal      opBegun_i      :   std_logic:= NO;
+--  signal      opBegun_s      :   std_logic:= NO;
+--  signal    rdPending_i    :   std_logic:= NO;
+--  signal    rdPending_s    :   std_logic:= NO;
+--  signal   earlyOpBegun_o :   std_logic:= NO;
+--  signal      opBegun_o      :   std_logic:= NO;
+--  signal    rdPending_o    :   std_logic:= NO;
+--  signal status_i       :   std_logic_vector(3 downto 0):="0000";
+--  signal status_o       :   std_logic_vector(3 downto 0):="0000";  
+--  signal rdDone_o       :   std_logic:= NO;
+--  signal rdDone_i       :   std_logic:= NO;
  
   signal   rst_s          :   std_logic                                  := NO;  -- reset.
   ----signal needed by XESS_SdramDPInst.vhd and xess_jpeg_top.vhd***************************
@@ -243,59 +236,7 @@ component xess_jpeg_top is
         index3_x: inout unsigned(22 downto 0)
     );
 end component xess_jpeg_top;
-  component DualPort is
-    generic(
-      PIPE_EN_G         : boolean                       := false;  -- enable pipelined read operations.
-      PORT_TIME_SLOTS_G : std_logic_vector(15 downto 0) := "1111000011110000";
-      DATA_WIDTH_G      : natural                       := 16;  -- host & SDRAM data width.
-      HADDR_WIDTH_G     : natural                       := 23  -- host-side address width.
-      );
-    port(
-     clk_i  : in std_logic;             -- master clock.
 
-      -- Host-side port 0.
-      rst0_i          : in  std_logic                                  := NO;  -- reset.
-      rd0_i           : in  std_logic                                  := NO;  -- initiate read operation.
-      wr0_i           : in  std_logic                                  := NO;  -- initiate write operation.
-      earlyOpBegun0_o : out std_logic;  -- read/write op has begun (async).
-      opBegun0_o      : out std_logic                                  := NO;  -- read/write op has begun (clocked).
-      rdPending0_o    : out std_logic;  -- true if read operation(s) are still in the pipeline.
-      done0_o         : out std_logic;  -- read or write operation is done_i.
-      rdDone0_o       : out std_logic;  -- read operation is done_i and data is available.
-      addr0_i         : in  std_logic_vector(HADDR_WIDTH_G-1 downto 0) := (others => ZERO);  -- address from host to SDRAM.
-      data0_i         : in  std_logic_vector(DATA_WIDTH_G-1 downto 0)  := (others => ZERO);  -- data from host to SDRAM.
-      data0_o         : out std_logic_vector(DATA_WIDTH_G-1 downto 0)  := (others => ZERO);  -- data from SDRAM to host.
-      status0_o       : out std_logic_vector(3 downto 0);  -- diagnostic status of the SDRAM controller FSM         .
-
-      -- Host-side port 1.
-      rst1_i          : in  std_logic                                  := NO;
-      rd1_i           : in  std_logic                                  := NO;
-      wr1_i           : in  std_logic                                  := NO;
-      earlyOpBegun1_o : out std_logic;
-      opBegun1_o      : out std_logic                                  := NO;
-      rdPending1_o    : out std_logic;
-      done1_o         : out std_logic;
-      rdDone1_o       : out std_logic;
-      addr1_i         : in  std_logic_vector(HADDR_WIDTH_G-1 downto 0) := (others => ZERO);
-      data1_i         : in  std_logic_vector(DATA_WIDTH_G-1 downto 0)  := (others => ZERO);
-      data1_o         : out std_logic_vector(DATA_WIDTH_G-1 downto 0)  := (others => ZERO);
-      status1_o       : out std_logic_vector(3 downto 0);
-
-      -- SDRAM controller host-side port.
-      rst_o          : out std_logic;
-      rd_o           : out std_logic;
-      wr_o           : out std_logic;
-      earlyOpBegun_i : in  std_logic;
-      opBegun_i      : in  std_logic;
-      rdPending_i    : in  std_logic;
-      done_i         : in  std_logic;
-      rdDone_i       : in  std_logic;
-      addr_o         : out std_logic_vector(HADDR_WIDTH_G-1 downto 0);
-      data_o         : out std_logic_vector(DATA_WIDTH_G-1 downto 0);
-      data_i         : in  std_logic_vector(DATA_WIDTH_G-1 downto 0);
-      status_i       : in  std_logic_vector(3 downto 0)
-      );
-  end component;
 begin
 --muxsel_x <= '0';
   --*********************************************************************
@@ -336,9 +277,7 @@ xess_jpeg_top_u0 : xess_jpeg_top
  
 	  dataFromRam0_s => unsigned(dataFromRam0_s),
 	  dataFromRam1_s => unsigned(dataFromRam1_s),
---	  wr_s => wr_s,
---	  rd_s => rd_s,
---	  done_s => done_s,
+
 	  wr0_s => wr0_s,
 	  rd0_s => rd0_s,
 	  done0_s => done0_s,	  
@@ -396,11 +335,12 @@ xess_jpeg_top_u0 : xess_jpeg_top
   -- Instantiate the SDRAM controller that connects to the FSM
   -- and interfaces to the external SDRAM chip.
   --*********************************************************************
-  SdramCntl_u0 : SdramCntl
+  DualPortSdram_u0 : DualPortSdram
     generic map(
       FREQ_G       => 100.0,  -- Use clock freq. to compute timing parameters.
       DATA_WIDTH_G => RAM_WIDTH_C,       -- Width of data words.
-		
+		PORT_TIME_SLOTS_G => "1111000011110000",
+		PIPE_EN_G  =>       false,
 		NROWS_G       => 4096,  -- Number of rows in SDRAM array.
       NCOLS_G       => 512,  -- Number of columns in SDRAM array.
       HADDR_WIDTH_G => 23,   -- Host-side address width.
@@ -408,19 +348,35 @@ xess_jpeg_top_u0 : xess_jpeg_top
       )
     port map(
       clk_i     => clk_s,
-      -- FSM side.
-      rd_i      => rd_s,
-      wr_i      => wr_s,
-      done_o    => done_s,
-      addr_i    => std_logic_vector(addrSdram_s),
-      data_i    => std_logic_vector(dataToSdram_s),
-      data_o    => dataFromSdram_s,
-		earlyOpBegun_o => earlyOpBegun_o,
-		opBegun_o => opBegun_o,
-		rdPending_o => rdPending_o,
-		rdDone_o => rdDone_o,
-		status_o => status_o,
-      -- SDRAM side.
+       -- Host-side port 0.
+		rst0_i => rst0_i,
+		rd0_i => rd0_s,
+		wr0_i => wr0_s,
+		earlyOpBegun0_o => earlyOpBegun0_o,
+		opBegun0_o => opBegun0_o,
+		rdPending0_o => rdPending0_o,
+		done0_o => done0_s,	 
+		rdDone0_o => rdDone0_o,
+		addr0_i => std_logic_vector(addrSdram0_s),
+		data0_i => std_logic_vector(dataToSdram0_s),
+		data0_o => dataFromSdram0_s,
+		status0_o => status0_o,
+		
+      -- Host-side port 1.	 
+		rst1_i => rst1_i,
+		rd1_i => rd1_s,
+		wr1_i => wr1_s,
+		earlyOpBegun1_o => earlyOpBegun1_o,
+		opBegun1_o => opBegun1_o,
+		rdPending1_o => rdPending1_o,
+		done1_o => done1_s,	 
+		rdDone1_o => rdDone1_o,
+		addr1_i => std_logic_vector(addrSdram1_s),
+		data1_i => std_logic_vector(dataToSdram1_s),
+		data1_o => dataFromSdram1_s,	 
+		status1_o => status1_o,
+ 
+	      -- SDRAM side.
       sdCke_o   => sdCke_o, -- SDRAM clock-enable pin is connected on the XuLA2.
       sdCe_bo   => sdCe_bo, -- SDRAM chip-enable is connected on the XuLA2.
       sdRas_bo  => sdRas_bo,
@@ -431,147 +387,18 @@ xess_jpeg_top_u0 : xess_jpeg_top
       sdData_io => sdData_io,
       sdDqmh_o  => sdDqmh_o, -- SDRAM high-byte databus qualifier is connected on the XuLA2.
       sdDqml_o  => sdDqml_o  -- SDRAM low-byte databus qualifier is connected on the XuLA2.
-      );
-DualPort_u0 : DualPort 
-    generic map(
---      PIPE_EN_G  =>       true,
-      PORT_TIME_SLOTS_G => "1111000011110000",
-      DATA_WIDTH_G     => 16,
-      HADDR_WIDTH_G     => 23
-      )
-    port map( 
-	 clk_i => clk_s,
-	 rst0_i => rst0_i,
-	 rd0_i => rd0_s,
-	 wr0_i => wr0_s,
-    earlyOpBegun0_o => earlyOpBegun0_o,
-    opBegun0_o => opBegun0_o,
-    rdPending0_o => rdPending0_o,
-    done0_o => done0_s,	 
-	 rdDone0_o => rdDone_o,
-    addr0_i => std_logic_vector(addrSdram0_s),
-	 data0_i => std_logic_vector(dataToSdram0_s),
-	 data0_o => dataFromSdram0_s,
-	 status0_o => status0_o,
-	 
-	 rst1_i => rst1_i,
-	 rd1_i => rd1_s,
-	 wr1_i => wr1_s,
-    earlyOpBegun1_o => earlyOpBegun1_o,
-    opBegun1_o => opBegun1_o,
-    rdPending1_o => rdPending1_o,
-    done1_o => done1_s,	 
-	 rdDone1_o => rdDone_i,
-    addr1_i => std_logic_vector(addrSdram1_s),
-	 data1_i => std_logic_vector(dataToSdram1_s),
-	 data1_o => dataFromSdram1_s,	 
-	 status1_o => status1_o,
-	 rst_o => rst_s,	
-    rd_o => rd_s,
-    wr_o	=> wr_s,
-	 done_i => done_s,
-	 earlyOpBegun_i => earlyOpBegun_o,
-	 opBegun_i => opBegun_o,
-	 rdPending_i => rdPending_o,
-	 rdDone_i => rdDone_o,
-	 status_i => status_o,
-	 data_i    => std_logic_vector(dataToSdram_s),
-    data_o    => dataFromSdram_s,
-	 addr_o  => addrSdram_s
 	 );
   -- Connect the SDRAM controller signals to the FSM signals. 
-  dataToSdram_s <= dataToRam0_r; 
-  addrSdram0_s   <= std_logic_vector(addr0_r); 
-    dataFromRam0_s <=unsigned(dataFromSdram_s);
---  dataFromRam0_s <= unsigned(dataFromSdram0_s);
---  dataToSdram1_s <= dataToRam1_r;  
---  dataToSdram_s <= std_logic_vector(dataToRam_r);
-
---  dataFromRam1_s <= RamWord_t(dataFromSdram1_s);
---  addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr_r, addrSdram_s'length));
-
---  addrSdram1_s   <= std_logic_vector(addr1_r);
---addrSdram_s   <= std_logic_vector(TO_UNSIGNED(addr0_r,16));
+  dataToSdram0_s <= dataToRam0_r; 
+  addrSdram0_s   <= std_logic_vector(addr0_r);
+  dataFromRam0_s <=unsigned(dataFromSdram0_s);
+  
+  dataToSdram1_s <= dataToRam1_r; 
+  addrSdram1_s   <= std_logic_vector(addr1_r);
+  dataFromRam1_s <=unsigned(dataFromSdram1_s);
  
-  --*********************************************************************
-  -- State machine that initializes RAM and then reads RAM to compute
-  -- the sum of products of the RAM address and data. This section
-  -- is combinatorial logic that sets the control bits for each state 
-  -- and determines the next state.
-  --*********************************************************************
---  FsmComb_p : process(state_r, addr_r, dataToRam_r,
---                      sum_r, dataFromRam_s, done_s)
---  begin
---    -- Disable RAM reads and writes by default.
---    rd_s        <= NO;                  -- Don't write to RAM.
---    wr_s        <= NO;                  -- Don't read from RAM.
---    -- Load the registers with their current values by default.
---    addr_x      <= addr_r;
---    sum_x       <= sum_r;
---    dataToRam_x <= dataToRam_r;
---    state_x     <= state_r;
---
---    case state_r is
---
---      when INIT =>                      -- Initialize the FSM.
---        addr_x      <= X"00_0000";      -- Start writing data at this address.
---        dataToRam_x <= TO_UNSIGNED(1, RAM_WIDTH_C);  -- Initial value to write.
-----        state_x     <= WRITE_DATA;      -- Go to next state.
---        state_x     <= READ_AND_SUM_DATA;      -- Go to next state.
---
---      when WRITE_DATA =>                -- Load RAM with values.
---        if done_s = NO then  -- While current RAM write is not complete ...
---          wr_s <= YES;                  -- keep write-enable active.
---        elsif addr_r < MAX_ADDR_C then  -- If haven't reach final address ...
---          addr_x      <= addr_r + 1;    -- go to next address ...
---          dataToRam_x <= dataToRam_r + 3;  -- and write this value.
---        else                 -- Else, the final address has been written ...
---          addr_x  <= X"00_0000";        -- go back to the start, ...
---          sum_x   <= 0;                 -- clear the sum-of-products, ...
---          state_x <= READ_AND_SUM_DATA;    -- and go to next state.
---        end if;
---
---      when READ_AND_SUM_DATA =>  -- Read RAM and sum address*data products
---        if done_s = NO then      -- While current RAM read is not complete ...
---          rd_s <= YES;                  -- keep read-enable active.
---        elsif addr_r <= MAX_ADDR_C then  -- If not the final address ...
---          -- add product of previous RAM address and data read 
---          -- from that address to the summation ...
---          sum_x  <= sum_r + TO_INTEGER(dataFromRam_s * addr_r);
---          addr_x <= addr_r + 1;         -- and go to next address.
---          if addr_r = MAX_ADDR_C then  -- Else, the final address has been read ...
---            state_x <= DONE;            -- so go to the next state.
---          end if;
---        end if;
---
---      when DONE =>                      -- Summation complete ...
---        null;                           -- so wait here and do nothing.
---      when others =>                    -- Erroneous state ...
---        state_x <= INIT;                -- so re-run the entire process.
---        
---    end case;
---
---  end process;
-
-  --*********************************************************************
-  -- Update the FSM's registers with their next values as computed by
-  -- the FSM's combinatorial section.       
-  --*********************************************************************
---  FsmUpdate_p : process(clk_s)
---  begin
---    if rising_edge(clk_s) then
-----      addr_r      <= addr_x;
-----      dataToRam_r <= dataToRam_x;
---      state_r     <= state_x;
---      sum_r       <= sum_x;
---    end if;
---  end process;
-
-  --*********************************************************************
-  -- Send the summation to the HostIoToDut module and then on to the PC.
-  --*********************************************************************
-  --sumDut_s <= std_logic_vector(TO_UNSIGNED(sum_r, 16));
-  --sumDut_s <= std_logic_vector(sum_r);
+ 
+ 
   fromsdramaddrDut_s <= std_logic_vector(addr0_r);
   fromsdramdataDut_s <= std_logic_vector(sum_r);
   fromresdataDut_s <= std_logic_vector(res_s);

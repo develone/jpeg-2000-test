@@ -259,8 +259,11 @@ def RamCtrl(addr0_r, addr0_x,
              
             enr_x.next = NO
             enw_x.next = NO
+            
             addr0_x.next = 65536
             dataToRam0_x.next = 0
+            addr1_x.next = 65792
+            dataToRam1_x.next = 0
             datain_x.next = 0
             offset_x.next = 0
             col_x.next = 0
@@ -281,6 +284,7 @@ def RamCtrl(addr0_r, addr0_x,
                 #datain_x.next = dataToRam_r + 1
             else:
                 addr0_x.next = 65536
+                addr1_x.next = 65792
                 enw_x.next = NO
                 enr_x.next = NO
                 sum_x.next = 0
@@ -295,6 +299,11 @@ def RamCtrl(addr0_r, addr0_x,
                 #dataToRam_x.next = dataout_r
                 sum_x.next = sum_r + (dataFromRam0_s )
                 addr0_x.next = addr0_r + 1
+                if (done1_s == NO):
+                    wr1_s.next = YES
+                elif (addr1_r <= 65797):
+                    dataToRam1_x.next = sum_r
+                    addr1_x.next = addr1_r + 1
             else:
                 enr_x.next = NO
                 addr0_x.next = 0
