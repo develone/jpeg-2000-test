@@ -138,8 +138,7 @@ ARCHITECTURE behavior OF XESS_SdramDPInstTb IS
    
   signal dataFromRam0_r  : unsigned(15 downto 0);
   signal dataFromRam1_r  : unsigned(15 downto 0);   
---  signal dataToSdram1_s            : unsigned(15 downto 0);  -- Data.
---  signal dataFromRam1_r  : unsigned(15 downto 0);
+ 
   signal sum_r, sum_x             : unsigned( 15 downto 0);
  
   
@@ -149,7 +148,7 @@ ARCHITECTURE behavior OF XESS_SdramDPInstTb IS
   signal rd0_s                     : std_logic:= NO;  -- Read-enable control.
   signal wr1_s                     : std_logic:= NO;  -- Write-enable control.
   signal rd1_s                     : std_logic:= NO;  -- Read-enable control.
-  signal done_s                   : std_logic:= NO;  -- SDRAM R/W operation done signal.
+
  
   signal done0_s                   : std_logic:= NO;  -- SDRAM R/W operation done signal.
   signal done1_s                   : std_logic:= NO;  -- SDRAM R/W operation done signal.
@@ -159,7 +158,7 @@ ARCHITECTURE behavior OF XESS_SdramDPInstTb IS
 
   signal index1_r, index2_r, index3_r           : unsigned(22 downto 0):= (others => '0'); 
   signal index1_x, index2_x, index3_x           : unsigned(22 downto 0):= (others => '0');
-  signal dataFromRam_s : unsigned(15 downto 0);  -- Data to write to RAM.
+
   signal dataToRam0_r, dataToRam0_x, dataFromRam0_s  : unsigned(15 downto 0);  -- Data to write to RAM.
   signal dataToRam1_r, dataToRam1_x, dataFromRam1_s  : unsigned(15 downto 0);  -- Data to write to RAM.
  
@@ -180,17 +179,7 @@ ARCHITECTURE behavior OF XESS_SdramDPInstTb IS
   signal   status1_o       :  std_logic_vector(3 downto 0):="0000";  -- diagnostic status of the SDRAM controller FSM
   signal   earlyOpBegun_i :   std_logic:= NO;
   signal   earlyOpBegun_s :   std_logic:= NO;
---  signal      opBegun_i      :   std_logic:= NO;
---  signal      opBegun_s      :   std_logic:= NO;
---  signal    rdPending_i    :   std_logic:= NO;
---  signal    rdPending_s    :   std_logic:= NO;
---  signal   earlyOpBegun_o :   std_logic:= NO;
---  signal      opBegun_o      :   std_logic:= NO;
---  signal    rdPending_o    :   std_logic:= NO;
---  signal status_i       :   std_logic_vector(3 downto 0):="0000";
---  signal status_o       :   std_logic_vector(3 downto 0):="0000";  
---  signal rdDone_o       :   std_logic:= NO;
---  signal rdDone_i       :   std_logic:= NO;
+ 
  
   signal   rst_s          :   std_logic                                  := NO;  -- reset.
   ----signal needed by XESS_SdramDPInst.vhd and xess_jpeg_top.vhd***************************

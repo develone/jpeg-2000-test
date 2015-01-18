@@ -167,7 +167,7 @@ offset_x = Signal(intbv(0)[JPEG_RAM_ADDR:])
 offset_r = Signal(intbv(0)[JPEG_RAM_ADDR:])
 #t_State = enum('INIT', 'ODD_SA', 'EVEN_SA','ODD_SA_COL', 'EVEN_SA_COL', 'TR_RES', 'TR_INIT', 'TRAN_RAM', 'DONE_PASS1', encoding="one_hot")
 #t_State = enum('INIT', 'WRITE_DATA', 'READ_AND_SUM_DATA', 'DONE', encoding="one_hot")
-t_State = enum('INIT', 'READ_ROM_TO_FIFO', 'WRITE_FIFO_TO_SDRAM', 'WRITE', 'READ_AND_SUM_DATA', 'CK_SDRAM_RD', 'CK_SDRAM_WR', 'ODD_SAMPLES', 'EVEN_SAMPLES', 'WR_DATA', 'INTERLACE', 'DONE', encoding="one_hot")
+t_State = enum('INIT', 'READ_ROM_TO_FIFO', 'COPY_PG1_TO_PG2', 'WRITE_FIFO_TO_SDRAM', 'WRITE', 'READ_AND_SUM_DATA', 'CK_SDRAM_RD', 'CK_SDRAM_WR', 'ODD_SAMPLES', 'EVEN_SAMPLES', 'WR_DATA', 'INTERLACE', 'DONE', encoding="one_hot")
 #print t_State, t_State.INIT
 state_r = Signal(t_State.INIT)
 state_x = Signal(t_State.INIT)
@@ -259,11 +259,14 @@ def RamCtrl(addr0_r, addr0_x,
              
             enr_x.next = NO
             enw_x.next = NO
-            
-            addr0_x.next = 65536
-            dataToRam0_x.next = 0
-            addr1_x.next = 65792
-            dataToRam1_x.next = 0
+            addr0_x.next = 131072
+            addr1_x.next = 0
+             
+            """Reading 00_0000 to 01_ffff equals 0 to 131071
+            addr1_r equals 0 the read address
+            writing 00_0000 01_ffff to 02_0000 to 3ffff
+            addr0_r equals 131072 the write adddress
+            INIT state next state COPY_PG1_TO_PG2"""
             datain_x.next = 0
             offset_x.next = 0
             col_x.next = 0
@@ -271,7 +274,7 @@ def RamCtrl(addr0_r, addr0_x,
             index1_x.next = 1
             index2_x.next = 257
             index3_x.next = 513
-            state_x.next = t_State.WRITE
+            state_x.next = t_State.COPY_PG1_TO_PG2
         elif state_r == t_State.WRITE:
             if (done0_s == NO):
                 wr0_s.next = YES
@@ -290,20 +293,16 @@ def RamCtrl(addr0_r, addr0_x,
                 sum_x.next = 0
                 state_x.next = t_State.READ_AND_SUM_DATA
         elif state_r == t_State.READ_AND_SUM_DATA:
-            if (done0_s == NO):
+            if (done0_s == NO) :
                 rd0_s.next = YES
-                #enr_x.next = NO
-                #enw_x.next = NO
-            elif (addr0_r <= 65541):
-                #enr_x.next = YES
-                #dataToRam_x.next = dataout_r
+            elif (addr0_r <= 131077):
+                """Read and sum 5 locations to indicate that the
+                sdram ram was transfer correctly
+                from Pg1 to Pg2
+                00_0000 to 01_ffff to 02_0000 to 03_ffff
+                start at 02_0000 to 02_0005"""
                 sum_x.next = sum_r + (dataFromRam0_s )
                 addr0_x.next = addr0_r + 1
-                if (done1_s == NO):
-                    wr1_s.next = YES
-                elif (addr1_r <= 65797):
-                    dataToRam1_x.next = sum_r
-                    addr1_x.next = addr1_r + 1
             else:
                 enr_x.next = NO
                 addr0_x.next = 0
@@ -316,7 +315,7 @@ def RamCtrl(addr0_r, addr0_x,
                 index2_x.next = 1
                 index2_x.next = 257
                 index3_x.next = 513
-                state_x.next = t_State.READ_ROM_TO_FIFO
+                state_x.next = t_State.EVEN_SAMPLES
         elif state_r == t_State.CK_SDRAM_RD:
             if (done0_s == NO):
                #enr_x.next = YES
@@ -428,6 +427,21 @@ def RamCtrl(addr0_r, addr0_x,
         elif state_r == t_State.INTERLACE:
             if addr0_r == 16:
                 state_x.next = t_State.DONE
+        elif state_r == t_State.COPY_PG1_TO_PG2:
+            if (done1_s == NO):
+                rd1_s.next = YES
+                wr0_s.next = YES
+            elif (addr1_r <= 131071):
+                """Read from address pointed by addr1_r
+                Write to address pointed by addr0_r
+                next state READ_AND_SUM_DATA from Pg2"""
+                dataToRam0_x.next = dataFromRam1_s
+                addr1_x.next = addr1_r + 1
+                addr0_x.next = addr0_r + 1
+                
+            else:
+                addr0_x.next = 131072
+                state_x.next = t_State.READ_AND_SUM_DATA
         elif state_r == t_State.DONE:
            
             state_x.next = t_State.INIT
