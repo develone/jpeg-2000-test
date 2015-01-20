@@ -21,7 +21,7 @@ def rom(dout_rom, addr_rom_r, CONTENT):
 reset_dly_c = 10
 ASZ = 10
 DSZ = 16
- 
+SDRAMDSZ = 16 
 enw_r = Signal(bool(0))
 enr_r = Signal(bool(0))
 empty_r = Signal(bool(0))
@@ -89,29 +89,29 @@ wr1_s = Signal(bool(0))
 done0_s = Signal(bool(0))
 done1_s = Signal(bool(0))
  
-dataToRam0_r = Signal(intbv(0)[16:])
-dataToRam0_x = Signal(intbv(0)[16:])
+dataToRam0_r = Signal(intbv(0)[SDRAMDSZ:])
+dataToRam0_x = Signal(intbv(0)[SDRAMDSZ:])
 
-dataToRam1_r = Signal(intbv(0)[16:])
-dataToRam1_x = Signal(intbv(0)[16:])
-dataFromRam_s = Signal(intbv(0)[16:])
-dataFromRam0_s = Signal(intbv(0)[16:])
-dataFromRam1_s = Signal(intbv(0)[16:])
+dataToRam1_r = Signal(intbv(0)[SDRAMDSZ:])
+dataToRam1_x = Signal(intbv(0)[SDRAMDSZ:])
+dataFromRam_s = Signal(intbv(0)[SDRAMDSZ:])
+dataFromRam0_s = Signal(intbv(0)[SDRAMDSZ:])
+dataFromRam1_s = Signal(intbv(0)[SDRAMDSZ:])
  
-dataFromRam0_r = Signal(intbv(0)[16:])
-dataFromRam0_x = Signal(intbv(0)[16:])
+dataFromRam0_r = Signal(intbv(0)[SDRAMDSZ:])
+dataFromRam0_x = Signal(intbv(0)[SDRAMDSZ:])
 
-dataToRam1_x = Signal(intbv(0)[16:])
+dataToRam1_x = Signal(intbv(0)[SDRAMDSZ:])
 
-dataFromRam1_r = Signal(intbv(0)[16:])
-dataFromRam1_x = Signal(intbv(0)[16:])
+dataFromRam1_r = Signal(intbv(0)[SDRAMDSZ:])
+dataFromRam1_x = Signal(intbv(0)[SDRAMDSZ:])
  
 addr0_r = Signal(intbv(0)[JPEG_RAM_ADDR:])
 addr0_x = Signal(intbv(0)[JPEG_RAM_ADDR:])
 addr1_r = Signal(intbv(0)[JPEG_RAM_ADDR:])
 addr1_x = Signal(intbv(0)[JPEG_RAM_ADDR:])
-sum_r = Signal(intbv(0)[16:])
-sum_x = Signal(intbv(0)[16:])
+sum_r = Signal(intbv(0)[SDRAMDSZ:])
+sum_x = Signal(intbv(0)[SDRAMDSZ:])
  
  
  
@@ -144,12 +144,12 @@ jp_row_sa = Signal(intbv(0)[16:])
 jp_row_rh = Signal(intbv(0)[16:])
 jp_row_flgs = Signal(intbv(0)[4:])
 
-din_res_r = Signal(intbv(0)[16:])
-dout_res_r = Signal(intbv(0)[16:])
-dout_res_r1 = Signal(intbv(0)[16:])
-dout_res_r2 = Signal(intbv(0)[16:])
-din_res_x = Signal(intbv(0)[16:])
-dout_res_x = Signal(intbv(0)[16:])
+din_res_r = Signal(intbv(0)[SDRAMDSZ:])
+dout_res_r = Signal(intbv(0)[SDRAMDSZ:])
+dout_res_r1 = Signal(intbv(0)[SDRAMDSZ:])
+dout_res_r2 = Signal(intbv(0)[SDRAMDSZ:])
+din_res_x = Signal(intbv(0)[SDRAMDSZ:])
+dout_res_x = Signal(intbv(0)[SDRAMDSZ:])
 offset = Signal(intbv(0)[JPEG_RAM_ADDR:])
 reset_col = Signal(bool(1))
 reset_col_r = Signal(bool(1))
@@ -259,9 +259,10 @@ def RamCtrl(addr0_r, addr0_x,
              
             enr_x.next = NO
             enw_x.next = NO
-            addr0_x.next = 131072
+            addr0_x.next = 262144
+            
             addr1_x.next = 0
-             
+            dataToRam0_x.next = 0 
             """Reading 00_0000 to 01_ffff equals 0 to 131071
             addr1_r equals 0 the read address
             writing 00_0000 01_ffff to 02_0000 to 3ffff
@@ -274,24 +275,24 @@ def RamCtrl(addr0_r, addr0_x,
             index1_x.next = 1
             index2_x.next = 257
             index3_x.next = 513
-            state_x.next = t_State.COPY_PG1_TO_PG2
+            state_x.next = t_State.WRITE
         elif state_r == t_State.WRITE:
             if (done0_s == NO):
                 wr0_s.next = YES
                 #enw_x.next = NO
                 
-            elif (addr0_r <= 65541):
+            elif (addr0_r <= 262149):
                 #enw_x.next = YES
                 addr0_x.next = addr0_r + 1
                 dataToRam0_x.next = dataToRam0_r + 1
                 #datain_x.next = dataToRam_r + 1
             else:
-                addr0_x.next = 65536
-                addr1_x.next = 65792
+                addr0_x.next = 131072
+                addr1_x.next = 0
                 enw_x.next = NO
                 enr_x.next = NO
                 sum_x.next = 0
-                state_x.next = t_State.READ_AND_SUM_DATA
+                state_x.next = t_State.COPY_PG1_TO_PG2
         elif state_r == t_State.READ_AND_SUM_DATA:
             if (done0_s == NO) :
                 rd0_s.next = YES
@@ -428,7 +429,7 @@ def RamCtrl(addr0_r, addr0_x,
             if addr0_r == 16:
                 state_x.next = t_State.DONE
         elif state_r == t_State.COPY_PG1_TO_PG2:
-            if (done1_s == NO):
+            if ((done1_s == NO) and (done0_s == NO)):
                 rd1_s.next = YES
                 wr0_s.next = YES
             elif (addr1_r <= 131071):
@@ -661,7 +662,7 @@ def xess_jpeg_top(clk_fast,
                           enr_r,
                           enw_r,
                           dataout_r,
-                          datain_r) 
+                          datain_r)
     #instance_13 = fifo_up_if.fifo_up_if_ex(clk_fast,rst,up_interface.din,up_interface.wr_en,up_interface.full)        
     #instance_14 = fifo_down_if.fifo_down_if_ex(clk_fast, rst, dn_interface.dout, dn_interface.rd_en, dn_interface.empty)
     
@@ -704,8 +705,9 @@ def xess_jpeg_top(clk_fast,
     #instance_8 = read_file_sdram(clk_fast, rst, eog, wr_s, rst_file_in, addr_r, dataToRam_r, y)
     instance_8 = rom(dout_rom, addr_rom_r, CONTENT)
     return instance_1, instance_3, instance_5, instance_6, instance_7, instance_8
+     
 
-
+ 
 toVHDL(xess_jpeg_top, clk_fast,
                   addr0_r, addr0_x, addr1_r, addr1_x,
                   state_r, state_x,

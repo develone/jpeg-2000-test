@@ -34,7 +34,7 @@ architecture Behavioral of XESS_SdramDPInst is
   constant YES                    : std_logic := '1';
   --00_0000 to 03_FFFF is total memory allocated
   --00_0000 to 01_FFFF is where lena256.hex is initially installed
-  constant RAM_SIZE_C             : natural   := 262144;  -- Number of words in RAM.
+  constant RAM_SIZE_C             : natural   := 524288;  -- Number of words in RAM.
   constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
   constant MIN_ADDR_C             : natural   := 1;  -- Process RAM from this address ...
   constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
@@ -113,12 +113,7 @@ architecture Behavioral of XESS_SdramDPInst is
   signal   rdPending1_o    :  std_logic:= NO;
   signal   rdDone1_o       :  std_logic:= NO;  -- read operation is done_i and data is available.
   signal   status1_o       :  std_logic_vector(3 downto 0):="0000";  -- diagnostic status of the SDRAM controller FSM
-  signal   earlyOpBegun_i :   std_logic:= NO;
-  signal   earlyOpBegun_s :   std_logic:= NO;
- 
- 
-  signal   rst_s          :   std_logic                                  := NO;  -- reset.
-  ----signal needed by XESS_SdramDPInst.vhd and xess_jpeg_top.vhd***************************
+   ----signal needed by XESS_SdramDPInst.vhd and xess_jpeg_top.vhd***************************
 
 --signal needed by xess_jpeg_top.vhd***************************
   signal state_r, state_x         : t_enum_t_State_1   := INIT;  -- FSM starts off in init state.
@@ -227,7 +222,7 @@ component xess_jpeg_top is
 end component xess_jpeg_top;
 
 begin
---muxsel_x <= '0';
+
   --*********************************************************************
   -- Instantiate the jpeg_top step1JPEG_TOP_INSTANCE_7_FSMUPDATE
   -- updates signals for the FSM.
