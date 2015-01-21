@@ -259,15 +259,12 @@ def RamCtrl(addr0_r, addr0_x,
              
             enr_x.next = NO
             enw_x.next = NO
-            addr0_x.next = 262144
-            
+            addr0_x.next = 65536
+            """write 0000 to address 00_0000
+            then go to the WRITE state writes"""
             addr1_x.next = 0
-            dataToRam0_x.next = 0 
-            """Reading 00_0000 to 01_ffff equals 0 to 131071
-            addr1_r equals 0 the read address
-            writing 00_0000 01_ffff to 02_0000 to 3ffff
-            addr0_r equals 131072 the write adddress
-            INIT state next state COPY_PG1_TO_PG2"""
+            dataToRam0_x.next = 5 
+            
             datain_x.next = 0
             offset_x.next = 0
             col_x.next = 0
@@ -277,31 +274,33 @@ def RamCtrl(addr0_r, addr0_x,
             index3_x.next = 513
             state_x.next = t_State.WRITE
         elif state_r == t_State.WRITE:
+            """write 0001 to 000c to address 04_0001 to 04_000c
+            then goes to the READ_AND_SUM_DATA state
+            """
             if (done0_s == NO):
                 wr0_s.next = YES
                 #enw_x.next = NO
                 
-            elif (addr0_r <= 262149):
+            elif (addr0_r <= 65541):
                 #enw_x.next = YES
                 addr0_x.next = addr0_r + 1
                 dataToRam0_x.next = dataToRam0_r + 1
                 #datain_x.next = dataToRam_r + 1
             else:
-                addr0_x.next = 131072
+                addr0_x.next = 65536
                 addr1_x.next = 0
                 enw_x.next = NO
                 enr_x.next = NO
                 sum_x.next = 0
-                state_x.next = t_State.COPY_PG1_TO_PG2
+                state_x.next = t_State.READ_AND_SUM_DATA
         elif state_r == t_State.READ_AND_SUM_DATA:
             if (done0_s == NO) :
                 rd0_s.next = YES
-            elif (addr0_r <= 131077):
-                """Read and sum 5 locations to indicate that the
-                sdram ram was transfer correctly
-                from Pg1 to Pg2
-                00_0000 to 01_ffff to 02_0000 to 03_ffff
-                start at 02_0000 to 02_0005"""
+            elif (addr0_r <= 65541):
+                """Reads and sum 6 locations to indicate that the
+                sdram ram was written correctly
+                start at 00_0000 to 00_000c
+                sum_r 0042"""
                 sum_x.next = sum_r + (dataFromRam0_s )
                 addr0_x.next = addr0_r + 1
             else:
@@ -316,7 +315,7 @@ def RamCtrl(addr0_r, addr0_x,
                 index2_x.next = 1
                 index2_x.next = 257
                 index3_x.next = 513
-                state_x.next = t_State.EVEN_SAMPLES
+                state_x.next = t_State.READ_ROM_TO_FIFO
         elif state_r == t_State.CK_SDRAM_RD:
             if (done0_s == NO):
                #enr_x.next = YES
