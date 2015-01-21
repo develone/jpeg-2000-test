@@ -244,7 +244,10 @@ def RamCtrl(addr_r, addr_x, state_r, state_x, dataToRam_r, dataToRam_x,
             enr_x.next = NO
             enw_x.next = NO
             addr_x.next = 65536
-            dataToRam_x.next = 0
+            """Writing 02 to be able to determine which program has written
+            To address 02_0000
+            """
+            dataToRam_x.next = 2
             datain_x.next = 0
             offset_x.next = 0
             col_x.next = 0
