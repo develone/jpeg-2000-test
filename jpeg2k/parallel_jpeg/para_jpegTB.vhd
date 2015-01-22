@@ -26,7 +26,7 @@
         state_x: inout t_enum_t_State_1;
         sig_in_r: inout unsigned(30 downto 0);
         sig_in_x: inout unsigned(30 downto 0);
-        noupdate_s: out std_logic;
+        noupdate_s: inout std_logic;
         res_s: out signed (8 downto 0);
         dout_rom: inout unsigned(30 downto 0);
         addr_rom_r: inout unsigned(16 downto 0);
