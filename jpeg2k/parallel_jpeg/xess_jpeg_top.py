@@ -26,7 +26,8 @@ cc = (982599844,
 984701092,
 982599844,
 982595732,
-978397316,
+978397316)
+"""
 974190716,
 972085340,
 963684436,
@@ -15625,8 +15626,7 @@ cc = (982599844,
 969971772,
 955287628,
 959473700,
-948983860)
-"""
+948983860,
 837875724,
 808511500,
 808515576,
@@ -130330,7 +130330,7 @@ def testbench(clk_fast, state_r, state_x, sig_in_r, sig_in_x, noupdate_s, res_s,
         clk_fast.next = not clk_fast
     @instance
     def stimulus():
-        for i in range(10000):
+        for i in range(40):
             yield clk_fast.posedge
         raise StopSimulation
     return instance_1, instance_2, instance_3, instance_4, stimulus, clkgen
