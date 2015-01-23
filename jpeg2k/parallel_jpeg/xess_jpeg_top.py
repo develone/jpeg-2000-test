@@ -130195,6 +130195,22 @@ sig_in_r = Signal(intbv(0)[31:])
 sig_in_x = Signal(intbv(0)[31:])
 noupdate_s = Signal(bool(0))
 res_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
+
+sig0_in_x = Signal(intbv(0)[31:])
+noupdate0_s = Signal(bool(0))
+res0_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
+
+sig1_in_x = Signal(intbv(0)[31:])
+noupdate1_s = Signal(bool(0))
+res1_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
+
+sig2_in_x = Signal(intbv(0)[31:])
+noupdate2_s = Signal(bool(0))
+res2_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
+
+sig3_in_x = Signal(intbv(0)[31:])
+noupdate3_s = Signal(bool(0))
+res3_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
 """
 res_u = Signal(intbv(0)[JPEGDZ:])
 jp_lf = Signal(intbv(0)[JPEGDZ:])
@@ -130315,7 +130331,15 @@ def jpeg_process(clk_fast, sig_in_x,  noupdate_s, res_s):
         else:
             noupdate_s.next = 1
     return jpeg
- 
+def multi_jpeg(clk_fast, sig0_in_x, noupdate0_s, res0_s,
+               sig1_in_x, noupdate1_s, res1_s,
+               sig2_in_x, noupdate2_s, res2_s,
+               sig3_in_x, noupdate3_s, res3_s):
+    instance_1 = jpeg_process( clk_fast, sig0_in_x,  noupdate0_s, res0_s)
+    instance_2 = jpeg_process( clk_fast, sig1_in_x,  noupdate1_s, res1_s)
+    instance_3 = jpeg_process( clk_fast, sig2_in_x,  noupdate2_s, res2_s)
+    instance_4 = jpeg_process( clk_fast, sig3_in_x,  noupdate3_s, res3_s)
+    return instance_1, instance_2, instance_3, instance_4
 def xess_jpeg_para(clk_fast, state_r, state_x, sig_in_r, sig_in_x, noupdate_s, res_s, dout_rom, addr_rom_r, addr_rom_x, cc):
 
     instance_1 = jpeg_process( clk_fast, sig_in_x,  noupdate_s, res_s)
@@ -130324,8 +130348,24 @@ def xess_jpeg_para(clk_fast, state_r, state_x, sig_in_r, sig_in_x, noupdate_s, r
     instance_3 = jpegfsmupdate(clk_fast, state_r, state_x, addr_rom_r, addr_rom_x, sig_in_r, sig_in_x)
     instance_2 = JPEGFSM(state_r, state_x, addr_rom_r, addr_rom_x, sig_in_r, sig_in_x, dout_rom)
     return instance_1, instance_2, instance_3, instance_4
-    
-     
+def testbench( clk_fast, sig0_in_x, noupdate0_s, res0_s,
+               sig1_in_x, noupdate1_s, res1_s,
+               sig2_in_x, noupdate2_s, res2_s,
+               sig3_in_x, noupdate3_s, res3_s):
+    instance_1 = jpeg_process( clk_fast, sig0_in_x,  noupdate0_s, res0_s)
+    instance_2 = jpeg_process( clk_fast, sig1_in_x,  noupdate1_s, res1_s)
+    instance_3 = jpeg_process( clk_fast, sig2_in_x,  noupdate2_s, res2_s)
+    instance_4 = jpeg_process( clk_fast, sig3_in_x,  noupdate3_s, res3_s)
+    @always(delay(10))
+    def clkgen():
+        clk_fast.next = not clk_fast
+    @instance
+    def stimulus():
+        for i in range(40):
+            yield clk_fast.posedge
+        raise StopSimulation
+    return instance_1, instance_2, instance_3, instance_4, stimulus, clkgen
+"""     
 def testbench(clk_fast, state_r, state_x, sig_in_r, sig_in_x, noupdate_s, res_s, dout_rom, addr_rom_r, addr_rom_x, cc):
 
     instance_1 = jpeg_process( clk_fast, sig_in_x,  noupdate_s, res_s)
@@ -130342,12 +130382,19 @@ def testbench(clk_fast, state_r, state_x, sig_in_r, sig_in_x, noupdate_s, res_s,
             yield clk_fast.posedge
         raise StopSimulation
     return instance_1, instance_2, instance_3, instance_4, stimulus, clkgen
+"""
 #toVHDL(jpeg_process, clk_fast, sig_in,  noupdate_s, res_s)
 #toVHDL(rom, dout_rom, addr_rom_x, cc)
 #toVHDL(JPEGFSM, state_r, state_x, dout_rom, addr_rom_r, addr_rom_x, sig_in_r, sig_in_x)
 #toVHDL(jpegfsmupdate, clk_fast,state_r, state_x, addr_rom_r, addr_rom_x, sig_in_r, sig_in_x)
-toVHDL(xess_jpeg_para, clk_fast, state_r, state_x, sig_in_r, sig_in_x, noupdate_s, res_s, dout_rom, addr_rom_r, addr_rom_x, cc)
- 
-tb_fsm = traceSignals(testbench, clk_fast, state_r, state_x, sig_in_r, sig_in_x, noupdate_s, res_s, dout_rom, addr_rom_r, addr_rom_x, cc)
+#toVHDL(xess_jpeg_para, clk_fast, state_r, state_x, sig_in_r, sig_in_x, noupdate_s, res_s, dout_rom, addr_rom_r, addr_rom_x, cc)
+toVHDL(multi_jpeg, clk_fast, sig0_in_x, noupdate0_s, res0_s,
+               sig1_in_x, noupdate1_s, res1_s,
+               sig2_in_x, noupdate2_s, res2_s,
+               sig3_in_x, noupdate3_s, res3_s)
+tb_fsm = traceSignals(testbench, clk_fast, sig0_in_x, noupdate0_s, res0_s,
+               sig1_in_x, noupdate1_s, res1_s,
+               sig2_in_x, noupdate2_s, res2_s,
+               sig3_in_x, noupdate3_s, res3_s)
 sim = Simulation(tb_fsm)
 sim.run() 
