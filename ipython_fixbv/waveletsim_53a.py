@@ -131,15 +131,16 @@ def fwt97(s, width, height):
 			rh = (s[row+1][col])
 			flgs = 7
 			a = flgs*(2**27)
-			b = lf*(2**18)
+			b = rh*(2**18)
 			c = sa*(2**9)
-			d = rh
+			d = lf
 			e = a + b + c + d
-			print e
+			#print e
 			#sig = concat(flgs, rh, sa, lf)
 			#print sig
 			#print '%00004s %000000008s %000000008s %000000008s' % (bin(flgs), bin(lf), bin(sa), bin(rh))
 			s[row][col] = (s[row][col] - (((s[row-1][col])>>1) + ((s[row+1][col])>>1)))
+			print lf, sa, rh, a, b, c, d, e, [row][col], bin([row][col])
 
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])
 
@@ -155,9 +156,9 @@ def fwt97(s, width, height):
 			rh = (s[row+1][col])
 			flgs = 6
 			a = flgs*(2**27)
-			b = lf*(2**18)
+			b = rh*(2**18)
 			c = sa*(2**9)
-			d = rh
+			d = lf
 			e = a + b + c + d
 			print e
 
