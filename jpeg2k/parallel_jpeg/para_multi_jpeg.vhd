@@ -43,7 +43,11 @@ architecture Behavioral of para_multi_jpeg is
  
   signal res0_s, res1_s, res2_s, res3_s : signed(8 downto 0) := (others => '0');
  
-
+  signal sig4_in_x,sig5_in_x, sig6_in_x,sig7_in_x : unsigned(30 downto 0) := (others => '0');
+  signal noupdate4_s, noupdate5_s, noupdate6_s, noupdate7_s : std_logic;
+ 
+ 
+  signal res4_s, res5_s, res6_s, res7_s : signed(8 downto 0) := (others => '0');
  
  
 
@@ -86,6 +90,25 @@ multi_jpeg_u0 : multi_jpeg
    noupdate3_s => noupdate3_s,
    res3_s => res3_s
 );
+multi_jpeg_u1 : multi_jpeg
+  port map(
+   clk_fast => Clk_i,
 
+	sig0_in_x => sig4_in_x,
+   noupdate0_s => noupdate4_s,
+   res0_s => res4_s,
+	
+	sig1_in_x => sig5_in_x,
+   noupdate1_s => noupdate5_s,
+   res1_s => res5_s,
+ 
+	sig2_in_x => sig6_in_x,
+   noupdate2_s => noupdate6_s,
+   res2_s => res6_s,
+	
+	sig3_in_x => sig7_in_x,
+   noupdate3_s => noupdate7_s,
+   res3_s => res7_s
+);
 end Behavioral;
 
