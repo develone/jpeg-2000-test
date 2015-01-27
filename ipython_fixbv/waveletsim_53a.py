@@ -130,41 +130,37 @@ def fwt97(s, width, height):
 			sa =  s[row][col]
 			rh = (s[row+1][col])
 			flgs = 7
-			a = flgs*(2**27)
-			b = rh*(2**18)
-			c = sa*(2**9)
+			a = flgs << 27
+			b = rh << 18
+			c = sa << 9
 			d = lf
 			e = a + b + c + d
-			#print e
-			#sig = concat(flgs, rh, sa, lf)
-			#print sig
-			#print '%00004s %000000008s %000000008s %000000008s' % (bin(flgs), bin(lf), bin(sa), bin(rh))
+			print e
+			#print " %s %d %d %d %d %d %d %d %d  " % (bin(e,37), row, col, lf, sa, rh,s[row-1][col], s[row][col],s[row+1][col] )
 			s[row][col] = (s[row][col] - (((s[row-1][col])>>1) + ((s[row+1][col])>>1)))
-			print lf, sa, rh, a, b, c, d, e, [row][col], bin([row][col])
+			#print "%d  " % ( s[row][col])
 
-            #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])
+            
 
 
         # Update 1. y0
 
         for row in range(1, height-1, 2):
-			#print row, col, int(s[row+1][col]), s[row][col], int(s[row-1][col])
-			#sig = 6*16777216 +  int(s[row+1][col])*65536 + s[row][col]*256 + int(s[row-1][col])
-			#print bin(sig)
+ 
 			lf = (s[row-1][col])
 			sa =  s[row][col]
 			rh = (s[row+1][col])
 			flgs = 6
-			a = flgs*(2**27)
-			b = rh*(2**18)
-			c = sa*(2**9)
+		
+			a = flgs << 27
+			b = rh << 18
+			c = sa << 9
 			d = lf
 			e = a + b + c + d
 			print e
-
-			#print '%00004s %000000008s %000000008s %000000008s' % (bin(flgs), bin(lf), bin(sa), bin(rh))
-			#sig = concat(flgs, rh, sa, lf)
+			#print " %s %d %d %d %d %d %d %d %d  " % (bin(e,37), row, col, lf, sa, rh,s[row-1][col], s[row][col],s[row+1][col] )
 			s[row][col] = (s[row][col] + ((int(s[row-1][col]) + int(s[row+1][col]) + 2)>>2))
+			#print "%d  " % ( s[row][col])
     s = de_interleave(s,height,width)
     return s
 
