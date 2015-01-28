@@ -49,8 +49,8 @@ datain_x = Signal(intbv(0)[DSZ:])
 readptr = Signal(intbv(0)[ASZ:])
 writeptr = Signal(intbv(0)[ASZ:])
 mem = [Signal(intbv(0)[DSZ:]) for ii in range(2**ASZ)]
-
 """
+
 def jpegfifo(clk_fast, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r ):
     """Following the code being converted requires the that both readptr
     writeptr be initialized :="00000000" """
@@ -99,7 +99,7 @@ ACTIVE_LOW = bool(0)
 NO = bool(0)
 YES = bool(1)
 """
-"""
+
 rd0_s = Signal(bool(0))
 wr0_s = Signal(bool(0))
 rd1_s = Signal(bool(0))
@@ -155,7 +155,7 @@ sig_in_x = Signal(intbv(0)[31:])
 noupdate_s = Signal(bool(0))
 """
 res_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
-
+"""
 sig0_in_x = Signal(intbv(0)[SIG_IN_WIDTH:])
 noupdate0_s = Signal(bool(0))
 res0_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
@@ -187,6 +187,38 @@ res6_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
 sig7_in_x = Signal(intbv(0)[SIG_IN_WIDTH:])
 noupdate7_s = Signal(bool(0))
 res7_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
+
+sig8_in_x = Signal(intbv(0)[SIG_IN_WIDTH:])
+noupdate8_s = Signal(bool(0))
+res8_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
+
+sig9_in_x = Signal(intbv(0)[SIG_IN_WIDTH:])
+noupdate9_s = Signal(bool(0))
+res9_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
+
+sig10_in_x = Signal(intbv(0)[SIG_IN_WIDTH:])
+noupdate10_s = Signal(bool(0))
+res10_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
+
+sig11_in_x = Signal(intbv(0)[SIG_IN_WIDTH:])
+noupdate11_s = Signal(bool(0))
+res11_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
+
+sig12_in_x = Signal(intbv(0)[SIG_IN_WIDTH:])
+noupdate12_s = Signal(bool(0))
+res12_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
+
+sig13_in_x = Signal(intbv(0)[SIG_IN_WIDTH:])
+noupdate13_s = Signal(bool(0))
+res13_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
+
+sig14_in_x = Signal(intbv(0)[SIG_IN_WIDTH:])
+noupdate14_s = Signal(bool(0))
+res14_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
+
+sig15_in_x = Signal(intbv(0)[SIG_IN_WIDTH:])
+noupdate15_s = Signal(bool(0))
+res15_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
 
 """
 res_u = Signal(intbv(0)[JPEGDZ:])
@@ -225,10 +257,10 @@ offset_r = Signal(intbv(0)[JPEG_RAM_ADDR:])
 #t_State = enum('INIT', 'ODD_SA', 'EVEN_SA','ODD_SA_COL', 'EVEN_SA_COL', 'TR_RES', 'TR_INIT', 'TRAN_RAM', 'DONE_PASS1', encoding="one_hot")
 #t_State = enum('INIT', 'WRITE_DATA', 'READ_AND_SUM_DATA', 'DONE', encoding="one_hot")
 #t_State = enum('INIT', 'READ_ROM_TO_FIFO', 'COPY_PG1_TO_PG2', 'WRITE_FIFO_TO_SDRAM', 'WRITE', 'READ_AND_SUM_DATA', 'CK_SDRAM_RD', 'CK_SDRAM_WR', 'ODD_SAMPLES', 'EVEN_SAMPLES', 'WR_DATA', 'INTERLACE', 'DONE', encoding="one_hot")
-t_State = enum('INIT', 'READ_ROM', 'DONE')
+#t_State = enum('INIT', 'READ_ROM', 'DONE')
 #print t_State, t_State.INIT
-state_r = Signal(t_State.INIT)
-state_x = Signal(t_State.INIT)
+#state_r = Signal(t_State.INIT)
+#state_x = Signal(t_State.INIT)
 #state = Signal(t_State.INIT)
 #even_odd_r = Signal(bool(0))
 #even_odd_x = Signal(bool(0))
@@ -236,6 +268,7 @@ state_x = Signal(t_State.INIT)
 
 
 #reset_col = Signal(bool(1))
+"""
 x0 = Signal(intbv(0)[124:])
 def resetFsm(clk_fast, reset_fsm_r, reset_ctn):
     @always(clk_fast.posedge)
@@ -282,7 +315,7 @@ def jpegfsmupdate(clk_fast,
  
     return fsmupdate
  
- 
+"""
 def jpeg_process(clk_fast, sig_in_x,  noupdate_s, res_s):
     left_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
     sam_s = Signal(intbv(0, min = -JPEG_DATA_WIDTH, max = JPEG_DATA_WIDTH))
@@ -318,7 +351,15 @@ def multi_jpeg(clk_fast, sig0_in_x, noupdate0_s, res0_s,
                sig4_in_x, noupdate4_s, res4_s,
                sig5_in_x, noupdate5_s, res5_s,
                sig6_in_x, noupdate6_s, res6_s,
-               sig7_in_x, noupdate7_s, res7_s
+               sig7_in_x, noupdate7_s, res7_s,
+               sig8_in_x, noupdate8_s, res8_s,
+               sig9_in_x, noupdate9_s, res9_s,
+               sig10_in_x, noupdate10_s, res10_s,
+               sig11_in_x, noupdate11_s, res11_s,
+               sig12_in_x, noupdate12_s, res12_s,
+               sig13_in_x, noupdate13_s, res13_s,
+               sig14_in_x, noupdate14_s, res14_s,
+               sig15_in_x, noupdate15_s, res15_s
                ):
     instance_0 = jpeg_process( clk_fast, sig0_in_x,  noupdate0_s, res0_s)
     instance_1 = jpeg_process( clk_fast, sig1_in_x,  noupdate1_s, res1_s)
@@ -328,7 +369,16 @@ def multi_jpeg(clk_fast, sig0_in_x, noupdate0_s, res0_s,
     instance_5 = jpeg_process( clk_fast, sig5_in_x,  noupdate5_s, res5_s)
     instance_6 = jpeg_process( clk_fast, sig6_in_x,  noupdate6_s, res6_s)
     instance_7 = jpeg_process( clk_fast, sig7_in_x,  noupdate7_s, res7_s)
-    return instance_0, instance_1, instance_2, instance_3, instance_4, instance_5, instance_6, instance_7
+    
+    instance_8 = jpeg_process( clk_fast, sig8_in_x,  noupdate8_s, res8_s)
+    instance_9 = jpeg_process( clk_fast, sig9_in_x,  noupdate9_s, res9_s)
+    instance_10 = jpeg_process( clk_fast, sig10_in_x,  noupdate10_s, res10_s)
+    instance_11 = jpeg_process( clk_fast, sig11_in_x,  noupdate11_s, res11_s)
+    instance_12 = jpeg_process( clk_fast, sig12_in_x,  noupdate12_s, res12_s)
+    instance_13 = jpeg_process( clk_fast, sig13_in_x,  noupdate13_s, res13_s)
+    instance_14 = jpeg_process( clk_fast, sig14_in_x,  noupdate14_s, res14_s)
+    instance_15 = jpeg_process( clk_fast, sig15_in_x,  noupdate15_s, res15_s)
+    return instance_0, instance_1, instance_2, instance_3, instance_4, instance_5, instance_6, instance_7, instance_8, instance_9, instance_10, instance_11, instance_12, instance_13, instance_14, instance_15
 def xess_jpeg_para(clk_fast, state_r, state_x, sig_in_r, sig_in_x, noupdate_s, res_s, dout_rom, addr_rom_r, addr_rom_x, cc):
 
     instance_1 = jpeg_process( clk_fast, sig_in_x,  noupdate_s, res_s)
@@ -344,7 +394,15 @@ def testbench( clk_fast, sig0_in_x, noupdate0_s, res0_s,
                sig4_in_x, noupdate4_s, res4_s,
                sig5_in_x, noupdate5_s, res5_s,
                sig6_in_x, noupdate6_s, res6_s,
-               sig7_in_x, noupdate7_s, res7_s):
+               sig7_in_x, noupdate7_s, res7_s,
+               sig8_in_x, noupdate8_s, res8_s,
+               sig9_in_x, noupdate9_s, res9_s,
+               sig10_in_x, noupdate10_s, res10_s,
+               sig11_in_x, noupdate11_s, res11_s,
+               sig12_in_x, noupdate12_s, res12_s,
+               sig13_in_x, noupdate13_s, res13_s,
+               sig14_in_x, noupdate14_s, res14_s,
+               sig15_in_x, noupdate15_s, res15_s):
     instance_0 = jpeg_process( clk_fast, sig0_in_x,  noupdate0_s, res0_s)
     instance_1 = jpeg_process( clk_fast, sig1_in_x,  noupdate1_s, res1_s)
     instance_2 = jpeg_process( clk_fast, sig2_in_x,  noupdate2_s, res2_s)
@@ -353,6 +411,15 @@ def testbench( clk_fast, sig0_in_x, noupdate0_s, res0_s,
     instance_5 = jpeg_process( clk_fast, sig5_in_x,  noupdate5_s, res5_s)
     instance_6 = jpeg_process( clk_fast, sig6_in_x,  noupdate6_s, res6_s)
     instance_7 = jpeg_process( clk_fast, sig7_in_x,  noupdate7_s, res7_s)
+    instance_8 = jpeg_process( clk_fast, sig8_in_x,  noupdate8_s, res8_s)
+    instance_9 = jpeg_process( clk_fast, sig9_in_x,  noupdate9_s, res9_s)
+    instance_10 = jpeg_process( clk_fast, sig10_in_x,  noupdate10_s, res10_s)
+    instance_11 = jpeg_process( clk_fast, sig11_in_x,  noupdate11_s, res11_s)
+    instance_12 = jpeg_process( clk_fast, sig12_in_x,  noupdate12_s, res12_s)
+    instance_13 = jpeg_process( clk_fast, sig13_in_x,  noupdate13_s, res13_s)
+    instance_14 = jpeg_process( clk_fast, sig14_in_x,  noupdate14_s, res14_s)
+    instance_15 = jpeg_process( clk_fast, sig15_in_x,  noupdate15_s, res15_s)
+
     @always(delay(10))
     def clkgen():
         clk_fast.next = not clk_fast
@@ -360,7 +427,7 @@ def testbench( clk_fast, sig0_in_x, noupdate0_s, res0_s,
     def stimulus():
         #for i in range(40):
         #yield clk_fast.posedge
-        for ii in range(0, 16381, 8):
+        for ii in range(0, 16381, 16):
             sig0_in_x.next = 0
             sig1_in_x.next = 0
             sig2_in_x.next = 0
@@ -369,7 +436,16 @@ def testbench( clk_fast, sig0_in_x, noupdate0_s, res0_s,
             sig5_in_x.next = 0
             sig6_in_x.next = 0
             sig7_in_x.next = 0
+            sig8_in_x.next = 0
+            sig9_in_x.next = 0
+            sig10_in_x.next = 0
+            sig11_in_x.next = 0
+            sig12_in_x.next = 0
+            sig13_in_x.next = 0
+            sig14_in_x.next = 0
+            sig15_in_x.next = 0
             yield clk_fast.posedge
+            
             sig0_in_x.next = cc[ii]
             sig1_in_x.next = cc[ii+1]
             sig2_in_x.next = cc[ii+2]
@@ -378,13 +454,21 @@ def testbench( clk_fast, sig0_in_x, noupdate0_s, res0_s,
             sig5_in_x.next = cc[ii+5]
             sig6_in_x.next = cc[ii+6]
             sig7_in_x.next = cc[ii+7]
+            sig8_in_x.next = cc[ii+8]
+            sig9_in_x.next = cc[ii+9]
+            sig10_in_x.next = cc[ii+10]
+            sig11_in_x.next = cc[ii+11]
+            sig12_in_x.next = cc[ii+12]
+            sig13_in_x.next = cc[ii+13]
+            sig14_in_x.next = cc[ii+14]
+            sig15_in_x.next = cc[ii+15]
             yield clk_fast.posedge
             print("%3d %d %d %d %d %d ") % (now(), ii, sig0_in_x, sig1_in_x, sig2_in_x, sig3_in_x)
             print("%3d %d %d %d %d %d ") % (now(), ii, sig4_in_x, sig5_in_x, sig6_in_x, sig7_in_x)
             print("%3d %d %d %d %d %d ") % (now(), ii, res0_s, res1_s, res2_s, res3_s)
             print("%3d %d %d %d %d %d ") % (now(), ii, res4_s, res5_s, res6_s, res7_s)
         raise StopSimulation
-    return instance_0, instance_1, instance_2, instance_3, instance_4, instance_5, instance_6, instance_7,stimulus, clkgen
+    return instance_0, instance_1, instance_2, instance_3, instance_4, instance_5, instance_6, instance_7,instance_8, instance_9, instance_10, instance_11, instance_12, instance_13, instance_14, instance_15, stimulus, clkgen
 """     
 def testbench(clk_fast, state_r, state_x, sig_in_r, sig_in_x, noupdate_s, res_s, dout_rom, addr_rom_r, addr_rom_x, cc):
 
@@ -416,7 +500,15 @@ toVHDL(multi_jpeg, clk_fast, sig0_in_x, noupdate0_s, res0_s,
                sig4_in_x, noupdate4_s, res4_s,
                sig5_in_x, noupdate5_s, res5_s,
                sig6_in_x, noupdate6_s, res6_s,
-               sig7_in_x, noupdate7_s, res7_s)
+               sig7_in_x, noupdate7_s, res7_s,
+               sig8_in_x, noupdate8_s, res8_s,
+               sig9_in_x, noupdate9_s, res9_s,
+               sig10_in_x, noupdate10_s, res10_s,
+               sig11_in_x, noupdate11_s, res11_s,
+               sig12_in_x, noupdate12_s, res12_s,
+               sig13_in_x, noupdate13_s, res13_s,
+               sig14_in_x, noupdate14_s, res14_s,
+               sig15_in_x, noupdate15_s, res15_s)
             
 tb_fsm = traceSignals(testbench, clk_fast, sig0_in_x, noupdate0_s, res0_s,
                sig1_in_x, noupdate1_s, res1_s,
@@ -425,7 +517,15 @@ tb_fsm = traceSignals(testbench, clk_fast, sig0_in_x, noupdate0_s, res0_s,
                sig4_in_x, noupdate4_s, res4_s,
                sig5_in_x, noupdate5_s, res5_s,
                sig6_in_x, noupdate6_s, res6_s,
-               sig7_in_x, noupdate7_s, res7_s)
+               sig7_in_x, noupdate7_s, res7_s,
+               sig8_in_x, noupdate8_s, res8_s,
+               sig9_in_x, noupdate9_s, res9_s,
+               sig10_in_x, noupdate10_s, res10_s,
+               sig11_in_x, noupdate11_s, res11_s,
+               sig12_in_x, noupdate12_s, res12_s,
+               sig13_in_x, noupdate13_s, res13_s,
+               sig14_in_x, noupdate14_s, res14_s,
+               sig15_in_x, noupdate15_s, res15_s)
 
 sim = Simulation(testbench(clk_fast, sig0_in_x, noupdate0_s, res0_s,
                sig1_in_x, noupdate1_s, res1_s,
@@ -434,7 +534,15 @@ sim = Simulation(testbench(clk_fast, sig0_in_x, noupdate0_s, res0_s,
                sig4_in_x, noupdate4_s, res4_s,
                sig5_in_x, noupdate5_s, res5_s,
                sig6_in_x, noupdate6_s, res6_s,
-               sig7_in_x, noupdate7_s, res7_s))
+               sig7_in_x, noupdate7_s, res7_s,
+               sig8_in_x, noupdate8_s, res8_s,
+               sig9_in_x, noupdate9_s, res9_s,
+               sig10_in_x, noupdate10_s, res10_s,
+               sig11_in_x, noupdate11_s, res11_s,
+               sig12_in_x, noupdate12_s, res12_s,
+               sig13_in_x, noupdate13_s, res13_s,
+               sig14_in_x, noupdate14_s, res14_s,
+               sig15_in_x, noupdate15_s, res15_s))
 
 sim = Simulation(tb_fsm)
 sim.run() 
