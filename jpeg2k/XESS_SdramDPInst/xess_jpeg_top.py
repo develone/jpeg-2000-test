@@ -58,11 +58,15 @@ def jpegfifo(clk_fast, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r ):
         if (enw_r == YES):
             mem[int(writeptr)].next = datain_x    
             writeptr.next = writeptr + 1
-        if  (readptr == 1023):
+        if  (readptr == (2**ASZ-1)):
             readptr.next = 0
-        if (writeptr == 1023):
+        if (writeptr == (2**ASZ -1)):
             full_x.next = YES
             writeptr.next = 0
+        else:
+            full_x.next = NO
+        if (writeptr == 0):
+            empty_x.next = YES
         else:
             empty_x.next = NO
     return rtl 
