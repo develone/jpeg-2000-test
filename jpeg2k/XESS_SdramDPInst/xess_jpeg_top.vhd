@@ -119,7 +119,7 @@ constant NO: integer := 0;
 
 
 
-signal instance_1_reset_ctn: unsigned(3 downto 0);
+signal instance_1_reset_ctn: unsigned(3 downto 0):= "0000";
 signal instance_1_writeptr: unsigned(9 downto 0);
 signal instance_1_readptr: unsigned(9 downto 0);
 type t_array_instance_1_mem is array(0 to 1024-1) of unsigned(15 downto 0);
