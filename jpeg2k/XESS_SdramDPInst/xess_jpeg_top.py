@@ -76,7 +76,7 @@ rst = ResetSignal(0,active=1,async=True)
 
 reset_dly_c = 10
 DATA_WIDTH = 32768
-JPEG_RAM_ADDR = 23
+JPEG_RAM_ADDR = 24
 JPEG_RES_RAM_ADDR = 9
 ROW_NUM = 8
 ACTIVE_LOW = bool(0)
