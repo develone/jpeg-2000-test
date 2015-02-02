@@ -91,7 +91,7 @@ sig0_in_x 31 bits
 res0_s ...res7_s 11 bits
 """
 JPEG_DATA_WIDTH = 1024
-SIG_IN_WIDTH = 31
+SIG_IN_WIDTH = 32
 JPEG_RAM_ADDR = 23
 JPEG_RES_RAM_ADDR = 9
 ROW_NUM = 8
@@ -327,6 +327,7 @@ def jpeg_process(clk_fast, sig_in_x,  noupdate_s, res_s):
     fwd_inv_s = sig_in_x(28)
     updated_s = sig_in_x(29)
     dum_s = sig_in_x(30)
+    dum1_s = sig_in_x(31) 
     @always(clk_fast.posedge)
     def jpeg():
         if updated_s:
