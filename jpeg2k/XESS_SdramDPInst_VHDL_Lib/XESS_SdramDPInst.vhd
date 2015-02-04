@@ -9,6 +9,13 @@ use XESS.ClkgenPckg.all;     -- For the clock generator module.
 use XESS.SdramCntlPckg.all;  -- For the SDRAM controller module.
 use XESS.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module. 
 use XESS.XessBoardPckg.all; 
+--library IEEE;
+--use IEEE.STD_LOGIC_1164.all;
+--use IEEE.NUMERIC_STD.all;
+--use work.ClkgenPckg.all;     -- For the clock generator module.
+--use work.SdramCntlPckg.all;  -- For the SDRAM controller module.
+--use work.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module. 
+
 use work.pck_myhdl_09.all;
 use work.pck_xess_jpeg_top.all;
 entity XESS_SdramDPInst is
@@ -35,8 +42,9 @@ architecture Behavioral of XESS_SdramDPInst is
   constant YES                    : std_logic := '1';
   --00_0000 to 03_FFFF is total memory allocated
   --00_0000 to 01_FFFF is where lena256.hex is initially installed
-  constant RAM_SIZE_C             : natural   := 524288;  -- Number of words in RAM.
+  constant RAM_SIZE_C             : natural   := 262140;  -- Number of words in RAM.
   constant RAM_WIDTH_C            : natural   := 32;  -- Width of RAM words.
+  constant RAM_ADDR_SIZE_C            : natural   := 24;  -- Addr size .
   constant MIN_ADDR_C             : natural   := 1;  -- Process RAM from this address ...
   constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
   subtype RamWord_t is unsigned(RAM_WIDTH_C-1 downto 0);  -- RAM word type.
@@ -53,30 +61,30 @@ architecture Behavioral of XESS_SdramDPInst is
 
 ----signal needed by XESS_SdramDPInst.vhd and xess_jpeg_top.vhd*************************** 
   signal clk_s                    : std_logic;  -- Internal clock.
-  signal sumDut_s                 : std_logic_vector(31 downto 0);  -- Send sum back to PC.
+  signal sumDut_s                 : std_logic_vector(RAM_WIDTH_C-1 downto 0);  -- Send sum back to PC.
 --  alias fromjpflgsDut_s is sumDut_s(107 downto 104);
 --  alias fromjprhDut_s is sumDut_s(103 downto 88);
 --  alias fromjpsaDut_s is sumDut_s(87 downto 72);
 --  alias fromjplfDut_s is sumDut_s(71 downto 56);
 --   
 --  alias fromresdataDut_s is sumDut_s(55 downto 40);
-  alias fromsdramdataDut_s is sumDut_s(31 downto 0);
+  alias fromsdramdataDut_s is sumDut_s(RAM_WIDTH_C-1 downto 0);
 --  alias fromsdramaddrDut_s is sumDut_s(23 downto 0);
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
 
-  signal dataFromSdram0_s          : std_logic_vector(31 downto 0);  -- Data.
-  signal dataFromSdram1_s          : std_logic_vector(31 downto 0);  -- Data.
+  signal dataFromSdram0_s          : std_logic_vector(RAM_WIDTH_C-1 downto 0);  -- Data.
+  signal dataFromSdram1_s          : std_logic_vector(RAM_WIDTH_C-1 downto 0);  -- Data.
 
-  signal addrSdram0_s              :std_logic_vector(23 downto 0);  -- Address.
-  signal addrSdram1_s              : std_logic_vector(23 downto 0);  -- Address.
+  signal addrSdram0_s              :std_logic_vector(RAM_ADDR_SIZE_C-1 downto 0);  -- Address.
+  signal addrSdram1_s              : std_logic_vector(RAM_ADDR_SIZE_C-1 downto 0);  -- Address.
 
-  signal dataToSdram0_s            : unsigned(31 downto 0);  -- Data.
-  signal dataToSdram1_s            : unsigned(31 downto 0);  -- Data.
+  signal dataToSdram0_s            : unsigned(RAM_WIDTH_C-1 downto 0);  -- Data.
+  signal dataToSdram1_s            : unsigned(RAM_WIDTH_C-1 downto 0);  -- Data.
    
-  signal dataFromRam0_r  : unsigned(31 downto 0);
-  signal dataFromRam1_r  : unsigned(31 downto 0);   
+  signal dataFromRam0_r  : unsigned(RAM_WIDTH_C-1 downto 0);
+  signal dataFromRam1_r  : unsigned(RAM_WIDTH_C-1 downto 0);   
  
-  signal sum_r, sum_x             : unsigned( 31 downto 0);
+  signal sum_r, sum_x             : unsigned( RAM_WIDTH_C-1 downto 0);
  
   
  
@@ -90,14 +98,14 @@ architecture Behavioral of XESS_SdramDPInst is
   signal done0_s                   : std_logic:= NO;  -- SDRAM R/W operation done signal.
   signal done1_s                   : std_logic:= NO;  -- SDRAM R/W operation done signal.
  
-  signal addr0_r, addr0_x           : unsigned(23 downto 0):= (others => '0');  -- RAM address.
-  signal addr1_r, addr1_x           : unsigned(23 downto 0):= (others => '0');  -- RAM address.
+  signal addr0_r, addr0_x           : unsigned(RAM_ADDR_SIZE_C-1 downto 0):= (others => '0');  -- RAM address.
+  signal addr1_r, addr1_x           : unsigned(RAM_ADDR_SIZE_C-1 downto 0):= (others => '0');  -- RAM address.
 
-  signal index1_r, index2_r, index3_r           : unsigned(23 downto 0):= (others => '0'); 
-  signal index1_x, index2_x, index3_x           : unsigned(23 downto 0):= (others => '0');
+  signal index1_r, index2_r, index3_r           : unsigned(RAM_ADDR_SIZE_C-1 downto 0):= (others => '0'); 
+  signal index1_x, index2_x, index3_x           : unsigned(RAM_ADDR_SIZE_C-1 downto 0):= (others => '0');
 
-  signal dataToRam0_r, dataToRam0_x, dataFromRam0_s  : unsigned(31 downto 0);  -- Data to write to RAM.
-  signal dataToRam1_r, dataToRam1_x, dataFromRam1_s  : unsigned(31 downto 0);  -- Data to write to RAM.
+  signal dataToRam0_r, dataToRam0_x, dataFromRam0_s  : unsigned(RAM_WIDTH_C-1 downto 0);  -- Data to write to RAM.
+  signal dataToRam1_r, dataToRam1_x, dataFromRam1_s  : unsigned(RAM_WIDTH_C-1 downto 0);  -- Data to write to RAM.
  
  
           -- Host-side port 0.
@@ -129,10 +137,10 @@ architecture Behavioral of XESS_SdramDPInst is
   signal reset_col : std_logic := '0';
 --  signal rdy : std_logic := '1';
 --  signal addr_not_reached : std_logic := '0';
-  signal offset_r, offset_x           : unsigned(23 downto 0);  -- RAM address.
+  signal offset_r, offset_x           : unsigned(RAM_ADDR_SIZE_C-1 downto 0);  -- RAM address.
  
   signal col_r, col_x, row_r, row_x : unsigned(7 downto 0) := (others => '0');
-  signal dout_rom : unsigned(31 downto 0) := (others => '0');
+  signal dout_rom : unsigned(RAM_WIDTH_C-1 downto 0) := (others => '0');
   signal addr_rom_r, addr_rom_x : unsigned(3 downto 0) := (others => '0');
 --signal needed by xess_jpeg_top.vhd*************************** 
 
@@ -141,14 +149,14 @@ architecture Behavioral of XESS_SdramDPInst is
   signal full_r:  std_logic:= '0';
   signal enr_r:  std_logic:= '0';
   signal enw_r:  std_logic:= '0';
-  signal dataout_r:  unsigned(31 downto 0):= (others => '0');
-  signal datain_r:  unsigned(31 downto 0):= (others => '0');
+  signal dataout_r:  unsigned(RAM_WIDTH_C-1 downto 0):= (others => '0');
+  signal datain_r:  unsigned(RAM_WIDTH_C-1 downto 0):= (others => '0');
   signal empty_x:  std_logic:= '0';
   signal full_x:  std_logic:= '0';
   signal enr_x:  std_logic:= '0';
   signal enw_x:  std_logic:= '0';
-  signal dataout_x:  unsigned(31 downto 0):= (others => '0');
-  signal datain_x:  unsigned(31 downto 0):= (others => '0'); 
+  signal dataout_x:  unsigned(RAM_WIDTH_C-1 downto 0):= (others => '0');
+  signal datain_x:  unsigned(RAM_WIDTH_C-1 downto 0):= (others => '0'); 
  
 --signal needed by FIFO*************************** 
  
@@ -156,20 +164,20 @@ architecture Behavioral of XESS_SdramDPInst is
 component xess_jpeg_top is
     port (
         clk_fast: in std_logic;
-        addr0_r: inout unsigned(23 downto 0);
-        addr0_x: inout unsigned(23 downto 0);
-        addr1_r: inout unsigned(23 downto 0);
-        addr1_x: inout unsigned(23 downto 0);
+        addr0_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        addr0_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        addr1_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        addr1_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
         state_r: inout t_enum_t_State_1;
         state_x: inout t_enum_t_State_1;
-        dataToRam0_r: inout unsigned(31 downto 0);
-        dataToRam0_x: inout unsigned(31 downto 0);
-        dataFromRam0_r: inout unsigned(31 downto 0);
-        dataFromRam0_x: inout unsigned(31 downto 0);
-        dataToRam1_r: inout unsigned(31 downto 0);
-        dataToRam1_x: inout unsigned(31 downto 0);
-        dataFromRam1_r: inout unsigned(31 downto 0);
-        dataFromRam1_x: inout unsigned(31 downto 0);
+        dataToRam0_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        dataToRam0_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        dataFromRam0_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        dataFromRam0_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        dataToRam1_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        dataToRam1_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        dataFromRam1_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        dataFromRam1_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
 --        sig_in: inout unsigned(51 downto 0);
 --        noupdate_s: out std_logic;
 --        res_s: inout signed (15 downto 0);
@@ -181,44 +189,44 @@ component xess_jpeg_top is
         reset_col: out std_logic;
 --        rdy: inout std_logic;
 --        addr_not_reached: inout std_logic;
-        offset_r: inout unsigned(23 downto 0);
-        offset_x: inout unsigned(23 downto 0);
+        offset_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        offset_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
  
-        dataFromRam0_s: in unsigned(31 downto 0);
-        dataFromRam1_s: in unsigned(31 downto 0);
+        dataFromRam0_s: in unsigned(RAM_WIDTH_C-1 downto 0);
+        dataFromRam1_s: in unsigned(RAM_WIDTH_C-1 downto 0);
         done1_s: in std_logic;
         wr1_s: out std_logic;
         rd1_s: out std_logic;
         done0_s: in std_logic;
         wr0_s: out std_logic;
         rd0_s: out std_logic;
-        sum_r: inout unsigned(31 downto 0);
-        sum_x: inout unsigned(31 downto 0);
+        sum_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        sum_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
         empty_r: out std_logic;
         full_r: out std_logic;
         enr_r: inout std_logic;
         enw_r: inout std_logic;
-        dataout_r: inout unsigned(31 downto 0);
-        datain_r: inout unsigned(31 downto 0);
+        dataout_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        datain_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
         empty_x: inout std_logic;
         full_x: inout std_logic;
         enr_x: inout std_logic;
         enw_x: inout std_logic;
-        dataout_x: inout unsigned(31 downto 0);
-        datain_x: inout unsigned(31 downto 0);
+        dataout_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        datain_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
         col_r: inout unsigned(7 downto 0);
         col_x: inout unsigned(7 downto 0);
         row_r: inout unsigned(7 downto 0);
         row_x: inout unsigned(7 downto 0);
-        dout_rom: inout unsigned(31 downto 0);
+        dout_rom: inout unsigned(RAM_WIDTH_C-1 downto 0);
         addr_rom_r: inout unsigned(3 downto 0);
         addr_rom_x: inout unsigned(3 downto 0);
-        index1_r: inout unsigned(23 downto 0);
-        index2_r: inout unsigned(23 downto 0);
-        index3_r: inout unsigned(23 downto 0);
-        index1_x: inout unsigned(23 downto 0);
-        index2_x: inout unsigned(23 downto 0);
-        index3_x: inout unsigned(23 downto 0)
+        index1_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        index2_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        index3_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        index1_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        index2_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        index3_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0)
     );
 end component xess_jpeg_top;
 
@@ -329,7 +337,7 @@ xess_jpeg_top_u0 : xess_jpeg_top
 --		PIPE_EN_G  =>       false,
 --		NROWS_G       => 4096,  -- Number of rows in SDRAM array.
 --      NCOLS_G       => 512,  -- Number of columns in SDRAM array.
---      HADDR_WIDTH_G => 23,   -- Host-side address width.
+--      HADDR_WIDTH_G => 23   -- Host-side address width.
 --      SADDR_WIDTH_G => 12   -- SDRAM-side address width.
       )
     port map(
