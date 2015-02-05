@@ -1,0 +1,151 @@
+5,12c5
+< --library IEEE, XESS;
+< --use IEEE.STD_LOGIC_1164.all;
+< --use IEEE.NUMERIC_STD.all;
+< --use XESS.ClkgenPckg.all;     -- For the clock generator module.
+< --use XESS.SdramCntlPckg.all;  -- For the SDRAM controller module.
+< --use XESS.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module. 
+< --use XESS.XessBoardPckg.all; 
+< library IEEE;
+---
+> library IEEE, XESS;
+15,17c8,17
+< use work.ClkgenPckg.all;     -- For the clock generator module.
+< use work.SdramCntlPckg.all;  -- For the SDRAM controller module.
+< use work.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module. 
+---
+> use XESS.ClkgenPckg.all;     -- For the clock generator module.
+> use XESS.SdramCntlPckg.all;  -- For the SDRAM controller module.
+> use XESS.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module. 
+> use XESS.XessBoardPckg.all; 
+> --library IEEE;
+> --use IEEE.STD_LOGIC_1164.all;
+> --use IEEE.NUMERIC_STD.all;
+> --use work.ClkgenPckg.all;     -- For the clock generator module.
+> --use work.SdramCntlPckg.all;  -- For the SDRAM controller module.
+> --use work.HostIoPckg.HostIoToDut;     -- For the FPGA<=>PC transfer link module. 
+32c32
+<     sdAddr_o  : out   std_logic_vector(11 downto 0);  -- SDRAM address bus.
+---
+>     sdAddr_o  : out   std_logic_vector(12 downto 0);  -- SDRAM address bus.
+47c47
+<   constant RAM_ADDR_SIZE_C            : natural   := 23;  -- Addr size .
+---
+>   constant RAM_ADDR_SIZE_C            : natural   := 24;  -- Addr size .
+166,170c166,170
+<          clk_fast: in std_logic;
+<         addr0_r: inout unsigned(22 downto 0);
+<         addr0_x: inout unsigned(22 downto 0);
+<         addr1_r: inout unsigned(22 downto 0);
+<         addr1_x: inout unsigned(22 downto 0);
+---
+>         clk_fast: in std_logic;
+>         addr0_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+>         addr0_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+>         addr1_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+>         addr1_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+173,180c173,188
+<         dataToRam0_r: inout unsigned(31 downto 0);
+<         dataToRam0_x: inout unsigned(31 downto 0);
+<         dataFromRam0_r: inout unsigned(31 downto 0);
+<         dataFromRam0_x: inout unsigned(31 downto 0);
+<         dataToRam1_r: inout unsigned(31 downto 0);
+<         dataToRam1_x: inout unsigned(31 downto 0);
+<         dataFromRam1_r: inout unsigned(31 downto 0);
+<         dataFromRam1_x: inout unsigned(31 downto 0);
+---
+>         dataToRam0_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+>         dataToRam0_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+>         dataFromRam0_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+>         dataFromRam0_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+>         dataToRam1_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+>         dataToRam1_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+>         dataFromRam1_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+>         dataFromRam1_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+> --        sig_in: inout unsigned(51 downto 0);
+> --        noupdate_s: out std_logic;
+> --        res_s: inout signed (15 downto 0);
+> --        res_u: out unsigned(15 downto 0);
+> --        jp_lf: inout unsigned(15 downto 0);
+> --        jp_sa: inout unsigned(15 downto 0);
+> --        jp_rh: inout unsigned(15 downto 0);
+> --        jp_flgs: inout unsigned(3 downto 0);
+182,185c190,196
+<         offset_r: inout unsigned(22 downto 0);
+<         offset_x: inout unsigned(22 downto 0);
+<         dataFromRam0_s: in unsigned(31 downto 0);
+<         dataFromRam1_s: in unsigned(31 downto 0);
+---
+> --        rdy: inout std_logic;
+> --        addr_not_reached: inout std_logic;
+>         offset_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+>         offset_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+>  
+>         dataFromRam0_s: in unsigned(RAM_WIDTH_C-1 downto 0);
+>         dataFromRam1_s: in unsigned(RAM_WIDTH_C-1 downto 0);
+192,193c203,204
+<         sum_r: inout unsigned(31 downto 0);
+<         sum_x: inout unsigned(31 downto 0);
+---
+>         sum_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+>         sum_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+198,199c209,210
+<         dataout_r: inout unsigned(31 downto 0);
+<         datain_r: inout unsigned(31 downto 0);
+---
+>         dataout_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+>         datain_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+204,205c215,216
+<         dataout_x: inout unsigned(31 downto 0);
+<         datain_x: inout unsigned(31 downto 0);
+---
+>         dataout_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+>         datain_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+210c221
+<         dout_rom: inout unsigned(31 downto 0);
+---
+>         dout_rom: inout unsigned(RAM_WIDTH_C-1 downto 0);
+213,218c224,229
+<         index1_r: inout unsigned(22 downto 0);
+<         index2_r: inout unsigned(22 downto 0);
+<         index3_r: inout unsigned(22 downto 0);
+<         index1_x: inout unsigned(22 downto 0);
+<         index2_x: inout unsigned(22 downto 0);
+<         index3_x: inout unsigned(22 downto 0)
+---
+>         index1_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+>         index2_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+>         index3_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+>         index1_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+>         index2_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+>         index3_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0)
+246c257,264
+<  
+---
+> --	  sig_in => sig_in,
+> --	  noupdate_s => noupdate_s,
+> --	  res_s => res_s,
+> --	  res_u => res_u,
+> --	  jp_lf => jp_lf,
+> --	  jp_sa => jp_sa,
+> --	  jp_rh => jp_rh,
+> --	  jp_flgs => jp_flgs,
+248c266,267
+<  
+---
+> --	  rdy => rdy,
+> --	  addr_not_reached => addr_not_reached,
+315c334
+< 		 DATA_WIDTH_G => RAM_WIDTH_C, -- Width of data words.
+---
+> 		 DATA_WIDTH_G => RAM_WIDTH_C -- Width of data words.
+319,322c338,341
+< 		NROWS_G       => 4096,  -- Number of rows in SDRAM array.
+<       NCOLS_G       => 512,  -- Number of columns in SDRAM array.
+<       HADDR_WIDTH_G => 23,   -- Host-side address width.
+<       SADDR_WIDTH_G => 12   -- SDRAM-side address width.
+---
+> --		NROWS_G       => 4096,  -- Number of rows in SDRAM array.
+> --      NCOLS_G       => 512,  -- Number of columns in SDRAM array.
+> --      HADDR_WIDTH_G => 23   -- Host-side address width.
+> --      SADDR_WIDTH_G => 12   -- SDRAM-side address width.
