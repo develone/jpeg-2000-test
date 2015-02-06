@@ -8,15 +8,16 @@ SDRAMDSZ = 16
 JPEG_RAM_ADDR = 23
 """
 
-""" The following 3 constants are used during testing of 32 bit sdram
-DSZ = 32
-SDRAMDSZ = 32
+""" The following 3 constants are used during testing of 32 bit sdram"""
+DSZ = 16
+SDRAMDSZ = 16
 JPEG_RAM_ADDR = 24
+
 """
 DSZ = 32
 SDRAMDSZ = 32
 JPEG_RAM_ADDR = 23
-
+"""
 reset_dly_c = 10
 DATA_WIDTH = 32768
 

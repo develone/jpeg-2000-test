@@ -30,7 +30,7 @@ entity XESS_SdramDPInst is
     sdWe_bo   : out   std_logic;  -- SDRAM write-enable.
     sdBs_o    : out   std_logic_vector(1 downto 0);  -- SDRAM bank-address.
     sdAddr_o  : out   std_logic_vector(11 downto 0);  -- SDRAM address bus.
-    sdData_io : inout std_logic_vector(31 downto 0);    -- SDRAM data bus.
+    sdData_io : inout std_logic_vector(15 downto 0);    -- SDRAM data bus.
     sdDqmh_o  : out   std_logic;  -- SDRAM high-byte databus qualifier.
     sdDqml_o  : out   std_logic  -- SDRAM low-byte databus qualifier.
     );
@@ -43,7 +43,7 @@ architecture Behavioral of XESS_SdramDPInst is
   --00_0000 to 03_FFFF is total memory allocated
   --00_0000 to 01_FFFF is where lena256.hex is initially installed
   constant RAM_SIZE_C             : natural   := 262140;  -- Number of words in RAM.
-  constant RAM_WIDTH_C            : natural   := 32;  -- Width of RAM words.
+  constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
   constant RAM_ADDR_SIZE_C            : natural   := 23;  -- Addr size .
   constant MIN_ADDR_C             : natural   := 1;  -- Process RAM from this address ...
   constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
@@ -140,7 +140,7 @@ architecture Behavioral of XESS_SdramDPInst is
   signal offset_r, offset_x           : unsigned(RAM_ADDR_SIZE_C-1 downto 0);  -- RAM address.
  
   signal col_r, col_x, row_r, row_x : unsigned(7 downto 0) := (others => '0');
-  signal dout_rom : unsigned(RAM_WIDTH_C-1 downto 0) := (others => '0');
+  signal dout_rom : unsigned(31 downto 0) := (others => '0');
   signal addr_rom_r, addr_rom_x : unsigned(3 downto 0) := (others => '0');
 --signal needed by xess_jpeg_top.vhd*************************** 
 
@@ -149,8 +149,8 @@ architecture Behavioral of XESS_SdramDPInst is
   signal full_r:  std_logic:= '0';
   signal enr_r:  std_logic:= '0';
   signal enw_r:  std_logic:= '0';
-  signal dataout_r:  unsigned(RAM_WIDTH_C-1 downto 0):= (others => '0');
-  signal datain_r:  unsigned(RAM_WIDTH_C-1 downto 0):= (others => '0');
+  signal dataout_r:  unsigned(31 downto 0):= (others => '0');
+  signal datain_r:  unsigned(31 downto 0):= (others => '0');
   signal empty_x:  std_logic:= '0';
   signal full_x:  std_logic:= '0';
   signal enr_x:  std_logic:= '0';

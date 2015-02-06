@@ -48,7 +48,7 @@ ARCHITECTURE behavior OF XESS_SdramDPInstTb IS
   --00_0000 to 03_FFFF is total memory allocated
   --00_0000 to 01_FFFF is where lena256.hex is initially installed
   constant RAM_SIZE_C             : natural   := 262140;  -- Number of words in RAM.
-  constant RAM_WIDTH_C            : natural   := 32;  -- Width of RAM words.
+  constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
   constant RAM_ADDR_SIZE_C            : natural   := 23;  -- Addr size .
   constant MIN_ADDR_C             : natural   := 1;  -- Process RAM from this address ...
   constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
@@ -67,7 +67,7 @@ ARCHITECTURE behavior OF XESS_SdramDPInstTb IS
          sdWe_bo : OUT  std_logic;
          sdBs_o    : OUT   std_logic_vector(1 downto 0);  -- 2-bit SDRAM bank-address.
          sdAddr_o : OUT  std_logic_vector(11 downto 0); -- 13-bit SDRAM address bus.
-         sdData_io : INOUT  std_logic_vector(31 downto 0);
+         sdData_io : INOUT  std_logic_vector(15 downto 0);
          sdDqmh_o  : OUT   std_logic;  -- SDRAM high-byte databus qualifier.
          sdDqml_o  : OUT   std_logic  -- SDRAM low-byte databus qualifier.
         );
@@ -79,7 +79,7 @@ ARCHITECTURE behavior OF XESS_SdramDPInstTb IS
     
     component mt48lc8m16a2 
     port(
-      Dq : inout std_logic_vector(31 downto 0);
+      Dq : inout std_logic_vector(15 downto 0);
       Addr : in std_logic_vector(11 downto 0); 
       Ba : in std_logic_vector(1 downto 0); 
       Clk : in std_logic; 
@@ -98,7 +98,7 @@ ARCHITECTURE behavior OF XESS_SdramDPInstTb IS
    signal sdClkFb_i : std_logic := '0';
 
 	--BiDirs
-   signal sdData_io : std_logic_vector(31 downto 0);
+   signal sdData_io : std_logic_vector(15 downto 0);
 
  	--Outputs
    signal sdClk_o : std_logic;
