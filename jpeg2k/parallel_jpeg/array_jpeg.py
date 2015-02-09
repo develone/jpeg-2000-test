@@ -1,9 +1,10 @@
 from myhdl import *
- 
-def jp_process(sig_in_x_i, res_out_x, left_s_i, sam_s_i, right_s_i,flgs_s_i, W0=3, LVL0=4, W1=3, LVL1=4, W2=3, LVL2=4,  W3=3, LVL3=4 ):
+from jpeg_constants import * 
+def jp_process( res_out_x, left_s_i, sam_s_i, right_s_i,flgs_s_i, noupdate_s, update_s, W0=3, LVL0=4, W1=3, LVL1=4, W2=3, LVL2=4,  W3=3, LVL3=4 ):
+    
     print W0, LVL0, W1, LVL1, W2, LVL2, W3, LVL3
  
-    sig_in_x = [sig_in_x_i((i+1)*W0, i*W0) for i in range(0, LVL0) ]
+    #sig_in_x = [sig_in_x_i((i+1)*W0, i*W0) for i in range(0, LVL0) ]
     #res_out_x = [res_out_x_i((i+1)*W1, i*W1) for i in range(0, LVL1) ]
     left_s = [left_s_i((i+1)*W2, i*W2) for i in range(0, LVL2) ]
     sam_s = [sam_s_i((i+1)*W2, i*W2) for i in range(0, LVL2) ]
@@ -17,43 +18,51 @@ def jp_process(sig_in_x_i, res_out_x, left_s_i, sam_s_i, right_s_i,flgs_s_i, W0=
     @always_comb
     def jpeg_logic():
         """
+        update_s needs to be 1
+        for the res_out_x to be valid
+        noupdate_s goes lo when a
+        res_out_x valid
         fwd dwt even flgs_s eq 7
         inv dwt even flgs_s eq 5
         fwd dwt odd flgs_s eq 6
         inv dwt odd flgs_s eq 4
         """
-        if (flgs_s[LVL0-1] == 7):
-            res_out_x.next = sam_s[LVL0-1] - ( (left_s[LVL0-1] >> 1) + ( (right_s[LVL0-1] >> 1)))
+        if (update_s):
+            noupdate_s.next = NO
+            for i in range(LVL0):
+                if (flgs_s[i] == 7):
+                    res_out_x.next = sam_s[i] - ( (left_s[i] >> 1) + ( (right_s[i] >> 1)))
         
-        elif (flgs_s[LVL0-1] == 5):
-            res_out_x.next = sam_s[LVL0-1] + ( (left_s[LVL0-1] >> 1) + ( (right_s[LVL0-1] >> 1)))
+                elif (flgs_s[i] == 5):
+                    res_out_x.next = sam_s[i] + ( (left_s[i] >> 1) + ( (right_s[i] >> 1)))
         
-        elif (flgs_s[LVL0-1] == 6):
-            res_out_x.next = sam_s[LVL0-1] + (( (left_s[LVL0-1] ) + ( (right_s[LVL0-1] ))) >> 2 )
+                elif (flgs_s[i] == 6):
+                    res_out_x.next = sam_s[i] + (( (left_s[i] ) + ( (right_s[i] ))) >> 2 )
         
-        elif (flgs_s[LVL0-1] == 4):
-            res_out_x.next = sam_s[LVL0-1] - (( (left_s[LVL0-1] ) + ( (right_s[LVL0-1] ))) >> 2 )
-        
+                elif (flgs_s[i] == 4):
+                    res_out_x.next = sam_s[i] - (( (left_s[i] ) + ( (right_s[i] ))) >> 2 )
+        else:
+            noupdate_s.next = YES
     return instances()
  
 def convert():
-    W0 = 8
-    LVL0 = 16
-    W1 = 8
-    LVL1 = 16
-    W2 = 8
-    LVL2 = 16
-    W3 = 5
-    LVL3 = 16
+    
+    res_out_x = Signal(intbv(0, min= -128 ,max= 128))
+    update_s = Signal(bool(0))
+    noupdate_s = Signal(bool(0))
+    """ W0, LVL0, W1, LVL1, W2, LVL2, W3, and LVL3
+    Required  by jp_process
+    these are used to set the size of the
+    arrays"""
 
-    sig_in_x_i = Signal(intbv(0)[LVL0*W0:])
-    res_out_x = Signal(intbv(0, min= -256 ,max= 256))
+    #sig_in_x_i = Signal(intbv(0)[LVL0*W0:])
     left_s_i = Signal(intbv(0)[LVL2*W2:])
     sam_s_i = Signal(intbv(0)[LVL2*W2:])
     right_s_i = Signal(intbv(0)[LVL2*W2:])
     flgs_s_i = Signal(intbv(0)[LVL3*W3:])
-    dut = toVerilog(jp_process, sig_in_x_i, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i, W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3)
-    dut = toVHDL(jp_process, sig_in_x_i, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i, W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3) 
+    
+    dut = toVerilog(jp_process, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i, noupdate_s, update_s,  W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3)
+    dut = toVHDL(jp_process, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i, noupdate_s, update_s,  W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3) 
  
 
 convert()
