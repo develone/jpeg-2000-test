@@ -37,10 +37,10 @@ def jp_process( res_out_x, left_s_i, sam_s_i, right_s_i,flgs_s_i, noupdate_s, up
                     res_out_x.next = sam_s[i] + ( (left_s[i] >> 1) + ( (right_s[i] >> 1)))
         
                 elif (flgs_s[i] == 6):
-                    res_out_x.next = sam_s[i] + (( (left_s[i] ) + ( (right_s[i] ))) >> 2 )
+                    res_out_x.next = sam_s[i] + (( (left_s[i] ) + ( (right_s[i] + 2 ))) >> 2 )
         
                 elif (flgs_s[i] == 4):
-                    res_out_x.next = sam_s[i] - (( (left_s[i] ) + ( (right_s[i] ))) >> 2 )
+                    res_out_x.next = sam_s[i] - (( (left_s[i] ) + ( (right_s[i] + 2  ))) >> 2 )
         else:
             noupdate_s.next = YES
     return instances()
