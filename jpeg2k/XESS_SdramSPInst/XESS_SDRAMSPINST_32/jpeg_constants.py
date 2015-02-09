@@ -1,6 +1,6 @@
 
 reset_dly_c = 10
-ASZ = 4
+ASZ = 5
 """ The following 3 constants are used during a simulation
 
 DSZ = 16
@@ -9,15 +9,10 @@ JPEG_RAM_ADDR = 23
 """
 
 """ The following 3 constants are used during testing of 32 bit sdram"""
-DSZ = 16
+DSZ = 32
 SDRAMDSZ = 16
 JPEG_RAM_ADDR = 24
 
-"""
-DSZ = 32
-SDRAMDSZ = 32
-JPEG_RAM_ADDR = 23
-"""
 reset_dly_c = 10
 DATA_WIDTH = 32768
 
@@ -31,3 +26,14 @@ YES = bool(1)
 SUB2 = 256
 SUB3 = 512
 ROM_ADDR = 4
+""" Required  by array_jpeg.py
+these are used to set the size of the
+arrays"""
+W0 = 8
+LVL0 = 1024
+W1 = 8
+LVL1 = 1024
+W2 = 8
+LVL2 = 1024
+W3 = 5
+LVL3 = 1024
