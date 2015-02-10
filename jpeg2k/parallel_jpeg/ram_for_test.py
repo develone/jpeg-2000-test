@@ -32,10 +32,10 @@ din_rh = Signal(intbv(0)[8:])
 addr_rh = Signal(intbv(0)[7:])
 we_rh = Signal(bool(0))
 
-dout_res = Signal(intbv(0)[8:])
-din_res = Signal(intbv(0)[8:])
-addr_res = Signal(intbv(0)[7:])
-we_res = Signal(bool(0))
+dout_flgs = Signal(intbv(0)[8:])
+din_flgs = Signal(intbv(0)[8:])
+addr_flgs = Signal(intbv(0)[7:])
+we_flgs = Signal(bool(0))
 
 clk = Signal(bool(0))
 
