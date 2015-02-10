@@ -19,22 +19,22 @@ def ram(dout, din, addr, we, clk, depth=2):
 
 dout_lf = Signal(intbv(0)[8:])
 din_lf = Signal(intbv(0)[8:])
-addr_lf = Signal(intbv(0)[7:])
+addr_lf = Signal(intbv(0)[2:])
 we_lf = Signal(bool(0))
 
 dout_sa = Signal(intbv(0)[8:])
 din_sa = Signal(intbv(0)[8:])
-addr_sa = Signal(intbv(0)[7:])
+addr_sa = Signal(intbv(0)[2:])
 we_sa = Signal(bool(0))
 
 dout_rh = Signal(intbv(0)[8:])
 din_rh = Signal(intbv(0)[8:])
-addr_rh = Signal(intbv(0)[7:])
+addr_rh = Signal(intbv(0)[2:])
 we_rh = Signal(bool(0))
 
 dout_flgs = Signal(intbv(0)[8:])
 din_flgs = Signal(intbv(0)[8:])
-addr_flgs = Signal(intbv(0)[7:])
+addr_flgs = Signal(intbv(0)[2:])
 we_flgs = Signal(bool(0))
 
 clk = Signal(bool(0))
