@@ -1,11 +1,11 @@
 from myhdl import *
 
-def ram(dout, din, addr, we, clk, depth=2):
+def ram(dout, din, addr, we, clk_fast, depth=128):
     """  Ram model """
     
     mem = [Signal(intbv(0)[8:]) for i in range(depth)]
     
-    @always(clk.posedge)
+    @always(clk_fast.posedge)
     def write():
         if we:
             mem[addr].next = din
@@ -37,12 +37,12 @@ din_flgs = Signal(intbv(0)[8:])
 addr_flgs = Signal(intbv(0)[2:])
 we_flgs = Signal(bool(0))
 
-clk = Signal(bool(0))
+clk_fast = Signal(bool(0))
 
 def xx():
     toVerilog.name = 'ram_1'
-    toVerilog(ram, dout, din, addr, we, clk)
-    toVHDL(ram, dout, din, addr, we, clk)
+    toVerilog(ram, dout, din, addr, we, clk_fast)
+    toVHDL(ram, dout, din, addr, we, clk_fast)
     
 if __name__ == '__main__':
     main()

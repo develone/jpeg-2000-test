@@ -1,8 +1,8 @@
 from myhdl import *
 from jpeg_constants import * 
-def jp_process( res_out_x, left_s_i, sam_s_i, right_s_i,flgs_s_i, noupdate_s, update_s, W0=3, LVL0=4, W1=3, LVL1=4, W2=3, LVL2=4,  W3=3, LVL3=4 ):
+def jp_process( res_out_x, left_s_i, sam_s_i, right_s_i,flgs_s_i, noupdate_s, update_s, W0=3, LVL0=4, W1=3, LVL1=4, W2=3, LVL2=4,  W3=3, LVL3=4, SIMUL=0 ):
     
-    print W0, LVL0, W1, LVL1, W2, LVL2, W3, LVL3
+    print W0, LVL0, W1, LVL1, W2, LVL2, W3, LVL3, SIMUL
  
     #sig_in_x = [sig_in_x_i((i+1)*W0, i*W0) for i in range(0, LVL0) ]
     #res_out_x = [res_out_x_i((i+1)*W1, i*W1) for i in range(0, LVL1) ]
@@ -43,26 +43,31 @@ def jp_process( res_out_x, left_s_i, sam_s_i, right_s_i,flgs_s_i, noupdate_s, up
                     res_out_x.next = sam_s[i] - (( (left_s[i] ) + ( (right_s[i] + 2  ))) >> 2 )
         else:
             noupdate_s.next = YES
-    return instances()
- 
+    if (SIMUL == 0):
+        return instances()
+    else:
+        print "In simulation mode"
+        return jpeg_logic
 def convert():
-    
-    res_out_x = Signal(intbv(0, min= -128 ,max= 128))
-    update_s = Signal(bool(0))
-    noupdate_s = Signal(bool(0))
-    """ W0, LVL0, W1, LVL1, W2, LVL2, W3, and LVL3
-    Required  by jp_process
-    these are used to set the size of the
-    arrays"""
+    if (SIMUL == 0):
+        res_out_x = Signal(intbv(0, min= -128 ,max= 128))
+        update_s = Signal(bool(0))
+        noupdate_s = Signal(bool(0))
+        """ W0, LVL0, W1, LVL1, W2, LVL2, W3, and LVL3
+        Required  by jp_process
+        these are used to set the size of the
+        arrays"""
 
-    #sig_in_x_i = Signal(intbv(0)[LVL0*W0:])
-    left_s_i = Signal(intbv(0)[LVL2*W2:])
-    sam_s_i = Signal(intbv(0)[LVL2*W2:])
-    right_s_i = Signal(intbv(0)[LVL2*W2:])
-    flgs_s_i = Signal(intbv(0)[LVL3*W3:])
+        #sig_in_x_i = Signal(intbv(0)[LVL0*W0:])
+        left_s_i = Signal(intbv(0)[LVL2*W2:])
+        sam_s_i = Signal(intbv(0)[LVL2*W2:])
+        right_s_i = Signal(intbv(0)[LVL2*W2:])
+        flgs_s_i = Signal(intbv(0)[LVL3*W3:])
     
-    dut = toVerilog(jp_process, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i, noupdate_s, update_s,  W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3)
-    dut = toVHDL(jp_process, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i, noupdate_s, update_s,  W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3) 
+        dut = toVerilog(jp_process, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i, noupdate_s, update_s,  W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
+        dut = toVHDL(jp_process, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i, noupdate_s, update_s,  W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
+    else:
+        print "In simulation mode"
  
 
 convert()
