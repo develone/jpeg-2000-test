@@ -42,7 +42,7 @@
 module mt48lc8m16a2 (Dq, Addr, Ba, Clk, Cke, Cs_n, Ras_n, Cas_n, We_n, Dqm);
 
     parameter addr_bits =      12;
-    parameter data_bits =      16;
+    parameter data_bits =      32;
     parameter col_bits  =       9;
     parameter mem_sizes = 2097151;
 
