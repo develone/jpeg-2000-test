@@ -34,4 +34,4 @@ dut = XsDutIo(USB_ID, DUT_ID, [32], [1])
 #for i in range(1000):
 sum = dut.Read(); # Read the 16-bit summation from the FPGA.
 #print 'Sum = %d\r' % sum.unsigned
-print sum
+print sum, sum.int

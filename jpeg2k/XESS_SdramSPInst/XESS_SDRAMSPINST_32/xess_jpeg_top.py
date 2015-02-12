@@ -150,7 +150,7 @@ offset_x = Signal(intbv(0)[JPEG_RAM_ADDR:])
 offset_r = Signal(intbv(0)[JPEG_RAM_ADDR:])
 #t_State = enum('INIT', 'ODD_SA', 'EVEN_SA','ODD_SA_COL', 'EVEN_SA_COL', 'TR_RES', 'TR_INIT', 'TRAN_RAM', 'DONE_PASS1', encoding="one_hot")
 #t_State = enum('INIT', 'WRITE_DATA', 'READ_AND_SUM_DATA', 'DONE', encoding="one_hot")
-t_State = enum('INIT', 'READ_ROM_TO_FIFO', 'COPY_PG1_TO_PG2', 'WRITE_FIFO_TO_SDRAM', 'WRITE', 'READ_AND_SUM_DATA', 'CK_SDRAM_RD', 'CK_SDRAM_WR', 'ODD_SAMPLES', 'EVEN_SAMPLES', 'WR_DATA', 'INTERLACE', 'DONE', encoding="one_hot")
+t_State = enum('INIT', 'READ_ROM_TO_FIFO', 'COPY_PG1_TO_PG2', 'WRITE_FIFO_TO_SDRAM', 'WRITE_HI_BYTE', 'WRITE_LO_BYTE', 'READ_HI_AND_SUM_DATA', 'READ_LO_AND_SUM_DATA', 'CK_SDRAM_RD', 'CK_SDRAM_WR', 'ODD_SAMPLES', 'EVEN_SAMPLES', 'WR_DATA', 'INTERLACE', 'DONE', encoding="one_hot")
 #print t_State, t_State.INIT
 state_r = Signal(t_State.INIT)
 state_x = Signal(t_State.INIT)
@@ -244,65 +244,71 @@ def RamCtrl(          addr0_r, addr0_x,
             enw_x.next = NO
             addr_rom_x.next = 0
             addr0_x.next = 65536
-            """writes to sdram at address during the WRITE state
-            32 33 34 35 36 37 38
-            :020000040002F8
-            :10000000002000210022002300240025002630A823
-            then goes to the READ_AND_SUM_DATA state
+            addr1_x.next = 65537
+            """writes to sdram at address during the WRITE_HI_BYTE state
+            0001 
+            
+            then goes to the READ_HI_AND_SUM_DATA state
             """
-            addr1_x.next = 65536
-            dataToRam0_x.next = 32
-            state_x.next = t_State.WRITE
-        elif state_r == t_State.WRITE:
+            
+            
+            dataToRam0_x.next = 1
+
+            dataToRam1_x.next = 32
+            state_x.next = t_State.WRITE_HI_BYTE
+        elif state_r == t_State.WRITE_HI_BYTE:
             """writes to sdram at address 
-            32 33 34 35 36 37 38
-            :020000040002F8
-            :10000000002000210022002300240025002630A823
-            then goes to the READ_AND_SUM_DATA state
+            0x020000 0001 hi byte of 65568
+            until the address 65554
+            then goes to the WRITE_LO_BYTE state
             """
             if (done0_s == NO):
                 wr0_s.next = YES
+            elif (addr0_r <= 65554):
                 
-                
-            elif (addr0_r <= 65541):
-        
-                addr0_x.next = addr0_r + 1
-                
-                dataToRam0_x.next = dataToRam0_r + 1
-            
+                dataToRam0_x.next = dataToRam0_r 
+                addr0_x.next = addr0_r + 2
+ 
+            else:
+                addr1_x.next = 65537
+                sum_x.next = 0
+                state_x.next = t_State.WRITE_LO_BYTE
+        elif state_r == t_State.WRITE_LO_BYTE:
+            """writes to sdram at address 
+            0x020001 0020 lo byte
+            then goes to the WRITE_LO_BYTE state
+            """
+            if (done1_s == NO):
+                wr1_s.next = YES
+            elif (addr1_r <= 65555):
+                dataToRam1_x.next = dataToRam1_r + 1 
+                addr1_x.next = addr1_r + 2
             else:
                 addr0_x.next = 65536
+                addr1_x.next = 65537
                 sum_x.next = 0
-                state_x.next = t_State.READ_AND_SUM_DATA
-        elif state_r == t_State.READ_AND_SUM_DATA:
+                state_x.next = t_State.READ_LO_AND_SUM_DATA
+        elif state_r == t_State.READ_HI_AND_SUM_DATA:
             if (done0_s == NO) :
                 rd0_s.next = YES
-            elif (addr0_r <= 65541):
-                """
-                32		
-                33		
-                34		
-                35		
-                36		
-                37	207	0x00cf"""
-
-                sum_x.next = sum_r + (dataFromRam0_s )
-                addr0_x.next = addr0_r + 1
+            elif (addr0_r <= 65554):
+ 
+                sum_x.next = sum_r + (dataFromRam0_s << 16 )
+                addr0_x.next = addr0_r + 2
             else:
-                """
-                enr_x.next = NO
-                addr0_x.next = 0
-                addr_rom_x.next = 0
-                get ready for EVEN_SAMPLES 
-                enr_x.next = NO
-                addr0_x.next = 0
-                offset_x.next = 0
-                row_x.next = 0
-                index2_x.next = 1
-                index2_x.next = 257
-                index3_x.next = 513
-                """
+                addr0_x.next = 65536
                 state_x.next = t_State.INIT
+
+        elif state_r == t_State.READ_LO_AND_SUM_DATA:
+            if (done1_s == NO) :
+                rd1_s.next = YES
+            elif (addr1_r <= 65555):
+ 
+                sum_x.next = sum_r + dataFromRam1_s
+                addr1_x.next = addr1_r + 2
+            else:
+                addr0_x.next = 65536
+                state_x.next = t_State.READ_HI_AND_SUM_DATA
         elif state_r == t_State.CK_SDRAM_RD:
             if (done0_s == NO):
                #enr_x.next = YES
@@ -428,7 +434,7 @@ def RamCtrl(          addr0_r, addr0_x,
                 
             else:
                 addr0_x.next = 131072
-                state_x.next = t_State.READ_AND_SUM_DATA
+                state_x.next = t_State.INIT
         elif state_r == t_State.DONE:
            
             state_x.next = t_State.INIT
