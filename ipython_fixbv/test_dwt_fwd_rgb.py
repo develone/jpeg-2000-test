@@ -1,5 +1,11 @@
 from PIL import Image
+"""small5.png is RGB 128 x 128
+small256.png is RGB 256 x 256
+small512.png is RGB 512 X 512
+"""
 img = Image.open("small5.png")
+#img = Image.open("small256.png")
+#img = Image.open("small512.png")
 pix = img.load()
 print pix.__sizeof__()
 print "img", type(img), "pix", type(pix)
@@ -8,7 +14,7 @@ print "small5.png", img.size
 w,h = img.size
 
 
-print "small5.png",  w,h
+print "small256.png",  w,h
 rgb = list(img.getdata())
 
 print "col 0 row 0", "rgb", rgb[0], "pix", pix[0,0]
@@ -58,43 +64,19 @@ print b[0][2]
 """this is before fwd dwt"""
 print "before fwd dwt", pix[0,0], rgb[0]
 rgb = []
-for row in range(128):
-    for col in range(128):
+for row in range(len(r)):
+    for col in range(len(r)):
         rgb.append((r[row][col],g[row][col],b[row][col]))
         
-for row in range(127):
-        for col in range(127):
+for row in range(len(r)):
+        for col in range(len(r)):
             #pix[row,col] = rgb[col + row*128]
-            pix[col,row] = rgb[col + row*128]
+            pix[col,row] = rgb[col + row*len(r)]
 
 
 img.show()
-img.save("test1_128_fwt.png")
+img.save("test1_256_fwt.png")
 """this is after fwd dwt"""
 print "after fwd  dwt", pix[0,0], rgb[0]
 print "after fwd  dwt", pix[0,1], rgb[1]
-#print rgb
-#dwt.seq_to_img(rgb, pix)
-#img.show()
-#im.save("test1_256_fwt.png")
-#img.show()
-"""
-print len(rgb[0]), len(rgb[1]),len(m[0]), len(m[1])
-rgb = [rgb[i:i+img.size[0]] for i in range(0, len(rgb), img.size[0])]
-#print len(rgb[0]), len(rgb[1])
-print m.__sizeof__()
-m = [m[i:i+img1.size[0]] for i in range(0, len(m), img1.size[0])]
-print len(m[0]), len(m[1])
-
-print rgb[0]
-print
-print rgb[1]
-#img.show()
-print img.mode
-r,g,b = rgb[0]
-print r,g,b
-for row in range(h):
-    
-    for col in range(w):
-        print row,col, rgb[col]
-"""
+ 
