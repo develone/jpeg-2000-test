@@ -1,7 +1,7 @@
-#  This file is part of the myhdl library, a Python package for using
+
 #  Python as a Hardware Description Language.
 #
-#  Copyright (C) 2003-2012 Jan Decaluwe
+#  Copyright (C) 2003-2014 Jan Decaluwe
 #
 #  The myhdl library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public License as
@@ -420,8 +420,8 @@ def _getRangeString(s):
     elif s._nrbits is not None:
         ls = getattr(s, 'lenStr', False)
         if ls:
-	    msb = ls + '-1'
-	else:
+            msb = ls + '-1'
+        else:
             msb = s._nrbits-1
         return "(%s downto 0)" %  msb
     else:
@@ -862,7 +862,7 @@ class _ConvertVisitor(ast.NodeVisitor, _ConversionMixin):
             if isinstance(lhs.value, ast.Name):
                 sig = self.tree.symdict[lhs.value.id]
                 if not sig._numeric:
-	            #if not isinstance(rhs, ast.Num):
+                    #if not isinstance(rhs, ast.Num):
                     convOpen, convClose = "std_logic_vector(", ")"
             self.write(' <= ')
             self.SigAss = False
@@ -907,6 +907,7 @@ class _ConvertVisitor(ast.NodeVisitor, _ConversionMixin):
         fn = node.func
         # assert isinstance(fn, astNode.Name)
         f = self.getObj(fn)
+        fname = ''
         pre, suf = '', ''
         opening, closing = '(', ')'
         sep = ", "
@@ -975,11 +976,14 @@ class _ConvertVisitor(ast.NodeVisitor, _ConversionMixin):
             opening, closing =  "unsigned'(", ")"
             sep = " & "
         elif hasattr(node, 'tree'):
-            self.write(node.tree.name)
+            pre, suf = self.inferCast(node.vhd, node.tree.vhd)
+            fname = node.tree.name
         else:
             self.write(f.__name__)
         if node.args:
             self.write(pre)
+            # TODO rewrite making use of fname variable
+            self.write(fname)
             self.write(opening)
             self.visit(node.args[0])
             for arg in node.args[1:]:
@@ -1263,12 +1267,18 @@ class _ConvertVisitor(ast.NodeVisitor, _ConversionMixin):
             s = n
             if isinstance(obj, bool):
                 s = "'%s'" % int(obj)
+                # print the symbol for a boolean in the global constant dict
+                if n in _constDict and obj == _constDict[n]:
+                    if isinstance(node.vhd, vhd_boolean):
+                        s = "bool(%s)" % n
             elif isinstance(obj, (int, long)):
-                # print the symbol for integer in the global constant dict
+                # print the symbol for an integer in the global constant dict
                 if n in _constDict and obj == _constDict[n]:
                     assert abs(obj) < 2**31
                     if isinstance(node.vhd, vhd_int):
                         s = n
+                    elif isinstance(node.vhd, vhd_boolean):
+                        s = "bool(%s)" % n
                     elif isinstance(node.vhd, vhd_std_logic):
                         s = "stdl(%s)" % n
                     elif isinstance(node.vhd, vhd_unsigned):
@@ -1580,8 +1590,18 @@ class _ConvertAlwaysCombVisitor(_ConvertVisitor):
         self.funcBuf = funcBuf
 
     def visit_FunctionDef(self, node):
+        # a local function works nicely too
+        def compressSensitivityList(senslist):
+            ''' reduce spelled out list items like [*name*(0), *name*(1), ..., *name*(n)] to just *name*'''
+            r = []
+            for item in senslist:
+                name = item._name.split('(',1)[0]
+                if not name in r:
+                    r.append( name ) # note that the list now contains names and not Signals, but we are interested in the strings anyway ...        
+            return r
+        
         self.writeDoc(node)
-        senslist = self.tree.senslist
+        senslist = compressSensitivityList(self.tree.senslist)
         self.write("%s: process (" % self.tree.name)
         for e in senslist[:-1]:
             self.write(e)
@@ -1794,6 +1814,7 @@ class _ConvertFunctionVisitor(_ConvertVisitor):
 
     def visit_Return(self, node):
         self.write("return ")
+        node.value.vhd = self.tree.vhd
         self.visit(node.value)
         self.write(";")
 
@@ -1855,6 +1876,10 @@ class vhd_enum(vhd_type):
     def __init__(self, tipe):
         self._type = tipe
 
+    def toStr(self, constr = True):
+        return self._type.__dict__['_name']
+      
+
 class vhd_std_logic(vhd_type):
     def __init__(self, size=0):
         vhd_type.__init__(self)
@@ -1880,7 +1905,7 @@ class vhd_unsigned(vhd_vector):
             ls = self.lenStr
             if ls:
                 return "unsigned(%s-1 downto 0)" % ls
-	    else:
+            else:
                 return "unsigned(%s downto 0)" % (self.size-1)
         else:
             return "unsigned"
@@ -1891,7 +1916,7 @@ class vhd_signed(vhd_vector):
             ls = self.lenStr
             if ls:
                 return "signed(%s-1 downto 0)" % ls
-	    else:
+            else:
                 return "signed(%s downto 0)" % (self.size-1)
         else:
             return "signed"
@@ -2004,6 +2029,8 @@ class _AnnotateTypesVisitor(ast.NodeVisitor, _ConversionMixin):
             for a in node.args:
                 if isinstance(a, ast.Str):
                     a.vhd = vhd_unsigned(a.vhd.size)
+                elif isinstance(a.vhd, vhd_signed):
+                    a.vhd = vhd_unsigned(a.vhd.size) 
                 s += a.vhd.size
             node.vhd = vhd_unsigned(s)
         elif f is bool:

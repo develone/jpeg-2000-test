@@ -1,0 +1,73 @@
+1c1
+< #  This file is part of the myhdl library, a Python package for using
+---
+> 
+4c4
+< #  Copyright (C) 2003-2012 Jan Decaluwe
+---
+> #  Copyright (C) 2003-2014 Jan Decaluwe
+423,424c423,424
+< 	    msb = ls + '-1'
+< 	else:
+---
+>             msb = ls + '-1'
+>         else:
+865c865
+< 	            #if not isinstance(rhs, ast.Num):
+---
+>                     #if not isinstance(rhs, ast.Num):
+909a910
+>         fname = ''
+978c979,980
+<             self.write(node.tree.name)
+---
+>             pre, suf = self.inferCast(node.vhd, node.tree.vhd)
+>             fname = node.tree.name
+982a985,986
+>             # TODO rewrite making use of fname variable
+>             self.write(fname)
+1265a1270,1273
+>                 # print the symbol for a boolean in the global constant dict
+>                 if n in _constDict and obj == _constDict[n]:
+>                     if isinstance(node.vhd, vhd_boolean):
+>                         s = "bool(%s)" % n
+1267c1275
+<                 # print the symbol for integer in the global constant dict
+---
+>                 # print the symbol for an integer in the global constant dict
+1271a1280,1281
+>                     elif isinstance(node.vhd, vhd_boolean):
+>                         s = "bool(%s)" % n
+1582a1593,1602
+>         # a local function works nicely too
+>         def compressSensitivityList(senslist):
+>             ''' reduce spelled out list items like [*name*(0), *name*(1), ..., *name*(n)] to just *name*'''
+>             r = []
+>             for item in senslist:
+>                 name = item._name.split('(',1)[0]
+>                 if not name in r:
+>                     r.append( name ) # note that the list now contains names and not Signals, but we are interested in the strings anyway ...        
+>             return r
+>         
+1584c1604
+<         senslist = self.tree.senslist
+---
+>         senslist = compressSensitivityList(self.tree.senslist)
+1796a1817
+>         node.value.vhd = self.tree.vhd
+1857a1879,1882
+>     def toStr(self, constr = True):
+>         return self._type.__dict__['_name']
+>       
+> 
+1883c1908
+< 	    else:
+---
+>             else:
+1894c1919
+< 	    else:
+---
+>             else:
+2006a2032,2033
+>                 elif isinstance(a.vhd, vhd_signed):
+>                     a.vhd = vhd_unsigned(a.vhd.size) 
