@@ -39,11 +39,11 @@ ROM_ADDR = 4
 these are used to set the size of the
 arrays"""
 W0 = 8
-LVL0 = 8
+LVL0 = 256
 W1 = 8
-LVL1 = 8
+LVL1 = 256
 W2 = 8
-LVL2 = 8
+LVL2 = 256
 W3 = 5
-LVL3 = 8
+LVL3 = 256
 SIMUL = 0
