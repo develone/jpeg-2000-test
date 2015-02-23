@@ -38,12 +38,12 @@ ROM_ADDR = 4
 """ Required  by array_jpeg.py
 these are used to set the size of the
 arrays"""
-W0 = 8
-LVL0 = 256
-W1 = 8
-LVL1 = 256
-W2 = 8
-LVL2 = 256
+W0 = 10
+LVL0 = 16
+W1 = 10
+LVL1 = 16
+W2 = 10
+LVL2 = 16
 W3 = 5
-LVL3 = 256
+LVL3 = 16
 SIMUL = 0
