@@ -1,19 +1,10 @@
 from myhdl import *
+from jpeg_constants import *
 from rom import *
 from array_jpeg import jp_process
 from merge_sam import merge
 CONTENT = [
 668288, 672388, 668288]
-
-W0 = 8
-LVL0 = 16
-W1 = 8
-LVL1 = 16
-W2 = 8
-LVL2 = 16
-W3 = 5
-LVL3 = 16
-SIMUL = 1
 
 clk_fast = Signal(bool(0))
 res_out_x = Signal(intbv(0, min= -(2**(W0+1)) ,max= (2**(W0+1))))
@@ -61,7 +52,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
 			yield clk_fast.posedge
 		for i in range(2):
-			#10	9	8	8	7	6	6	5	4	4	3	2	2	1	0
+
 			lft_s_i.next = (160 << W0*15) + (163 << W0*14)+(156 << W0*13) + (157 << W0*12) + (160 << W0*11)+(163 << W0*10) + (156 << W0*9)+(160 << W0*8) +(159 << W0*7) + (144 << W0*6) + (157 <<  W0*5) + (163 << W0*4) + (161 << W0*3) + (159 << W0*2) + (157 << W0) + 158
 			sa_s_i.next = (158 << W0*15) + (159 << W0*14)+(160 << W0*13) + (161 << W0*12) + (162 << W0*11)+(163 << W0*10) + (164 << W0*9)+(165 << W0*8) +(166 << W0*7) + (165 << W0*6) + (164 <<  W0*5) + (163 << W0*4) + (162 << W0*3) + (161 << W0*2) + (160 << W0) + 159
 			rht_s_i.next = (157 << W0*15) + (160 << W0*14)+(163 << W0*13) + (156 << W0*12) + (157 << W0*11)+(160 << W0*10) + (163 << W0*9)+(156 << W0*8) +(160 << W0*7) + (159 << W0*6) + (144 <<  W0*5) + (157 << W0*4) + (163 << W0*3) + (161 << W0*2) + (159 << W0) + 157
@@ -77,7 +68,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 			right_s_i.next = right_com_x
  			yield clk_fast.posedge
 		addr_flgs.next = 0
-		for i in range(26):
+		for i in range(61):
 
 			flgs_s_i.next = dout_flgs
 			yield clk_fast.posedge
@@ -86,7 +77,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 			yield clk_fast.posedge
 			update_s.next = 1
 			yield clk_fast.posedge
-			print ("%d %d %s") % (now(), res_out_x.signed(), bin(flgs_s_i) )
+			print ("%d %d %d %d %s") % (now(), i, update_s, res_out_x, hex(flgs_s_i) )
 			update_s.next = 0
 			yield clk_fast.posedge
 			update_s.next = 1
