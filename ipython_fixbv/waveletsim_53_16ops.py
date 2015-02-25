@@ -117,7 +117,7 @@ def fwt97(s, width, height):
         ''' Lifting is done on the cols. '''
         # Predict 1. y1
 
-        for row in range(2, height-32, 16):
+        for row in range(2, height-32, 34):
 
 
 			s[row][col] = (s[row][col] - ((int(s[row-1][col])>>1) + (int(s[row+1][col])>>1)))
@@ -143,7 +143,7 @@ def fwt97(s, width, height):
 
         # Update 1. y0
 
-        for row in range(1, height-33, 16):
+        for row in range(1, height-33, 34):
 
 			s[row][col] = (s[row][col] + ((int(s[row-1][col]) + int(s[row+1][col]) + 2)>>2))
 			s[row+2][col] = (s[row+2][col] + ((int(s[row+2-1][col]) + (int(s[row+3][col]) + 2))>>2))
