@@ -3,6 +3,122 @@ from jpeg_constants import *
 from rom import *
 from array_jpeg import jp_process
 from merge_sam import merge
+from PIL import Image
+img = Image.open("lena_rgb_512.png")
+pix = img.load()
+rgb = list(img.getdata())
+w,h = img.size
+r = []
+g = []
+b = []
+"""get r g b from rgb"""
+for n in range(len(rgb)):
+    rr,gg,bb = rgb[n]
+    r.append(rr)
+    g.append(gg)
+    b.append(bb)
+"""convert to row col"""
+r = [r[i:i+img.size[0]] for i in range(0, len(r), img.size[0])]
+g = [g[i:i+img.size[0]] for i in range(0, len(g), img.size[0])]
+b = [b[i:i+img.size[0]] for i in range(0, len(b), img.size[0])]
+def upper_lower(s, width, height):
+
+	temp_bank = [[0]*width for i in range(height)]
+	for col in range(width/2):
+
+		for row in range(height/2):
+
+			temp_bank[col+width/2][row+height/2] = s[row][col]
+
+	for row in range(width):
+		for col in range(height):
+			s[row][col] = temp_bank[col][row]
+	return s
+def lower_upper(s, width, height):
+
+	temp_bank = [[0]*width for i in range(height)]
+	for col in range(width/2,width,1):
+
+		for row in range(height/2,height,1):
+
+			temp_bank[col-width/2][row-height/2] = s[row][col]
+
+	for row in range(width):
+		for col in range(height):
+			s[row][col] = temp_bank[col][row]
+	return s
+def de_interleave(s,height,width):
+	# de-interleave
+	temp_bank = [[0]*width for i in range(height)]
+	for row in range(width):
+		for col in range(width):
+            # k1 and k2 scale the vals
+            # simultaneously transpose the matrix when deinterleaving
+			if row % 2 == 0:
+
+				temp_bank[col][row/2] =  s[row][col]
+			else:
+
+				temp_bank[col][row/2 + height/2] =  s[row][col]
+    # write temp_bank to s:
+	for row in range(width):
+		for col in range(height):
+			s[row][col] = temp_bank[row][col]
+	return s
+
+def fwt97_2d(m, nlevels=1):
+    ''' Perform the CDF 9/7 transform on a 2D matrix signal m.
+    nlevel is the desired number of times to recursively transform the
+    signal. '''
+
+    w = len(m[0])
+    h = len(m)
+    for i in range(nlevels):
+        m = fwt97(m, w, h) # cols
+        m = fwt97(m, w, h) # rows
+        lower_upper(m, w, h)
+        w /= 2
+        h /= 2
+
+    return m
+def fwt97(s, width, height):
+    ''' Forward Cohen-Daubechies-Feauveau 5 tap / 3 tap wavelet transform
+    performed on all columns of the 2D n*n matrix signal s via lifting.
+    The returned result is s, the modified input matrix.
+    The highpass and lowpass results are stored on the left half and right
+    half of s respectively, after the matrix is transposed. '''
+
+
+
+    for col in range(width): # Do the 1D transform on all cols:
+        ''' Core 1D lifting process in this loop. '''
+        ''' Lifting is done on the cols. '''
+        # Predict 1. y1
+
+        for row in range(2, height-32, 34):
+			if (row == 2):
+				if (col == 0):
+					#dummy statement
+					col == 0
+					#print row, col, s[row][col]
+
+
+            #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])
+
+
+        # Update 1. y0
+
+        for row in range(1, height-33, 34):
+			if (row == 1):
+				if (col == 0):
+					#dummy statement
+					col = 0
+					#print row, col, s[row][col]
+
+
+    s = de_interleave(s,height,width)
+    return s
+
 CONTENT = [
 668288, 672388, 668288]
 
@@ -97,5 +213,20 @@ tb, clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i,
 merge_rdy_s, nomerge_s)
+print "before fwd dwt", pix[0,0], rgb[0]
+r = fwt97_2d(r, 1)
+g = fwt97_2d(g, 1)
+b = fwt97_2d(b, 1)
+rgb = []
+for row in range(len(r)):
+    for col in range(len(r)):
+        rgb.append((r[row][col],g[row][col],b[row][col]))
+
+for row in range(len(r)):
+        for col in range(len(r)):
+            #pix[row,col] = rgb[col + row*128]
+            pix[col,row] = rgb[col + row*len(r)]
+print "after fwd  dwt", pix[0,0], rgb[0]
+print r[1][0]
 sim = Simulation(tb_fsm)
 sim.run()
