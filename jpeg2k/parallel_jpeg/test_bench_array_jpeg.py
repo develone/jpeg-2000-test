@@ -2,7 +2,7 @@ from myhdl import *
 from jpeg_constants import *
 from rom import *
 from array_jpeg import jp_process
-from merge_sam import merge
+from combine_sam import combine
 from PIL import Image
 img = Image.open("lena_rgb_512.png")
 pix = img.load()
@@ -135,20 +135,20 @@ right_com_x = Signal(intbv(0)[LVL2*W2:])
 lft_s_i = Signal(intbv(0)[LVL2*W2:])
 sa_s_i = Signal(intbv(0)[LVL2*W2:])
 rht_s_i = Signal(intbv(0)[LVL2*W2:])
-merge_rdy_s = Signal(bool(0))
-nomerge_s = Signal(bool(0))
+combine_rdy_s = Signal(bool(0))
+nocombine_s = Signal(bool(0))
 
 
 def tb(clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i,
-merge_rdy_s, nomerge_s,
+combine_rdy_s, nocombine_s,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3):
 
 	instance_rom_flgs = rom_flgs(dout_flgs, addr_flgs, ROM_CONTENT)
-	instance_merge = merge( left_com_x, sam_com_x, right_com_x,
-lft_s_i, sa_s_i, rht_s_i, merge_rdy_s, nomerge_s,
+	instance_combine = combine( left_com_x, sam_com_x, right_com_x,
+lft_s_i, sa_s_i, rht_s_i, combine_rdy_s, nocombine_s,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3)
 	instance_dut = jp_process( res_out_x, left_s_i,sam_s_i, right_s_i,
@@ -171,7 +171,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 			rht_s_i.next = (r[33][0] << W0*15) + (r[31][0] << W0*14) + (r[29][0] << W0*13)+(r[27][0] << W0*12) + (r[25][0] << W0*11) + (r[23][0] << W0*10)+(r[21][0] << W0*9) + (r[19][0] << W0*8)+(r[17][0] << W0*7) +(r[15][0] << W0*6) + (r[13][0] << W0*5) + (r[11][0] <<  W0*4) + (r[9][0] << W0*3) + (r[7][0] << W0*2) + (r[5][0] << W0) + r[3][0]
 
  			yield clk_fast.posedge
-			merge_rdy_s.next = 1
+			combine_rdy_s.next = 1
 			yield clk_fast.posedge
 
  		for i in range(2):
@@ -180,37 +180,39 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 			sam_s_i.next = sam_com_x
 			right_s_i.next = right_com_x
  			yield clk_fast.posedge
-		addr_flgs.next = 0
-		for i in range(63):
 
-			flgs_s_i.next = dout_flgs
-			yield clk_fast.posedge
-			#print( "%3d %s") % (now(), hex(flgs_s_i))
-			addr_flgs.next = addr_flgs + 1
-			yield clk_fast.posedge
-			update_s.next = 1
-			yield clk_fast.posedge
-			print ("%d %d %s" ) % (now(), res_out_x, hex(flgs_s_i)) 
-			#print ("%d %d %d %d %s") % (now(), i, update_s, res_out_x, hex(flgs_s_i) )
-			update_s.next = 0
-			yield clk_fast.posedge
-			update_s.next = 1
-			yield clk_fast.posedge
-			update_s.next = 0
-			yield clk_fast.posedge
+		for i in range(15):
+			addr_flgs.next = 0
+			for i in range(15):
+
+				flgs_s_i.next = dout_flgs
+				yield clk_fast.posedge
+				#print( "%3d %s") % (now(), hex(flgs_s_i))
+				addr_flgs.next = addr_flgs + 1
+				yield clk_fast.posedge
+				update_s.next = 1
+				yield clk_fast.posedge
+				print ("%d %d %s" ) % (now(), res_out_x, hex(flgs_s_i))
+				#print ("%d %d %d %d %s") % (now(), i, update_s, res_out_x, hex(flgs_s_i) )
+				update_s.next = 0
+				yield clk_fast.posedge
+				update_s.next = 1
+				yield clk_fast.posedge
+				update_s.next = 0
+				yield clk_fast.posedge
 		raise StopSimulation
 	return instances()
 tb(clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i,
-merge_rdy_s, nomerge_s,
+combine_rdy_s, nocombine_s,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3)
 tb_fsm = traceSignals(
 tb, clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i,
-merge_rdy_s, nomerge_s)
+combine_rdy_s, nocombine_s)
 #print "before fwd dwt", pix[0,0], rgb[0]
 r = fwt97_2d(r, 1)
 g = fwt97_2d(g, 1)
