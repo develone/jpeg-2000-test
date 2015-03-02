@@ -69,7 +69,7 @@ def de_interleave(s,height,width):
 def fwt97_2d(m, nlevels=1):
     ''' Perform the CDF 9/7 transform on a 2D matrix signal m.
     nlevel is the desired number of times to recursively transform the
-    signal. '''
+    signal.
 
     w = len(m[0])
     h = len(m)
@@ -79,7 +79,7 @@ def fwt97_2d(m, nlevels=1):
         lower_upper(m, w, h)
         w /= 2
         h /= 2
-
+	'''
     return m
 def fwt97(s, width, height):
     ''' Forward Cohen-Daubechies-Feauveau 5 tap / 3 tap wavelet transform
@@ -99,8 +99,8 @@ def fwt97(s, width, height):
 			if (row == 2):
 				if (col == 0):
 					#dummy statement
-					col == 0
-					#print row, col, s[row][col]
+					#col == 0
+					print row, col, s[row][col]
 
 
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])
@@ -112,8 +112,8 @@ def fwt97(s, width, height):
 			if (row == 1):
 				if (col == 0):
 					#dummy statement
-					col = 0
-					#print row, col, s[row][col]
+					#col = 0
+					print row, col, s[row][col]
 
 
     s = de_interleave(s,height,width)
@@ -195,7 +195,8 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 						update_s.next = 1
 						yield clk_fast.posedge
 						#row_s.next = row_s + 1
-						print ("%d %d %s" ) % (now(), res_out_x, hex(flgs_s_i))
+						print ("%d %d" ) % (now(), res_out_x)
+						#print ("%d %d %s" ) % (now(), res_out_x, hex(flgs_s_i))
 						#print ("%d %d %d %d %s") % (now(), i, update_s, res_out_x, hex(flgs_s_i) )
 						update_s.next = 0
 						yield clk_fast.posedge
