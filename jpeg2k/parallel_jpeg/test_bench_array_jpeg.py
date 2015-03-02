@@ -120,10 +120,11 @@ def fwt97(s, width, height):
     return s
 
 clk_fast = Signal(bool(0))
-res_out_x = Signal(intbv(0, min= -(2**(W0+1)) ,max= (2**(W0+1))))
+res_out_x = Signal(intbv(0, min= -(2**(W0-1)) ,max= (2**(W0-1))))
 update_s = Signal(bool(0))
 noupdate_s = Signal(bool(0))
-
+row_s = Signal(intbv(0)[8:])
+col_s = Signal(intbv(0)[8:])
 left_s_i = Signal(intbv(0)[LVL2*W2:])
 sam_s_i = Signal(intbv(0)[LVL2*W2:])
 right_s_i = Signal(intbv(0)[LVL2*W2:])
@@ -162,7 +163,8 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 	def stimulus():
 		for i in range(10):
 			#print( "%3d ") % (now())
-
+			#row_s.next = 0
+			#col_s.next = 0
 			yield clk_fast.posedge
 		for i in range(2):
 
@@ -192,6 +194,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 						yield clk_fast.posedge
 						update_s.next = 1
 						yield clk_fast.posedge
+						#row_s.next = row_s + 1
 						print ("%d %d %s" ) % (now(), res_out_x, hex(flgs_s_i))
 						#print ("%d %d %d %d %s") % (now(), i, update_s, res_out_x, hex(flgs_s_i) )
 						update_s.next = 0
