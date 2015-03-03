@@ -8,6 +8,7 @@ img = Image.open("lena_rgb_512.png")
 pix = img.load()
 rgb = list(img.getdata())
 w,h = img.size
+
 r = []
 g = []
 b = []
@@ -138,12 +139,13 @@ sa_s_i = Signal(intbv(0)[LVL2*W2:])
 rht_s_i = Signal(intbv(0)[LVL2*W2:])
 combine_rdy_s = Signal(bool(0))
 nocombine_s = Signal(bool(0))
-
+row_ind = Signal(intbv(0)[9:])
+col_ind = Signal(intbv(0)[9:])
 
 def tb(clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i,
-combine_rdy_s, nocombine_s,
+combine_rdy_s, nocombine_s, row_ind, col_ind,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3):
 
@@ -163,10 +165,11 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 	def stimulus():
 		for i in range(10):
 			#print( "%3d ") % (now())
-			#row_s.next = 0
-			#col_s.next = 0
+			row_ind.next = 2
+			col_ind.next = 0
+			print( "%3d %d %d ") % (now(), row_ind, col_ind  )
 			yield clk_fast.posedge
-		for i in range(2):
+		for i in range(1):
 
 			for col in range(w):
 				for row in range(2,h-32, 34):
@@ -196,6 +199,15 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 						yield clk_fast.posedge
 						#row_s.next = row_s + 1
 						print ("%d %d" ) % (now(), res_out_x)
+						r[row_ind][col_ind] = res_out_x
+						print ("%d %d %d %d saving res_out_x " ) % (now(), row_ind, col_ind, r[row_ind][col_ind])
+						if (row_ind == 510):
+							row_ind.next = 2
+							if (col_ind <= 511):
+								col_ind.next = col_ind + 1
+						else:
+							row_ind.next = row_ind + 2
+
 						#print ("%d %d %s" ) % (now(), res_out_x, hex(flgs_s_i))
 						#print ("%d %d %d %d %s") % (now(), i, update_s, res_out_x, hex(flgs_s_i) )
 						update_s.next = 0
@@ -209,14 +221,14 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 tb(clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i,
-combine_rdy_s, nocombine_s,
+combine_rdy_s, nocombine_s, row_ind, col_ind,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3)
 tb_fsm = traceSignals(
 tb, clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i,
-combine_rdy_s, nocombine_s)
+combine_rdy_s, nocombine_s, row_ind, col_ind)
 #print "before fwd dwt", pix[0,0], rgb[0]
 r = fwt97_2d(r, 1)
 g = fwt97_2d(g, 1)
