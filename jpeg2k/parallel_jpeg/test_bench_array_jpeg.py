@@ -169,53 +169,121 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 			col_ind.next = 0
 			print( "%3d %d %d ") % (now(), row_ind, col_ind  )
 			yield clk_fast.posedge
-		for i in range(1):
 
-			for col in range(w):
-				for row in range(2,h-32, 34):
-					lft_s_i.next = (r[row+31][col] << W0*15) + (r[row+29][col] << W0*14) + (r[row+27][col] << W0*13) +(r[row+25][col] << W0*12) + (r[row+23][col] << W0*11) + (r[row+21][col] << W0*10) + (r[row+19][col] << W0*9) + (r[row+17][col] << W0*8) + (r[row+15][col] << W0*7) + (r[row+13][col] << W0*6) + (r[row+11][col] << W0*5) + (r[row+9][col] << W0*4) + (r[row+7][col] << W0*3) + (r[row+5][col] << W0*2) + (r[row+3][col] << W0*1) + (r[row+1][col] )
-					sa_s_i.next = (r[row+32][col] << W0*15) + (r[row+30][col] << W0*14) + (r[row+28][col] << W0*13) +(r[row+26][col] << W0*12) + (r[row+24][col] << W0*11) + (r[row+22][col] << W0*10) + (r[row+20][col] << W0*9) + (r[row+18][col] << W0*8) + (r[row+16][col] << W0*7) + (r[row+14][col] << W0*6) + (r[row+12][col] << W0*5) + (r[row+10][col] << W0*4) + (r[row+8][col] << W0*3) + (r[row+6][col] << W0*2) + (r[row+4][col] << W0*1) + (r[row][col] )
-					rht_s_i.next = (r[row+33][col] << W0*15) + (r[row+31][col] << W0*14) + (r[row+29][col] << W0*13) +(r[row+27][col] << W0*12) + (r[row+25][col] << W0*11) + (r[row+23][col] << W0*10) + (r[row+21][col] << W0*9) + (r[row+19][col] << W0*8) + (r[row+17][col] << W0*7) + (r[row+15][col] << W0*6) + (r[row+13][col] << W0*5) + (r[row+11][col] << W0*4) + (r[row+9][col] << W0*3) + (r[row+7][col] << W0*2) + (r[row+5][col] << W0*1) + (r[row+1][col] )
-					yield clk_fast.posedge
-					combine_rdy_s.next = 1
-					yield clk_fast.posedge
-					print( "%3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
-					left_s_i.next = left_com_x
-					sam_s_i.next = sam_com_x
-					right_s_i.next = right_com_x
-					yield clk_fast.posedge
-					combine_rdy_s.next = 0
-					yield clk_fast.posedge
-					addr_flgs.next = 0
-					yield clk_fast.posedge
-					for i in range(15):
+		for col in range(w):
+			for row in range(2,h-32, 34):
 
-						flgs_s_i.next = dout_flgs
-						yield clk_fast.posedge
-						#print( "%3d %s") % (now(), hex(flgs_s_i))
-						addr_flgs.next = addr_flgs + 1
-						yield clk_fast.posedge
-						update_s.next = 1
-						yield clk_fast.posedge
-						#row_s.next = row_s + 1
-						print ("%d %d" ) % (now(), res_out_x)
+				lft_s_i.next = (r[row+31][col] << W0*15) + (r[row+29][col] << W0*14) + (r[row+27][col] << W0*13) + (r[row+25][col] << W0*12) + (r[row+23][col] << W0*11) + (r[row+21][col] << W0*10) + (r[row+19][col] << W0*9) + (r[row+17][col] << W0*8) + (r[row+15][col] << W0*7) + (r[row+13][col] << W0*6) + (r[row+11][col] << W0*5) + (r[row+9][col] << W0*4) + (r[row+7][col] << W0*3) + (r[row+5][col] << W0*2) + (r[row+3][col] << W0*1) + (r[row-1][col] )
+				sa_s_i.next = (r[row+32][col] << W0*15) + (r[row+30][col] << W0*14) + (r[row+28][col] << W0*13) + (r[row+26][col] << W0*12) + (r[row+24][col] << W0*11) + (r[row+22][col] << W0*10) + (r[row+20][col] << W0*9) + (r[row+18][col] << W0*8) + (r[row+16][col] << W0*7) + (r[row+14][col] << W0*6) + (r[row+12][col] << W0*5) + (r[row+10][col] << W0*4) + (r[row+8][col] << W0*3) + (r[row+6][col] << W0*2) + (r[row+4][col] << W0*1) + (r[row][col] )
+				rht_s_i.next = (r[row+33][col] << W0*15) + (r[row+31][col] << W0*14) + (r[row+29][col] << W0*13) + (r[row+27][col] << W0*12) + (r[row+25][col] << W0*11) + (r[row+23][col] << W0*10) + (r[row+21][col] << W0*9) + (r[row+19][col] << W0*8) + (r[row+17][col] << W0*7) + (r[row+15][col] << W0*6) + (r[row+13][col] << W0*5) + (r[row+11][col] << W0*4) + (r[row+9][col] << W0*3) + (r[row+7][col] << W0*2) + (r[row+5][col] << W0*1) + (r[row+1][col] )
+				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
+				yield clk_fast.posedge
+				combine_rdy_s.next = 1
+				yield clk_fast.posedge
+				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
+				left_s_i.next = left_com_x
+				sam_s_i.next = sam_com_x
+				right_s_i.next = right_com_x
+				yield clk_fast.posedge
+				combine_rdy_s.next = 0
+				yield clk_fast.posedge
+				addr_flgs.next = 0
+				yield clk_fast.posedge
+				for i in range(15):
+
+					flgs_s_i.next = dout_flgs
+					yield clk_fast.posedge
+					#print( "%3d %s") % (now(), hex(flgs_s_i))
+					addr_flgs.next = addr_flgs + 1
+					yield clk_fast.posedge
+					update_s.next = 1
+					yield clk_fast.posedge
+
+					if (res_out_x < 0):
 						r[row_ind][col_ind] = res_out_x
-						print ("%d %d %d %d saving res_out_x " ) % (now(), row_ind, col_ind, r[row_ind][col_ind])
-						if (row_ind == 510):
-							row_ind.next = 2
-							if (col_ind <= 511):
-								col_ind.next = col_ind + 1
-						else:
-							row_ind.next = row_ind + 2
+						r[row_ind][col_ind] = r[row_ind][col_ind]*(-1)
+						print ("%d %d %d %d %d saving even pass 1 res_out_x " ) % (now(), res_out_x, row_ind, col_ind, r[row_ind][col_ind])
+						yield clk_fast.posedge
+					else:
+						r[row_ind][col_ind] = res_out_x
+						yield clk_fast.posedge
+						print ("%d %d %d %d %d saving even pass 1 res_out_x " ) % (now(), res_out_x, row_ind, col_ind, r[row_ind][col_ind])
+					if (row_ind == 510):
+						row_ind.next = 2
+						if (col_ind <= 511):
+							col_ind.next = col_ind + 1
+					else:
+						row_ind.next = row_ind + 2
 
-						#print ("%d %d %s" ) % (now(), res_out_x, hex(flgs_s_i))
-						#print ("%d %d %d %d %s") % (now(), i, update_s, res_out_x, hex(flgs_s_i) )
-						update_s.next = 0
+					#print ("%d %d %s" ) % (now(), res_out_x, hex(flgs_s_i))
+					#print ("%d %d %d %d %s") % (now(), i, update_s, res_out_x, hex(flgs_s_i) )
+					update_s.next = 0
+					yield clk_fast.posedge
+					update_s.next = 1
+					yield clk_fast.posedge
+					update_s.next = 0
+					yield clk_fast.posedge
+		row_ind.next = 1
+		col_ind.next = 0
+		print( "%3d %d %d ") % (now(), row_ind, col_ind  )
+
+		for col in range(w):
+			for row in range(1,h-33, 34):
+				print ( "%3d %d %d ") % (now(), w, h  )
+				print r[row+29][col],r[row+27][col],r[row+25][col],r[row+23][col], r[row+21][col], r[row+19][col], r[row+17][col],r[row+15][col],r[row+13][col],r[row+11][col],r[row+9][col],r[row+7][col], r[row+5][col],r[row+3][col],r[row+1][col],r[row-1][col],
+				lft_s_i.next = (r[row+29][col] << W0*15) + (r[row+27][col] << W0*14) + (r[row+25][col] << W0*13) +(r[row+23][col] << W0*12) + (r[row+21][col] << W0*11) + (r[row+19][col] << W0*10) + (r[row+17][col] << W0*9) + (r[row+15][col] << W0*8) + (r[row+13][col] << W0*7) + (r[row+11][col] << W0*6) + (r[row+9][col] << W0*5) + (r[row+7][col] << W0*4) + (r[row+5][col] << W0*3) + (r[row+3][col] << W0*2) + (r[row+1][col] << W0*1) + (r[row-1][col] )
+				sa_s_i.next = (r[row+30][col] << W0*15) + (r[row+28][col] << W0*14) + (r[row+26][col] << W0*13) +(r[row+24][col] << W0*12) + (r[row+22][col] << W0*11) + (r[row+20][col] << W0*10) + (r[row+18][col] << W0*9) + (r[row+16][col] << W0*8) + (r[row+14][col] << W0*7) + (r[row+12][col] << W0*6) + (r[row+10][col] << W0*5) + (r[row+8][col] << W0*4) + (r[row+6][col] << W0*3) + (r[row+4][col] << W0*2) + (r[row+2][col] << W0*1) + (r[row][col] )
+				#print ("%d %s") % (now(),hex(sa_s_i))
+				rht_s_i.next = (r[row+31][col] << W0*15) + (r[row+29][col] << W0*14) + (r[row+27][col] << W0*13) +(r[row+25][col] << W0*12) + (r[row+23][col] << W0*11) + (r[row+21][col] << W0*10) + (r[row+19][col] << W0*9) + (r[row+17][col] << W0*8) + (r[row+15][col] << W0*7) + (r[row+13][col] << W0*6) + (r[row+11][col] << W0*5) + (r[row+9][col] << W0*4) + (r[row+7][col] << W0*3) + (r[row+5][col] << W0*2) + (r[row+3][col] << W0*1) + (r[row+1][col] )
+				yield clk_fast.posedge
+				combine_rdy_s.next = 1
+				yield clk_fast.posedge
+				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
+				left_s_i.next = left_com_x
+				sam_s_i.next = sam_com_x
+				right_s_i.next = right_com_x
+				yield clk_fast.posedge
+				combine_rdy_s.next = 0
+				yield clk_fast.posedge
+				addr_flgs.next = 32
+				yield clk_fast.posedge
+				for i in range(15):
+
+					flgs_s_i.next = dout_flgs
+					yield clk_fast.posedge
+					#print( "%3d %s") % (now(), hex(flgs_s_i))
+					addr_flgs.next = addr_flgs + 1
+					yield clk_fast.posedge
+					update_s.next = 1
+					yield clk_fast.posedge
+					#row_s.next = row_s + 1
+
+					if (res_out_x <= 0):
+						res_out_x.next = res_out_x
 						yield clk_fast.posedge
-						update_s.next = 1
+						r[row_ind][col_ind] = res_out_x
+						r[row_ind][col_ind] = r[row_ind][col_ind]*(-1)
+						print ("%d %d %d %d %d saving odd pass 1 res_out_x " ) % (now(), res_out_x, row_ind, col_ind, r[row_ind][col_ind])
 						yield clk_fast.posedge
-						update_s.next = 0
+					else:
+						r[row_ind][col_ind] = res_out_x
 						yield clk_fast.posedge
+						print ("%d %d %d %d %d saving odd pass 1 res_out_x " ) % (now(), res_out_x, row_ind, col_ind, r[row_ind][col_ind])
+					if (row_ind == 509):
+						row_ind.next = 2
+						if (col_ind <= 511):
+							col_ind.next = col_ind + 1
+					else:
+						row_ind.next = row_ind + 2
+
+					#print ("%d %d %s" ) % (now(), res_out_x, hex(flgs_s_i))
+					#print ("%d %d %d %d %s") % (now(), i, update_s, res_out_x, hex(flgs_s_i) )
+					update_s.next = 0
+					yield clk_fast.posedge
+					update_s.next = 1
+					yield clk_fast.posedge
+					update_s.next = 0
+					yield clk_fast.posedge
 		raise StopSimulation
 	return instances()
 tb(clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
