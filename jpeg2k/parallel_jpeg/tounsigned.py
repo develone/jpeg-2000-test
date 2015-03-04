@@ -1,5 +1,5 @@
 from myhdl import *
-W0 = 10
+from jpeg_constants import *
 bits_in = Signal(intbv(0, min= -(2**(W0-1)) ,max= (2**(W0-1))))
 v = Signal(intbv(0)[W0:])
 

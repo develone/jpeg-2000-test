@@ -275,9 +275,9 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 					print ("%d %d %d %d %d saving odd pass 1 res_out_x " ) % (now(), res_out_x, row_ind, col_ind, r[row_ind][col_ind])
 					yield clk_fast.posedge
 
-					if (row_ind == 509):
-						row_ind.next = 2
-						if (col_ind <= 511):
+					if (row_ind == 511):
+						row_ind.next = 1
+						if (col_ind <= 510):
 							col_ind.next = col_ind + 1
 					else:
 						row_ind.next = row_ind + 2
