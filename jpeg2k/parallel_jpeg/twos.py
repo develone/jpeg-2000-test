@@ -11,19 +11,20 @@ def tounsigned( v , w):
 
 def tosigned(v, w):
     ''' return a signed representation of an 'unsigned' value '''
-    if v >> (w-1) & 1:
+    if (v >> (w-1)) & 1:
         # high bit set -> negative
         return -(~v + 1)
     else:
         # positive
         return v
+x = -512
 for r in range(-511,511,1):
 
 	print "calling tounsigned", r
 
 	y = tounsigned(r,W0-1)
 	print y, bin(y,10), r,bin(r,10)
-
+	print (x + y)
 	print "calling tosigned", r
 	z = tosigned(r,W0)
 	print z, bin(z,10), bin(r,10)

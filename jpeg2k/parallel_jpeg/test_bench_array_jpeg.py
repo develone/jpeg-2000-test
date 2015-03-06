@@ -4,8 +4,7 @@ from rom import *
 from array_jpeg import jp_process
 from combine_sam import combine
 from PIL import Image
-from tounsigned import tounsigned
-from tosigned import tosigned
+
 img = Image.open("lena_rgb_512.png")
 pix = img.load()
 rgb = list(img.getdata())
@@ -151,7 +150,7 @@ col_ind = Signal(intbv(0)[9:])
 def tb(clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i,
-combine_rdy_s, nocombine_s, row_ind, col_ind, bits_in, v,bits_in2unsigned, vv,
+combine_rdy_s, nocombine_s, row_ind, col_ind,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3):
 
@@ -161,8 +160,7 @@ LVL2=LVL2, W3=W3, LVL3=LVL3):
 lft_s_i, sa_s_i, rht_s_i, combine_rdy_s, nocombine_s,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3)
-	instance_tounsigned = tounsigned(bits_in, v, w=W0-1)
-	instance_tosigned = tosigned(bits_in2unsigned, vv, w=W0)
+
 	instance_dut = jp_process( res_out_x, left_s_i,sam_s_i, right_s_i,
 flgs_s_i, noupdate_s, update_s,  W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1,
 W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
@@ -185,15 +183,17 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 				lft_s_i.next = (r[row+31][col] << W0*15) + (r[row+29][col] << W0*14) + (r[row+27][col] << W0*13) + (r[row+25][col] << W0*12) + (r[row+23][col] << W0*11) + (r[row+21][col] << W0*10) + (r[row+19][col] << W0*9) + (r[row+17][col] << W0*8) + (r[row+15][col] << W0*7) + (r[row+13][col] << W0*6) + (r[row+11][col] << W0*5) + (r[row+9][col] << W0*4) + (r[row+7][col] << W0*3) + (r[row+5][col] << W0*2) + (r[row+3][col] << W0*1) + (r[row-1][col] )
 				sa_s_i.next = (r[row+32][col] << W0*15) + (r[row+30][col] << W0*14) + (r[row+28][col] << W0*13) + (r[row+26][col] << W0*12) + (r[row+24][col] << W0*11) + (r[row+22][col] << W0*10) + (r[row+20][col] << W0*9) + (r[row+18][col] << W0*8) + (r[row+16][col] << W0*7) + (r[row+14][col] << W0*6) + (r[row+12][col] << W0*5) + (r[row+10][col] << W0*4) + (r[row+8][col] << W0*3) + (r[row+6][col] << W0*2) + (r[row+4][col] << W0*1) + (r[row][col] )
 				rht_s_i.next = (r[row+33][col] << W0*15) + (r[row+31][col] << W0*14) + (r[row+29][col] << W0*13) + (r[row+27][col] << W0*12) + (r[row+25][col] << W0*11) + (r[row+23][col] << W0*10) + (r[row+21][col] << W0*9) + (r[row+19][col] << W0*8) + (r[row+17][col] << W0*7) + (r[row+15][col] << W0*6) + (r[row+13][col] << W0*5) + (r[row+11][col] << W0*4) + (r[row+9][col] << W0*3) + (r[row+7][col] << W0*2) + (r[row+5][col] << W0*1) + (r[row+1][col] )
+				yield clk_fast.posedge
 				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
 				yield clk_fast.posedge
 				combine_rdy_s.next = 1
 				yield clk_fast.posedge
-				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
+
 				left_s_i.next = left_com_x
 				sam_s_i.next = sam_com_x
 				right_s_i.next = right_com_x
 				yield clk_fast.posedge
+				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
 				combine_rdy_s.next = 0
 				yield clk_fast.posedge
 				addr_flgs.next = 0
@@ -207,14 +207,15 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 					yield clk_fast.posedge
 					update_s.next = 1
 					yield clk_fast.posedge
-					bits_in.next = res_out_x
-					yield clk_fast.posedge
-					r[row_ind][col_ind] = v
-					yield clk_fast.posedge
-					bits_in2unsigned.next = r[row_ind][col_ind]
+					r[row_ind][col_ind] = res_out_x
+
 					yield clk_fast.posedge
 
-					#r[row_ind][col_ind] = tounsigned(res_out_x, W0-1)
+					yield clk_fast.posedge
+
+					yield clk_fast.posedge
+
+
 					print ("%d %d %d %d %d saving even pass 1 res_out_x " ) % (now(), res_out_x, row_ind, col_ind, r[row_ind][col_ind])
 					yield clk_fast.posedge
 
@@ -225,8 +226,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 					else:
 						row_ind.next = row_ind + 2
 
-					#print ("%d %d %s" ) % (now(), res_out_x, hex(flgs_s_i))
-					#print ("%d %d %d %d %s") % (now(), i, update_s, res_out_x, hex(flgs_s_i) )
+					yield clk_fast.posedge
 					update_s.next = 0
 					yield clk_fast.posedge
 					update_s.next = 1
@@ -235,27 +235,26 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 					yield clk_fast.posedge
 		row_ind.next = 1
 		col_ind.next = 0
+		yield clk_fast.posedge
 		print( "%3d %d %d ") % (now(), row_ind, col_ind  )
 
 		for col in range(w):
 			for row in range(1,h-33, 34):
-				print ( "%3d %d %d ") % (now(), w, h  )
-				print ("%3d %d %d %d %d %d %d %d %d  %d %d %d %d  %d %d %d %d  ") % (now(),r[row+29][col],r[row+27][col],r[row+25][col],r[row+23][col], r[row+21][col], r[row+19][col], r[row+17][col],r[row+15][col],r[row+13][col],r[row+11][col],r[row+9][col],r[row+7][col], r[row+5][col],r[row+3][col],r[row+1][col],r[row-1][col])
-				print ("%3d %d %d %d %d %d %d %d %d  %d %d %d %d  %d %d %d %d  ") % (now(),r[row+30][col],r[row+28][col],r[row+26][col],r[row+24][col], r[row+22][col], r[row+20][col], r[row+18][col],r[row+16][col],r[row+14][col],r[row+12][col],r[row+10][col],r[row+8][col], r[row+6][col],r[row+4][col],r[row+2][col],r[row][col])
-				print ("%3d %d %d %d %d %d %d %d %d  %d %d %d %d  %d %d %d %d  ") % (now(),r[row+31][col],r[row+29][col],r[row+27][col],r[row+25][col], r[row+23][col], r[row+21][col], r[row+19][col],r[row+17][col],r[row+15][col],r[row+13][col],r[row+11][col],r[row+9][col], r[row+7][col],r[row+5][col],r[row+3][col],r[row+1][col])
+
 				lft_s_i.next = (r[row+29][col] << W0*15) + (r[row+27][col] << W0*14) + (r[row+25][col] << W0*13) +(r[row+23][col] << W0*12) + (r[row+21][col] << W0*11) + (r[row+19][col] << W0*10) + (r[row+17][col] << W0*9) + (r[row+15][col] << W0*8) + (r[row+13][col] << W0*7) + (r[row+11][col] << W0*6) + (r[row+9][col] << W0*5) + (r[row+7][col] << W0*4) + (r[row+5][col] << W0*3) + (r[row+3][col] << W0*2) + (r[row+1][col] << W0*1) + (r[row-1][col] )
 				sa_s_i.next = (r[row+30][col] << W0*15) + (r[row+28][col] << W0*14) + (r[row+26][col] << W0*13) +(r[row+24][col] << W0*12) + (r[row+22][col] << W0*11) + (r[row+20][col] << W0*10) + (r[row+18][col] << W0*9) + (r[row+16][col] << W0*8) + (r[row+14][col] << W0*7) + (r[row+12][col] << W0*6) + (r[row+10][col] << W0*5) + (r[row+8][col] << W0*4) + (r[row+6][col] << W0*3) + (r[row+4][col] << W0*2) + (r[row+2][col] << W0*1) + (r[row][col] )
-				#print ("%d %s") % (now(),hex(sa_s_i))
 				rht_s_i.next = (r[row+31][col] << W0*15) + (r[row+29][col] << W0*14) + (r[row+27][col] << W0*13) +(r[row+25][col] << W0*12) + (r[row+23][col] << W0*11) + (r[row+21][col] << W0*10) + (r[row+19][col] << W0*9) + (r[row+17][col] << W0*8) + (r[row+15][col] << W0*7) + (r[row+13][col] << W0*6) + (r[row+11][col] << W0*5) + (r[row+9][col] << W0*4) + (r[row+7][col] << W0*3) + (r[row+5][col] << W0*2) + (r[row+3][col] << W0*1) + (r[row+1][col] )
 				yield clk_fast.posedge
+				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
 				combine_rdy_s.next = 1
 				yield clk_fast.posedge
-				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
+
 
 				left_s_i.next = left_com_x
 				sam_s_i.next = sam_com_x
 				right_s_i.next = right_com_x
 				yield clk_fast.posedge
+				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
 				combine_rdy_s.next = 0
 				yield clk_fast.posedge
 				addr_flgs.next = 16
@@ -264,21 +263,15 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
 					flgs_s_i.next = dout_flgs
 					yield clk_fast.posedge
-					#print( "%3d %s") % (now(), hex(flgs_s_i))
+
 					addr_flgs.next = addr_flgs + 1
 					yield clk_fast.posedge
 					update_s.next = 1
 					yield clk_fast.posedge
-					bits_in.next = res_out_x
+					r[row_ind][col_ind] = res_out_x
 					yield clk_fast.posedge
-					r[row_ind][col_ind] = v
-					yield clk_fast.posedge
-					bits_in2unsigned.next = r[row_ind][col_ind]
-					yield clk_fast.posedge
-					#row_s.next = row_s + 1
-					#r[row_ind][col_ind] = tounsigned(res_out_x, W0-1)
 					print ("%d %d %d %d %d saving odd pass 1 res_out_x " ) % (now(), res_out_x, row_ind, col_ind, r[row_ind][col_ind])
-					yield clk_fast.posedge
+
 
 					if (row_ind == 511):
 						row_ind.next = 1
@@ -287,8 +280,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 					else:
 						row_ind.next = row_ind + 2
 
-					#print ("%d %d %s" ) % (now(), res_out_x, hex(flgs_s_i))
-					#print ("%d %d %d %d %s") % (now(), i, update_s, res_out_x, hex(flgs_s_i) )
+					yield clk_fast.posedge
 					update_s.next = 0
 					yield clk_fast.posedge
 					update_s.next = 1
@@ -300,28 +292,19 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 tb(clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i,
-combine_rdy_s, nocombine_s, row_ind, col_ind, bits_in, v,bits_in2unsigned, vv,
+combine_rdy_s, nocombine_s, row_ind, col_ind,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3)
 tb_fsm = traceSignals(
 tb, clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i,
-combine_rdy_s, nocombine_s, row_ind, col_ind, bits_in, v,bits_in2unsigned, vv)
-#print "before fwd dwt", pix[0,0], rgb[0]
-r = fwt97_2d(r, 1)
-g = fwt97_2d(g, 1)
-b = fwt97_2d(b, 1)
-rgb = []
-for row in range(len(r)):
-    for col in range(len(r)):
-        rgb.append((r[row][col],g[row][col],b[row][col]))
+combine_rdy_s, nocombine_s, row_ind, col_ind)
+
+sim = Simulation(tb_fsm)
+sim.run()
 
 for row in range(len(r)):
         for col in range(len(r)):
-            #pix[row,col] = rgb[col + row*128]
             pix[col,row] = rgb[col + row*len(r)]
-#print "after fwd  dwt", pix[0,0], rgb[0]
-#print r[1][0]
-sim = Simulation(tb_fsm)
-sim.run()
+img.save("simulation.png")
