@@ -5,6 +5,7 @@ from array_jpeg import jp_process
 from combine_sam import combine
 from PIL import Image
 from tounsigned import tounsigned
+from tosigned import tosigned
 img = Image.open("lena_rgb_512.png")
 pix = img.load()
 rgb = list(img.getdata())
@@ -124,7 +125,9 @@ def fwt97(s, width, height):
 clk_fast = Signal(bool(0))
 res_out_x = Signal(intbv(0, min= -(2**(W0-1)) ,max= (2**(W0-1))))
 bits_in = Signal(intbv(0, min= -(2**(W0-1)) ,max= (2**(W0-1))))
+bits_in2unsigned = Signal(intbv(0)[W0:])
 v = Signal(intbv(0)[W0:])
+vv = Signal(intbv(0, min= -(2**(W0-1)) ,max= (2**(W0-1))))
 update_s = Signal(bool(0))
 noupdate_s = Signal(bool(0))
 row_s = Signal(intbv(0)[8:])
@@ -148,24 +151,18 @@ col_ind = Signal(intbv(0)[9:])
 def tb(clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i,
-combine_rdy_s, nocombine_s, row_ind, col_ind, bits_in, v,
+combine_rdy_s, nocombine_s, row_ind, col_ind, bits_in, v,bits_in2unsigned, vv,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3):
 
-	def tosigned(v, w):
-		''' return a signed representation of an 'unsigned' value '''
-		if v >> (w-1) & 1:
-			# high bit set -> negative
-			return -(~v + 1)
-		else:
-			# positive
-			return v
+
 	instance_rom_flgs = rom_flgs(dout_flgs, addr_flgs, ROM_CONTENT)
 	instance_combine = combine( left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i, combine_rdy_s, nocombine_s,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3)
-	instance_tounsiged = tounsigned(bits_in, v, w=W0-1)
+	instance_tounsigned = tounsigned(bits_in, v, w=W0-1)
+	instance_tosigned = tosigned(bits_in2unsigned, vv, w=W0)
 	instance_dut = jp_process( res_out_x, left_s_i,sam_s_i, right_s_i,
 flgs_s_i, noupdate_s, update_s,  W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1,
 W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
@@ -213,6 +210,10 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 					bits_in.next = res_out_x
 					yield clk_fast.posedge
 					r[row_ind][col_ind] = v
+					yield clk_fast.posedge
+					bits_in2unsigned.next = r[row_ind][col_ind]
+					yield clk_fast.posedge
+
 					#r[row_ind][col_ind] = tounsigned(res_out_x, W0-1)
 					print ("%d %d %d %d %d saving even pass 1 res_out_x " ) % (now(), res_out_x, row_ind, col_ind, r[row_ind][col_ind])
 					yield clk_fast.posedge
@@ -250,6 +251,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 				combine_rdy_s.next = 1
 				yield clk_fast.posedge
 				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
+
 				left_s_i.next = left_com_x
 				sam_s_i.next = sam_com_x
 				right_s_i.next = right_com_x
@@ -270,6 +272,9 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 					bits_in.next = res_out_x
 					yield clk_fast.posedge
 					r[row_ind][col_ind] = v
+					yield clk_fast.posedge
+					bits_in2unsigned.next = r[row_ind][col_ind]
+					yield clk_fast.posedge
 					#row_s.next = row_s + 1
 					#r[row_ind][col_ind] = tounsigned(res_out_x, W0-1)
 					print ("%d %d %d %d %d saving odd pass 1 res_out_x " ) % (now(), res_out_x, row_ind, col_ind, r[row_ind][col_ind])
@@ -295,14 +300,14 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 tb(clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i,
-combine_rdy_s, nocombine_s, row_ind, col_ind, bits_in, v,
+combine_rdy_s, nocombine_s, row_ind, col_ind, bits_in, v,bits_in2unsigned, vv,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3)
 tb_fsm = traceSignals(
 tb, clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i,
-combine_rdy_s, nocombine_s, row_ind, col_ind, bits_in, v)
+combine_rdy_s, nocombine_s, row_ind, col_ind, bits_in, v,bits_in2unsigned, vv)
 #print "before fwd dwt", pix[0,0], rgb[0]
 r = fwt97_2d(r, 1)
 g = fwt97_2d(g, 1)
