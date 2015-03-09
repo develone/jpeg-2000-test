@@ -230,9 +230,9 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 				rht_s_i.next = tounsigned((r[row+33][col] << W0*15), 10) | tounsigned((r[row+31][col] << W0*14), 10) | tounsigned((r[row+29][col] << W0*13), 10) | tounsigned((r[row+27][col] << W0*12), 10) | tounsigned((r[row+25][col] << W0*11), 10) | tounsigned((r[row+23][col] << W0*10), 10) | tounsigned((r[row+21][col] << W0*9), 10) | tounsigned((r[row+19][col] << W0*8), 10) | tounsigned((r[row+17][col] << W0*7), 10) | tounsigned((r[row+15][col] << W0*6), 10) | tounsigned((r[row+13][col] << W0*5), 10) | tounsigned((r[row+11][col] << W0*4), 10) | tounsigned((r[row+9][col] << W0*3), 10) | tounsigned((r[row+7][col] << W0*2), 10) | tounsigned((r[row+5][col] << W0*1), 10) | tounsigned((r[row+1][col]), 10)
 				yield clk_fast.posedge
 				'''
-				a0.next = lft_s_i
-				a1.next = sa_s_i
-				a2.next = rht_s_i
+				y0.next = lft_s_i
+				y1.next = sa_s_i
+				y2.next = rht_s_i
 				'''
 				yield clk_fast.posedge
 				#print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
@@ -301,9 +301,9 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 				rht_s_i.next = tounsigned((r[row+31][col] << W0*15), 10) | tounsigned((r[row+29][col] << W0*14), 10) | tounsigned((r[row+27][col] << W0*13), 10) | tounsigned((r[row+25][col] << W0*12), 10) | tounsigned((r[row+23][col] << W0*11), 10) | tounsigned((r[row+21][col] << W0*10), 10) | tounsigned((r[row+19][col] << W0*9), 10) | tounsigned((r[row+17][col] << W0*8), 10) | tounsigned((r[row+15][col] << W0*7), 10) | tounsigned((r[row+13][col] << W0*6), 10) | tounsigned((r[row+11][col] << W0*5), 10) | tounsigned((r[row+9][col] << W0*4), 10) | tounsigned((r[row+7][col] << W0*3), 10) | tounsigned((r[row+5][col] << W0*2), 10) | tounsigned((r[row+3][col] << W0*1), 10) | tounsigned((r[row+1][col]), 10)
 				yield clk_fast.posedge
 				'''
-				a0.next = lft_s_i
-				a1.next = sa_s_i
-				a2.next = rht_s_i
+				y0.next = lft_s_i
+				y1.next = sa_s_i
+				y2.next = rht_s_i
 				yield clk_fast.posedge
 				'''
 				#print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
@@ -385,9 +385,9 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 				rht_s_i.next = tounsigned((r[row+33][col] << W0*15), 10) | tounsigned((r[row+31][col] << W0*14), 10) | tounsigned((r[row+29][col] << W0*13), 10) | tounsigned((r[row+27][col] << W0*12), 10) | tounsigned((r[row+25][col] << W0*11), 10) | tounsigned((r[row+23][col] << W0*10), 10) | tounsigned((r[row+21][col] << W0*9), 10) | tounsigned((r[row+19][col] << W0*8), 10) | tounsigned((r[row+17][col] << W0*7), 10) | tounsigned((r[row+15][col] << W0*6), 10) | tounsigned((r[row+13][col] << W0*5), 10) | tounsigned((r[row+11][col] << W0*4), 10) | tounsigned((r[row+9][col] << W0*3), 10) | tounsigned((r[row+7][col] << W0*2), 10) | tounsigned((r[row+5][col] << W0*1), 10) | tounsigned((r[row+1][col]), 10)
 				yield clk_fast.posedge
 				'''
-				a0.next = lft_s_i
-				a1.next = sa_s_i
-				a2.next = rht_s_i
+				y0.next = lft_s_i
+				y1.next = sa_s_i
+				y2.next = rht_s_i
 				yield clk_fast.posedge
 				'''
 				#print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
@@ -457,9 +457,9 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 				rht_s_i.next = tounsigned((r[row+31][col] << W0*15), 10) | tounsigned((r[row+29][col] << W0*14), 10) | tounsigned((r[row+27][col] << W0*13), 10) | tounsigned((r[row+25][col] << W0*12), 10) | tounsigned((r[row+23][col] << W0*11), 10) | tounsigned((r[row+21][col] << W0*10), 10) | tounsigned((r[row+19][col] << W0*9), 10) | tounsigned((r[row+17][col] << W0*8), 10) | tounsigned((r[row+15][col] << W0*7), 10) | tounsigned((r[row+13][col] << W0*6), 10) | tounsigned((r[row+11][col] << W0*5), 10) | tounsigned((r[row+9][col] << W0*4), 10) | tounsigned((r[row+7][col] << W0*3), 10) | tounsigned((r[row+5][col] << W0*2), 10) | tounsigned((r[row+3][col] << W0*1), 10) | tounsigned((r[row+1][col]), 10 )
 				yield clk_fast.posedge
 				'''
-				a0.next = lft_s_i
-				a1.next = sa_s_i
-				a2.next = rht_s_i
+				y0.next = lft_s_i
+				y1.next = sa_s_i
+				y2.next = rht_s_i
 				yield clk_fast.posedge
 				'''
 				#print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
