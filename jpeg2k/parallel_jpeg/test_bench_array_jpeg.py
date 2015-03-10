@@ -3,6 +3,7 @@ from jpeg_constants import *
 from rom import *
 from array_jpeg import jp_process
 from combine_sam import combine
+from sig2one import sig2one
 from PIL import Image
 #img = Image.open("lena_rgb_512.png")
 img = Image.open("lena_256.png")
@@ -156,42 +157,78 @@ right_com_x = Signal(intbv(0)[LVL2*W2:])
 lft_s_i = Signal(intbv(0)[LVL2*W2:])
 sa_s_i = Signal(intbv(0)[LVL2*W2:])
 rht_s_i = Signal(intbv(0)[LVL2*W2:])
-a0 = Signal(intbv(0)[LVL2*W2:])
-a1 = Signal(intbv(0)[LVL2*W2:])
-a2 = Signal(intbv(0)[LVL2*W2:])
-y0 = Signal(intbv(0)[LVL2*W2:])
-y1 = Signal(intbv(0)[LVL2*W2:])
-y2 = Signal(intbv(0)[LVL2*W2:])
+
 combine_rdy_s = Signal(bool(0))
 nocombine_s = Signal(bool(0))
 row_ind = Signal(intbv(0)[9:])
 col_ind = Signal(intbv(0)[9:])
-DO_SIGNED_UNSIGNED = bool(1)
 
-def tounsigned( v , w):
-	''' return an unsigned value to represent a possibly 'signed' value'''
-	if DO_SIGNED_UNSIGNED:
-		if v >= 0:
-			return v
-		else:
-			'''remember, v is negative'''
-			return 2**w + v
-	else:
-		return v
-def tosigned(v, w):
-	''' return a signed representation of a 'two's complement' value '''
-	if v >> (w-1) & 1:
-		'''high bit set -> negative'''
-		return -(2**w - v)
-	else:
-		'''positive'''
-		return v
+Sinl_in0 = Signal(intbv(0)[10:])
+Sinl_in1 = Signal(intbv(0)[10:])
+Sinl_in2 = Signal(intbv(0)[10:])
+Sinl_in3 = Signal(intbv(0)[10:])
+Sinl_in4 = Signal(intbv(0)[10:])
+Sinl_in5 = Signal(intbv(0)[10:])
+Sinl_in6 = Signal(intbv(0)[10:])
+Sinl_in7 = Signal(intbv(0)[10:])
+Sinl_in8 = Signal(intbv(0)[10:])
+Sinl_in9 = Signal(intbv(0)[10:])
+Sinl_in10 = Signal(intbv(0)[10:])
+Sinl_in11 = Signal(intbv(0)[10:])
+Sinl_in12 = Signal(intbv(0)[10:])
+Sinl_in13 = Signal(intbv(0)[10:])
+Sinl_in14 = Signal(intbv(0)[10:])
+Sinl_in15 = Signal(intbv(0)[10:])
+Sout_s = Signal(intbv(0)[160:])
+combinel_sig_s = Signal(bool(0))
+
+Sinsa_in0 = Signal(intbv(0)[10:])
+Sinsa_in1 = Signal(intbv(0)[10:])
+Sinsa_in2 = Signal(intbv(0)[10:])
+Sinsa_in3 = Signal(intbv(0)[10:])
+Sinsa_in4 = Signal(intbv(0)[10:])
+Sinsa_in5 = Signal(intbv(0)[10:])
+Sinsa_in6 = Signal(intbv(0)[10:])
+Sinsa_in7 = Signal(intbv(0)[10:])
+Sinsa_in8 = Signal(intbv(0)[10:])
+Sinsa_in9 = Signal(intbv(0)[10:])
+Sinsa_in10 = Signal(intbv(0)[10:])
+Sinsa_in11 = Signal(intbv(0)[10:])
+Sinsa_in12 = Signal(intbv(0)[10:])
+Sinsa_in13 = Signal(intbv(0)[10:])
+Sinsa_in14 = Signal(intbv(0)[10:])
+Sinsa_in15 = Signal(intbv(0)[10:])
+Sout_s = Signal(intbv(0)[160:])
+combinesa_sig_s = Signal(bool(0))
+
+Sinrt_in0 = Signal(intbv(0)[10:])
+Sinrt_in1 = Signal(intbv(0)[10:])
+Sinrt_in2 = Signal(intbv(0)[10:])
+Sinrt_in3 = Signal(intbv(0)[10:])
+Sinrt_in4 = Signal(intbv(0)[10:])
+Sinrt_in5 = Signal(intbv(0)[10:])
+Sinrt_in6 = Signal(intbv(0)[10:])
+Sinrt_in7 = Signal(intbv(0)[10:])
+Sinrt_in8 = Signal(intbv(0)[10:])
+Sinrt_in9 = Signal(intbv(0)[10:])
+Sinrt_in10 = Signal(intbv(0)[10:])
+Sinrt_in11 = Signal(intbv(0)[10:])
+Sinrt_in12 = Signal(intbv(0)[10:])
+Sinrt_in13 = Signal(intbv(0)[10:])
+Sinrt_in14 = Signal(intbv(0)[10:])
+Sinrt_in15 = Signal(intbv(0)[10:])
+Sout_s = Signal(intbv(0)[160:])
+combinert_sig_s = Signal(bool(0))
 
 def tb(clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
-lft_s_i, sa_s_i, rht_s_i,
-combine_rdy_s, nocombine_s, row_ind, col_ind, a0, a1, a2,
-y0, y1, y2,
+lft_s_i, sa_s_i, rht_s_i,combine_rdy_s, nocombine_s, row_ind,
+col_ind, sig2one, Sout_s, combinel_sig_s, Sinl_in0, Sinl_in1, Sinl_in2, Sinl_in3, Sinl_in4,
+Sinl_in5, Sinl_in6, Sinl_in7, Sinl_in8, Sinl_in9, Sinl_in10, Sinl_in11, Sinl_in12, Sinl_in13, Sinl_in14, Sinl_in15,
+combinesa_sig_s, Sinsa_in0, Sinsa_in1, Sinsa_in2, Sinsa_in3, Sinsa_in4,
+Sinsa_in5, Sinsa_in6, Sinsa_in7, Sinsa_in8, Sinsa_in9, Sinsa_in10, Sinsa_in11, Sinsa_in12, Sinsa_in13, Sinsa_in14, Sinsa_in15,
+combinert_sig_s, Sinrt_in0, Sinrt_in1, Sinrt_in2, Sinrt_in3, Sinrt_in4,
+Sinrt_in5, Sinrt_in6, Sinrt_in7, Sinrt_in8, Sinrt_in9, Sinrt_in10, Sinrt_in11, Sinrt_in12, Sinrt_in13, Sinrt_in14, Sinrt_in15,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3):
 
@@ -205,6 +242,9 @@ LVL2=LVL2, W3=W3, LVL3=LVL3)
 	instance_dut = jp_process( res_out_x, left_s_i,sam_s_i, right_s_i,
 flgs_s_i, noupdate_s, update_s,  W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1,
 W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
+	instance_sig2_lf = sig2one(lft_s_i, clk_fast, combinel_sig_s, Sinl_in0, Sinl_in1, Sinl_in2, Sinl_in3, Sinl_in4, Sinl_in5, Sinl_in6, Sinl_in7, Sinl_in8, Sinl_in9, Sinl_in10, Sinl_in11, Sinl_in12, Sinl_in13, Sinl_in14, Sinl_in15)
+	instance_sig2_sa = sig2one(sa_s_i, clk_fast, combinesa_sig_s, Sinsa_in0, Sinsa_in1, Sinsa_in2, Sinsa_in3, Sinsa_in4, Sinsa_in5, Sinsa_in6, Sinsa_in7, Sinsa_in8, Sinsa_in9, Sinsa_in10, Sinsa_in11, Sinsa_in12, Sinsa_in13, Sinsa_in14, Sinsa_in15)
+	instance_sig2_rh = sig2one(rht_s_i, clk_fast, combinert_sig_s, Sinrt_in0, Sinrt_in1, Sinrt_in2, Sinrt_in3, Sinrt_in4, Sinrt_in5, Sinrt_in6, Sinrt_in7, Sinrt_in8, Sinrt_in9, Sinrt_in10, Sinrt_in11, Sinrt_in12, Sinrt_in13, Sinrt_in14, Sinrt_in15)
 	@always(delay(10))
 	def clkgen():
 		clk_fast.next = not clk_fast
@@ -221,22 +261,84 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
 		for col in range(w):
 			for row in range(2,h-32, 34):
+				Sinl_in0.next = r[row-1][col]
+				Sinl_in1.next = r[row+3][col]
+				Sinl_in2.next = r[row+5][col]
+				Sinl_in3.next = r[row+7][col]
+				Sinl_in4.next = r[row+9][col]
+				Sinl_in5.next = r[row+11][col]
+				Sinl_in6.next = r[row+13][col]
+				Sinl_in7.next = r[row+15][col]
+				Sinl_in8.next = r[row+17][col]
+				Sinl_in9.next = r[row+19][col]
+				Sinl_in10.next = r[row+21][col]
+				Sinl_in11.next = r[row+23][col]
+				Sinl_in12.next = r[row+25][col]
+				Sinl_in13.next = r[row+27][col]
+				Sinl_in14.next = r[row+29][col]
+				Sinl_in15.next = r[row+31][col]
+				yield clk_fast.posedge
+				combinel_sig_s.next = 1
+				yield clk_fast.posedge
 
-				print bin(tounsigned((r[row+31][col] << W0*15), 10) | tounsigned((r[row+29][col] << W0*14), 10) | tounsigned((r[row+27][col] << W0*13), 10) | tounsigned((r[row+25][col] << W0*12), 10) | tounsigned((r[row+23][col] << W0*11), 10) | tounsigned((r[row+21][col] << W0*10), 10) | tounsigned((r[row+19][col] << W0*9), 10) | tounsigned((r[row+17][col] << W0*8), 10) | tounsigned((r[row+15][col] << W0*7), 10) | tounsigned((r[row+13][col] << W0*6), 10) | tounsigned((r[row+11][col] << W0*5), 10) | tounsigned((r[row+9][col] << W0*4), 10) | tounsigned((r[row+7][col] << W0*3), 10) | tounsigned((r[row+5][col] << W0*2), 10) | tounsigned((r[row+3][col] << W0*1), 10) | tounsigned((r[row-1][col]),10))
-				print bin(tounsigned((r[row+32][col] << W0*15), 10) | tounsigned((r[row+30][col] << W0*14), 10) | tounsigned((r[row+28][col] << W0*13), 10) | tounsigned((r[row+26][col] << W0*12), 10) | tounsigned((r[row+24][col] << W0*11), 10) | tounsigned((r[row+22][col] << W0*10), 10) | tounsigned((r[row+20][col] << W0*9), 10) | tounsigned((r[row+18][col] << W0*8), 10) | tounsigned((r[row+16][col] << W0*7), 10) | tounsigned((r[row+14][col] << W0*6), 10) | tounsigned((r[row+12][col] << W0*5), 10) | tounsigned((r[row+10][col] << W0*4), 10) | tounsigned((r[row+8][col] << W0*3), 10) | tounsigned((r[row+6][col] << W0*2), 10) | tounsigned((r[row+4][col] << W0*1), 10) | tounsigned((r[row][col]), 10))
-				print bin(tounsigned((r[row+33][col] << W0*15), 10) | tounsigned((r[row+31][col] << W0*14), 10) | tounsigned((r[row+29][col] << W0*13), 10) | tounsigned((r[row+27][col] << W0*12), 10) | tounsigned((r[row+25][col] << W0*11), 10) | tounsigned((r[row+23][col] << W0*10), 10) | tounsigned((r[row+21][col] << W0*9), 10) | tounsigned((r[row+19][col] << W0*8), 10) | tounsigned((r[row+17][col] << W0*7), 10) | tounsigned((r[row+15][col] << W0*6), 10) | tounsigned((r[row+13][col] << W0*5), 10) | tounsigned((r[row+11][col] << W0*4), 10) | tounsigned((r[row+9][col] << W0*3), 10) | tounsigned((r[row+7][col] << W0*2), 10) | tounsigned((r[row+5][col] << W0*1), 10) | tounsigned((r[row+1][col]), 10))
-				lft_s_i.next = tounsigned((r[row+31][col] << W0*15), 10) | tounsigned((r[row+29][col] << W0*14), 10) | tounsigned((r[row+27][col] << W0*13), 10) | tounsigned((r[row+25][col] << W0*12), 10) | tounsigned((r[row+23][col] << W0*11), 10) | tounsigned((r[row+21][col] << W0*10), 10) | tounsigned((r[row+19][col] << W0*9), 10) | tounsigned((r[row+17][col] << W0*8), 10) | tounsigned((r[row+15][col] << W0*7), 10) | tounsigned((r[row+13][col] << W0*6), 10) | tounsigned((r[row+11][col] << W0*5), 10) | tounsigned((r[row+9][col] << W0*4), 10) | tounsigned((r[row+7][col] << W0*3), 10) | tounsigned((r[row+5][col] << W0*2), 10) | tounsigned((r[row+3][col] << W0*1), 10) | tounsigned((r[row-1][col]), 10)
-				sa_s_i.next = tounsigned((r[row+32][col] << W0*15), 10) | tounsigned((r[row+30][col] << W0*14), 10) | tounsigned((r[row+28][col] << W0*13), 10) | tounsigned((r[row+26][col] << W0*12), 10) | tounsigned((r[row+24][col] << W0*11), 10) | tounsigned((r[row+22][col] << W0*10), 10) | tounsigned((r[row+20][col] << W0*9), 10) | tounsigned((r[row+18][col] << W0*8), 10) | tounsigned((r[row+16][col] << W0*7), 10) | tounsigned((r[row+14][col] << W0*6), 10) | tounsigned((r[row+12][col] << W0*5), 10) | tounsigned((r[row+10][col] << W0*4), 10) | tounsigned((r[row+8][col] << W0*3), 10) | tounsigned((r[row+6][col] << W0*2), 10) | tounsigned((r[row+4][col] << W0*1), 10) | tounsigned((r[row][col]), 10)
-				rht_s_i.next = tounsigned((r[row+33][col] << W0*15), 10) | tounsigned((r[row+31][col] << W0*14), 10) | tounsigned((r[row+29][col] << W0*13), 10) | tounsigned((r[row+27][col] << W0*12), 10) | tounsigned((r[row+25][col] << W0*11), 10) | tounsigned((r[row+23][col] << W0*10), 10) | tounsigned((r[row+21][col] << W0*9), 10) | tounsigned((r[row+19][col] << W0*8), 10) | tounsigned((r[row+17][col] << W0*7), 10) | tounsigned((r[row+15][col] << W0*6), 10) | tounsigned((r[row+13][col] << W0*5), 10) | tounsigned((r[row+11][col] << W0*4), 10) | tounsigned((r[row+9][col] << W0*3), 10) | tounsigned((r[row+7][col] << W0*2), 10) | tounsigned((r[row+5][col] << W0*1), 10) | tounsigned((r[row+1][col]), 10)
+				lft_s_i.next = Sout_s
 				yield clk_fast.posedge
-				'''
-				y0.next = lft_s_i
-				y1.next = sa_s_i
-				y2.next = rht_s_i
-				'''
 				yield clk_fast.posedge
-				#print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
+				print (" %d %s %s") % (now(), bin(Sout_s,160), bin(lft_s_i,160))
 				yield clk_fast.posedge
+				#combinel_sig_s.next = 0
+				Sinsa_in0.next = r[row][col]
+				Sinsa_in1.next = r[row+4][col]
+				Sinsa_in2.next = r[row+6][col]
+				Sinsa_in3.next = r[row+8][col]
+				Sinsa_in4.next = r[row+10][col]
+				Sinsa_in5.next = r[row+12][col]
+				Sinsa_in6.next = r[row+14][col]
+				Sinsa_in7.next = r[row+16][col]
+				Sinsa_in8.next = r[row+18][col]
+				Sinsa_in9.next = r[row+20][col]
+				Sinsa_in10.next = r[row+22][col]
+				Sinsa_in11.next = r[row+24][col]
+				Sinsa_in12.next = r[row+26][col]
+				Sinsa_in13.next = r[row+28][col]
+				Sinsa_in14.next = r[row+30][col]
+				Sinsa_in15.next = r[row+32][col]
+				yield clk_fast.posedge
+				combinesa_sig_s.next = 1
+				yield clk_fast.posedge
+				sa_s_i.next = (Sout_s)
+				yield clk_fast.posedge
+				print (" %d %s %s") % (now(), bin(Sout_s,160), bin(sa_s_i,160))
+				#combinesa_sig_s.next = 0
+
+				Sinrt_in0.next = r[row+1][col]
+				Sinrt_in1.next = r[row+5][col]
+				Sinrt_in2.next = r[row+7][col]
+				Sinrt_in3.next = r[row+7][col]
+				Sinrt_in4.next = r[row+11][col]
+				Sinrt_in5.next = r[row+13][col]
+				Sinrt_in6.next = r[row+15][col]
+				Sinrt_in7.next = r[row+17][col]
+				Sinrt_in8.next = r[row+19][col]
+				Sinrt_in9.next = r[row+21][col]
+				Sinrt_in10.next = r[row+23][col]
+				Sinrt_in11.next = r[row+25][col]
+				Sinrt_in12.next = r[row+27][col]
+				Sinrt_in13.next = r[row+29][col]
+				Sinrt_in14.next = r[row+31][col]
+				Sinrt_in15.next = r[row+33][col]
+				yield clk_fast.posedge
+				combinert_sig_s.next = 1
+				yield clk_fast.posedge
+				rht_s_i.next = (Sout_s)
+				yield clk_fast.posedge
+				print (" %d %s %s") % (now(), bin(Sout_s,160), bin(rht_s_i,160))
+				#combinert_sig_s.next = 0
+				yield clk_fast.posedge
+
+				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
+				yield clk_fast.posedge
+
 				combine_rdy_s.next = 1
 				yield clk_fast.posedge
 
@@ -244,7 +346,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 				sam_s_i.next = sam_com_x
 				right_s_i.next = right_com_x
 				yield clk_fast.posedge
-				#print( "%3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
+				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
 				combine_rdy_s.next = 0
 				yield clk_fast.posedge
 				addr_flgs.next = 0
@@ -292,20 +394,84 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
 		for col in range(w):
 			for row in range(1,h-33, 34):
-				print bin(tounsigned((r[row+29][col] << W0*15), 10) | tounsigned((r[row+27][col] << W0*14), 10) | tounsigned((r[row+25][col] << W0*13), 10) | tounsigned((r[row+23][col] << W0*12), 10) | tounsigned((r[row+21][col] << W0*11), 10) | tounsigned((r[row+19][col] << W0*10), 10) | tounsigned((r[row+17][col] << W0*9), 10) | tounsigned((r[row+15][col] << W0*8), 10) | tounsigned((r[row+13][col] << W0*7), 10) | tounsigned((r[row+11][col] << W0*6), 10) | tounsigned((r[row+9][col] << W0*5), 10) | tounsigned((r[row+7][col] << W0*4), 10) | tounsigned((r[row+5][col] << W0*3), 10) | tounsigned((r[row+3][col] << W0*2), 10) | tounsigned((r[row+1][col] << W0*1), 10) | tounsigned((r[row-1][col]), 10 ))
-				print bin(tounsigned((r[row+30][col] << W0*15), 10) | tounsigned((r[row+28][col] << W0*14), 10) | tounsigned((r[row+26][col] << W0*13), 10) | tounsigned((r[row+24][col] << W0*12), 10) | tounsigned((r[row+22][col] << W0*11), 10) | tounsigned((r[row+20][col] << W0*10), 10) | tounsigned((r[row+18][col] << W0*9), 10) | tounsigned((r[row+16][col] << W0*8), 10) | tounsigned((r[row+14][col] << W0*7), 10) | tounsigned((r[row+12][col] << W0*6), 10) | tounsigned((r[row+10][col] << W0*5), 10) | tounsigned((r[row+8][col] << W0*4), 10) | tounsigned((r[row+6][col] << W0*3), 10) | tounsigned((r[row+4][col] << W0*2), 10) | tounsigned((r[row+2][col] << W0*1), 10) | tounsigned((r[row][col]), 10 ))
-				print bin(tounsigned((r[row+31][col] << W0*15), 10) | tounsigned((r[row+29][col] << W0*14), 10) | tounsigned((r[row+27][col] << W0*13), 10) | tounsigned((r[row+25][col] << W0*12), 10) | tounsigned((r[row+23][col] << W0*11), 10) | tounsigned((r[row+21][col] << W0*10), 10) | tounsigned((r[row+19][col] << W0*9), 10) | tounsigned((r[row+17][col] << W0*8), 10) | tounsigned((r[row+15][col] << W0*7), 10) | tounsigned((r[row+13][col] << W0*6), 10) | tounsigned((r[row+11][col] << W0*5), 10) | tounsigned((r[row+9][col] << W0*4), 10) | tounsigned((r[row+7][col] << W0*3), 10) | tounsigned((r[row+5][col] << W0*2), 10) | tounsigned((r[row+3][col] << W0*1), 10) | tounsigned((r[row+1][col]), 10 ))
+				Sinl_in0.next = r[row-1][col]
+				Sinl_in1.next = r[row+3][col]
+				Sinl_in2.next = r[row+5][col]
+				Sinl_in3.next = r[row+7][col]
+				Sinl_in4.next = r[row+9][col]
+				Sinl_in5.next = r[row+11][col]
+				Sinl_in6.next = r[row+13][col]
+				Sinl_in7.next = r[row+15][col]
+				Sinl_in8.next = r[row+17][col]
+				Sinl_in9.next = r[row+19][col]
+				Sinl_in10.next = r[row+21][col]
+				Sinl_in11.next = r[row+23][col]
+				Sinl_in12.next = r[row+25][col]
+				Sinl_in13.next = r[row+27][col]
+				Sinl_in14.next = r[row+29][col]
+				Sinl_in15.next = r[row+31][col]
+				yield clk_fast.posedge
+				combinel_sig_s.next = 1
+				yield clk_fast.posedge
 
-				lft_s_i.next = tounsigned((r[row+29][col] << W0*15), 10) | tounsigned((r[row+27][col] << W0*14), 10) | tounsigned((r[row+25][col] << W0*13), 10) | tounsigned((r[row+23][col] << W0*12), 10) | tounsigned((r[row+21][col] << W0*11), 10) | tounsigned((r[row+19][col] << W0*10), 10) | tounsigned((r[row+17][col] << W0*9), 10) | tounsigned((r[row+15][col] << W0*8), 10) | tounsigned((r[row+13][col] << W0*7), 10) | tounsigned((r[row+11][col] << W0*6), 10) | tounsigned((r[row+9][col] << W0*5), 10) | tounsigned((r[row+7][col] << W0*4), 10) | tounsigned((r[row+5][col] << W0*3), 10) | tounsigned((r[row+3][col] << W0*2), 10) | tounsigned((r[row+1][col] << W0*1), 10) | tounsigned((r[row-1][col]), 10)
-				sa_s_i.next = tounsigned((r[row+30][col] << W0*15), 10) | tounsigned((r[row+28][col] << W0*14), 10) | tounsigned((r[row+26][col] << W0*13), 10) | tounsigned((r[row+24][col] << W0*12), 10) | tounsigned((r[row+22][col] << W0*11), 10) | tounsigned((r[row+20][col] << W0*10), 10) | tounsigned((r[row+18][col] << W0*9), 10) | tounsigned((r[row+16][col] << W0*8), 10) | tounsigned((r[row+14][col] << W0*7), 10) | tounsigned((r[row+12][col] << W0*6), 10) | tounsigned((r[row+10][col] << W0*5), 10) | tounsigned((r[row+8][col] << W0*4), 10) | tounsigned((r[row+6][col] << W0*3), 10) | tounsigned((r[row+4][col] << W0*2), 10) | tounsigned((r[row+2][col] << W0*1), 10) | tounsigned((r[row][col]), 10)
-				rht_s_i.next = tounsigned((r[row+31][col] << W0*15), 10) | tounsigned((r[row+29][col] << W0*14), 10) | tounsigned((r[row+27][col] << W0*13), 10) | tounsigned((r[row+25][col] << W0*12), 10) | tounsigned((r[row+23][col] << W0*11), 10) | tounsigned((r[row+21][col] << W0*10), 10) | tounsigned((r[row+19][col] << W0*9), 10) | tounsigned((r[row+17][col] << W0*8), 10) | tounsigned((r[row+15][col] << W0*7), 10) | tounsigned((r[row+13][col] << W0*6), 10) | tounsigned((r[row+11][col] << W0*5), 10) | tounsigned((r[row+9][col] << W0*4), 10) | tounsigned((r[row+7][col] << W0*3), 10) | tounsigned((r[row+5][col] << W0*2), 10) | tounsigned((r[row+3][col] << W0*1), 10) | tounsigned((r[row+1][col]), 10)
+				lft_s_i.next = Sout_s
 				yield clk_fast.posedge
-				'''
-				y0.next = lft_s_i
-				y1.next = sa_s_i
-				y2.next = rht_s_i
 				yield clk_fast.posedge
-				'''
+				print (" %d %s %s") % (now(), bin(Sout_s,160), bin(lft_s_i,160))
+				yield clk_fast.posedge
+				#combinel_sig_s.next = 0
+				Sinsa_in0.next = r[row][col]
+				Sinsa_in1.next = r[row+4][col]
+				Sinsa_in2.next = r[row+6][col]
+				Sinsa_in3.next = r[row+8][col]
+				Sinsa_in4.next = r[row+10][col]
+				Sinsa_in5.next = r[row+12][col]
+				Sinsa_in6.next = r[row+14][col]
+				Sinsa_in7.next = r[row+16][col]
+				Sinsa_in8.next = r[row+18][col]
+				Sinsa_in9.next = r[row+20][col]
+				Sinsa_in10.next = r[row+22][col]
+				Sinsa_in11.next = r[row+24][col]
+				Sinsa_in12.next = r[row+26][col]
+				Sinsa_in13.next = r[row+28][col]
+				Sinsa_in14.next = r[row+30][col]
+				Sinsa_in15.next = r[row+32][col]
+				yield clk_fast.posedge
+				combinesa_sig_s.next = 1
+				yield clk_fast.posedge
+				sa_s_i.next = (Sout_s)
+				yield clk_fast.posedge
+				print (" %d %s %s") % (now(), bin(Sout_s,160), bin(sa_s_i,160))
+				#combinesa_sig_s.next = 0
+
+				Sinrt_in0.next = r[row+1][col]
+				Sinrt_in1.next = r[row+5][col]
+				Sinrt_in2.next = r[row+7][col]
+				Sinrt_in3.next = r[row+7][col]
+				Sinrt_in4.next = r[row+11][col]
+				Sinrt_in5.next = r[row+13][col]
+				Sinrt_in6.next = r[row+15][col]
+				Sinrt_in7.next = r[row+17][col]
+				Sinrt_in8.next = r[row+19][col]
+				Sinrt_in9.next = r[row+21][col]
+				Sinrt_in10.next = r[row+23][col]
+				Sinrt_in11.next = r[row+25][col]
+				Sinrt_in12.next = r[row+27][col]
+				Sinrt_in13.next = r[row+29][col]
+				Sinrt_in14.next = r[row+31][col]
+				Sinrt_in15.next = r[row+33][col]
+				yield clk_fast.posedge
+				combinert_sig_s.next = 1
+				yield clk_fast.posedge
+				rht_s_i.next = (Sout_s)
+				yield clk_fast.posedge
+				print (" %d %s %s") % (now(), bin(Sout_s,160), bin(rht_s_i,160))
+				#combinert_sig_s.next = 0
+				yield clk_fast.posedge
+
+				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
+				yield clk_fast.posedge
+
 				#print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
 				combine_rdy_s.next = 1
 				yield clk_fast.posedge
@@ -377,19 +543,81 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
 		for col in range(w):
 			for row in range(2,h-32, 34):
-				print bin(tounsigned((r[row+31][col] << W0*15), 10) | tounsigned((r[row+29][col] << W0*14), 10) | tounsigned((r[row+27][col] << W0*13), 10) | tounsigned((r[row+25][col] << W0*12), 10) | tounsigned((r[row+23][col] << W0*11), 10) | tounsigned((r[row+21][col] << W0*10), 10) | tounsigned((r[row+19][col] << W0*9), 10) | tounsigned((r[row+17][col] << W0*8), 10) | tounsigned((r[row+15][col] << W0*7), 10) | tounsigned((r[row+13][col] << W0*6), 10) | tounsigned((r[row+11][col] << W0*5), 10) | tounsigned((r[row+9][col] << W0*4), 10) | tounsigned((r[row+7][col] << W0*3), 10) | tounsigned((r[row+5][col] << W0*2), 10) | tounsigned((r[row+3][col] << W0*1), 10) | tounsigned((r[row-1][col]),10))
-				print bin(tounsigned((r[row+32][col] << W0*15), 10) | tounsigned((r[row+30][col] << W0*14), 10) | tounsigned((r[row+28][col] << W0*13), 10) | tounsigned((r[row+26][col] << W0*12), 10) | tounsigned((r[row+24][col] << W0*11), 10) | tounsigned((r[row+22][col] << W0*10), 10) | tounsigned((r[row+20][col] << W0*9), 10) | tounsigned((r[row+18][col] << W0*8), 10) | tounsigned((r[row+16][col] << W0*7), 10) | tounsigned((r[row+14][col] << W0*6), 10) | tounsigned((r[row+12][col] << W0*5), 10) | tounsigned((r[row+10][col] << W0*4), 10) | tounsigned((r[row+8][col] << W0*3), 10) | tounsigned((r[row+6][col] << W0*2), 10) | tounsigned((r[row+4][col] << W0*1), 10) | tounsigned((r[row][col]), 10))
-				print bin(tounsigned((r[row+33][col] << W0*15), 10) | tounsigned((r[row+31][col] << W0*14), 10) | tounsigned((r[row+29][col] << W0*13), 10) | tounsigned((r[row+27][col] << W0*12), 10) | tounsigned((r[row+25][col] << W0*11), 10) | tounsigned((r[row+23][col] << W0*10), 10) | tounsigned((r[row+21][col] << W0*9), 10) | tounsigned((r[row+19][col] << W0*8), 10) | tounsigned((r[row+17][col] << W0*7), 10) | tounsigned((r[row+15][col] << W0*6), 10) | tounsigned((r[row+13][col] << W0*5), 10) | tounsigned((r[row+11][col] << W0*4), 10) | tounsigned((r[row+9][col] << W0*3), 10) | tounsigned((r[row+7][col] << W0*2), 10) | tounsigned((r[row+5][col] << W0*1), 10) | tounsigned((r[row+1][col]), 10))
-				lft_s_i.next = tounsigned((r[row+31][col] << W0*15), 10) | tounsigned((r[row+29][col] << W0*14), 10) | tounsigned((r[row+27][col] << W0*13), 10) | tounsigned((r[row+25][col] << W0*12), 10) | tounsigned((r[row+23][col] << W0*11), 10) | tounsigned((r[row+21][col] << W0*10), 10) | tounsigned((r[row+19][col] << W0*9), 10) | tounsigned((r[row+17][col] << W0*8), 10) | tounsigned((r[row+15][col] << W0*7), 10) | tounsigned((r[row+13][col] << W0*6), 10) | tounsigned((r[row+11][col] << W0*5), 10) | tounsigned((r[row+9][col] << W0*4), 10) | tounsigned((r[row+7][col] << W0*3), 10) | tounsigned((r[row+5][col] << W0*2), 10) | tounsigned((r[row+3][col] << W0*1), 10) | tounsigned((r[row-1][col]),10)
-				sa_s_i.next = tounsigned((r[row+32][col] << W0*15), 10) | tounsigned((r[row+30][col] << W0*14), 10) | tounsigned((r[row+28][col] << W0*13), 10) | tounsigned((r[row+26][col] << W0*12), 10) | tounsigned((r[row+24][col] << W0*11), 10) | tounsigned((r[row+22][col] << W0*10), 10) | tounsigned((r[row+20][col] << W0*9), 10) | tounsigned((r[row+18][col] << W0*8), 10) | tounsigned((r[row+16][col] << W0*7), 10) | tounsigned((r[row+14][col] << W0*6), 10) | tounsigned((r[row+12][col] << W0*5), 10) | tounsigned((r[row+10][col] << W0*4), 10) | tounsigned((r[row+8][col] << W0*3), 10) | tounsigned((r[row+6][col] << W0*2), 10) | tounsigned((r[row+4][col] << W0*1), 10) | tounsigned((r[row][col]), 10)
-				rht_s_i.next = tounsigned((r[row+33][col] << W0*15), 10) | tounsigned((r[row+31][col] << W0*14), 10) | tounsigned((r[row+29][col] << W0*13), 10) | tounsigned((r[row+27][col] << W0*12), 10) | tounsigned((r[row+25][col] << W0*11), 10) | tounsigned((r[row+23][col] << W0*10), 10) | tounsigned((r[row+21][col] << W0*9), 10) | tounsigned((r[row+19][col] << W0*8), 10) | tounsigned((r[row+17][col] << W0*7), 10) | tounsigned((r[row+15][col] << W0*6), 10) | tounsigned((r[row+13][col] << W0*5), 10) | tounsigned((r[row+11][col] << W0*4), 10) | tounsigned((r[row+9][col] << W0*3), 10) | tounsigned((r[row+7][col] << W0*2), 10) | tounsigned((r[row+5][col] << W0*1), 10) | tounsigned((r[row+1][col]), 10)
+				Sinl_in0.next = r[row-1][col]
+				Sinl_in1.next = r[row+3][col]
+				Sinl_in2.next = r[row+5][col]
+				Sinl_in3.next = r[row+7][col]
+				Sinl_in4.next = r[row+9][col]
+				Sinl_in5.next = r[row+11][col]
+				Sinl_in6.next = r[row+13][col]
+				Sinl_in7.next = r[row+15][col]
+				Sinl_in8.next = r[row+17][col]
+				Sinl_in9.next = r[row+19][col]
+				Sinl_in10.next = r[row+21][col]
+				Sinl_in11.next = r[row+23][col]
+				Sinl_in12.next = r[row+25][col]
+				Sinl_in13.next = r[row+27][col]
+				Sinl_in14.next = r[row+29][col]
+				Sinl_in15.next = r[row+31][col]
 				yield clk_fast.posedge
-				'''
-				y0.next = lft_s_i
-				y1.next = sa_s_i
-				y2.next = rht_s_i
+				combinel_sig_s.next = 1
 				yield clk_fast.posedge
-				'''
+
+				lft_s_i.next = Sout_s
+				yield clk_fast.posedge
+				yield clk_fast.posedge
+				print (" %d %s %s") % (now(), bin(Sout_s,160), bin(lft_s_i,160))
+				yield clk_fast.posedge
+				#combinel_sig_s.next = 0
+				Sinsa_in0.next = r[row][col]
+				Sinsa_in1.next = r[row+4][col]
+				Sinsa_in2.next = r[row+6][col]
+				Sinsa_in3.next = r[row+8][col]
+				Sinsa_in4.next = r[row+10][col]
+				Sinsa_in5.next = r[row+12][col]
+				Sinsa_in6.next = r[row+14][col]
+				Sinsa_in7.next = r[row+16][col]
+				Sinsa_in8.next = r[row+18][col]
+				Sinsa_in9.next = r[row+20][col]
+				Sinsa_in10.next = r[row+22][col]
+				Sinsa_in11.next = r[row+24][col]
+				Sinsa_in12.next = r[row+26][col]
+				Sinsa_in13.next = r[row+28][col]
+				Sinsa_in14.next = r[row+30][col]
+				Sinsa_in15.next = r[row+32][col]
+				yield clk_fast.posedge
+				combinesa_sig_s.next = 1
+				yield clk_fast.posedge
+				sa_s_i.next = (Sout_s)
+				yield clk_fast.posedge
+				print (" %d %s %s") % (now(), bin(Sout_s,160), bin(sa_s_i,160))
+				#combinesa_sig_s.next = 0
+
+				Sinrt_in0.next = r[row+1][col]
+				Sinrt_in1.next = r[row+5][col]
+				Sinrt_in2.next = r[row+7][col]
+				Sinrt_in3.next = r[row+7][col]
+				Sinrt_in4.next = r[row+11][col]
+				Sinrt_in5.next = r[row+13][col]
+				Sinrt_in6.next = r[row+15][col]
+				Sinrt_in7.next = r[row+17][col]
+				Sinrt_in8.next = r[row+19][col]
+				Sinrt_in9.next = r[row+21][col]
+				Sinrt_in10.next = r[row+23][col]
+				Sinrt_in11.next = r[row+25][col]
+				Sinrt_in12.next = r[row+27][col]
+				Sinrt_in13.next = r[row+29][col]
+				Sinrt_in14.next = r[row+31][col]
+				Sinrt_in15.next = r[row+33][col]
+				yield clk_fast.posedge
+				combinert_sig_s.next = 1
+				yield clk_fast.posedge
+				rht_s_i.next = (Sout_s)
+				yield clk_fast.posedge
+				print (" %d %s %s") % (now(), bin(Sout_s,160), bin(rht_s_i,160))
+				#combinert_sig_s.next = 0
+				yield clk_fast.posedge
+
 				#print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
 				yield clk_fast.posedge
 				combine_rdy_s.next = 1
@@ -447,21 +675,84 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
 		for col in range(w):
 			for row in range(1,h-33, 34):
-				print bin(tounsigned((r[row+29][col] << W0*15), 10) | tounsigned((r[row+27][col] << W0*14), 10) | tounsigned((r[row+25][col] << W0*13), 10) | tounsigned((r[row+23][col] << W0*12), 10) | tounsigned((r[row+21][col] << W0*11), 10) | tounsigned((r[row+19][col] << W0*10), 10) | tounsigned((r[row+17][col] << W0*9), 10) | tounsigned((r[row+15][col] << W0*8), 10) | tounsigned((r[row+13][col] << W0*7), 10) | tounsigned((r[row+11][col] << W0*6), 10) | tounsigned((r[row+9][col] << W0*5), 10) | tounsigned((r[row+7][col] << W0*4), 10) | tounsigned((r[row+5][col] << W0*3), 10) | tounsigned((r[row+3][col] << W0*2), 10) | tounsigned((r[row+1][col] << W0*1), 10) | tounsigned((r[row-1][col]), 10 ))
-				print bin(tounsigned((r[row+30][col] << W0*15), 10) | tounsigned((r[row+28][col] << W0*14), 10) | tounsigned((r[row+26][col] << W0*13), 10) | tounsigned((r[row+24][col] << W0*12), 10) | tounsigned((r[row+22][col] << W0*11), 10) | tounsigned((r[row+20][col] << W0*10), 10) | tounsigned((r[row+18][col] << W0*9), 10) | tounsigned((r[row+16][col] << W0*8), 10) | tounsigned((r[row+14][col] << W0*7), 10) | tounsigned((r[row+12][col] << W0*6), 10) | tounsigned((r[row+10][col] << W0*5), 10) | tounsigned((r[row+8][col] << W0*4), 10) | tounsigned((r[row+6][col] << W0*3), 10) | tounsigned((r[row+4][col] << W0*2), 10) | tounsigned((r[row+2][col] << W0*1), 10) | tounsigned((r[row][col]), 10 ))
-				print bin(tounsigned((r[row+31][col] << W0*15), 10) | tounsigned((r[row+29][col] << W0*14), 10) | tounsigned((r[row+27][col] << W0*13), 10) | tounsigned((r[row+25][col] << W0*12), 10) | tounsigned((r[row+23][col] << W0*11), 10) | tounsigned((r[row+21][col] << W0*10), 10) | tounsigned((r[row+19][col] << W0*9), 10) | tounsigned((r[row+17][col] << W0*8), 10) | tounsigned((r[row+15][col] << W0*7), 10) | tounsigned((r[row+13][col] << W0*6), 10) | tounsigned((r[row+11][col] << W0*5), 10) | tounsigned((r[row+9][col] << W0*4), 10) | tounsigned((r[row+7][col] << W0*3), 10) | tounsigned((r[row+5][col] << W0*2), 10) | tounsigned((r[row+3][col] << W0*1), 10) | tounsigned((r[row+1][col]), 10 ))
-
-
-				lft_s_i.next = tounsigned((r[row+29][col] << W0*15), 10) | tounsigned((r[row+27][col] << W0*14), 10) | tounsigned((r[row+25][col] << W0*13), 10) | tounsigned((r[row+23][col] << W0*12), 10) | tounsigned((r[row+21][col] << W0*11), 10) | tounsigned((r[row+19][col] << W0*10), 10) | tounsigned((r[row+17][col] << W0*9), 10) | tounsigned((r[row+15][col] << W0*8), 10) | tounsigned((r[row+13][col] << W0*7), 10) | tounsigned((r[row+11][col] << W0*6), 10) | tounsigned((r[row+9][col] << W0*5), 10) | tounsigned((r[row+7][col] << W0*4), 10) | tounsigned((r[row+5][col] << W0*3), 10) | tounsigned((r[row+3][col] << W0*2), 10) | tounsigned((r[row+1][col] << W0*1), 10) | tounsigned((r[row-1][col]), 10 )
-				sa_s_i.next = tounsigned((r[row+30][col] << W0*15), 10) | tounsigned((r[row+28][col] << W0*14), 10) | tounsigned((r[row+26][col] << W0*13), 10) | tounsigned((r[row+24][col] << W0*12), 10) | tounsigned((r[row+22][col] << W0*11), 10) | tounsigned((r[row+20][col] << W0*10), 10) | tounsigned((r[row+18][col] << W0*9), 10) | tounsigned((r[row+16][col] << W0*8), 10) | tounsigned((r[row+14][col] << W0*7), 10) | tounsigned((r[row+12][col] << W0*6), 10) | tounsigned((r[row+10][col] << W0*5), 10) | tounsigned((r[row+8][col] << W0*4), 10) | tounsigned((r[row+6][col] << W0*3), 10) | tounsigned((r[row+4][col] << W0*2), 10) | tounsigned((r[row+2][col] << W0*1), 10) | tounsigned((r[row][col]), 10 )
-				rht_s_i.next = tounsigned((r[row+31][col] << W0*15), 10) | tounsigned((r[row+29][col] << W0*14), 10) | tounsigned((r[row+27][col] << W0*13), 10) | tounsigned((r[row+25][col] << W0*12), 10) | tounsigned((r[row+23][col] << W0*11), 10) | tounsigned((r[row+21][col] << W0*10), 10) | tounsigned((r[row+19][col] << W0*9), 10) | tounsigned((r[row+17][col] << W0*8), 10) | tounsigned((r[row+15][col] << W0*7), 10) | tounsigned((r[row+13][col] << W0*6), 10) | tounsigned((r[row+11][col] << W0*5), 10) | tounsigned((r[row+9][col] << W0*4), 10) | tounsigned((r[row+7][col] << W0*3), 10) | tounsigned((r[row+5][col] << W0*2), 10) | tounsigned((r[row+3][col] << W0*1), 10) | tounsigned((r[row+1][col]), 10 )
+				Sinl_in0.next = r[row-1][col]
+				Sinl_in1.next = r[row+3][col]
+				Sinl_in2.next = r[row+5][col]
+				Sinl_in3.next = r[row+7][col]
+				Sinl_in4.next = r[row+9][col]
+				Sinl_in5.next = r[row+11][col]
+				Sinl_in6.next = r[row+13][col]
+				Sinl_in7.next = r[row+15][col]
+				Sinl_in8.next = r[row+17][col]
+				Sinl_in9.next = r[row+19][col]
+				Sinl_in10.next = r[row+21][col]
+				Sinl_in11.next = r[row+23][col]
+				Sinl_in12.next = r[row+25][col]
+				Sinl_in13.next = r[row+27][col]
+				Sinl_in14.next = r[row+29][col]
+				Sinl_in15.next = r[row+31][col]
 				yield clk_fast.posedge
-				'''
-				y0.next = lft_s_i
-				y1.next = sa_s_i
-				y2.next = rht_s_i
+				combinel_sig_s.next = 1
 				yield clk_fast.posedge
-				'''
+
+				lft_s_i.next = Sout_s
+				yield clk_fast.posedge
+				yield clk_fast.posedge
+				print (" %d %s %s") % (now(), bin(Sout_s,160), bin(lft_s_i,160))
+				yield clk_fast.posedge
+				#combinel_sig_s.next = 0
+				Sinsa_in0.next = r[row][col]
+				Sinsa_in1.next = r[row+4][col]
+				Sinsa_in2.next = r[row+6][col]
+				Sinsa_in3.next = r[row+8][col]
+				Sinsa_in4.next = r[row+10][col]
+				Sinsa_in5.next = r[row+12][col]
+				Sinsa_in6.next = r[row+14][col]
+				Sinsa_in7.next = r[row+16][col]
+				Sinsa_in8.next = r[row+18][col]
+				Sinsa_in9.next = r[row+20][col]
+				Sinsa_in10.next = r[row+22][col]
+				Sinsa_in11.next = r[row+24][col]
+				Sinsa_in12.next = r[row+26][col]
+				Sinsa_in13.next = r[row+28][col]
+				Sinsa_in14.next = r[row+30][col]
+				Sinsa_in15.next = r[row+32][col]
+				yield clk_fast.posedge
+				combinesa_sig_s.next = 1
+				yield clk_fast.posedge
+				sa_s_i.next = (Sout_s)
+				yield clk_fast.posedge
+				print (" %d %s %s") % (now(), bin(Sout_s,160), bin(sa_s_i,160))
+				#combinesa_sig_s.next = 0
+
+				Sinrt_in0.next = r[row+1][col]
+				Sinrt_in1.next = r[row+5][col]
+				Sinrt_in2.next = r[row+7][col]
+				Sinrt_in3.next = r[row+7][col]
+				Sinrt_in4.next = r[row+11][col]
+				Sinrt_in5.next = r[row+13][col]
+				Sinrt_in6.next = r[row+15][col]
+				Sinrt_in7.next = r[row+17][col]
+				Sinrt_in8.next = r[row+19][col]
+				Sinrt_in9.next = r[row+21][col]
+				Sinrt_in10.next = r[row+23][col]
+				Sinrt_in11.next = r[row+25][col]
+				Sinrt_in12.next = r[row+27][col]
+				Sinrt_in13.next = r[row+29][col]
+				Sinrt_in14.next = r[row+31][col]
+				Sinrt_in15.next = r[row+33][col]
+				yield clk_fast.posedge
+				combinert_sig_s.next = 1
+				yield clk_fast.posedge
+				rht_s_i.next = (Sout_s)
+				yield clk_fast.posedge
+				print (" %d %s %s") % (now(), bin(Sout_s,160), bin(rht_s_i,160))
+				#combinert_sig_s.next = 0
+				yield clk_fast.posedge
+
+				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
+				yield clk_fast.posedge
+
 				#print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
 				combine_rdy_s.next = 1
 				yield clk_fast.posedge
@@ -523,15 +814,25 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 	return instances()
 tb(clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
-lft_s_i, sa_s_i, rht_s_i, a0, a1, a2, y0, y1, y2,
-combine_rdy_s, nocombine_s, row_ind, col_ind,
+lft_s_i, sa_s_i, rht_s_i, combine_rdy_s, nocombine_s, row_ind, col_ind,
+sig2one, Sout_s, combinel_sig_s, Sinl_in0, Sinl_in1, Sinl_in2, Sinl_in3, Sinl_in4, Sinl_in5, Sinl_in6,
+Sinl_in7, Sinl_in8, Sinl_in9, Sinl_in10, Sinl_in11, Sinl_in12, Sinl_in13, Sinl_in14, Sinl_in15,
+combinesa_sig_s, Sinsa_in0, Sinsa_in1, Sinsa_in2, Sinsa_in3, Sinsa_in4,
+Sinsa_in5, Sinsa_in6, Sinsa_in7, Sinsa_in8, Sinsa_in9, Sinsa_in10, Sinsa_in11, Sinsa_in12, Sinsa_in13, Sinsa_in14, Sinsa_in15,
+combinert_sig_s, Sinrt_in0, Sinrt_in1, Sinrt_in2, Sinrt_in3, Sinrt_in4,
+Sinrt_in5, Sinrt_in6, Sinrt_in7, Sinrt_in8, Sinrt_in9, Sinrt_in10, Sinrt_in11, Sinrt_in12, Sinrt_in13, Sinrt_in14, Sinrt_in15,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3)
 tb_fsm = traceSignals(
 tb, clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
-lft_s_i, sa_s_i, rht_s_i, a0, a1, a2, y0, y1, y2,
-combine_rdy_s, nocombine_s, row_ind, col_ind)
+lft_s_i, sa_s_i, rht_s_i, combine_rdy_s, nocombine_s, row_ind, col_ind,
+sig2one, Sout_s, combinel_sig_s, Sinl_in0, Sinl_in1, Sinl_in2, Sinl_in3, Sinl_in4, Sinl_in5, Sinl_in6,
+Sinl_in7, Sinl_in8, Sinl_in9, Sinl_in10, Sinl_in11, Sinl_in12, Sinl_in13, Sinl_in14, Sinl_in15,
+combinesa_sig_s, Sinsa_in0, Sinsa_in1, Sinsa_in2, Sinsa_in3, Sinsa_in4,
+Sinsa_in5, Sinsa_in6, Sinsa_in7, Sinsa_in8, Sinsa_in9, Sinsa_in10, Sinsa_in11, Sinsa_in12, Sinsa_in13, Sinsa_in14, Sinsa_in15,
+combinert_sig_s, Sinrt_in0, Sinrt_in1, Sinrt_in2, Sinrt_in3, Sinrt_in4,
+Sinrt_in5, Sinrt_in6, Sinrt_in7, Sinrt_in8, Sinrt_in9, Sinrt_in10, Sinrt_in11, Sinrt_in12, Sinrt_in13, Sinrt_in14, Sinrt_in15,)
 
 sim = Simulation(tb_fsm)
 sim.run()

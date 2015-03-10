@@ -39,13 +39,13 @@ def tb(Sout_s, clk_fast, combine_sig_s, Sin0, Sin1, Sin2, Sin3, Sin4, Sin5, Sin6
 	@always(delay (10))
 	def clkgen():
 		clk_fast.next = not clk_fast
-
+	'''
 	@instance
 	def stimulus():
 		for i in range(16):
 			print("%3d") % (now())
 		raise StopSimulation
-
+	'''
 	return instances()
 convert()
 x = tb(Sout_s, clk_fast, combine_sig_s, Sin0, Sin1, Sin2, Sin3, Sin4, Sin5, Sin6, Sin7, Sin8, Sin9, Sin10, Sin11, Sin12, Sin13, Sin14, Sin15)
