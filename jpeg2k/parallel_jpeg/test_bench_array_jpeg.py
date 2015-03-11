@@ -5,6 +5,7 @@ from array_jpeg import jp_process
 from combine_sam import combine
 from sig2one import sig2one
 from PIL import Image
+toVHDL.numeric_ports = False
 #img = Image.open("lena_rgb_512.png")
 img = Image.open("lena_256.png")
 pix = img.load()

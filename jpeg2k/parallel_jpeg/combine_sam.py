@@ -1,9 +1,24 @@
 from myhdl import *
 from jpeg_constants import *
+toVHDL.numeric_ports = False
 def combine( left_com_x, sam_com_x, right_com_x, lft_s_i, sa_s_i, rht_s_i, combine_rdy_s, nocombine_s, W0=3, LVL0=4, W1=3, LVL1=4, W2=3, LVL2=4,  W3=3, LVL3=4, SIMUL=0 ):
 	lft_s = [lft_s_i((i+1)*W2, i*W2) for i in range(0, LVL2) ]
 	sa_s = [sa_s_i((i+1)*W2, i*W2) for i in range(0, LVL2) ]
 	rht_s = [rht_s_i((i+1)*W2, i*W2) for i in range(0, LVL2) ]
+	if(LVL0==1):
+		@always_comb
+		def combine_logic():
+			if (combine_rdy_s == 1):
+				left_com_x.next = concat(lft_s[0])
+				sam_com_x.next = concat(sa_s[0])
+				right_com_x.next = concat(rht_s[0])
+				nocombine_s.next = 0
+			else:
+				left_com_x.next = 0
+				sam_com_x.next = 0
+				right_com_x.next = 0
+				nocombine_s.next = 1
+
 	if(LVL0==2):
 		@always_comb
 		def combine_logic():

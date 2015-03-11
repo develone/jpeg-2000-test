@@ -1,4 +1,5 @@
 from myhdl import *
+toVHDL.numeric_ports = False
 ROM_CONTENT = ( 7, 7<<5, 7<<10, 7<<15,
  7<<20, 7<<25, 7<<30, 7<<35,
  7<<40, 7<<45, 7<<50, 7<<55,
