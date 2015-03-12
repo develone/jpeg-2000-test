@@ -139,10 +139,7 @@ def seq_to_img(m, pix):
 
 clk_fast = Signal(bool(0))
 res_out_x = Signal(intbv(0, min= -(2**(W0-1)) ,max= (2**(W0-1))))
-bits_in = Signal(intbv(0, min= -(2**(W0-1)) ,max= (2**(W0-1))))
-bits_in2unsigned = Signal(intbv(0)[W0:])
-v = Signal(intbv(0)[W0:])
-vv = Signal(intbv(0, min= -(2**(W0-1)) ,max= (2**(W0-1))))
+
 update_s = Signal(bool(0))
 noupdate_s = Signal(bool(0))
 row_s = Signal(intbv(0)[8:])
@@ -249,7 +246,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 	@always(delay(10))
 	def clkgen():
 		clk_fast.next = not clk_fast
-	DO_SIGNED_UNSIGNED = 1
+
 	@instance
 	def stimulus():
 
