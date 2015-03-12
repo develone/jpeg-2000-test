@@ -27,7 +27,7 @@ def sig2one(Sout_s, clk_fast, combine_sig_s, Sin0, Sin1, Sin2, Sin3, Sin4, Sin5,
 	def combine_logic():
 		if (combine_sig_s == 1):
 			#Sout_s.next = concat(Sin15, Sin14, Sin13, Sin12, Sin11, Sin10, Sin9, Sin8, Sin7, Sin6, Sin5, Sin4, Sin3, Sin2, Sin1, Sin0)
-			Sout_s.next = concat(Sin0)
+			Sout_s.next = concat(Sin11,Sin10,Sin9,Sin8,Sin7,Sin6,Sin5,Sin4,Sin3,Sin2,Sin1,Sin0)
 		else:
 			Sout_s.next = 0
 	return combine_logic
