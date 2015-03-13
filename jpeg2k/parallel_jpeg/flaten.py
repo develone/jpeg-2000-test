@@ -18,18 +18,31 @@ def test_flatten():
 	def tbstim():
 		yield delay(1)
 		print(bin(flat, 160))
-		y = random.randrange(0,1024)
-		for mrow in range(3,-1,-1):
-			for mcol in range(3,-1,-1):
+		for j in range(512):
+			j = random.randrange(-512,512)
+			x = Signal(intbv(j, min=-512, max=512))
+			z = Signal(intbv(0)[10:])
+			for mrow in range(3,-1,-1):
+				for mcol in range(3,-1,-1):
+					z = x[10:]
+					print bin(z,10)
+					matrix[mrow][mcol].next = z
 
-				matrix[mrow][mcol].next = y
+					print mrow, mcol, z.signed()
 
-				print mrow, mcol, y
-				y = y + 1
+					if (flat[10:0] == flat[160:150]):
+						print 'lsb', flat[10:0],  flat[10:0].signed(),'msb', flat[160:150],  flat[160:150].signed()
 
-				yield delay(1)
-				print(bin(flat, 160))
+					yield delay(1)
+					print(bin(flat, 160))
+			'''
+			for mrow in range(3,-1,-1):
+				for mcol in range(3,-1,-1):
 
-
+					print bin(z,10)
+					matrix[mrow][mcol].next = 0
+					yield delay(1)
+					print(bin(flat, 160))
+			'''
 	return tbdut, tbstim
 Simulation(test_flatten()).run()
