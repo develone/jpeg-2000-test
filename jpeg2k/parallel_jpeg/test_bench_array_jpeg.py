@@ -256,18 +256,18 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 							x.next = r[row+27][col]
 						elif (mrow == 0 and mcol == 0):
 							x.next = r[row+29][col]
-						#dprint (" %d %s %d %d %d") % (now(),bin(x,10), x, mrow, mcol)
+						#print (" %d %s %d %d %d") % (now(),bin(x,10), x, mrow, mcol)
 						yield clk_fast.posedge
-						z.next = x[12:]
+						z.next = x[W0:]
 						matrix_lf[mrow][mcol].next = z
 						yield clk_fast.posedge
-						#print (" %d %s") % (now(),bin(flat_lf,160))
+						#print (" %d %s") % (now(),bin(flat_lf,W0*LVL0))
 
 				#raise StopSimulation
 
 				lft_s_i.next = flat_lf
 				yield clk_fast.posedge
-				print (" %d %s %s") % (now(), hex(flat_lf), hex(lft_s_i))
+				print ("left %d %s %s") % (now(), hex(flat_lf), hex(lft_s_i))
 				yield clk_fast.posedge
 				#combinel_sig_s.next = 0
 				'''mrow mcol pass1 even sa
@@ -313,14 +313,14 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 							x.next = r[row+30][col]
 						#print (" %d %s %d %d %d") % (now(),bin(x,12), x, mrow, mcol)
 						yield clk_fast.posedge
-						z.next = x[12:]
-						matrix_lf[mrow][mcol].next = z
+						z.next = x[W0:]
+						matrix_sa[mrow][mcol].next = z
 						yield clk_fast.posedge
-						#print (" %d %s") % (now(),bin(flat_sa,160))
+						#print (" %d %s") % (now(),bin(flat_sa,W0*LVL0))
 
 				sa_s_i.next = flat_sa
 				yield clk_fast.posedge
-				print (" %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
+				print ("sam  %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
 				#combinesa_sig_s.next = 0
 				'''mrow mcol pass1 even rt
 				   3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
@@ -365,14 +365,14 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 							x.next = r[row+31][col]
 						#print (" %d %s %d %d %d") % (now(),bin(x,12), x, mrow, mcol)
 						yield clk_fast.posedge
-						z.next = x[12:]
-						matrix_lf[mrow][mcol].next = z
+						z.next = x[W0:]
+						matrix_rt[mrow][mcol].next = z
 						yield clk_fast.posedge
-						#print (" %d %s") % (now(),bin(flat_rt,160))
+						#print (" %d %s") % (now(),bin(flat_rt,W0*LVL0))
 
 				rht_s_i.next = (flat_rt)
 				yield clk_fast.posedge
-				print (" %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
+				print ("right %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
 				#combinert_sig_s.next = 0
 				yield clk_fast.posedge
 
@@ -477,14 +477,14 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 							x.next = r[row+29][col]
 						#print (" %d %s %d %d %d") % (now(),bin(x,12), x, mrow, mcol)
 						yield clk_fast.posedge
-						z.next = x[12:]
-						matrix_sa[mrow][mcol].next = z
+						z.next = x[W0:]
+						matrix_lf[mrow][mcol].next = z
 						yield clk_fast.posedge
-						#print (" %d %s") % (now(),bin(flat_lf,160))
+						#print (" %d %s") % (now(),bin(flat_lf,W0*LVL0))
 
 				lft_s_i.next = flat_lf
 				yield clk_fast.posedge
-				print (" %d %s %s") % (now(), hex(flat_sa), hex(lft_s_i))
+				#print ("left %d %s %s") % (now(), hex(flat_sa), hex(lft_s_i))
 				yield clk_fast.posedge
 				#combinel_sig_s.next = 0
 				'''mrow mcol pass1 odd sa
@@ -530,15 +530,15 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 							x.next = r[row+29][col]
 						#print (" %d %s %d %d %d") % (now(),bin(x,12), x, mrow, mcol)
 						yield clk_fast.posedge
-						z.next = x[12:]
-						matrix_lf[mrow][mcol].next = z
+						z.next = x[W0:]
+						matrix_sa[mrow][mcol].next = z
 						yield clk_fast.posedge
-						#print (" %d %s") % (now(),bin(flat_lf,160))
+						#print (" %d %s") % (now(),bin(flat_lf,W0*LVL0))
 
 
 				sa_s_i.next = flat_sa
 				yield clk_fast.posedge
-				print (" %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
+				#print (" %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
 				#combinesa_sig_s.next = 0
 				'''mrow mcol pass1 odd rt
 				   3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
@@ -583,15 +583,15 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 							x.next = r[row+31][col]
 						#print (" %d %s %d %d %d") % (now(),bin(x,12), x, mrow, mcol)
 						yield clk_fast.posedge
-						z.next = x[12:]
-						matrix_lf[mrow][mcol].next = z
+						z.next = x[W0:]
+						matrix_rt[mrow][mcol].next = z
 						yield clk_fast.posedge
-						#print (" %d %s") % (now(),bin(flat_rt,160))
+						#print (" %d %s") % (now(),bin(flat_rt,W0*LVL0))
 
 
 				rht_s_i.next = flat_rt
 				yield clk_fast.posedge
-				print (" %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
+				#print ("right %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
 
 
 				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
@@ -704,16 +704,16 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 							x.next = r[row+29][col]
 						#dprint (" %d %s %d %d %d") % (now(),bin(x,12), x, mrow, mcol)
 						yield clk_fast.posedge
-						z.next = x[12:]
+						z.next = x[W0:]
 						matrix_lf[mrow][mcol].next = z
 						yield clk_fast.posedge
-						#print (" %d %s") % (now(),bin(flat_lf,160))
+						#print (" %d %s") % (now(),bin(flat_lf,W0*LVL0))
 
 				#raise StopSimulation
 
 				lft_s_i.next = flat_lf
 				yield clk_fast.posedge
-				print (" %d %s %s") % (now(), hex(flat_lf), hex(lft_s_i))
+				print ("left %d %s %s") % (now(), hex(flat_lf), hex(lft_s_i))
 				yield clk_fast.posedge
 				#combinel_sig_s.next = 0
 				'''mrow mcol pass1 even sa
@@ -759,14 +759,14 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 							x.next = r[row+30][col]
 						#print (" %d %s %d %d %d") % (now(),bin(x,12), x, mrow, mcol)
 						yield clk_fast.posedge
-						z.next = x[12:]
-						matrix_lf[mrow][mcol].next = z
+						z.next = x[W0:]
+						matrix_sa[mrow][mcol].next = z
 						yield clk_fast.posedge
-						#print (" %d %s") % (now(),bin(flat_sa,160))
+						#print (" %d %s") % (now(),bin(flat_sa,W0*LVL0))
 
 				sa_s_i.next = flat_sa
 				yield clk_fast.posedge
-				print (" %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
+				print ("sam %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
 				#combinesa_sig_s.next = 0
 				'''mrow mcol pass1 even rt
 				   3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
@@ -811,14 +811,14 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 							x.next = r[row+31][col]
 						#print (" %d %s %d %d %d") % (now(),bin(x,12), x, mrow, mcol)
 						yield clk_fast.posedge
-						z.next = x[12:]
-						matrix_lf[mrow][mcol].next = z
+						z.next = x[W0:]
+						matrix_rt[mrow][mcol].next = z
 						yield clk_fast.posedge
-						#print (" %d %s") % (now(),bin(flat_rt,160))
+						#print (" %d %s") % (now(),bin(flat_rt,W0*LVL0))
 
 				rht_s_i.next = (flat_rt)
 				yield clk_fast.posedge
-				print (" %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
+				print ("right %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
 				#combinert_sig_s.next = 0
 				yield clk_fast.posedge
 
@@ -924,13 +924,13 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 						#print (" %d %s %d %d %d") % (now(),bin(x,12), x, mrow, mcol)
 						yield clk_fast.posedge
 						z.next = x[12:]
-						matrix_sa[mrow][mcol].next = z
+						matrix_lf[mrow][mcol].next = z
 						yield clk_fast.posedge
-						#print (" %d %s") % (now(),bin(flat_lf,160))
+						#print (" %d %s") % (now(),bin(flat_lf,W0*LVL0))
 
 				lft_s_i.next = flat_lf
 				yield clk_fast.posedge
-				print (" %d %s %s") % (now(), hex(flat_sa), hex(lft_s_i))
+				print ("left %d %s %s") % (now(), hex(flat_sa), hex(lft_s_i))
 				yield clk_fast.posedge
 				#combinel_sig_s.next = 0
 				'''mrow mcol pass1 odd sa
@@ -977,14 +977,14 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 						#print (" %d %s %d %d %d") % (now(),bin(x,12), x, mrow, mcol)
 						yield clk_fast.posedge
 						z.next = x[12:]
-						matrix_lf[mrow][mcol].next = z
+						matrix_sa[mrow][mcol].next = z
 						yield clk_fast.posedge
-						#print (" %d %s") % (now(),bin(flat_lf,160))
+						#print (" %d %s") % (now(),bin(flat_lf,W0*LVL0))
 
 
 				sa_s_i.next = flat_sa
 				yield clk_fast.posedge
-				print (" %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
+				print ("sam %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
 				#combinesa_sig_s.next = 0
 				'''mrow mcol pass1 odd rt
 				   3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
@@ -1030,17 +1030,17 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 						#print (" %d %s %d %d %d") % (now(),bin(x,12), x, mrow, mcol)
 						yield clk_fast.posedge
 						z.next = x[12:]
-						matrix_lf[mrow][mcol].next = z
+						matrix_rt[mrow][mcol].next = z
 						yield clk_fast.posedge
-						#print (" %d %s") % (now(),bin(flat_rt,160))
+						#print (" %d %s") % (now(),bin(flat_rt,W0*LVL0))
 
 
 				rht_s_i.next = flat_rt
 				yield clk_fast.posedge
-				print (" %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
+				print ("right %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
 
 
-				print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
+				print( " %3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
 				yield clk_fast.posedge
 
 				#print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))

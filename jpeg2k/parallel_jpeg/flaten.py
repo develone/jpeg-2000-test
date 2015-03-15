@@ -46,7 +46,7 @@ def test_flatten():
 					print(bin(flat, 160))
 			'''
 	return tbdut, tbstim
-Simulation(test_flatten()).run()
+#Simulation(test_flatten()).run()
 def convert():
 	matrix = [[Signal(intbv(0)[W0:]) for mcol in range(4)] for mrow in range(4)]
 	flat = Signal(intbv(0)[W0*LVL0:])
