@@ -1,6 +1,6 @@
 from myhdl import *
 from jpeg_constants import *
-toVHDL.numeric_ports = False
+#toVHDL.numeric_ports = False
 def jp_process( res_out_x, left_s_i, sam_s_i, right_s_i,flgs_s_i, noupdate_s, update_s, W0=3, LVL0=4, W1=3, LVL1=4, W2=3, LVL2=4,  W3=3, LVL3=4, SIMUL=0 ):
 
     print W0, LVL0, W1, LVL1, W2, LVL2, W3, LVL3, SIMUL

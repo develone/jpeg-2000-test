@@ -1,6 +1,6 @@
 from myhdl import *
 from jpeg_constants import *
-toVHDL.numeric_ports = False
+#toVHDL.numeric_ports = False
 def combine( left_com_x, sam_com_x, right_com_x, lft_s_i, sa_s_i, rht_s_i, combine_rdy_s, nocombine_s, W0=3, LVL0=4, W1=3, LVL1=4, W2=3, LVL2=4,  W3=3, LVL3=4, SIMUL=0 ):
 	lft_s = [lft_s_i((i+1)*W2, i*W2) for i in range(0, LVL2) ]
 	sa_s = [sa_s_i((i+1)*W2, i*W2) for i in range(0, LVL2) ]
