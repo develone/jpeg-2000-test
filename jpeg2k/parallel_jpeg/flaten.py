@@ -52,4 +52,4 @@ def convert():
 	flat = Signal(intbv(0)[W0*LVL0:])
 	toVerilog(m_flatten, matrix, flat)
 	toVHDL(m_flatten, matrix, flat)
-convert()
+#convert()

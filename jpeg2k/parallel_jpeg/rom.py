@@ -37,6 +37,6 @@ addr_flgs = Signal(intbv(0)[RADZ:])
 
 
 
-romconvert()
+#romconvert()
 #if __name__ == '__main__':
 #main()
