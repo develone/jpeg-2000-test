@@ -32,16 +32,16 @@ def jp_process( res_out_x, left_s_i, sam_s_i, right_s_i,flgs_s_i, noupdate_s, up
             noupdate_s.next = NO
             for i in range(LVL0):
                 if (flgs_s[i] == 7):
-                    res_out_x.next = sam_s[i] - ( (left_s[i] >> 1) + ( (right_s[i] >> 1)))
+                    res_out_x.next = sam_s[i].signed() - ( (left_s[i].signed() >> 1) + ( (right_s[i].signed() >> 1)))
 
                 elif (flgs_s[i] == 5):
-                    res_out_x.next = sam_s[i] + ( (left_s[i] >> 1) + ( (right_s[i] >> 1)))
+                    res_out_x.next = sam_s[i].signed() + ( (left_s[i].signed() >> 1) + ( (right_s[i].signed() >> 1)))
 
                 elif (flgs_s[i] == 6):
-                    res_out_x.next = sam_s[i] + (( (left_s[i] ) + ( (right_s[i] + 2 ))) >> 2 )
+                    res_out_x.next = sam_s[i].signed() + ((left_s[i].signed()  + right_s[i].signed() + 2 ) >> 2)
 
                 elif (flgs_s[i] == 4):
-                    res_out_x.next = sam_s[i] - (( (left_s[i] ) + ( (right_s[i] + 2  ))) >> 2 )
+                    res_out_x.next = sam_s[i].signed() - ((left_s[i].signed()  + right_s[i].signed() + 2 ) >> 2)
         else:
             noupdate_s.next = YES
     if (SIMUL == 0):
