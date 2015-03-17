@@ -405,14 +405,10 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 					yield clk_fast.posedge
 					update_s.next = 1
 					yield clk_fast.posedge
-					if (res_out_x > 2**W0-1):
-						r[row_ind][col_ind] = 2**W0-1
-						print ("%d %d %d %d %d %d %d odd pass 1 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
-						results.append(int(r[row_ind][col_ind]))
-					else:
-						r[row_ind][col_ind] = res_out_x
-						print ("%d %d %d %d %d %d %d odd pass 1 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
-						results.append(int(r[row_ind][col_ind]))
+
+					r[row_ind][col_ind] = res_out_x
+					print ("%d %d %d %d %d %d %d odd pass 1 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
+					results.append(int(r[row_ind][col_ind]))
 					if (row_ind == 224):
 						row_ind.next = 2
 						yield clk_fast.posedge
@@ -627,14 +623,10 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 					yield clk_fast.posedge
 					update_s.next = 1
 					yield clk_fast.posedge
-					if (res_out_x > 2**W0-1):
-						r[row_ind][col_ind] = 2**W0-1
-						print ("%d %d %d %d %d %d %d odd pass 1 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
-						results.append(int(r[row_ind][col_ind]))
-					else:
-						r[row_ind][col_ind] = res_out_x
-						print ("%d %d %d %d %d %d %d odd pass 1 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
-						results.append(int(r[row_ind][col_ind]))
+
+					r[row_ind][col_ind] = res_out_x
+					print ("%d %d %d %d %d %d %d odd pass 1 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
+					results.append(int(r[row_ind][col_ind]))
 					yield clk_fast.posedge
 					if (row_ind == w - 1):
 						row_ind.next = 1
