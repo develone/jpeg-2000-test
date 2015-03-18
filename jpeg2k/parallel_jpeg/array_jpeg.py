@@ -51,7 +51,7 @@ def jp_process( res_out_x, left_s_i, sam_s_i, right_s_i,flgs_s_i, noupdate_s, up
         return jpeg_logic
 def convert():
     if (SIMUL == 0):
-        res_out_x = Signal(intbv(0, min= -(2**(W0-1)) ,max= (2**(W0-1))))
+        res_out_x = Signal(intbv(0, min= -(2**(W0)) ,max= (2**(W0))))
         update_s = Signal(bool(0))
         noupdate_s = Signal(bool(0))
         """ W0, LVL0, W1, LVL1, W2, LVL2, W3, and LVL3

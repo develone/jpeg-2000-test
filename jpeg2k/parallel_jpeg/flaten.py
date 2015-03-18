@@ -18,10 +18,10 @@ def test_flatten():
 	@instance
 	def tbstim():
 		yield delay(1)
-		print(bin(flat, 192))
+		print(bin(flat, W0*LVL0))
 		for j in range(512):
 			j = random.randrange(-2**(W0-1),2**(W0-1))
-			x = Signal(intbv(j, min=-2**(W0-1), max=2**(W0-1)))
+			x = Signal(intbv(j, min=-2**(W0), max=2**(W0)))
 			z = Signal(intbv(0)[W0:])
 			for mrow in range(3,-1,-1):
 				for mcol in range(3,-1,-1):
@@ -31,7 +31,7 @@ def test_flatten():
 
 					print mrow, mcol, z.signed()
 
-					if (flat[W0:0] == flat[W0*LVL0:150]):
+					if (flat[W0:0] == flat[W0*LVL0:(W0*LVL0)-W0]):
 						print 'lsb', flat[W0:0],  flat[W0:0].signed(),'msb', flat[W0*LVL0:(W0*LVL0)-W0],  flat[W0*LVL0:(W0*LVL0)-W0].signed()
 
 					yield delay(1)
