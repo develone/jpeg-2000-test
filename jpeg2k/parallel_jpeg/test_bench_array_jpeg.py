@@ -4,9 +4,9 @@ from jpeg_constants import *
 from rom import *
 from array_jpeg import jp_process
 from combine_sam import combine
-#from sig2one import sig2one
+
 from PIL import Image
-toVHDL.numeric_ports = False
+#toVHDL.numeric_ports = False
 #img = Image.open("lena_rgb_512.png")
 img = Image.open("lena_256.png")
 pix = img.load()
@@ -221,48 +221,43 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                 '''mrow mcol  pass1 even lf
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
                 (1 2 3) (3 4 5) (5 6 7) (7 8 9) (9 10 11) (11 12 13) (13 14 15) (15 16 17) (17 18 19) (19 20 21) (21 22 23) (23 24 25) (25 26 28) (27 28 29) (29 30 31) (31 32 33)'''
-                for mmrow in range(3,-1,-1):
-                    mrow.next = mmrow
-                    yield clk_fast.posedge
-                    for mmcol in range(3,-1,-1):
-                        mcol.next = mmcol
-                        yield clk_fast.posedge
-                        if (mrow == 3 and mcol == 3):
-                            x.next = r[row-1][col]
-                        elif (mrow == 3 and mcol == 2):
-                            x.next = r[row+1][col]
-                        elif (mrow == 3 and mcol == 1):
-                            x.next = r[row+3][col]
-                        elif (mrow == 3 and mcol == 0):
-                            x.next = r[row+5][col]
-                        elif (mrow == 2 and mcol == 3):
-                            x.next = r[row+7][col]
-                        elif (mrow == 2 and mcol == 2):
-                            x.next = r[row+9][col]
-                        elif (mrow == 2 and mcol == 1):
-                            x.next = r[row+11][col]
-                        elif (mrow == 2 and mcol == 0):
-                            x.next = r[row+13][col]
-                        elif (mrow == 1 and mcol == 3):
-                            x.next = r[row+15][col]
-                        elif (mrow == 1 and mcol == 2):
-                            x.next = r[row+17][col]
-                        elif (mrow == 1 and mcol == 1):
-                            x.next = r[row+19][col]
-                        elif (mrow == 1 and mcol == 0):
-                            x.next = r[row+21][col]
-                        elif (mrow == 0 and mcol == 3):
-                            x.next = r[row+23][col]
-                        elif (mrow == 0 and mcol == 2):
-                            x.next = r[row+25][col]
-                        elif (mrow == 0 and mcol == 1):
-                            x.next = r[row+27][col]
-                        else:
-                            if( row != 226):
-                                if (mrow == 0 and mcol == 0):
-                                    x.next = r[row+29][col]
-                        yield clk_fast.posedge
-                        print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
+
+                if (mrow == 3 and mcol == 3):
+                    x.next = r[row-1][col]
+                elif (mrow == 3 and mcol == 2):
+                    x.next = r[row+1][col]
+                elif (mrow == 3 and mcol == 1):
+                    x.next = r[row+3][col]
+                elif (mrow == 3 and mcol == 0):
+                    x.next = r[row+5][col]
+                elif (mrow == 2 and mcol == 3):
+                    x.next = r[row+7][col]
+                elif (mrow == 2 and mcol == 2):
+                    x.next = r[row+9][col]
+                elif (mrow == 2 and mcol == 1):
+                    x.next = r[row+11][col]
+                elif (mrow == 2 and mcol == 0):
+                    x.next = r[row+13][col]
+                elif (mrow == 1 and mcol == 3):
+                    x.next = r[row+15][col]
+                elif (mrow == 1 and mcol == 2):
+                    x.next = r[row+17][col]
+                elif (mrow == 1 and mcol == 1):
+                    x.next = r[row+19][col]
+                elif (mrow == 1 and mcol == 0):
+                    x.next = r[row+21][col]
+                elif (mrow == 0 and mcol == 3):
+                    x.next = r[row+23][col]
+                elif (mrow == 0 and mcol == 2):
+                    x.next = r[row+25][col]
+                elif (mrow == 0 and mcol == 1):
+                    x.next = r[row+27][col]
+                else:
+                    if( row != 226):
+                        if (mrow == 0 and mcol == 0):
+                           x.next = r[row+29][col]
+                           yield clk_fast.posedge
+                #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
                         yield clk_fast.posedge
                         z.next = x[W0:]
                         yield clk_fast.posedge
@@ -274,7 +269,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
                 lft_s_i.next = flat_lf
                 yield clk_fast.posedge
-                print ("left %d %s %s") % (now(), hex(flat_lf), hex(lft_s_i))
+                #print ("left %d %s %s") % (now(), hex(flat_lf), hex(lft_s_i))
                 yield clk_fast.posedge
                 #combinel_sig_s.next = 0
                 '''mrow mcol pass1 even sa
@@ -321,7 +316,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                                 if (mrow == 0 and mcol == 0):
                                     x.next = r[row+30][col]
                         yield clk_fast.posedge
-                        print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
+                        #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
                         z.next = x[W0:]
                         yield clk_fast.posedge
                         matrix_sa[mrow][mcol].next = z
@@ -330,7 +325,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
                 sa_s_i.next = flat_sa
                 yield clk_fast.posedge
-                print ("sam  %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
+                #print ("sam  %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
                 #combinesa_sig_s.next = 0
                 '''mrow mcol pass1 even rt
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
@@ -376,7 +371,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                                 if (mrow == 0 and mcol == 0):
                                     x.next = r[row+31][col]
                         yield clk_fast.posedge
-                        print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
+                        #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
                         z.next = x[W0:]
                         yield clk_fast.posedge
                         matrix_rt[mrow][mcol].next = z
@@ -385,11 +380,11 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
                 rht_s_i.next = (flat_rt)
                 yield clk_fast.posedge
-                print ("right %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
+                #print ("right %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
                 #combinert_sig_s.next = 0
                 yield clk_fast.posedge
 
-                print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
+                #print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
                 yield clk_fast.posedge
 
                 combine_rdy_s.next = 1
@@ -399,7 +394,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                 sam_s_i.next = sam_com_x
                 right_s_i.next = right_com_x
                 yield clk_fast.posedge
-                print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
+                #print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
                 combine_rdy_s.next = 0
                 yield clk_fast.posedge
                 addr_flgs.next = 0
@@ -469,14 +464,12 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             x.next = r[row+23][col]
                         elif (mrow == 0 and mcol == 2):
                             x.next = r[row+25][col]
-                        #else:
-                            #if (row != 225):
                         elif (mrow == 0 and mcol == 1):
                             x.next = r[row+27][col]
                         elif (mrow == 0 and mcol == 0):
                             x.next = r[row+29][col]
                         yield clk_fast.posedge
-                        print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
+                        #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
                         z.next = x[W0:]
                         yield clk_fast.posedge
                         matrix_lf[mrow][mcol].next = z
@@ -485,7 +478,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
                 lft_s_i.next = flat_lf
                 yield clk_fast.posedge
-                print ("left %d %s %s") % (now(), hex(flat_lf), hex(lft_s_i))
+                #print ("left %d %s %s") % (now(), hex(flat_lf), hex(lft_s_i))
                 yield clk_fast.posedge
                 #combinel_sig_s.next = 0
                 '''mrow mcol pass1 odd sa
@@ -526,14 +519,12 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             x.next = r[row+24][col]
                         elif (mrow == 0 and mcol == 2):
                             x.next = r[row+26][col]
-                        #else:
-                        #if (row != 225):
                         elif (mrow == 0 and mcol == 1):
                             x.next = r[row+28][col]
                         elif (mrow == 0 and mcol == 0):
                             x.next = r[row+30][col]
                         yield clk_fast.posedge
-                        print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
+                        #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
                         z.next = x[W0:]
                         yield clk_fast.posedge
                         matrix_sa[mrow][mcol].next = z
@@ -543,7 +534,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
                 sa_s_i.next = flat_sa
                 yield clk_fast.posedge
-                print ("sam %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
+                #print ("sam %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
                 #combinesa_sig_s.next = 0
                 '''mrow mcol pass1 odd rt
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
@@ -583,14 +574,14 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             x.next = r[row+25][col]
                         elif (mrow == 0 and mcol == 2):
                             x.next = r[row+27][col]
+                        elif (mrow == 0 and mcol == 1):
+                            x.next = r[row+29][col]
                         else:
-                            if (row != 225):
-                                if (mrow == 0 and mcol == 1):
-                                    x.next = r[row+29][col]
+                            if (row <225):
                                 if (mrow == 0 and mcol == 0):
                                     x.next = r[row+31][col]
                         yield clk_fast.posedge
-                        print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
+                        #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
                         z.next = x[W0:]
                         yield clk_fast.posedge
                         matrix_rt[mrow][mcol].next = z
@@ -600,10 +591,10 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
                 rht_s_i.next = flat_rt
                 yield clk_fast.posedge
-                print ("right %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
+                #print ("right %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
 
 
-                print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
+                #print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
                 yield clk_fast.posedge
 
                 #print( "%3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
@@ -615,7 +606,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                 sam_s_i.next = sam_com_x
                 right_s_i.next = right_com_x
                 yield clk_fast.posedge
-                print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
+                #print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
                 combine_rdy_s.next = 0
                 yield clk_fast.posedge
                 addr_flgs.next = 16
