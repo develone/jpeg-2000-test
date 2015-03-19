@@ -215,7 +215,9 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
         for col in range(w):
             col_ind.next = col
             yield clk_fast.posedge
-            for row in range(2,h-32, 34):
+            for row in range(2,h-16, 32):
+                row_ind.next = row
+                yield clk_fast.posedge
                 '''mrow mcol  pass1 even lf
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
                 (1 2 3) (3 4 5) (5 6 7) (7 8 9) (9 10 11) (11 12 13) (13 14 15) (15 16 17) (17 18 19) (19 20 21) (21 22 23) (23 24 25) (25 26 28) (27 28 29) (29 30 31) (31 32 33)'''
@@ -255,8 +257,10 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             x.next = r[row+25][col]
                         elif (mrow == 0 and mcol == 1):
                             x.next = r[row+27][col]
-                        elif (mrow == 0 and mcol == 0):
-                            x.next = r[row+29][col]
+                        else:
+                            if( row != 226):
+                                if (mrow == 0 and mcol == 0):
+                                    x.next = r[row+29][col]
                         yield clk_fast.posedge
                         print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
                         yield clk_fast.posedge
@@ -312,8 +316,10 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             x.next = r[row+26][col]
                         elif (mrow == 0 and mcol == 1):
                             x.next = r[row+28][col]
-                        elif (mrow == 0 and mcol == 0):
-                            x.next = r[row+30][col]
+                        else:
+                            if( row != 226):
+                                if (mrow == 0 and mcol == 0):
+                                    x.next = r[row+30][col]
                         yield clk_fast.posedge
                         print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
                         z.next = x[W0:]
@@ -365,8 +371,10 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             x.next = r[row+27][col]
                         elif (mrow == 0 and mcol == 1):
                             x.next = r[row+29][col]
-                        elif (mrow == 0 and mcol == 0):
-                            x.next = r[row+31][col]
+                        else:
+                            if( row != 226):
+                                if (mrow == 0 and mcol == 0):
+                                    x.next = r[row+31][col]
                         yield clk_fast.posedge
                         print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
                         z.next = x[W0:]
@@ -405,17 +413,13 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                     yield clk_fast.posedge
                     update_s.next = 1
                     yield clk_fast.posedge
+                    if (row_ind <= 254):
+                        r[row_ind][col_ind] = res_out_x
+                        print ("%d %d %d %d %d %d %d even pass 1 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
+                        results.append(int(r[row_ind][col_ind]))
 
-                    r[row_ind][col_ind] = res_out_x
-                    print ("%d %d %d %d %d %d %d even pass 1 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
-                    results.append(int(r[row_ind][col_ind]))
-                    if (row_ind == 224):
-                        row_ind.next = 2
-                        yield clk_fast.posedge
-
-                    else:
-                        row_ind.next = row_ind + 2
-                        yield clk_fast.posedge
+                    row_ind.next = row_ind + 2
+                    yield clk_fast.posedge
 
                     update_s.next = 0
                     yield clk_fast.posedge
@@ -424,14 +428,10 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                     update_s.next = 0
                     yield clk_fast.posedge
 
-        #raise StopSimulation
-        row_ind.next = 1
-        #col_ind.next = 0
-        yield clk_fast.posedge
-        for col in range(w):
-            col_ind.next = col
-            yield clk_fast.posedge
-            for row in range(1,h-33, 34):
+            #raise StopSimulation
+            for row in range(1,h-17, 32):
+                row_ind.next = row
+                yield clk_fast.posedge
                 '''mrow mcol pass1 odd lf
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
                 (0 1 2 ) (2 3 4 ) (4 5 6) (6 7 8) (8 9 10) (10 11 12) (12 13 14) (14 15 16) (16 17 18) (18 19 20) (20 21 22) (22 23 24) (24 25 26) (26 27 28) (28 29 30) (30 31 32)'''
@@ -469,6 +469,8 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             x.next = r[row+23][col]
                         elif (mrow == 0 and mcol == 2):
                             x.next = r[row+25][col]
+                        #else:
+                            #if (row != 225):
                         elif (mrow == 0 and mcol == 1):
                             x.next = r[row+27][col]
                         elif (mrow == 0 and mcol == 0):
@@ -524,6 +526,8 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             x.next = r[row+24][col]
                         elif (mrow == 0 and mcol == 2):
                             x.next = r[row+26][col]
+                        #else:
+                        #if (row != 225):
                         elif (mrow == 0 and mcol == 1):
                             x.next = r[row+28][col]
                         elif (mrow == 0 and mcol == 0):
@@ -579,10 +583,12 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             x.next = r[row+25][col]
                         elif (mrow == 0 and mcol == 2):
                             x.next = r[row+27][col]
-                        elif (mrow == 0 and mcol == 1):
-                            x.next = r[row+29][col]
-                        elif (mrow == 0 and mcol == 0):
-                            x.next = r[row+31][col]
+                        else:
+                            if (row != 225):
+                                if (mrow == 0 and mcol == 1):
+                                    x.next = r[row+29][col]
+                                if (mrow == 0 and mcol == 0):
+                                    x.next = r[row+31][col]
                         yield clk_fast.posedge
                         print (" %d %s %d %d %d") % (now(),bin(x,W0), x, mrow, mcol)
                         z.next = x[W0:]
@@ -628,12 +634,9 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                     print ("%d %d %d %d %d %d %d odd pass 1 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
                     results.append(int(r[row_ind][col_ind]))
                     yield clk_fast.posedge
-                    if (row_ind == w - 1):
-                        row_ind.next = 1
-                        yield clk_fast.posedge
-                    else:
-                        row_ind.next = row_ind + 2
-                        yield clk_fast.posedge
+
+                    row_ind.next = row_ind + 2
+                    yield clk_fast.posedge
 
                     update_s.next = 0
                     yield clk_fast.posedge
@@ -653,7 +656,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
                     temp_bank[mmcol][mmrow/2 + h/2] =  r[mmrow][mmcol]
 
-        #raise StopSimulation
+        raise StopSimulation
         '''this is pass2'''
         for i in range(10):
             #print( "%3d ") % (now())
@@ -858,7 +861,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                     r[row_ind][col_ind] = res_out_x
                     print ("%d %d %d %d %d %d %d even pass 2 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
                     results.append(int(r[row_ind][col_ind]))
-                    if (row_ind == 224):
+                    if (row_ind == w - 1):
                         row_ind.next = 2
                         yield clk_fast.posedge
 

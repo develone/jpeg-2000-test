@@ -71,10 +71,12 @@ def fwt97_2d(m, nlevels=1):
     h = len(m)
     for i in range(nlevels):
         m = fwt97(m, w, h) # cols
+        '''
         m = fwt97(m, w, h) # rows
         lower_upper(m, w, h)
         w /= 2
         h /= 2
+		'''
 
     return m
 
@@ -117,52 +119,88 @@ def fwt97(s, width, height):
         ''' Lifting is done on the cols. '''
         # Predict 1. y1
 
-        for row in range(2, height-32, 34):
+        for row in range(2, height-16, 32):
 
 
 			s[row][col] = (s[row][col] - ((int(s[row-1][col])>>1) + (int(s[row+1][col])>>1)))
+			print row, col, int(s[row-1][col]), int(s[row][col]), int(s[row+1][col])
 			s[row+2][col] = (s[row+2][col] - ((int(s[row+2-1][col])>>1) + (int(s[row+3][col])>>1)))
+			print row+2, col, int(s[row+2-1][col]), int(s[row+2][col]), int(s[row+3][col])
 			s[row+4][col] = (s[row+4][col] - ((int(s[row+4-1][col])>>1) + (int(s[row+5][col])>>1)))
+			print row+4, col, int(s[row+4-1][col]), int(s[row+4][col]), int(s[row+5][col])
 			s[row+6][col] = (s[row+6][col] - ((int(s[row+6-1][col])>>1) + (int(s[row+7][col])>>1)))
+			print row+6, col, int(s[row+6-1][col]), int(s[row+6][col]), int(s[row+7][col])
 			s[row+8][col] = (s[row+8][col] - ((int(s[row+8-1][col])>>1) + (int(s[row+9][col])>>1)))
+			print row+8, col, int(s[row+8-1][col]), int(s[row+8][col]), int(s[row+9][col])
 			s[row+10][col] = (s[row+10][col] - ((int(s[row+10-1][col])>>1) + (int(s[row+11][col])>>1)))
+			print row+10, col, int(s[row+10-1][col]), int(s[row+10][col]), int(s[row+11][col])
 			s[row+12][col] = (s[row+12][col] - ((int(s[row+12-1][col])>>1) + (int(s[row+13][col])>>1)))
+			print row+12, col, int(s[row+12-1][col]), int(s[row+12][col]), int(s[row+13][col])
 			s[row+14][col] = (s[row+14][col] - ((int(s[row+14-1][col])>>1) + (int(s[row+15][col])>>1)))
+			print row+14, col, int(s[row+14-1][col]), int(s[row+14][col]), int(s[row+15][col])
 			s[row+16][col] = (s[row+16][col] - ((int(s[row+16-1][col])>>1) + (int(s[row+17][col])>>1)))
+			print row+16, col, int(s[row+16-1][col]), int(s[row+16][col]), int(s[row+17][col])
 			s[row+18][col] = (s[row+18][col] - ((int(s[row+18-1][col])>>1) + (int(s[row+19][col])>>1)))
+			print row+18, col, int(s[row+18-1][col]), int(s[row+18][col]), int(s[row+19][col])
 			s[row+20][col] = (s[row+20][col] - ((int(s[row+20-1][col])>>1) + (int(s[row+21][col])>>1)))
+			print row+20, col, int(s[row+20-1][col]), int(s[row+20][col]), int(s[row+21][col])
 			s[row+22][col] = (s[row+22][col] - ((int(s[row+22-1][col])>>1) + (int(s[row+23][col])>>1)))
+			print row+22, col, int(s[row+22-1][col]), int(s[row+22][col]), int(s[row+23][col])
 			s[row+24][col] = (s[row+24][col] - ((int(s[row+24-1][col])>>1) + (int(s[row+25][col])>>1)))
+			print row+24, col, int(s[row+24-1][col]), int(s[row+24][col]), int(s[row+25][col])
 			s[row+26][col] = (s[row+26][col] - ((int(s[row+26-1][col])>>1) + (int(s[row+27][col])>>1)))
+			print row+26, col, int(s[row+26-1][col]), int(s[row+26][col]), int(s[row+27][col])
 			s[row+28][col] = (s[row+28][col] - ((int(s[row+28-1][col])>>1) + (int(s[row+29][col])>>1)))
-			s[row+30][col] = (s[row+30][col] - ((int(s[row+30-1][col])>>1) + (int(s[row+31][col])>>1)))
-			s[row+32][col] = (s[row+32][col] - ((int(s[row+32-1][col])>>1) + (int(s[row+33][col])>>1)))
-
+			print row+28, col, int(s[row+28-1][col]), int(s[row+28][col]), int(s[row+29][col])
+			if (row != 226):
+				s[row+30][col] = (s[row+30][col] - ((int(s[row+30-1][col])>>1) + (int(s[row+31][col])>>1)))
+				print row+30, col, int(s[row+30-1][col]), int(s[row+30][col]), int(s[row+31][col])
+			#s[row+32][col] = (s[row+32][col] - ((int(s[row+32-1][col])>>1) + (int(s[row+33][col])>>1)))
+			#print row+32, col, int(s[row+32-1][col]), int(s[row+32][col]), int(s[row+33][col])
+			print
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])
 
 
         # Update 1. y0
 
-        for row in range(1, height-33, 34):
+        for row in range(1, height-17, 32):
 
 			s[row][col] = (s[row][col] + ((int(s[row-1][col]) + int(s[row+1][col]) + 2)>>2))
+			print row, col, int(s[row-1][col]), int(s[row][col]), int(s[row+1][col])
 			s[row+2][col] = (s[row+2][col] + ((int(s[row+2-1][col]) + (int(s[row+3][col]) + 2))>>2))
+			print row+2, col, int(s[row+2-1][col]), int(s[row+2][col]), int(s[row+3][col])
 			s[row+4][col] = (s[row+4][col] + ((int(s[row+4-1][col]) + (int(s[row+5][col]) + 2))>>2))
+			print row+4, col, int(s[row+4-1][col]), int(s[row+4][col]), int(s[row+5][col])
 			s[row+6][col] = (s[row+6][col] + ((int(s[row+6-1][col]) + (int(s[row+7][col]) + 2))>>2))
+			print row+6, col, int(s[row+6-1][col]), int(s[row+6][col]), int(s[row+7][col])
 			s[row+8][col] = (s[row+8][col] + ((int(s[row+8-1][col]) + (int(s[row+9][col]) + 2))>>2))
+			print row+8, col, int(s[row+8-1][col]), int(s[row+8][col]), int(s[row+9][col])
 			s[row+10][col] = (s[row+10][col] + ((int(s[row+10-1][col]) + (int(s[row+11][col]) + 2))>>2))
+			print row+10, col, int(s[row+10-1][col]), int(s[row+10][col]), int(s[row+11][col])
 			s[row+12][col] = (s[row+12][col] + ((int(s[row+12-1][col]) + (int(s[row+13][col]) + 2))>>2))
+			print row+12, col, int(s[row+12-1][col]), int(s[row+12][col]), int(s[row+13][col])
 			s[row+14][col] = (s[row+14][col] + ((int(s[row+14-1][col]) + (int(s[row+15][col]) + 2))>>2))
+			print row+14, col, int(s[row+14-1][col]), int(s[row+14][col]), int(s[row+15][col])
 			s[row+16][col] = (s[row+16][col] + ((int(s[row+16-1][col]) + (int(s[row+17][col]) + 2))>>2))
+			print row+16, col, int(s[row+16-1][col]), int(s[row+16][col]), int(s[row+17][col])
 			s[row+18][col] = (s[row+18][col] + ((int(s[row+18-1][col]) + (int(s[row+19][col]) + 2))>>2))
+			print row+18, col, int(s[row+18-1][col]), int(s[row+18][col]), int(s[row+19][col])
 			s[row+20][col] = (s[row+20][col] + ((int(s[row+20-1][col]) + (int(s[row+21][col]) + 2))>>2))
+			print row+20, col, int(s[row+20-1][col]), int(s[row+20][col]), int(s[row+21][col])
 			s[row+22][col] = (s[row+22][col] + ((int(s[row+22-1][col]) + (int(s[row+23][col]) + 2))>>2))
+			print row+22, col, int(s[row+22-1][col]), int(s[row+22][col]), int(s[row+23][col])
 			s[row+24][col] = (s[row+24][col] + ((int(s[row+24-1][col]) + (int(s[row+25][col]) + 2))>>2))
+			print row+24, col, int(s[row+24-1][col]), int(s[row+24][col]), int(s[row+25][col])
 			s[row+26][col] = (s[row+26][col] + ((int(s[row+26-1][col]) + (int(s[row+27][col]) + 2))>>2))
+			print row+26, col, int(s[row+26-1][col]), int(s[row+26][col]), int(s[row+27][col])
 			s[row+28][col] = (s[row+28][col] + ((int(s[row+28-1][col]) + (int(s[row+29][col]) + 2))>>2))
-			s[row+30][col] = (s[row+30][col] + ((int(s[row+30-1][col]) + (int(s[row+31][col]) + 2))>>2))
-			s[row+32][col] = (s[row+32][col] + ((int(s[row+32-1][col]) + (int(s[row+33][col]) + 2))>>2))
-
+			print row+28, col, int(s[row+28-1][col]), int(s[row+28][col]), int(s[row+29][col])
+			if (row != 225):
+				s[row+30][col] = (s[row+30][col] + ((int(s[row+30-1][col]) + (int(s[row+31][col]) + 2))>>2))
+				print row+30, col, int(s[row+30-1][col]), int(s[row+30][col]), int(s[row+31][col])
+				s[row+32][col] = (s[row+32][col] + ((int(s[row+32-1][col]) + (int(s[row+33][col]) + 2))>>2))
+				print row+32, col, int(s[row+32-1][col]), int(s[row+32][col]), int(s[row+33][col])
+			print
     s = de_interleave(s,height,width)
     return s
 
