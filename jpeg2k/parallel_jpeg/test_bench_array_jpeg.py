@@ -7,8 +7,8 @@ from combine_sam import combine
 #from sig2one import sig2one
 from PIL import Image
 toVHDL.numeric_ports = False
-#img = Image.open("lena_rgb_512.png")
-img = Image.open("lena_256.png")
+img = Image.open("lena_rgb_512.png")
+#img = Image.open("lena_256.png")
 pix = img.load()
 if (img.mode == "RGB"):
     rgb = list(img.getdata())
@@ -160,8 +160,8 @@ rht_s_i = Signal(intbv(0)[LVL2*W2:])
 
 combine_rdy_s = Signal(bool(0))
 nocombine_s = Signal(bool(0))
-row_ind = Signal(intbv(0)[9:])
-col_ind = Signal(intbv(0)[9:])
+row_ind = Signal(intbv(0)[10:])
+col_ind = Signal(intbv(0)[10:])
 
 matrix_lf = [[Signal(intbv(0)[W0:]) for mcol in range(4)] for mrow in range(4)]
 matrix_sa = [[Signal(intbv(0)[W0:]) for mcol in range(4)] for mrow in range(4)]
@@ -258,7 +258,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                         elif (mrow == 0 and mcol == 1):
                             x.next = r[row+27][col]
                         else:
-                            if( row != 226):
+                            if( row != h-30):
                                 if (mrow == 0 and mcol == 0):
                                     x.next = r[row+29][col]
                         yield clk_fast.posedge
@@ -317,7 +317,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                         elif (mrow == 0 and mcol == 1):
                             x.next = r[row+28][col]
                         else:
-                            if( row != 226):
+                            if( row != h-30):
                                 if (mrow == 0 and mcol == 0):
                                     x.next = r[row+30][col]
                         yield clk_fast.posedge
@@ -372,7 +372,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                         elif (mrow == 0 and mcol == 1):
                             x.next = r[row+29][col]
                         else:
-                            if( row != 226):
+                            if( row != h-30):
                                 if (mrow == 0 and mcol == 0):
                                     x.next = r[row+31][col]
                         yield clk_fast.posedge
@@ -414,7 +414,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                     update_s.next = 1
                     yield clk_fast.posedge
                     a = int(res_out_x)
-                    if (row_ind <= 254):
+                    if (row_ind <= h-2):
                         r[row_ind][col_ind] = a
                         print ("%d %d %d %d %d %d %d even pass 1 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
                         results.append(int(r[row_ind][col_ind]))
@@ -585,7 +585,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                         elif (mrow == 0 and mcol == 2):
                             x.next = r[row+27][col]
                         else:
-                            if (row != 225):
+                            if (row != h-31):
                                 if (mrow == 0 and mcol == 1):
                                     x.next = r[row+29][col]
                                 if (mrow == 0 and mcol == 0):
@@ -659,6 +659,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 		for row in range(w):
 			for col in range(h):
 				r[row][col] = temp_bank[row][col]'''
+        de_interleave(r,h,w)
         raise StopSimulation
         '''this is the end of  pass1'''
 
@@ -680,7 +681,7 @@ matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, mrow, mcol)
 
 sim = Simulation(tb_fsm)
 sim.run()
-de_interleave(r,h,w)
+#de_interleave(r,h,w)
 if (img.mode == "RGB"):
     rgb = []
     for row in range(len(r)):
