@@ -4,11 +4,12 @@ from jpeg_constants import *
 from rom import *
 from array_jpeg import jp_process
 from combine_sam import combine
-#from sig2one import sig2one
+from ram import ram
+from ram_res import ram_res
 from PIL import Image
-toVHDL.numeric_ports = False
-img = Image.open("lena_rgb_512.png")
-#img = Image.open("lena_256.png")
+#toVHDL.numeric_ports = False
+#img = Image.open("lena_rgb_512.png")
+img = Image.open("lena_256.png")
 pix = img.load()
 if (img.mode == "RGB"):
     rgb = list(img.getdata())
@@ -138,7 +139,26 @@ def seq_to_img(m, pix):
     for row in range(len(m)):
         for col in range(len(m[row])):
             pix[col,row] = m[row][col]
+dout_res = Signal(intbv(0)[W0+1:])
 
+din_res = Signal(intbv(0)[W0+1:])
+addr_res = Signal(intbv(0)[10:])
+we_res = Signal(bool(0))
+
+dout_lf = Signal(intbv(0)[LVL2*W2:])
+din_lf = Signal(intbv(0)[LVL2*W2:])
+addr_lf = Signal(intbv(0)[10:])
+we_lf = Signal(bool(0))
+
+dout_sa = Signal(intbv(0)[LVL2*W2:])
+din_sa = Signal(intbv(0)[LVL2*W2:])
+addr_sa = Signal(intbv(0)[10:])
+we_sa = Signal(bool(0))
+
+dout_rt = Signal(intbv(0)[LVL2*W2:])
+din_rt = Signal(intbv(0)[LVL2*W2:])
+addr_rt = Signal(intbv(0)[10:])
+we_rt = Signal(bool(0))
 clk_fast = Signal(bool(0))
 res_out_x = Signal(intbv(0, min= -(2**(W0)) ,max= (2**(W0))))
 
@@ -179,6 +199,8 @@ noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i,combine_rdy_s, nocombine_s, row_ind,
 col_ind,
 matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, mrow, mcol,
+dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
+addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3):
 
@@ -187,7 +209,10 @@ LVL2=LVL2, W3=W3, LVL3=LVL3):
 lft_s_i, sa_s_i, rht_s_i, combine_rdy_s, nocombine_s,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3)
-
+    instance_ram_lf = ram(dout_lf, din_lf, addr_lf, we_lf, clk_fast)
+    instance_ram_sa = ram(dout_sa, din_sa, addr_sa, we_sa, clk_fast)
+    instance_ram_rt = ram(dout_rt, din_rt, addr_rt, we_rt, clk_fast)
+    instance_ram_results = ram_res(dout_res, din_res, addr_res, we_res, clk_fast)
     instance_dut = jp_process( res_out_x, left_s_i,sam_s_i, right_s_i,
 flgs_s_i, noupdate_s, update_s,  W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1,
 W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
@@ -271,7 +296,21 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                         #print (" %d %s") % (now(),bin(flat_lf,W0*LVL0))
 
                 #raise StopSimulation
-
+                addr_res.next = 0
+                addr_lf.next = 0
+                addr_sa.next = 0
+                addr_rt.next = 0
+                yield clk_fast.posedge
+                we_lf.next = 1
+                we_sa.next = 1
+                we_rt.next = 1
+                we_res.next = 1
+                yield clk_fast.posedge
+                din_lf.next = flat_lf
+                din_sa.next = flat_lf
+                din_rt.next = flat_lf
+                din_res.next = x
+                yield clk_fast.posedge
                 lft_s_i.next = flat_lf
                 yield clk_fast.posedge
                 #print ("left %d %s %s") % (now(), hex(flat_lf), hex(lft_s_i))
@@ -670,6 +709,8 @@ noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i, combine_rdy_s, nocombine_s, row_ind, col_ind,
 
 matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, mrow, mcol,
+dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
+addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3)
 tb_fsm = traceSignals(
@@ -677,8 +718,9 @@ tb, clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, left_com_x, sam_com_x, right_com_x,
 lft_s_i, sa_s_i, rht_s_i, combine_rdy_s, nocombine_s, row_ind, col_ind,
 
-matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, mrow, mcol)
-
+matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, mrow, mcol,
+dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
+addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res)
 sim = Simulation(tb_fsm)
 sim.run()
 #de_interleave(r,h,w)
