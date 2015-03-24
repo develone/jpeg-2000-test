@@ -61,7 +61,7 @@ ARCHITECTURE behavior OF tbjp_procesvhd IS
     );
     END COMPONENT;
     
-	 COMPONENT ram 
+	 COMPONENT ram
     port (
         dout: out unsigned(143 downto 0);
         din: in unsigned(143 downto 0);
@@ -71,25 +71,45 @@ ARCHITECTURE behavior OF tbjp_procesvhd IS
     );
 	 END COMPONENT;
 	 
+	 COMPONENT ram_res 
+    port (
+        dout_res: out unsigned(9 downto 0);
+        din_res: in unsigned(9 downto 0);
+        addr_res: in unsigned(9 downto 0);
+        we_res: in std_logic;
+        clk_fast: in std_logic
+    );
+    END COMPONENT;
+	 
+	 COMPONENT m_flatten is
+    port (
+        flat: out unsigned(143 downto 0)
+    );
+end COMPONENT;
    --Inputs
    signal left_s_i : unsigned(143 downto 0) := (others => '0');
    signal sam_s_i : unsigned(143 downto 0) := (others => '0');
    signal right_s_i : unsigned(143 downto 0) := (others => '0');
+
    signal flgs_s_i : unsigned(79 downto 0) := (others => '0');
 	
    signal din_lf : unsigned(143 downto 0) := (others => '0');
    signal din_sa : unsigned(143 downto 0) := (others => '0');
    signal din_rt : unsigned(143 downto 0) := (others => '0');
+	signal din_res : unsigned(9 downto 0) := (others => '0');
+	
    signal update_s : std_logic := '0';
    signal clk_fast : std_logic := '0';
 	signal we_lf : std_logic := '0';
 	signal we_sa : std_logic := '0';
 	signal we_rt : std_logic := '0';
+	signal we_res : std_logic := '0';
 	
    signal    addr_flgs: unsigned(9 downto 0);
 	signal    addr_lf: unsigned(9 downto 0);
 	signal    addr_sa: unsigned(9 downto 0);
 	signal    addr_rt: unsigned(9 downto 0);
+	signal    addr_res: unsigned(9 downto 0);
  	--Outputs
    signal res_out_x : signed(9 downto 0);
    signal noupdate_s : std_logic;
@@ -98,6 +118,11 @@ ARCHITECTURE behavior OF tbjp_procesvhd IS
 	signal dout_lf : unsigned(143 downto 0) := (others => '0');
    signal dout_sa : unsigned(143 downto 0) := (others => '0');
    signal dout_rt : unsigned(143 downto 0) := (others => '0');
+	signal dout_res : unsigned(9 downto 0) := (others => '0');
+	
+	signal flat_lf : unsigned(143 downto 0) := (others => '0');
+	signal flat_sa : unsigned(143 downto 0) := (others => '0');
+	signal flat_rt : unsigned(143 downto 0) := (others => '0');
    -- No clocks detected in port list. Replace <clock> below with 
    -- appropriate port name 
  
@@ -141,6 +166,24 @@ BEGIN
 			we => we_rt,
 			clk_fast => clk_fast
 		);	
+		
+		uut_ram_res : ram_res PORT MAP (
+	      dout_res => dout_res,
+			din_res  => unsigned(res_out_x),
+			addr_res => addr_res,
+			we_res => we_res,
+			clk_fast => clk_fast
+		);	
+		
+--		uut_m_flatten_lf : m_flatten PORT MAP (
+--         flat => flat_lf
+--		);
+--		uut_m_flatten_sa : m_flatten PORT MAP (
+--         flat => flat_sa
+--		);		
+--		uut_m_flatten_rt : m_flatten PORT MAP (
+--         flat => flat_rt
+--		);
    -- Clock process definitions
 --   <clock>_process :process
 --   begin
@@ -183,6 +226,8 @@ BEGIN
 	  wait for 10 ns;
      we_rt <= '1';
 	  wait for 10 ns;
+     we_res <= '1';
+	  wait for 10 ns;
      din_lf <= x"1a0d068341a0b088542e0b0581c120905824";
 	  wait for 10 ns;
 	  din_sa <= x"160b068341a0b068442a1106824120b05824";
@@ -204,11 +249,14 @@ BEGIN
 	  wait for 10 ns;
 	  flgs_s_i <= dout_flgs;
 	  wait for 10 ns;
+	  addr_res <= b"0000000000";
+	  wait for 10 ns;
 	  update_s <= '1';
 	  wait for 10 ns;
 	  update_s <= '0';
 	  wait for 10 ns;
-	  
+	  addr_res <= b"0000000001";
+	  wait for 10 ns;
 	  addr_flgs <= b"0000010000";
 	  wait for 10 ns;
 	  flgs_s_i <= dout_flgs;
