@@ -61,10 +61,11 @@ module tbjpeg_para;
 	wire [9:0] dout_res;	
    wire [79:0] dout_flgs;
 	//jpeg signals
-  wire signed [9:0] res_out_x;
-  //reg signed [9:0] res_out_x;
+  //wire signed [9:0] res_out_x;
+  reg signed [9:0] res_out_x;
 	wire noupdate_s;
-	
+
+ 	
  
 	
  
@@ -143,7 +144,7 @@ end
 		left_s_i = 0;
 		sam_s_i = 0;
 		flgs_s_i = 0;
-		
+		res_out_x = 0;
  
 		
 		// Wait 100 ns for global reset to finish
