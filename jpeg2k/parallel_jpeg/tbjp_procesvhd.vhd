@@ -81,11 +81,15 @@ ARCHITECTURE behavior OF tbjp_procesvhd IS
     );
     END COMPONENT;
 	 
-	 COMPONENT m_flatten is
+	 COMPONENT matrix_wrap 
     port (
-        flat: out unsigned(143 downto 0)
+        flat: out unsigned(143 downto 0);
+		  z: in unsigned(8 downto 0);
+        x: in signed (9 downto 0);
+        mrow: in unsigned(3 downto 0);
+        mcol: in unsigned(3 downto 0)
     );
-end COMPONENT;
+    end COMPONENT;
    --Inputs
    signal left_s_i : unsigned(143 downto 0) := (others => '0');
    signal sam_s_i : unsigned(143 downto 0) := (others => '0');
@@ -110,6 +114,21 @@ end COMPONENT;
 	signal    addr_sa: unsigned(9 downto 0);
 	signal    addr_rt: unsigned(9 downto 0);
 	signal    addr_res: unsigned(9 downto 0);
+	
+   signal z_lf : unsigned(8 downto 0):= (others => '0');
+   signal x_lf : signed (9 downto 0);
+   signal mrow_lf: unsigned(3 downto 0);
+   signal mcol_lf: unsigned(3 downto 0);
+	
+	signal z_sa : unsigned(8 downto 0):= (others => '0');
+   signal x_sa : signed (9 downto 0);
+   signal mrow_sa: unsigned(3 downto 0);
+   signal mcol_sa: unsigned(3 downto 0);
+	
+	signal z_rt : unsigned(8 downto 0):= (others => '0');
+   signal x_rt : signed (9 downto 0);
+   signal mrow_rt: unsigned(3 downto 0);
+   signal mcol_rt: unsigned(3 downto 0);
  	--Outputs
    signal res_out_x : signed(9 downto 0);
    signal noupdate_s : std_logic;
@@ -123,6 +142,10 @@ end COMPONENT;
 	signal flat_lf : unsigned(143 downto 0) := (others => '0');
 	signal flat_sa : unsigned(143 downto 0) := (others => '0');
 	signal flat_rt : unsigned(143 downto 0) := (others => '0');
+	type t11 is array (0 to 3) of unsigned(9 downto 0);
+	type t1 is array (0 to 3) of t11;
+	
+	signal a : t1:=(others => (others => (others => '0')));
    -- No clocks detected in port list. Replace <clock> below with 
    -- appropriate port name 
  
@@ -175,15 +198,27 @@ BEGIN
 			clk_fast => clk_fast
 		);	
 		
---		uut_m_flatten_lf : m_flatten PORT MAP (
---         flat => flat_lf
---		);
---		uut_m_flatten_sa : m_flatten PORT MAP (
---         flat => flat_sa
---		);		
---		uut_m_flatten_rt : m_flatten PORT MAP (
---         flat => flat_rt
---		);
+		matrix_wrap_lf_u1 : matrix_wrap PORT MAP (
+         flat => flat_lf,
+			z => z_lf,
+			x => x_lf,
+			mrow => mrow_lf,
+			mcol => mcol_lf
+		);
+		matrix_wrap_lf_u2 : matrix_wrap PORT MAP (
+         flat => flat_sa,
+			z => z_sa,
+			x => x_sa,
+			mrow => mrow_sa,
+			mcol => mcol_sa
+		);		
+		matrix_wrap_lf_u3 : matrix_wrap PORT MAP (
+         flat => flat_rt,
+			z => z_rt,
+			x => x_rt,
+			mrow => mrow_rt,
+			mcol => mcol_rt
+		);
    -- Clock process definitions
 --   <clock>_process :process
 --   begin
@@ -210,6 +245,14 @@ BEGIN
 
       -- insert stimulus here 
 	  wait for 10 ns;
+	  mcol_lf <= "0011";
+	  wait for 10 ns;
+	  mrow_lf <= "0011";
+	  wait for 10 ns;
+	  x_lf <= "0010100100";
+	  wait for 10 ns;
+	  z_lf <= "010100100";
+--	  a[mrow_lf][mcol_lf]  <= z_lf;
 	  addr_lf <= b"0000000000";
 	  wait for 10 ns;
 	  addr_sa <= b"0000000000";
