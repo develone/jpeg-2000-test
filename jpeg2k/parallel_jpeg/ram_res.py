@@ -17,9 +17,9 @@ def ram_res(dout_res, din_res, addr_res, we_res, clk_fast, depth=512):
     return write, read
 
 
-dout_res = Signal(intbv(0)[W0+1:])
+dout_res = Signal(intbv(0)[W0:])
 #dout_v = Signal(intbv(0)[LVL2*W2:])
-din_res = Signal(intbv(0)[W0+1:])
+din_res = Signal(intbv(0)[W0:])
 addr_res = Signal(intbv(0)[10:])
 we_res = Signal(bool(0))
 clk_fast = Signal(bool(0))

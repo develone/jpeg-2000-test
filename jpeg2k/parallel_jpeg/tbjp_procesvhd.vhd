@@ -29,7 +29,6 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 use IEEE.numeric_std.all;
 use std.textio.all;
-
 use work.pck_myhdl_09.all; 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -41,7 +40,12 @@ END tbjp_procesvhd;
 ARCHITECTURE behavior OF tbjp_procesvhd IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
- 
+    COMPONENT signed2twoscomplement 
+    port (
+        bits_in_sig: in signed (9 downto 0);
+        vv: out unsigned(8 downto 0)
+    );
+	 END COMPONENT;
     COMPONENT jp_process
     PORT(
          res_out_x : OUT  signed(9 downto 0);
@@ -73,8 +77,8 @@ ARCHITECTURE behavior OF tbjp_procesvhd IS
 	 
 	 COMPONENT ram_res 
     port (
-        dout_res: out unsigned(9 downto 0);
-        din_res: in unsigned(9 downto 0);
+        dout_res: out unsigned(8 downto 0);
+        din_res: in unsigned(8 downto 0);
         addr_res: in unsigned(9 downto 0);
         we_res: in std_logic;
         clk_fast: in std_logic
@@ -90,13 +94,12 @@ ARCHITECTURE behavior OF tbjp_procesvhd IS
    signal left_s_i : unsigned(143 downto 0) := (others => '0');
    signal sam_s_i : unsigned(143 downto 0) := (others => '0');
    signal right_s_i : unsigned(143 downto 0) := (others => '0');
-
    signal flgs_s_i : unsigned(79 downto 0) := (others => '0');
 	
    signal din_lf : unsigned(143 downto 0) := (others => '0');
    signal din_sa : unsigned(143 downto 0) := (others => '0');
    signal din_rt : unsigned(143 downto 0) := (others => '0');
-	signal din_res : unsigned(9 downto 0) := (others => '0');
+	signal din_res : unsigned(8 downto 0) := (others => '0');
 	
    signal update_s : std_logic := '0';
    signal clk_fast : std_logic := '0';
@@ -110,21 +113,13 @@ ARCHITECTURE behavior OF tbjp_procesvhd IS
 	signal    addr_sa: unsigned(9 downto 0);
 	signal    addr_rt: unsigned(9 downto 0);
 	signal    addr_res: unsigned(9 downto 0);
+	signal bits_in_sig: signed (9 downto 0);
+   signal vv:  unsigned(8 downto 0);
+   signal z : unsigned(8 downto 0):= (others => '0');
+   signal x : signed (9 downto 0);
+   signal ma_row: unsigned(3 downto 0);
+   signal ma_col: unsigned(3 downto 0);
 	
-   signal z_lf : unsigned(8 downto 0):= (others => '0');
-   signal x_lf : signed (9 downto 0);
-   signal mrow_lf: unsigned(3 downto 0);
-   signal mcol_lf: unsigned(3 downto 0);
-	
-	signal z_sa : unsigned(8 downto 0):= (others => '0');
-   signal x_sa : signed (9 downto 0);
-   signal mrow_sa: unsigned(3 downto 0);
-   signal mcol_sa: unsigned(3 downto 0);
-	
-	signal z_rt : unsigned(8 downto 0):= (others => '0');
-   signal x_rt : signed (9 downto 0);
-   signal mrow_rt: unsigned(3 downto 0);
-   signal mcol_rt: unsigned(3 downto 0);
  	--Outputs
    signal res_out_x : signed(9 downto 0);
    signal noupdate_s : std_logic;
@@ -133,15 +128,16 @@ ARCHITECTURE behavior OF tbjp_procesvhd IS
 	signal dout_lf : unsigned(143 downto 0) := (others => '0');
    signal dout_sa : unsigned(143 downto 0) := (others => '0');
    signal dout_rt : unsigned(143 downto 0) := (others => '0');
-	signal dout_res : unsigned(9 downto 0) := (others => '0');
+	signal dout_res : unsigned(8 downto 0) := (others => '0');
 	
 	signal flat_lf : unsigned(143 downto 0) := (others => '0');
 	signal flat_sa : unsigned(143 downto 0) := (others => '0');
 	signal flat_rt : unsigned(143 downto 0) := (others => '0');
+	
 	type t11 is array (0 to 3) of unsigned(9 downto 0);
 	type t1 is array (0 to 3) of t11;
+	signal flat_i : t1:=(others => (others => (others => '0')));
 	
-	signal mat_flat_i : t1:=(others => (others => (others => '0')));
    -- No clocks detected in port list. Replace <clock> below with 
    -- appropriate port name 
  
@@ -188,7 +184,7 @@ BEGIN
 		
 		uut_ram_res : ram_res PORT MAP (
 	      dout_res => dout_res,
-			din_res  => unsigned(res_out_x),
+			din_res  => din_res,
 			addr_res => addr_res,
 			we_res => we_res,
 			clk_fast => clk_fast
@@ -205,7 +201,10 @@ BEGIN
 		m_flatten_lf_u3 : m_flatten PORT MAP (
          flat => flat_rt
       );
- 
+    signed2twoscomplement_u1 : signed2twoscomplement PORT MAP (
+	      bits_in_sig => bits_in_sig,
+			vv => vv
+	 );
    clk_fast_process :process
    begin
 		clk_fast <= '0';
@@ -224,55 +223,71 @@ BEGIN
 
       -- insert stimulus here 
 	  wait for 10 ns;
-	  mcol_lf <= "0011";
+	  ma_col <= "0011";
 	  wait for 10 ns;
-	  mrow_lf <= "0011";
+	  ma_row <= "0011";
+--	  testing -1 to x
+	  x <= "1111111111";
 	  wait for 10 ns;
-	  x_lf <= "0010100100";
+	  bits_in_sig <= x;
 	  wait for 10 ns;
-	  z_lf <= "010100100";
+	  z <= vv;
 	  wait for 10 ns;
-	  mat_flat_i(3)(3)  <= "0000000001";
+--	  testing -2 to x
+     x <= "1111111110";
 	  wait for 10 ns;
-	  mat_flat_i(3)(2)  <= "0010100010";
+	  bits_in_sig <= x;
 	  wait for 10 ns;
-	  
-	  
-	  mat_flat_i(3)(1)  <= "0010100011";
-	  wait for 10 ns;
-	  mat_flat_i(3)(0)  <= "0010100100";
-	  wait for 10 ns;
-	  mat_flat_i(2)(3)  <= "0010100001";
-	  wait for 10 ns;
-	  mat_flat_i(2)(2)  <= "0010100010";
+	  z <= vv;
 	  wait for 10 ns;
 	  
-	  
-	  mat_flat_i(2)(1)  <= "0010100011";
+--	  testing 258 to x
+	  x <= "0100000010";
 	  wait for 10 ns;
-	  mat_flat_i(2)(0)  <= "0010100100";
-	  wait for 10 ns;	  
-
+	  bits_in_sig <= x;
 	  wait for 10 ns;
-	  mat_flat_i(1)(3)  <= "0000000001";
+	  z <= vv;
 	  wait for 10 ns;
-	  mat_flat_i(1)(2)  <= "0110100010";
+--	  testing 110 to x
+     x <= "0001101110";
 	  wait for 10 ns;
-	  
-	  
-	  mat_flat_i(1)(1)  <= "0110100011";
+	  bits_in_sig <= x;
 	  wait for 10 ns;
-	  mat_flat_i(1)(0)  <= "0110100100";
+	  z <= vv;
 	  wait for 10 ns;
-	  mat_flat_i(0)(3)  <= "0110100001";
-	  wait for 10 ns;
-	  mat_flat_i(0)(2)  <= "0110100010";
-	  wait for 10 ns;
-	  
-	  
-	  mat_flat_i(0)(1)  <= "0110100011";
-	  wait for 10 ns;
-	  mat_flat_i(0)(0)  <= "0110100100";
+--	  lines 259-290
+--	  are to test the matrix flat_i
+--	  flat_i(3)(3)  <= "0000000001";
+--	  wait for 10 ns;
+--	  flat_i(3)(2)  <= "0010100010";
+--	  wait for 10 ns;
+--	  flat_i(3)(1)  <= "0010100011";
+--	  wait for 10 ns;
+--	  flat_i(3)(0)  <= "0010100100";
+--	  wait for 10 ns;
+--	  flat_i(2)(3)  <= "0010100001";
+--	  wait for 10 ns;
+--	  flat_i(2)(2)  <= "0010100010";
+--	  wait for 10 ns;
+--	  flat_i(2)(1)  <= "0010100011";
+--	  wait for 10 ns;
+--	  flat_i(2)(0)  <= "0010100100";
+--	  wait for 10 ns;	  
+--	  flat_i(1)(3)  <= "0000000001";
+--	  wait for 10 ns;
+--	  flat_i(1)(2)  <= "0110100010";
+--	  wait for 10 ns; 
+--	  flat_i(1)(1)  <= "0110100011";
+--	  wait for 10 ns;
+--	  flat_i(1)(0)  <= "0110100100";
+--	  wait for 10 ns;
+--	  flat_i(0)(3)  <= "0110100001";
+--	  wait for 10 ns;
+--	  flat_i(0)(2)  <= "0110100010";
+--	  wait for 10 ns;
+--	  flat_i(0)(1)  <= "0110100011";
+--	  wait for 10 ns;
+--	  flat_i(0)(0)  <= "0110100100";
 	  wait for 10 ns;	  	  
 	  addr_lf <= b"0000000000";
 	  wait for 10 ns;
@@ -317,6 +332,10 @@ BEGIN
 	  wait for 10 ns;
 	  update_s <= '1';
 	  wait for 10 ns;
+	  bits_in_sig <= res_out_x;
+	  wait for 10 ns;
+	  din_res <= vv;
+	  wait for 10 ns;
 	  update_s <= '0';
 	  wait for 10 ns;
 	  addr_res <= b"0000000001";
@@ -326,6 +345,11 @@ BEGIN
 	  flgs_s_i <= dout_flgs;
 	  wait for 10 ns;
 	  update_s <= '1';
+	  wait for 10 ns;
+	  wait for 10 ns;
+	  bits_in_sig <= res_out_x;
+	  wait for 10 ns;
+	  din_res <= vv;
 	  wait for 10 ns;
 	  update_s <= '0';
 	  wait for 10 ns;
