@@ -145,7 +145,7 @@ ARCHITECTURE behavior OF tbjp_procesvhd IS
 	type t11 is array (0 to 3) of unsigned(9 downto 0);
 	type t1 is array (0 to 3) of t11;
 	
-	signal a : t1:=(others => (others => (others => '0')));
+	signal mat_flat : t1:=(others => (others => (others => '0')));
    -- No clocks detected in port list. Replace <clock> below with 
    -- appropriate port name 
  
@@ -252,7 +252,49 @@ BEGIN
 	  x_lf <= "0010100100";
 	  wait for 10 ns;
 	  z_lf <= "010100100";
---	  a[mrow_lf][mcol_lf]  <= z_lf;
+	  wait for 10 ns;
+	  mat_flat(3)(3)  <= "0000000001";
+	  wait for 10 ns;
+	  mat_flat(3)(2)  <= "0010100010";
+	  wait for 10 ns;
+	  
+	  
+	  mat_flat(3)(1)  <= "0010100011";
+	  wait for 10 ns;
+	  mat_flat(3)(0)  <= "0010100100";
+	  wait for 10 ns;
+	  mat_flat(2)(3)  <= "0010100001";
+	  wait for 10 ns;
+	  mat_flat(2)(2)  <= "0010100010";
+	  wait for 10 ns;
+	  
+	  
+	  mat_flat(2)(1)  <= "0010100011";
+	  wait for 10 ns;
+	  mat_flat(2)(0)  <= "0010100100";
+	  wait for 10 ns;	  
+
+	  wait for 10 ns;
+	  mat_flat(1)(3)  <= "0000000001";
+	  wait for 10 ns;
+	  mat_flat(1)(2)  <= "0110100010";
+	  wait for 10 ns;
+	  
+	  
+	  mat_flat(1)(1)  <= "0110100011";
+	  wait for 10 ns;
+	  mat_flat(1)(0)  <= "0110100100";
+	  wait for 10 ns;
+	  mat_flat(0)(3)  <= "0110100001";
+	  wait for 10 ns;
+	  mat_flat(0)(2)  <= "0110100010";
+	  wait for 10 ns;
+	  
+	  
+	  mat_flat(0)(1)  <= "0110100011";
+	  wait for 10 ns;
+	  mat_flat(0)(0)  <= "0110100100";
+	  wait for 10 ns;	  	  
 	  addr_lf <= b"0000000000";
 	  wait for 10 ns;
 	  addr_sa <= b"0000000000";
