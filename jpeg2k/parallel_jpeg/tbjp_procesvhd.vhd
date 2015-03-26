@@ -81,13 +81,9 @@ ARCHITECTURE behavior OF tbjp_procesvhd IS
     );
     END COMPONENT;
 	 
-	 COMPONENT matrix_wrap 
+	 COMPONENT m_flatten 
     port (
-        flat: out unsigned(143 downto 0);
-		  z: in unsigned(8 downto 0);
-        x: in signed (9 downto 0);
-        mrow: in unsigned(3 downto 0);
-        mcol: in unsigned(3 downto 0)
+        flat: out unsigned(143 downto 0)
     );
     end COMPONENT;
    --Inputs
@@ -145,11 +141,11 @@ ARCHITECTURE behavior OF tbjp_procesvhd IS
 	type t11 is array (0 to 3) of unsigned(9 downto 0);
 	type t1 is array (0 to 3) of t11;
 	
-	signal mat_flat : t1:=(others => (others => (others => '0')));
+	signal mat_flat_i : t1:=(others => (others => (others => '0')));
    -- No clocks detected in port list. Replace <clock> below with 
    -- appropriate port name 
  
---   constant <clock>_period : time := 10 ns;
+ 
     constant clk_fast_period : time := 10 ns;
 BEGIN
  
@@ -198,35 +194,18 @@ BEGIN
 			clk_fast => clk_fast
 		);	
 		
-		matrix_wrap_lf_u1 : matrix_wrap PORT MAP (
-         flat => flat_lf,
-			z => z_lf,
-			x => x_lf,
-			mrow => mrow_lf,
-			mcol => mcol_lf
+		m_flatten_lf_u1 : m_flatten PORT MAP (
+         flat => flat_lf
 		);
-		matrix_wrap_lf_u2 : matrix_wrap PORT MAP (
-         flat => flat_sa,
-			z => z_sa,
-			x => x_sa,
-			mrow => mrow_sa,
-			mcol => mcol_sa
-		);		
-		matrix_wrap_lf_u3 : matrix_wrap PORT MAP (
-         flat => flat_rt,
-			z => z_rt,
-			x => x_rt,
-			mrow => mrow_rt,
-			mcol => mcol_rt
-		);
-   -- Clock process definitions
---   <clock>_process :process
---   begin
---		<clock> <= '0';
---		wait for <clock>_period/2;
---		<clock> <= '1';
---		wait for <clock>_period/2;
---   end process;
+		
+		m_flatten_lf_u2 : m_flatten PORT MAP (
+         flat => flat_sa
+      );
+		
+		m_flatten_lf_u3 : m_flatten PORT MAP (
+         flat => flat_rt
+      );
+ 
    clk_fast_process :process
    begin
 		clk_fast <= '0';
@@ -253,47 +232,47 @@ BEGIN
 	  wait for 10 ns;
 	  z_lf <= "010100100";
 	  wait for 10 ns;
-	  mat_flat(3)(3)  <= "0000000001";
+	  mat_flat_i(3)(3)  <= "0000000001";
 	  wait for 10 ns;
-	  mat_flat(3)(2)  <= "0010100010";
-	  wait for 10 ns;
-	  
-	  
-	  mat_flat(3)(1)  <= "0010100011";
-	  wait for 10 ns;
-	  mat_flat(3)(0)  <= "0010100100";
-	  wait for 10 ns;
-	  mat_flat(2)(3)  <= "0010100001";
-	  wait for 10 ns;
-	  mat_flat(2)(2)  <= "0010100010";
+	  mat_flat_i(3)(2)  <= "0010100010";
 	  wait for 10 ns;
 	  
 	  
-	  mat_flat(2)(1)  <= "0010100011";
+	  mat_flat_i(3)(1)  <= "0010100011";
 	  wait for 10 ns;
-	  mat_flat(2)(0)  <= "0010100100";
+	  mat_flat_i(3)(0)  <= "0010100100";
+	  wait for 10 ns;
+	  mat_flat_i(2)(3)  <= "0010100001";
+	  wait for 10 ns;
+	  mat_flat_i(2)(2)  <= "0010100010";
+	  wait for 10 ns;
+	  
+	  
+	  mat_flat_i(2)(1)  <= "0010100011";
+	  wait for 10 ns;
+	  mat_flat_i(2)(0)  <= "0010100100";
 	  wait for 10 ns;	  
 
 	  wait for 10 ns;
-	  mat_flat(1)(3)  <= "0000000001";
+	  mat_flat_i(1)(3)  <= "0000000001";
 	  wait for 10 ns;
-	  mat_flat(1)(2)  <= "0110100010";
-	  wait for 10 ns;
-	  
-	  
-	  mat_flat(1)(1)  <= "0110100011";
-	  wait for 10 ns;
-	  mat_flat(1)(0)  <= "0110100100";
-	  wait for 10 ns;
-	  mat_flat(0)(3)  <= "0110100001";
-	  wait for 10 ns;
-	  mat_flat(0)(2)  <= "0110100010";
+	  mat_flat_i(1)(2)  <= "0110100010";
 	  wait for 10 ns;
 	  
 	  
-	  mat_flat(0)(1)  <= "0110100011";
+	  mat_flat_i(1)(1)  <= "0110100011";
 	  wait for 10 ns;
-	  mat_flat(0)(0)  <= "0110100100";
+	  mat_flat_i(1)(0)  <= "0110100100";
+	  wait for 10 ns;
+	  mat_flat_i(0)(3)  <= "0110100001";
+	  wait for 10 ns;
+	  mat_flat_i(0)(2)  <= "0110100010";
+	  wait for 10 ns;
+	  
+	  
+	  mat_flat_i(0)(1)  <= "0110100011";
+	  wait for 10 ns;
+	  mat_flat_i(0)(0)  <= "0110100100";
 	  wait for 10 ns;	  	  
 	  addr_lf <= b"0000000000";
 	  wait for 10 ns;

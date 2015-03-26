@@ -3,10 +3,10 @@ from jpeg_constants import *
 import  random
 
 def m_flatten(matrix, flat):
-	_flat = ConcatSignal(*[mcol(W0,0) for mrow in matrix for mcol in mrow])
+	flat_i = ConcatSignal(*[mcol(W0,0) for mrow in matrix for mcol in mrow])
 	@always_comb
 	def rtl():
-		flat.next = _flat
+		flat.next = flat_i
 	return rtl
 
 
