@@ -138,9 +138,9 @@ def seq_to_img(m, pix):
     for row in range(len(m)):
         for col in range(len(m[row])):
             pix[col,row] = m[row][col]
-dout_res = Signal(intbv(0)[W0+1:])
+dout_res = Signal(intbv(0)[W0:])
 
-din_res = Signal(intbv(0)[W0+1:])
+din_res = Signal(intbv(0)[W0:])
 addr_res = Signal(intbv(0)[10:])
 we_res = Signal(bool(0))
 
