@@ -11,31 +11,31 @@ from argparse import Namespace
 from PIL import Image
 from myhdl import *
 
-from _jpeg_prep_cosim import prep_cosim
+#from _jpeg_prep_cosim import prep_cosim
 # the interfaces to the encoders
-from _jpeg_v1_intf import JPEGEncV1
-from _jpeg_v2_intf import JPEGEncV2
-
+from _jpeg_2k_intf import JPEGEnc2k
 def runbench(args):
 
-    clock = Signal(bool(0))
+    clk_fast = Signal(bool(0))
     reset = ResetSignal(1, active=1, async=True)
 
-    jpgv1 = JPEGEncV1(clock, reset, args=args)
-    jpgv2 = JPEGEncV2(clock, reset, args=args)
-
+ 
+    jpg2k = JPEGEnc2k(clk_fast, reset, args=args)
+ 
+ 
+    '''
     # prepare the cosimulation
-    tbdut = prep_cosim(clock, reset, jpgv1, jpgv2, args=args)
+    #tbdut = prep_cosim(clk_fast, reset, jpg2k, args=args)
 
     # save the bitstreams here
     v1_bic,v2_bic = [None],[None]
-
+    
     # clock generator (20 tick period)
     @always(delay(10))
     def tbclk():
-        clock.next = not clock
+        clk_fast.next = not clk_fast
 
-
+    
     def _dump_bitstreams(v1_bic, v2_bic, args):
         """ dump the retrieved bitstreams
         """
@@ -58,7 +58,7 @@ def runbench(args):
                 break
         print("V2 max frame rate %8.3f @ %s" % (jpgv2.max_frame_rate, str(jpgv2.img_size),))
 
-
+    
     def _test():
         # get the bus adapters to the encoders
         tbintf = (jpgv1.get_gens(), jpgv2.get_gens(),)
@@ -133,25 +133,25 @@ def runbench(args):
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # stimulate V2 (design2)
         @instance
-        def tbstimv2():
+        def tbstim2k():
             yield delay(100)
             while reset == reset.active:
                 yield delay(10)
             yield delay(100)
             yield clock.posedge
 
-            yield jpgv2.put_image(img)
+            yield jpg2k.put_image(img)
 
             # no_wait indicates to stream the input and exit,
             # don't wait the encoder to finish
             if args.no_wait:
-                while not jpgv2.pxl_done:
+                while not jpg2k.pxl_done:
                     yield delay(1000)
                     yield clock.posedge
                 for _ in range(100):
                     yield delay(100)
             else:
-                yield jpgv2.get_jpeg(v2_bic)
+                yield jpg2k.get_jpeg(v2_bic)
 
             finished[1].next = True
 
@@ -159,7 +159,7 @@ def runbench(args):
 
 
     if args.trace:
-        traceSignals.name = 'vcd/_test_jpegenc'
+        traceSignals.name = 'vcd/_test_jpegenc2k'
         traceSignals.timescale = '1ns'
         fn = traceSignals.name + '.vcd'
         if os.path.isfile(fn):
@@ -170,15 +170,16 @@ def runbench(args):
 
     # run the simulation
     Simulation((gt, tbdut,)).run()
-
-def test_jpegenc():
+    '''
+def test_jpegenc2k():
     # randomly select a test image
-    ipth = "./test_images/color/small4.png"
+    #ipth = "./lena_256.png"
+    ipth = "./lena_rgb_512.png"
     parser = argparse.ArgumentParser()
     args = parser.parse_args()
-    """
-
-    ifn = 'small'
+ 
+ 
+    """= 'small'
     while 'small' in ifn:
         ifn = random.choice(os.listdir(ipth))
 
@@ -197,7 +198,7 @@ def test_jpegenc():
     """
 
     # setup arguments for the test (future capture from CLI)
-    vmod = 'tb_jpegenc'
+    vmod = 'tb_jpegenc2k'
     # tracing arguments
     args.trace=False            # enable tracing (debug)
     args.vtrace=True            # enable VCD tracing in Verilog cosim
@@ -210,17 +211,30 @@ def test_jpegenc():
     args.build_only=False       # compile the V* only, not test
     args.build_skip_v1=False    # skip the V1 encoder compile
     args.nout=0                 # number of encoded outputs to capture (debug mode)
-    args.no_wait=False          # don't wait for the encoder, exit after input
+    args.no_wait=False          # don't wait for the encoder,exit after input
     args.dump_bitstreams=False  # dump full bitstreams at the end
     args.ncyc = 200             # generate some prints
 
     args.start_time = datetime.datetime.now()
 
     # run the JPEG encoder test
+    print("Using args trace %s " % (args.trace))
+    print("Using args vtrace %s " % (args.vtrace))
+    print("Using args vtrace_level %s " % (args.vtrace_level))
+    print("Using args vtrace_module %s " % (args.vtrace_module))
     print("Using image %s " % (ipth,))
+    
+    print("Using args build_only %s " % (args.build_only))
+    print("Using args nout %s " % (args.nout))
+    print("Using args no_wait %s " % (args.no_wait))
+    print("Using args dump_bitstreams %s " % (args.dump_bitstreams))
+    print("Using args start_time %s " % (args.start_time))
+    img = Image.open(ipth) 
+    print("Image size %d %d " % (img.size))
+    print("Image mode %s " % (img.mode))
     runbench(args)
 
 if __name__ == '__main__':
-    test_jpegenc()
+    test_jpegenc2k()
 
 

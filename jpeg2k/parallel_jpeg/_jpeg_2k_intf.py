@@ -9,16 +9,16 @@ from PIL import Image
 from myhdl import *
 from _SignalQueue import SignalQueue
 
-from _jpeg_intf import JPEGEnc
+from _jpeg2k_intf import JPEGEnc2k
 
 
-class JPEGEncV2(JPEGEnc):
+class JPEGEnc2k(JPEGEnc2k):
     
-    def __init__(self, clock, reset, args=None):
+    def __init__(self, clk_fast, reset, args=None):
         """
         """
 
-        JPEGEnc.__init__(self, clock, reset, args=args)
+        JPEGEnc2k.__init__(self, clk_fast, reset, args=args)
         self.args = args
 
         # ---[encoder interface]---
@@ -35,7 +35,7 @@ class JPEGEncV2(JPEGEnc):
         self.block_size = (8,8,)
         self.nout = args.nout
         self.start_time = args.start_time
-
+        '''
 
     def stream_img_in(self):
         """ 
@@ -55,7 +55,7 @@ class JPEGEncV2(JPEGEnc):
                 self.pxl_done.next = False
                 img = imglst[0]
                 nx,ny = img.size
-                print("V2: encode image %s %d x %d" % (str(img), nx, ny,))
+                print("2k: encode image %s %d x %d" % (str(img), nx, ny,))
                 self.img_size = img.size
 
                 self.encode_start_time = now()
@@ -89,7 +89,7 @@ class JPEGEncV2(JPEGEnc):
                 self.encode_end_time = now()
                 dt = self.encode_end_time - self.encode_start_time
                 self.max_frame_rate = 1/(dt * 1e-9)
-                print("V2: max frame rate %8.3f frames/sec" % (self.max_frame_rate,))
+                print("2k: max frame rate %8.3f frames/sec" % (self.max_frame_rate,))
                 
                 self.pxl_done.next = True
                 self.data_in.next = 0
@@ -98,12 +98,12 @@ class JPEGEncV2(JPEGEnc):
                 # keep track of the simulation time
                 end_time = datetime.datetime.now()
                 dt = end_time - self.start_time
-                print("V2: end pixel stream %s " % (dt,))
+                print("2k: end pixel stream %s " % (dt,))
 
 
         return t_bus_in
-
-
+        '''
+    '''
     def stream_jpg_out(self):
         """ capture the encoded bitstream
         """
@@ -122,7 +122,7 @@ class JPEGEncV2(JPEGEnc):
                     self._bitstream.append(int(self.jpeg_bitstream))
                     ii += 1
                     if ii%Ncyc == 0: 
-                        print("V2: %6d output, latest %08X" % (ii, self._bitstream[-1],))
+                        print("2k: %6d output, latest %08X" % (ii, self._bitstream[-1],))
 
                 if ((self.nout > 0 and ii >= self.nout) or 
                     self.eof_data_partial_ready):
@@ -131,9 +131,9 @@ class JPEGEncV2(JPEGEnc):
                     
                     end_time = datetime.datetime.now()
                     dt = end_time - self.start_time
-                    print("V2: end of bitstream %s " % (dt,))
+                    print("2k: end of bitstream %s " % (dt,))
                     self.enc_done.next = True
 
         return t_bus_out
-
+        '''
 

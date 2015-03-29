@@ -7,12 +7,12 @@ from myhdl import *
 from _SignalQueue import SignalQueue
     
                  
-class JPEGEnc(object):
+class JPEGEnc2k(object):
 
-    def __init__(self, clock, reset, args=None):
+    def __init__(self, clk_fast, reset, args=None):
         """
         """
-
+  
         # @todo: the following parameters should be part of the args
         self.pixel_nbits = 24
         self.block_size  = (8,8,)
@@ -20,7 +20,7 @@ class JPEGEnc(object):
 
         self.clock = clock
         self.reset = reset
-
+        ''' 
         # ---[generic interface]---
         # pixel stream input
         self.sof = Signal(bool(0))        # start of figure/frame
@@ -88,3 +88,4 @@ class JPEGEnc(object):
         d = self.stream_img_in()
         m = self.stream_jpg_out()
         return d,m
+    '''
