@@ -197,7 +197,7 @@ LVL2=LVL2, W3=W3, LVL3=LVL3):
     instance_ram_lf = ram(dout_lf, din_lf, addr_lf, we_lf, clk_fast)
     instance_ram_sa = ram(dout_sa, din_sa, addr_sa, we_sa, clk_fast)
     instance_ram_rt = ram(dout_rt, din_rt, addr_rt, we_rt, clk_fast)
-    instance_ram_results = ram_res(dout_res, din_res, addr_res, we_res, clk_fast)
+    instance_ram_res = ram_res(dout_res, din_res, addr_res, we_res, clk_fast)
     instance_dut = jp_process( res_out_x, left_s_i,sam_s_i, right_s_i,
 flgs_s_i, noupdate_s, update_s,  W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1,
 W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
@@ -286,19 +286,13 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                         yield clk_fast.posedge
                         matrix_lf[ma_row][ma_col].next = z
                         yield clk_fast.posedge
-                        #print (" %d %s") % (now(),bin(flat_lf,W0*LVL0))
-
-                #raise StopSimulation
-
-                #lft_s_i.next = flat_lf
-                #yield clk_fast.posedge
+                        #print (" %d %s") % (now(),bin(flat_lf,W0*LVL0)) 
                 din_lf.next = flat_lf
                 yield clk_fast.posedge
+                print ("left %d %d %s %s") % (now(), addr_lf, hex(flat_lf), hex(din_lf))
                 addr_lf.next = addr_lf + 1
                 yield clk_fast.posedge
-                #print ("left %d %s %s") % (now(), hex(flat_lf), hex(lft_s_i))
-                yield clk_fast.posedge
-                #combinel_sig_s.next = 0
+ 
                 '''ma_row ma_col pass1 even sa
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
                 (1 2 3) (3 4 5) (5 6 7) (7 8 9) (9 10 11) (11 12 13) (13 14 15) (15 16 17) (17 18 19) (19 20 21) (21 22 23) (23 24 25) (25 26 28) (27 28 29) (29 30 31) (31 32 33)'''
@@ -348,18 +342,13 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                         yield clk_fast.posedge
                         matrix_sa[ma_row][ma_col].next = z
                         yield clk_fast.posedge
-                        #print (" %d %s") % (now(),bin(flat_sa,W0*LVL0))
-
-                #sa_s_i.next = flat_sa
-                #yield clk_fast.posedge
+ 
                 din_sa.next = flat_sa
                 yield clk_fast.posedge
+                print ("sam %d %d %s %s") % (now(), addr_sa, hex(flat_sa), hex(din_sa))
                 addr_sa.next = addr_sa + 1
                 yield clk_fast.posedge
-
-                yield clk_fast.posedge
-                #print ("sam  %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
-                #combinesa_sig_s.next = 0
+ 
                 '''ma_row ma_col pass1 even rt
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
                 (1 2 3) (3 4 5) (5 6 7) (7 8 9) (9 10 11) (11 12 13) (13 14 15) (15 16 17) (17 18 19) (19 20 21) (21 22 23) (23 24 25) (25 26 28) (27 28 29) (29 30 31) (31 32 33)'''
@@ -409,68 +398,61 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                         yield clk_fast.posedge
                         matrix_rt[ma_row][ma_col].next = z
                         yield clk_fast.posedge
-                        #print (" %d %s") % (now(),bin(flat_rt,W0*LVL0))
-
-                #rht_s_i.next = (flat_rt)
-                #yield clk_fast.posedge
-
+ 
                 din_rt.next = flat_rt
                 yield clk_fast.posedge
+                print ("right %d %d %s %s") % (now(), addr_rt, hex(flat_rt), hex(din_rt))
                 addr_rt.next = addr_rt + 1
+                yield clk_fast.posedge
+                addr_flgs.next = 0                 
+                yield clk_fast.posedge
+                flgs_s_i.next = dout_flgs
                 yield clk_fast.posedge
             #raise StopSimulation
             #this should have the col values in ram
-            addr_lf.next = 0
-            yield clk_fast.posedge
-            addr_sa.next = 0
-            yield clk_fast.posedge
-            addr_rt.next = 0
-            yield clk_fast.posedge
             we_lf.next = 0
             yield clk_fast.posedge
             we_sa.next = 0
             yield clk_fast.posedge
             we_rt.next = 0
             yield clk_fast.posedge
-            addr_res.next = 0
+            row_ind.next = 2
             yield clk_fast.posedge
+            addr_res.next = 2
+            yield clk_fast.posedge 
+            addr_lf.next = 0
+            yield clk_fast.posedge
+            addr_sa.next = 0
+            yield clk_fast.posedge
+            addr_rt.next = 0
+            yield clk_fast.posedge
+
+            addr_flgs.next = 0
+            yield clk_fast.posedge 
             we_res.next = 1
             yield clk_fast.posedge
-            #print ("right %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
-            #combinert_sig_s.next = 0
-            yield clk_fast.posedge
+            
             for i in range(h/16):
-                print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(dout_lf), hex(dout_sa), hex(dout_rt))
-                #print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
-                yield clk_fast.posedge
-
-                #combine_rdy_s.next = 1
-                #yield clk_fast.posedge
-
+                print( "memory left sam right %3d %d %d %d %d %d %s %s %s") % (now(), row, col,addr_lf, addr_sa, addr_rt, hex(dout_lf), hex(dout_sa), hex(dout_rt))
                 left_s_i.next = dout_lf
+                yield clk_fast.posedge
                 sam_s_i.next = dout_sa
+                yield clk_fast.posedge
                 right_s_i.next = dout_rt
                 yield clk_fast.posedge
-                print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
-                #combine_rdy_s.next = 0
+                print( "jpeg inp left sam right %3d %d %d %d %d %d %s %s %s") % (now(), row, col,addr_lf, addr_sa, addr_rt, hex(left_s_i), hex(sam_s_i), hex(right_s_i))   
 
-                addr_lf.next = addr_lf + 1
-                yield clk_fast.posedge
-                addr_sa.next = addr_sa + 1
-                yield clk_fast.posedge
-                addr_rt.next = addr_rt + 1
-                yield clk_fast.posedge
-                addr_flgs.next = 0
-                yield clk_fast.posedge
+ 
                 for loop in range(16):
                     update_s.next = 1
+                    yield clk_fast.posedge
+                    din_res.next = res_out_x[W0:]
                     yield clk_fast.posedge
                     addr_flgs.next = addr_flgs + 1
                     yield clk_fast.posedge
                     flgs_s_i.next = dout_flgs
                     yield clk_fast.posedge
-                    din_res.next = res_out_x[W0:]
-                    yield clk_fast.posedge
+                    
                     addr_res.next = addr_res + 2
                     yield clk_fast.posedge
                     if (row_ind <= h-2):
@@ -480,7 +462,14 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                         yield clk_fast.posedge
                     update_s.next = 0
                     yield clk_fast.posedge
-
+                addr_flgs.next = 0
+                yield clk_fast.posedge
+                addr_lf.next = addr_lf + 1
+                yield clk_fast.posedge
+                addr_sa.next = addr_sa + 1
+                yield clk_fast.posedge
+                addr_rt.next = addr_rt + 1
+                yield clk_fast.posedge 
             raise StopSimulation
 
             #raise StopSimulation

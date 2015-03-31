@@ -5,7 +5,7 @@ def ram_res(dout_res, din_res, addr_res, we_res, clk_fast, depth=512):
 
     mem = [Signal(intbv(0)[W0:]) for i in range(depth)]
 
-    @always(clk_fast.posedge)
+    @always(clk_fast.negedge)
     def write():
         if we_res:
             mem[addr_res].next = din_res
