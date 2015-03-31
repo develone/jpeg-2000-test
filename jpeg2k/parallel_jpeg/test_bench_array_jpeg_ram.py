@@ -462,30 +462,26 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                 yield clk_fast.posedge
                 addr_flgs.next = 0
                 yield clk_fast.posedge
+                for loop in range(16):
+                    update_s.next = 1
+                    yield clk_fast.posedge
+                    addr_flgs.next = addr_flgs + 1
+                    yield clk_fast.posedge
+                    flgs_s_i.next = dout_flgs
+                    yield clk_fast.posedge
+                    din_res.next = res_out_x[W0:]
+                    yield clk_fast.posedge
+                    addr_res.next = addr_res + 2
+                    yield clk_fast.posedge
+                    if (row_ind <= h-2):
+                        print ("%d %d %d %d %d %d %d even pass 1 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
+                        results.append(int(r[row_ind][col_ind]))
+                        row_ind.next = row_ind + 2
+                        yield clk_fast.posedge
+                    update_s.next = 0
+                    yield clk_fast.posedge
 
-
-                flgs_s_i.next = dout_flgs
-                yield clk_fast.posedge
-                #print( "%3d %s") % (now(), hex(flgs_s_i))
-                addr_flgs.next = addr_flgs + 1
-                yield clk_fast.posedge
-                update_s.next = 1
-                yield clk_fast.posedge
-                #a = int(res_out_x)
-                din_res.next = res_out_x[W0:]
-                yield clk_fast.posedge
-                addr_res.next = addr_res + 1
-                yield clk_fast.posedge
-                if (row_ind <= h-2):
-                    #r[row_ind][col_ind] = a
-                    print ("%d %d %d %d %d %d %d even pass 1 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
-                    results.append(int(r[row_ind][col_ind]))
-
-                row_ind.next = row_ind + 2
-                yield clk_fast.posedge
-
-                update_s.next = 0
-                yield clk_fast.posedge
+            raise StopSimulation
 
             #raise StopSimulation
             addr_lf.next = 0
