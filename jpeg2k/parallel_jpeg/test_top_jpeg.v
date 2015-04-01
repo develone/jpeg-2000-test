@@ -185,12 +185,23 @@ end
 		sam_s_i = dout_sa;
 		right_s_i = dout_rt;
 		#250;
-		flgs_s_i = 7;
-		//flgs_s_i = dout_flgs;
+		//flgs_s_i = 7;
+		flgs_s_i = dout_flgs;
 		#270;
 		update_s = 1;
 		#280;
 		update_s = 0;
+		#290;
+		addr_flgs = 1;
+		#300;
+		flgs_s_i = dout_flgs;
+		update_s = 1;
+		#320;
+		update_s = 0;
+		#330;
+		addr_flgs = 2;
+		#340;
+		flgs_s_i = dout_flgs;
 		
 	end
       
