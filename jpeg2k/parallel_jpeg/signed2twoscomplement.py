@@ -15,4 +15,4 @@ def convert():
 	toVHDL(signed2twoscomplement, bits_in_sig, vv)
 	toVerilog(signed2twoscomplement, bits_in_sig, vv)
 
-convert()
+#convert()

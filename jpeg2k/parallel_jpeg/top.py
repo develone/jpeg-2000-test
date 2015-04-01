@@ -5,6 +5,7 @@ from rom import *
 from array_jpeg import jp_process
 from ram import ram
 from ram_res import ram_res
+from signed2twoscomplement import signed2twoscomplement
 from PIL import Image
 #toVHDL.numeric_ports = False
 #img = Image.open("lena_rgb_512.png")
@@ -138,6 +139,8 @@ def seq_to_img(m, pix):
     for row in range(len(m)):
         for col in range(len(m[row])):
             pix[col,row] = m[row][col]
+bits_in_sig = Signal(intbv(0, min= -(2**(W0)) ,max= (2**(W0))))
+vv = Signal(intbv(0)[W0:])
 dout_res = Signal(intbv(0)[W0:])
 
 din_res = Signal(intbv(0)[W0:])
@@ -185,7 +188,7 @@ ma_row = Signal(intbv(0)[4:])
 ma_col = Signal(intbv(0)[4:])
 def top_jpeg(clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, row_ind, col_ind,
-matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col,
+matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col, bits_in_sig, vv,
 dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
 addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
@@ -204,6 +207,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
     instance_mat_lf = m_flatten(matrix_lf, flat_lf)
     instance_mat_sa = m_flatten(matrix_sa, flat_sa)
     instance_mat_rt = m_flatten(matrix_rt, flat_rt)
+    instance_signed2twoscomplement = signed2twoscomplement( bits_in_sig, vv)
     return instances()
 def tb(clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, row_ind, col_ind,
@@ -1317,7 +1321,7 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
 top_jpeg(clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, row_ind, col_ind,
-matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col,
+matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col, bits_in_sig, vv,
 dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
 addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
@@ -1325,12 +1329,12 @@ LVL2=LVL2, W3=W3, LVL3=LVL3)
 
 toVHDL(top_jpeg,clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, row_ind, col_ind,
-matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col,
+matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col, bits_in_sig, vv,
 dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
 addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res)
 
 toVerilog(top_jpeg,clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, row_ind, col_ind,
-matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col,
+matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col, bits_in_sig, vv,
 dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
 addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res)  
