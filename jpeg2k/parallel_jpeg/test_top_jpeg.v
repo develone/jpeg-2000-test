@@ -47,12 +47,12 @@ module test_top_jpeg;
 	reg [9:0] addr_sa;
 	reg [9:0] addr_rt;
 	reg [9:0] addr_res;
-	//reg [9:0] addr_flgs;
+	reg [9:0] addr_flgs;
 	reg we_lf;
 	reg we_sa;
 	reg we_rt;
 	reg we_res;
-   reg [79:0] dout_flgs;
+   
 	// Outputs
 	wire [9:0] res_out_x;
 	wire noupdate_s;
@@ -65,7 +65,8 @@ module test_top_jpeg;
 	wire [8:0] dout_res;
    //output [8:0] vv;
    wire [8:0] vv;
-	//wire [9:0] addr_flgs;
+	wire [79:0] dout_flgs;
+ 
 
 
 	// Instantiate the Unit Under Test (UUT)
@@ -93,7 +94,7 @@ module test_top_jpeg;
 		.dout_sa(dout_sa), 
 		.dout_rt(dout_rt), 
 		.dout_res(dout_res),
-      //.dout_flgs(dout_flgs),		
+      		
 		.din_lf(din_lf), 
 		.din_sa(din_sa), 
 		.din_rt(din_rt), 
@@ -101,12 +102,14 @@ module test_top_jpeg;
 		.addr_lf(addr_lf), 
 		.addr_sa(addr_sa), 
 		.addr_rt(addr_rt),
-		//.addr_flgs(addr_flgs), 
+		
 		.addr_res(addr_res), 
 		.we_lf(we_lf), 
 		.we_sa(we_sa), 
-		.we_rt(we_rt), 
-		.we_res(we_res)
+		.we_rt(we_rt),		
+		.we_res(we_res),
+		.dout_flgs(dout_flgs),
+		.addr_flgs(addr_flgs)
 	);
 initial begin
 clk = 0;
@@ -139,7 +142,7 @@ end
 		we_sa = 0;
 		we_rt = 0;
 		we_res = 0;
-
+      addr_flgs = 0;
 		// Wait 100 ns for global reset to finish
 		#100;
         

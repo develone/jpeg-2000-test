@@ -191,6 +191,7 @@ noupdate_s, update_s, row_ind, col_ind,
 matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col, bits_in_sig, vv,
 dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
 addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
+dout_flgs, addr_flgs,             
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3):
 
@@ -1324,6 +1325,7 @@ noupdate_s, update_s, row_ind, col_ind,
 matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col, bits_in_sig, vv,
 dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
 addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
+dout_flgs, addr_flgs,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3)
 
@@ -1331,10 +1333,12 @@ toVHDL(top_jpeg,clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, row_ind, col_ind,
 matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col, bits_in_sig, vv,
 dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
-addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res)
+addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
+dout_flgs, addr_flgs)
 
 toVerilog(top_jpeg,clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, row_ind, col_ind,
 matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col, bits_in_sig, vv,
 dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
-addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res)  
+addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
+dout_flgs, addr_flgs)  
