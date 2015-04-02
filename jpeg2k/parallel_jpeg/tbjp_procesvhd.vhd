@@ -42,8 +42,8 @@ ARCHITECTURE behavior OF tbjp_procesvhd IS
     -- Component Declaration for the Unit Under Test (UUT)
     COMPONENT signed2twoscomplement 
     port (
-        bits_in_sig: in signed (9 downto 0);
-        vv: out unsigned(8 downto 0)
+        x: in signed (9 downto 0);
+        z: inout unsigned(8 downto 0)
     );
 	 END COMPONENT;
     COMPONENT jp_process
@@ -113,8 +113,7 @@ ARCHITECTURE behavior OF tbjp_procesvhd IS
 	signal    addr_sa: unsigned(9 downto 0);
 	signal    addr_rt: unsigned(9 downto 0);
 	signal    addr_res: unsigned(9 downto 0);
-	signal bits_in_sig: signed (9 downto 0);
-   signal vv:  unsigned(8 downto 0);
+
    signal z : unsigned(8 downto 0):= (others => '0');
    signal x : signed (9 downto 0);
    signal ma_row: unsigned(3 downto 0);
@@ -202,8 +201,8 @@ BEGIN
          flat => flat_rt
       );
     signed2twoscomplement_u1 : signed2twoscomplement PORT MAP (
-	      bits_in_sig => bits_in_sig,
-			vv => vv
+	      x => x,
+			z => z
 	 );
    clk_fast_process :process
    begin
@@ -229,32 +228,32 @@ BEGIN
 --	  testing -1 to x
 	  x <= "1111111111";
 	  wait for 10 ns;
-	  bits_in_sig <= x;
-	  wait for 10 ns;
-	  z <= vv;
-	  wait for 10 ns;
+--	  bits_in_sig <= x;
+--	  wait for 10 ns;
+--	  z <= vv;
+--	  wait for 10 ns;
 --	  testing -2 to x
      x <= "1111111110";
 	  wait for 10 ns;
-	  bits_in_sig <= x;
-	  wait for 10 ns;
-	  z <= vv;
-	  wait for 10 ns;
+--	  bits_in_sig <= x;
+--	  wait for 10 ns;
+--	  z <= vv;
+--	  wait for 10 ns;
 	  
 --	  testing 258 to x
 	  x <= "0100000010";
 	  wait for 10 ns;
-	  bits_in_sig <= x;
-	  wait for 10 ns;
-	  z <= vv;
-	  wait for 10 ns;
+--	  bits_in_sig <= x;
+--	  wait for 10 ns;
+--	  z <= vv;
+--	  wait for 10 ns;
 --	  testing 110 to x
      x <= "0001101110";
 	  wait for 10 ns;
-	  bits_in_sig <= x;
-	  wait for 10 ns;
-	  z <= vv;
-	  wait for 10 ns;
+--	  bits_in_sig <= x;
+--	  wait for 10 ns;
+--	  z <= vv;
+--	  wait for 10 ns;
 --	  lines 259-290
 --	  are to test the matrix flat_i
 --	  flat_i(3)(3)  <= "0000000001";
@@ -332,9 +331,9 @@ BEGIN
 	  wait for 10 ns;
 	  update_s <= '1';
 	  wait for 10 ns;
-	  bits_in_sig <= res_out_x;
+	  x <= res_out_x;
 	  wait for 10 ns;
-	  din_res <= vv;
+	  din_res <= z;
 	  wait for 10 ns;
 	  update_s <= '0';
 	  wait for 10 ns;
@@ -347,9 +346,9 @@ BEGIN
 	  update_s <= '1';
 	  wait for 10 ns;
 	  wait for 10 ns;
-	  bits_in_sig <= res_out_x;
+	  x <= res_out_x;
 	  wait for 10 ns;
-	  din_res <= vv;
+	  din_res <= z;
 	  wait for 10 ns;
 	  update_s <= '0';
 	  wait for 10 ns;

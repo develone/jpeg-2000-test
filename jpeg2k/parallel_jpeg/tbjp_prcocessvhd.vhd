@@ -57,12 +57,10 @@ ARCHITECTURE behavior OF tbjp_prcocessvhd IS
          flat_lf : OUT  unsigned(143 downto 0);
          flat_sa : OUT  unsigned(143 downto 0);
          flat_rt : OUT  unsigned(143 downto 0);
-         z : IN  unsigned(8 downto 0);
+         z : INOUT  unsigned(8 downto 0);
          x : IN  signed(9 downto 0);
          ma_row : IN  unsigned(3 downto 0);
          ma_col : IN  unsigned(3 downto 0);
-         bits_in_sig : IN  signed(9 downto 0);
-         vv : OUT  unsigned(8 downto 0);
          dout_lf : OUT  unsigned(143 downto 0);
          dout_sa : OUT  unsigned(143 downto 0);
          dout_rt : OUT  unsigned(143 downto 0);
@@ -98,7 +96,7 @@ ARCHITECTURE behavior OF tbjp_prcocessvhd IS
    signal x : signed(9 downto 0) := (others => '0');
    signal ma_row : unsigned(3 downto 0) := (others => '0');
    signal ma_col : unsigned(3 downto 0) := (others => '0');
-   signal bits_in_sig : signed(9 downto 0) := (others => '0');
+
    signal din_lf : unsigned(143 downto 0) := (others => '0');
    signal din_sa : unsigned(143 downto 0) := (others => '0');
    signal din_rt : unsigned(143 downto 0) := (others => '0');
@@ -119,7 +117,7 @@ ARCHITECTURE behavior OF tbjp_prcocessvhd IS
    signal flat_lf : unsigned(143 downto 0);
    signal flat_sa : unsigned(143 downto 0);
    signal flat_rt : unsigned(143 downto 0);
-   signal vv : unsigned(8 downto 0);
+
    signal dout_lf : unsigned(143 downto 0);
    signal dout_sa : unsigned(143 downto 0);
    signal dout_rt : unsigned(143 downto 0);
@@ -150,8 +148,6 @@ BEGIN
           x => x,
           ma_row => ma_row,
           ma_col => ma_col,
-          bits_in_sig => bits_in_sig,
-          vv => vv,
           dout_lf => dout_lf,
           dout_sa => dout_sa,
           dout_rt => dout_rt,
@@ -198,31 +194,19 @@ BEGIN
 --	  testing -1 to x
 	  x <= "1111111111";
 	  wait for 10 ns;
-	  bits_in_sig <= x;
-	  wait for 10 ns;
-	  z <= vv;
-	  wait for 10 ns;
+
 --	  testing -2 to x
      x <= "1111111110";
-	  wait for 10 ns;
-	  bits_in_sig <= x;
-	  wait for 10 ns;
-	  z <= vv;
+
 	  wait for 10 ns;
 	  
 --	  testing 258 to x
 	  x <= "0100000010";
-	  wait for 10 ns;
-	  bits_in_sig <= x;
-	  wait for 10 ns;
-	  z <= vv;
+
 	  wait for 10 ns;
 --	  testing 110 to x
      x <= "0001101110";
-	  wait for 10 ns;
-	  bits_in_sig <= x;
-	  wait for 10 ns;
-	  z <= vv;
+
 	  wait for 10 ns;
 --	  lines 259-290
 --	  are to test the matrix flat_i
@@ -301,9 +285,11 @@ BEGIN
 	  wait for 10 ns;
 	  update_s <= '1';
 	  wait for 10 ns;
-	  bits_in_sig <= res_out_x;
+	  x <= res_out_x;
+ 
 	  wait for 10 ns;
-	  din_res <= vv;
+	  din_res <= z;
+ 
 	  wait for 10 ns;
 	  update_s <= '0';
 	  wait for 10 ns;
@@ -316,9 +302,11 @@ BEGIN
 	  update_s <= '1';
 	  wait for 10 ns;
 	  wait for 10 ns;
-	  bits_in_sig <= res_out_x;
+	  x <= res_out_x;
+ 
 	  wait for 10 ns;
-	  din_res <= vv;
+	  din_res <= z;
+ 
 	  wait for 10 ns;
 	  update_s <= '0';
 	  wait for 10 ns;

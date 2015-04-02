@@ -139,8 +139,7 @@ def seq_to_img(m, pix):
     for row in range(len(m)):
         for col in range(len(m[row])):
             pix[col,row] = m[row][col]
-bits_in_sig = Signal(intbv(0, min= -(2**(W0)) ,max= (2**(W0))))
-vv = Signal(intbv(0)[W0:])
+
 dout_res = Signal(intbv(0)[W0:])
 
 din_res = Signal(intbv(0)[W0:])
@@ -161,7 +160,7 @@ dout_rt = Signal(intbv(0)[LVL2*W2:])
 din_rt = Signal(intbv(0)[LVL2*W2:])
 addr_rt = Signal(intbv(0)[10:])
 we_rt = Signal(bool(0))
-clk_fast = Signal(bool(0))
+clk = Signal(bool(0))
 res_out_x = Signal(intbv(0, min= -(2**(W0)) ,max= (2**(W0))))
 
 update_s = Signal(bool(0))
@@ -183,13 +182,14 @@ flat_lf = Signal(intbv(0)[LVL2*W2:])
 flat_sa = Signal(intbv(0)[LVL2*W2:])
 flat_rt = Signal(intbv(0)[LVL2*W2:])
 x = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+y = Signal(intbv(0)[W0:])
 z = Signal(intbv(0)[W0:])
 ma_row = Signal(intbv(0)[4:])
 ma_col = Signal(intbv(0)[4:])
 
-def tb(clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
+def tb(clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, row_ind, col_ind,
-matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col, bits_in_sig, vv,
+matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col,
 dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
 addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
@@ -197,10 +197,10 @@ LVL2=LVL2, W3=W3, LVL3=LVL3):
 
     instance_rom_flgs = rom_flgs(dout_flgs, addr_flgs, ROM_CONTENT)
 
-    instance_ram_lf = ram(dout_lf, din_lf, addr_lf, we_lf, clk_fast)
-    instance_ram_sa = ram(dout_sa, din_sa, addr_sa, we_sa, clk_fast)
-    instance_ram_rt = ram(dout_rt, din_rt, addr_rt, we_rt, clk_fast)
-    instance_ram_res = ram_res(dout_res, din_res, addr_res, we_res, clk_fast)
+    instance_ram_lf = ram(dout_lf, din_lf, addr_lf, we_lf, clk)
+    instance_ram_sa = ram(dout_sa, din_sa, addr_sa, we_sa, clk)
+    instance_ram_rt = ram(dout_rt, din_rt, addr_rt, we_rt, clk)
+    instance_ram_res = ram_res(dout_res, din_res, addr_res, we_res, clk)
     instance_dut = jp_process( res_out_x, left_s_i,sam_s_i, right_s_i,
 flgs_s_i, noupdate_s, update_s,  W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1,
 W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
@@ -208,10 +208,10 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
     instance_mat_lf = m_flatten(matrix_lf, flat_lf)
     instance_mat_sa = m_flatten(matrix_sa, flat_sa)
     instance_mat_rt = m_flatten(matrix_rt, flat_rt)
-    instance_signed2twoscomplement = signed2twoscomplement( bits_in_sig, vv)
+    instance_signed2twoscomplement = signed2twoscomplement( x, z)
     @always(delay(10))
     def clkgen():
-        clk_fast.next = not clk_fast
+        clk.next = not clk
 
     @instance
     def stimulus():
@@ -221,34 +221,34 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
             row_ind.next = 2
             col_ind.next = 0
             #print( "%3d %d %d ") % (now(), row_ind, col_ind  )
-            yield clk_fast.posedge
+            yield clk.posedge
         for col in range(w):
             col_ind.next = col
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_lf.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_sa.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_rt.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_lf.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
             we_sa.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
             we_rt.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
             for row in range(2,h-16, 32):
                 row_ind.next = row
-                yield clk_fast.posedge
+                yield clk.posedge
                 '''ma_row ma_col  pass1 even lf
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
                 (1 2 3) (3 4 5) (5 6 7) (7 8 9) (9 10 11) (11 12 13) (13 14 15) (15 16 17) (17 18 19) (19 20 21) (21 22 23) (23 24 25) (25 26 28) (27 28 29) (29 30 31) (31 32 33)'''
                 for mma_row in range(3,-1,-1):
                     ma_row.next = mma_row
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     for mma_col in range(3,-1,-1):
                         ma_col.next = mma_col
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         if (ma_row == 3 and ma_col == 3):
                             x.next = r[row-1][col]
                         elif (ma_row == 3 and ma_col == 2):
@@ -283,29 +283,29 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             if( row != h-30):
                                 if (ma_row == 0 and ma_col == 0):
                                     x.next = r[row+29][col]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, ma_row, ma_col)
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         z.next = x[W0:]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         matrix_lf[ma_row][ma_col].next = z
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s") % (now(),bin(flat_lf,W0*LVL0)) 
                 din_lf.next = flat_lf
-                yield clk_fast.posedge
+                yield clk.posedge
                 print ("left %d %d %s %s") % (now(), addr_lf, hex(flat_lf), hex(din_lf))
                 addr_lf.next = addr_lf + 1
-                yield clk_fast.posedge
+                yield clk.posedge
  
                 '''ma_row ma_col pass1 even sa
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
                 (1 2 3) (3 4 5) (5 6 7) (7 8 9) (9 10 11) (11 12 13) (13 14 15) (15 16 17) (17 18 19) (19 20 21) (21 22 23) (23 24 25) (25 26 28) (27 28 29) (29 30 31) (31 32 33)'''
                 for mma_row in range(3,-1,-1):
                     ma_row.next = mma_row
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     for mma_col in range(3,-1,-1):
                         ma_col.next = mma_col
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         if (ma_row == 3 and ma_col == 3):
                             x.next = r[row][col]
                         elif (ma_row == 3 and ma_col == 2):
@@ -340,28 +340,28 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             if( row != h-30):
                                 if (ma_row == 0 and ma_col == 0):
                                     x.next = r[row+30][col]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, ma_row, ma_col)
                         z.next = x[W0:]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         matrix_sa[ma_row][ma_col].next = z
-                        yield clk_fast.posedge
+                        yield clk.posedge
  
                 din_sa.next = flat_sa
-                yield clk_fast.posedge
+                yield clk.posedge
                 print ("sam %d %d %s %s") % (now(), addr_sa, hex(flat_sa), hex(din_sa))
                 addr_sa.next = addr_sa + 1
-                yield clk_fast.posedge
+                yield clk.posedge
  
                 '''ma_row ma_col pass1 even rt
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
                 (1 2 3) (3 4 5) (5 6 7) (7 8 9) (9 10 11) (11 12 13) (13 14 15) (15 16 17) (17 18 19) (19 20 21) (21 22 23) (23 24 25) (25 26 28) (27 28 29) (29 30 31) (31 32 33)'''
                 for mma_row in range(3,-1,-1):
                     ma_row.next = mma_row
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     for mma_col in range(3,-1,-1):
                         ma_col.next = mma_col
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         if (ma_row == 3 and ma_col == 3):
                             x.next = r[row+1][col]
                         elif (ma_row == 3 and ma_col == 2):
@@ -396,112 +396,112 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             if( row != h-30):
                                 if (ma_row == 0 and ma_col == 0):
                                     x.next = r[row+31][col]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, ma_row, ma_col)
                         z.next = x[W0:]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         matrix_rt[ma_row][ma_col].next = z
-                        yield clk_fast.posedge
+                        yield clk.posedge
  
                 din_rt.next = flat_rt
-                yield clk_fast.posedge
+                yield clk.posedge
                 print ("right %d %d %s %s") % (now(), addr_rt, hex(flat_rt), hex(din_rt))
                 addr_rt.next = addr_rt + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_flgs.next = 0                 
-                yield clk_fast.posedge
+                yield clk.posedge
                 flgs_s_i.next = dout_flgs
-                yield clk_fast.posedge
+                yield clk.posedge
             #raise StopSimulation
             #this should have the col values in ram
             we_lf.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_sa.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_rt.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             row_ind.next = 2
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_res.next = 2
-            yield clk_fast.posedge 
+            yield clk.posedge 
             addr_lf.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_sa.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_rt.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
 
             addr_flgs.next = 0
-            yield clk_fast.posedge 
+            yield clk.posedge 
             we_res.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
             
             for i in range(h/16):
                 print( "memory left sam right %3d %d %d %d %d %d %s %s %s") % (now(), row, col,addr_lf, addr_sa, addr_rt, hex(dout_lf), hex(dout_sa), hex(dout_rt))
                 left_s_i.next = dout_lf
-                yield clk_fast.posedge
+                yield clk.posedge
                 sam_s_i.next = dout_sa
-                yield clk_fast.posedge
+                yield clk.posedge
                 right_s_i.next = dout_rt
-                yield clk_fast.posedge
+                yield clk.posedge
                 print( "jpeg inp left sam right %3d %d %d %d %d %d %s %s %s") % (now(), row, col,addr_lf, addr_sa, addr_rt, hex(left_s_i), hex(sam_s_i), hex(right_s_i))   
 
  
                 for loop in range(16):
                     update_s.next = 1
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     din_res.next = res_out_x[W0:]
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     addr_flgs.next = addr_flgs + 1
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     flgs_s_i.next = dout_flgs
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     
                     addr_res.next = addr_res + 2
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     if (row_ind <= h-2):
                         print ("%d %d %d %d %d %d %d even pass 1 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
                         results.append(int(r[row_ind][col_ind]))
                         row_ind.next = row_ind + 2
-                        yield clk_fast.posedge
+                        yield clk.posedge
                     update_s.next = 0
-                    yield clk_fast.posedge
+                    yield clk.posedge
                 addr_flgs.next = 0
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_lf.next = addr_lf + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_sa.next = addr_sa + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_rt.next = addr_rt + 1
-                yield clk_fast.posedge 
+                yield clk.posedge 
             raise StopSimulation
 
             #raise StopSimulation
             addr_lf.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_sa.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_rt.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_lf.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
             we_sa.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
             we_rt.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
 
             for row in range(1,h-17, 32):
                 row_ind.next = row
-                yield clk_fast.posedge
+                yield clk.posedge
                 '''ma_row ma_col pass1 odd lf
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
                 (0 1 2 ) (2 3 4 ) (4 5 6) (6 7 8) (8 9 10) (10 11 12) (12 13 14) (14 15 16) (16 17 18) (18 19 20) (20 21 22) (22 23 24) (24 25 26) (26 27 28) (28 29 30) (30 31 32)'''
                 for mma_row in range(3,-1,-1):
                     ma_row.next = mma_row
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     for mma_col in range(3,-1,-1):
                         ma_col.next = mma_col
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         if (ma_row == 3 and ma_col == 3):
                             x.next = r[row-1][col]
                         elif (ma_row == 3 and ma_col == 2):
@@ -536,36 +536,36 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             x.next = r[row+27][col]
                         elif (ma_row == 0 and ma_col == 0):
                             x.next = r[row+29][col]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, ma_row, ma_col)
                         z.next = x[W0:]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         matrix_lf[ma_row][ma_col].next = z
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s") % (now(),bin(flat_lf,W0*LVL0))
 
                 #lft_s_i.next = flat_lf
-                #yield clk_fast.posedge
+                #yield clk.posedge
                 din_lf.next = flat_lf
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_lf.next = addr_lf + 1
-                yield clk_fast.posedge
+                yield clk.posedge
 
                 #print ("left %d %s %s") % (now(), hex(flat_lf), hex(lft_s_i))
-                yield clk_fast.posedge
+                yield clk.posedge
                 #combinel_sig_s.next = 0
                 '''ma_row ma_col pass1 odd sa
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
                 (0 1 2 ) (2 3 4 ) (4 5 6) (6 7 8) (8 9 10) (10 11 12) (12 13 14) (14 15 16) (16 17 18) (18 19 20) (20 21 22) (22 23 24) (24 25 26) (26 27 28) (28 29 30) (30 31 32)'''
                 for mma_row in range(3,-1,-1):
                     ma_row.next = mma_row
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     for mma_col in range(3,-1,-1):
                         ma_col.next = mma_col
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         if (ma_row == 3 and ma_col == 3):
                             x.next = r[row][col]
-                            yield clk_fast.posedge
+                            yield clk.posedge
                         elif (ma_row == 3 and ma_col == 2):
                             x.next = r[row+2][col]
                         elif (ma_row == 3 and ma_col == 1):
@@ -598,21 +598,21 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             x.next = r[row+28][col]
                         elif (ma_row == 0 and ma_col == 0):
                             x.next = r[row+30][col]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, ma_row, ma_col)
                         z.next = x[W0:]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         matrix_sa[ma_row][ma_col].next = z
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s") % (now(),bin(flat_lf,W0*LVL0))
 
 
                 #sa_s_i.next = flat_sa
-                #yield clk_fast.posedge
+                #yield clk.posedge
                 din_sa.next = flat_sa
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_sa.next = addr_sa + 1
-                yield clk_fast.posedge
+                yield clk.posedge
 
                 #print ("sam %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
                 #combinesa_sig_s.next = 0
@@ -621,13 +621,13 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                 (0 1 2 ) (2 3 4 ) (4 5 6) (6 7 8) (8 9 10) (10 11 12) (12 13 14) (14 15 16) (16 17 18) (18 19 20) (20 21 22) (22 23 24) (24 25 26) (26 27 28) (28 29 30) (30 31 32)'''
                 for mma_row in range(3,-1,-1):
                     ma_row.next = mma_row
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     for mma_col in range(3,-1,-1):
                         ma_col.next = mma_col
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         if (ma_row == 3 and ma_col == 3):
                             x.next = r[row+1][col]
-                            yield clk_fast.posedge
+                            yield clk.posedge
                         elif (ma_row == 3 and ma_col == 2):
                             x.next = r[row+3][col]
                         elif (ma_row == 3 and ma_col == 1):
@@ -660,91 +660,91 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                                     x.next = r[row+29][col]
                                 if (ma_row == 0 and ma_col == 0):
                                     x.next = r[row+31][col]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, ma_row, ma_col)
                         z.next = x[W0:]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         matrix_rt[ma_row][ma_col].next = z
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s") % (now(),bin(flat_rt,W0*LVL0))
 
 
                 #rht_s_i.next = flat_rt
-                #yield clk_fast.posedge
+                #yield clk.posedge
                 din_rt.next = flat_rt
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_rt.next = addr_rt + 1
-                yield clk_fast.posedge
+                yield clk.posedge
             #this should have the col values in ram
             addr_lf.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_sa.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_rt.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_lf.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_sa.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_rt.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_res.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_res.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
             #print ("right %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
             #combinert_sig_s.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             for i in range(h/16):
                 print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(dout_lf), hex(dout_sa), hex(dout_rt))
                 #print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
-                yield clk_fast.posedge
+                yield clk.posedge
 
                 #combine_rdy_s.next = 1
-                #yield clk_fast.posedge
+                #yield clk.posedge
 
                 left_s_i.next = dout_lf
                 sam_s_i.next = dout_sa
                 right_s_i.next = dout_rt
-                yield clk_fast.posedge
+                yield clk.posedge
                 print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
                 #combine_rdy_s.next = 0
 
                 addr_lf.next = addr_lf + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_sa.next = addr_sa + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_rt.next = addr_rt + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_flgs.next = 0
-                yield clk_fast.posedge
+                yield clk.posedge
 
 
                 flgs_s_i.next = dout_flgs
-                yield clk_fast.posedge
+                yield clk.posedge
                 #print( "%3d %s") % (now(), hex(flgs_s_i))
                 addr_flgs.next = addr_flgs + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 update_s.next = 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 #a = int(res_out_x)
-                bits_in_sig.next = res_out_x
-                yield clk_fast.posedge
-                din_res.next = vv
+                x.next = res_out_x
+                yield clk.posedge
+                din_res.next = z
                 #din_res.next = res_out_x[W0:]
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_res.next = addr_res + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 if (row_ind <= h-2):
                     #r[row_ind][col_ind] = a
                     print ("%d %d %d %d %d %d %d odd pass 1 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
                     results.append(int(r[row_ind][col_ind]))
 
                 row_ind.next = row_ind + 2
-                yield clk_fast.posedge
+                yield clk.posedge
 
                 update_s.next = 0
-                yield clk_fast.posedge
+                yield clk.posedge
 
 
         de_interleave(r,h,w)
@@ -754,34 +754,34 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
             row_ind.next = 2
             col_ind.next = 0
             #print( "%3d %d %d ") % (now(), row_ind, col_ind  )
-            yield clk_fast.posedge
+            yield clk.posedge
         for col in range(w):
             col_ind.next = col
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_lf.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_sa.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_rt.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_lf.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
             we_sa.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
             we_rt.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
             for row in range(2,h-16, 32):
                 row_ind.next = row
-                yield clk_fast.posedge
+                yield clk.posedge
                 '''ma_row ma_col  pass1 even lf
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
                 (1 2 3) (3 4 5) (5 6 7) (7 8 9) (9 10 11) (11 12 13) (13 14 15) (15 16 17) (17 18 19) (19 20 21) (21 22 23) (23 24 25) (25 26 28) (27 28 29) (29 30 31) (31 32 33)'''
                 for mma_row in range(3,-1,-1):
                     ma_row.next = mma_row
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     for mma_col in range(3,-1,-1):
                         ma_col.next = mma_col
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         if (ma_row == 3 and ma_col == 3):
                             x.next = r[row-1][col]
                         elif (ma_row == 3 and ma_col == 2):
@@ -816,35 +816,35 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             if( row != h-30):
                                 if (ma_row == 0 and ma_col == 0):
                                     x.next = r[row+29][col]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, ma_row, ma_col)
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         z.next = x[W0:]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         matrix_lf[ma_row][ma_col].next = z
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s") % (now(),bin(flat_lf,W0*LVL0))
 
                 #raise StopSimulation
 
                 #lft_s_i.next = flat_lf
-                #yield clk_fast.posedge
+                #yield clk.posedge
                 din_lf.next = flat_lf
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_lf.next = addr_lf + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 #print ("left %d %s %s") % (now(), hex(flat_lf), hex(lft_s_i))
-                yield clk_fast.posedge
+                yield clk.posedge
                 #combinel_sig_s.next = 0
                 '''ma_row ma_col pass1 even sa
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
                 (1 2 3) (3 4 5) (5 6 7) (7 8 9) (9 10 11) (11 12 13) (13 14 15) (15 16 17) (17 18 19) (19 20 21) (21 22 23) (23 24 25) (25 26 28) (27 28 29) (29 30 31) (31 32 33)'''
                 for mma_row in range(3,-1,-1):
                     ma_row.next = mma_row
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     for mma_col in range(3,-1,-1):
                         ma_col.next = mma_col
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         if (ma_row == 3 and ma_col == 3):
                             x.next = r[row][col]
                         elif (ma_row == 3 and ma_col == 2):
@@ -879,22 +879,22 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             if( row != h-30):
                                 if (ma_row == 0 and ma_col == 0):
                                     x.next = r[row+30][col]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, ma_row, ma_col)
                         z.next = x[W0:]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         matrix_sa[ma_row][ma_col].next = z
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s") % (now(),bin(flat_sa,W0*LVL0))
 
                 #sa_s_i.next = flat_sa
-                #yield clk_fast.posedge
+                #yield clk.posedge
                 din_sa.next = flat_sa
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_sa.next = addr_sa + 1
-                yield clk_fast.posedge
+                yield clk.posedge
 
-                yield clk_fast.posedge
+                yield clk.posedge
                 #print ("sam  %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
                 #combinesa_sig_s.next = 0
                 '''ma_row ma_col pass1 even rt
@@ -902,10 +902,10 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                 (1 2 3) (3 4 5) (5 6 7) (7 8 9) (9 10 11) (11 12 13) (13 14 15) (15 16 17) (17 18 19) (19 20 21) (21 22 23) (23 24 25) (25 26 28) (27 28 29) (29 30 31) (31 32 33)'''
                 for mma_row in range(3,-1,-1):
                     ma_row.next = mma_row
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     for mma_col in range(3,-1,-1):
                         ma_col.next = mma_col
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         if (ma_row == 3 and ma_col == 3):
                             x.next = r[row+1][col]
                         elif (ma_row == 3 and ma_col == 2):
@@ -940,116 +940,116 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             if( row != h-30):
                                 if (ma_row == 0 and ma_col == 0):
                                     x.next = r[row+31][col]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, ma_row, ma_col)
                         z.next = x[W0:]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         matrix_rt[ma_row][ma_col].next = z
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s") % (now(),bin(flat_rt,W0*LVL0))
 
                 #rht_s_i.next = (flat_rt)
-                #yield clk_fast.posedge
+                #yield clk.posedge
 
                 din_rt.next = flat_rt
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_rt.next = addr_rt + 1
-                yield clk_fast.posedge
+                yield clk.posedge
             #raise StopSimulation
             #this should have the col values in ram
             addr_lf.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_sa.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_rt.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_lf.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_sa.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_rt.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_res.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_res.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
             #print ("right %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
             #combinert_sig_s.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             for i in range(h/16):
                 print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(dout_lf), hex(dout_sa), hex(dout_rt))
                 #print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
-                yield clk_fast.posedge
+                yield clk.posedge
 
                 #combine_rdy_s.next = 1
-                #yield clk_fast.posedge
+                #yield clk.posedge
 
                 left_s_i.next = dout_lf
                 sam_s_i.next = dout_sa
                 right_s_i.next = dout_rt
-                yield clk_fast.posedge
+                yield clk.posedge
                 print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
                 #combine_rdy_s.next = 0
 
                 addr_lf.next = addr_lf + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_sa.next = addr_sa + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_rt.next = addr_rt + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_flgs.next = 0
-                yield clk_fast.posedge
+                yield clk.posedge
 
 
                 flgs_s_i.next = dout_flgs
-                yield clk_fast.posedge
+                yield clk.posedge
                 #print( "%3d %s") % (now(), hex(flgs_s_i))
                 addr_flgs.next = addr_flgs + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 update_s.next = 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 #a = int(res_out_x)
                 din_res.next = res_out_x[W0:]
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_res.next = addr_res + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 if (row_ind <= h-2):
                     #r[row_ind][col_ind] = a
                     print ("%d %d %d %d %d %d %d even pass 2 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
                     results.append(int(r[row_ind][col_ind]))
 
                 row_ind.next = row_ind + 2
-                yield clk_fast.posedge
+                yield clk.posedge
 
                 update_s.next = 0
-                yield clk_fast.posedge
+                yield clk.posedge
 
             #raise StopSimulation
             addr_lf.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_sa.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_rt.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_lf.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
             we_sa.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
             we_rt.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
 
             for row in range(1,h-17, 32):
                 row_ind.next = row
-                yield clk_fast.posedge
+                yield clk.posedge
                 '''ma_row ma_col pass1 odd lf
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
                 (0 1 2 ) (2 3 4 ) (4 5 6) (6 7 8) (8 9 10) (10 11 12) (12 13 14) (14 15 16) (16 17 18) (18 19 20) (20 21 22) (22 23 24) (24 25 26) (26 27 28) (28 29 30) (30 31 32)'''
                 for mma_row in range(3,-1,-1):
                     ma_row.next = mma_row
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     for mma_col in range(3,-1,-1):
                         ma_col.next = mma_col
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         if (ma_row == 3 and ma_col == 3):
                             x.next = r[row-1][col]
                         elif (ma_row == 3 and ma_col == 2):
@@ -1084,36 +1084,36 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             x.next = r[row+27][col]
                         elif (ma_row == 0 and ma_col == 0):
                             x.next = r[row+29][col]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, ma_row, ma_col)
                         z.next = x[W0:]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         matrix_lf[ma_row][ma_col].next = z
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s") % (now(),bin(flat_lf,W0*LVL0))
 
                 #lft_s_i.next = flat_lf
-                #yield clk_fast.posedge
+                #yield clk.posedge
                 din_lf.next = flat_lf
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_lf.next = addr_lf + 1
-                yield clk_fast.posedge
+                yield clk.posedge
 
                 #print ("left %d %s %s") % (now(), hex(flat_lf), hex(lft_s_i))
-                yield clk_fast.posedge
+                yield clk.posedge
                 #combinel_sig_s.next = 0
                 '''ma_row ma_col pass1 odd sa
                    3 3    3 2      3 1    3 0       2 3       2 2       2 1         2 0      1 3         1 2         1 1       1 0          0 3       0 2       0 1       00
                 (0 1 2 ) (2 3 4 ) (4 5 6) (6 7 8) (8 9 10) (10 11 12) (12 13 14) (14 15 16) (16 17 18) (18 19 20) (20 21 22) (22 23 24) (24 25 26) (26 27 28) (28 29 30) (30 31 32)'''
                 for mma_row in range(3,-1,-1):
                     ma_row.next = mma_row
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     for mma_col in range(3,-1,-1):
                         ma_col.next = mma_col
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         if (ma_row == 3 and ma_col == 3):
                             x.next = r[row][col]
-                            yield clk_fast.posedge
+                            yield clk.posedge
                         elif (ma_row == 3 and ma_col == 2):
                             x.next = r[row+2][col]
                         elif (ma_row == 3 and ma_col == 1):
@@ -1146,21 +1146,21 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                             x.next = r[row+28][col]
                         elif (ma_row == 0 and ma_col == 0):
                             x.next = r[row+30][col]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, ma_row, ma_col)
                         z.next = x[W0:]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         matrix_sa[ma_row][ma_col].next = z
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s") % (now(),bin(flat_lf,W0*LVL0))
 
 
                 #sa_s_i.next = flat_sa
-                #yield clk_fast.posedge
+                #yield clk.posedge
                 din_sa.next = flat_sa
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_sa.next = addr_sa + 1
-                yield clk_fast.posedge
+                yield clk.posedge
 
                 #print ("sam %d %s %s") % (now(), hex(flat_sa), hex(sa_s_i))
                 #combinesa_sig_s.next = 0
@@ -1169,13 +1169,13 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                 (0 1 2 ) (2 3 4 ) (4 5 6) (6 7 8) (8 9 10) (10 11 12) (12 13 14) (14 15 16) (16 17 18) (18 19 20) (20 21 22) (22 23 24) (24 25 26) (26 27 28) (28 29 30) (30 31 32)'''
                 for mma_row in range(3,-1,-1):
                     ma_row.next = mma_row
-                    yield clk_fast.posedge
+                    yield clk.posedge
                     for mma_col in range(3,-1,-1):
                         ma_col.next = mma_col
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         if (ma_row == 3 and ma_col == 3):
                             x.next = r[row+1][col]
-                            yield clk_fast.posedge
+                            yield clk.posedge
                         elif (ma_row == 3 and ma_col == 2):
                             x.next = r[row+3][col]
                         elif (ma_row == 3 and ma_col == 1):
@@ -1208,88 +1208,88 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
                                     x.next = r[row+29][col]
                                 if (ma_row == 0 and ma_col == 0):
                                     x.next = r[row+31][col]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s %d %d %d") % (now(),bin(x,W0), x, ma_row, ma_col)
                         z.next = x[W0:]
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         matrix_rt[ma_row][ma_col].next = z
-                        yield clk_fast.posedge
+                        yield clk.posedge
                         #print (" %d %s") % (now(),bin(flat_rt,W0*LVL0))
 
 
                 #rht_s_i.next = flat_rt
-                #yield clk_fast.posedge
+                #yield clk.posedge
                 din_rt.next = flat_rt
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_rt.next = addr_rt + 1
-                yield clk_fast.posedge
+                yield clk.posedge
             #this should have the col values in ram
             addr_lf.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_sa.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_rt.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_lf.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_sa.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_rt.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             addr_res.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             we_res.next = 1
-            yield clk_fast.posedge
+            yield clk.posedge
             #print ("right %d %s %s") % (now(), hex(flat_rt), hex(rht_s_i))
             #combinert_sig_s.next = 0
-            yield clk_fast.posedge
+            yield clk.posedge
             for i in range(h/16):
                 print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(dout_lf), hex(dout_sa), hex(dout_rt))
                 #print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(lft_s_i), hex(sa_s_i), hex(rht_s_i))
-                yield clk_fast.posedge
+                yield clk.posedge
 
                 #combine_rdy_s.next = 1
-                #yield clk_fast.posedge
+                #yield clk.posedge
 
                 left_s_i.next = dout_lf
                 sam_s_i.next = dout_sa
                 right_s_i.next = dout_rt
-                yield clk_fast.posedge
+                yield clk.posedge
                 print( "left sam right %3d %d %d %s %s %s") % (now(), row, col, hex(left_s_i), hex(sam_s_i), hex(right_s_i))
                 #combine_rdy_s.next = 0
 
                 addr_lf.next = addr_lf + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_sa.next = addr_sa + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_rt.next = addr_rt + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_flgs.next = 0
-                yield clk_fast.posedge
+                yield clk.posedge
 
 
                 flgs_s_i.next = dout_flgs
-                yield clk_fast.posedge
+                yield clk.posedge
                 #print( "%3d %s") % (now(), hex(flgs_s_i))
                 addr_flgs.next = addr_flgs + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 update_s.next = 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 #a = int(res_out_x)
                 din_res.next = res_out_x[W0:]
-                yield clk_fast.posedge
+                yield clk.posedge
                 addr_res.next = addr_res + 1
-                yield clk_fast.posedge
+                yield clk.posedge
                 if (row_ind <= h-2):
                     #r[row_ind][col_ind] = a
                     print ("%d %d %d %d %d %d %d odd pass 2 res_out_x " ) % (now(), res_out_x, r[row_ind][col_ind], row_ind, col_ind, row, col)
                     results.append(int(r[row_ind][col_ind]))
 
                 row_ind.next = row_ind + 2
-                yield clk_fast.posedge
+                yield clk.posedge
 
                 update_s.next = 0
-                yield clk_fast.posedge
+                yield clk.posedge
 
 
         de_interleave(r,h,w)
@@ -1299,19 +1299,68 @@ W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
 
     return instances()
-tb(clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
+tb(clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, row_ind, col_ind,
-matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col, bits_in_sig, vv,
+matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col,
 dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
 addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3)
 tb_fsm = traceSignals(
-tb, clk_fast, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
+tb, clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, row_ind, col_ind,
-matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col, bits_in_sig, vv,
+matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col,
 dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
 addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res)
+def top_jpeg(clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
+noupdate_s, update_s, row_ind, col_ind,
+matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col,
+dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
+addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
+dout_flgs, addr_flgs,             
+W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
+LVL2=LVL2, W3=W3, LVL3=LVL3):
+
+    instance_rom_flgs = rom_flgs(dout_flgs, addr_flgs, ROM_CONTENT)
+
+    instance_ram_lf = ram(dout_lf, din_lf, addr_lf, we_lf, clk)
+    instance_ram_sa = ram(dout_sa, din_sa, addr_sa, we_sa, clk)
+    instance_ram_rt = ram(dout_rt, din_rt, addr_rt, we_rt, clk)
+    instance_ram_res = ram_res(dout_res, din_res, addr_res, we_res, clk)
+    instance_dut = jp_process( res_out_x, left_s_i,sam_s_i, right_s_i,
+flgs_s_i, noupdate_s, update_s,  W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1,
+W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
+
+    instance_mat_lf = m_flatten(matrix_lf, flat_lf)
+    instance_mat_sa = m_flatten(matrix_sa, flat_sa)
+    instance_mat_rt = m_flatten(matrix_rt, flat_rt)
+    instance_signed2twoscomplement = signed2twoscomplement( x, z)
+    return instances()
+def convert():
+    top_jpeg(clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
+             noupdate_s, update_s, row_ind, col_ind,
+             matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt,
+             flat_rt, z, x, ma_row, ma_col, dout_lf,
+             dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
+             addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt,
+             we_res,dout_flgs, addr_flgs,
+             W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
+             LVL2=LVL2, W3=W3, LVL3=LVL3)
+    toVHDL(top_jpeg, clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
+             noupdate_s, update_s, row_ind, col_ind,
+             matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt,
+             flat_rt, z, x, ma_row, ma_col, dout_lf,
+             dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
+             addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt,
+             we_res,dout_flgs, addr_flgs)
+    toVerilog(top_jpeg, clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
+             noupdate_s, update_s, row_ind, col_ind,
+             matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt,
+             flat_rt, z, x, ma_row, ma_col, dout_lf,
+             dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
+             addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt,
+             we_res,dout_flgs, addr_flgs)
+#convert()
 sim = Simulation(tb_fsm)
 sim.run()
 #de_interleave(r,h,w)
