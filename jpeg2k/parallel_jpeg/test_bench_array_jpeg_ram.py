@@ -6,6 +6,7 @@ from array_jpeg import jp_process
 from ram import ram
 from ram_res import ram_res
 from signed2twoscomplement import signed2twoscomplement
+from matrix import matrix
 from PIL import Image
 #toVHDL.numeric_ports = False
 #img = Image.open("lena_rgb_512.png")
@@ -186,7 +187,9 @@ y = Signal(intbv(0)[W0:])
 z = Signal(intbv(0)[W0:])
 ma_row = Signal(intbv(0)[4:])
 ma_col = Signal(intbv(0)[4:])
-
+flat_s_i = Signal(intbv(0)[LVL0*W0:])
+matrix_sa_i = Signal(intbv(0)[LVL0*W0:])
+matrix_rt_i = Signal(intbv(0)[LVL0*W0:])
 def tb(clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
 noupdate_s, update_s, row_ind, col_ind,
 matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col,
@@ -1317,7 +1320,7 @@ noupdate_s, update_s, row_ind, col_ind,
 matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col,
 dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
 addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
-dout_flgs, addr_flgs,             
+dout_flgs, addr_flgs, flat_s_, matrix_sa_i, matrix_rt_i,            
 W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
 LVL2=LVL2, W3=W3, LVL3=LVL3):
 
@@ -1332,34 +1335,34 @@ flgs_s_i, noupdate_s, update_s,  W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1,
 W2=W2, LVL2=LVL2, W3=W3, LVL3=LVL3, SIMUL=SIMUL)
 
     instance_mat_lf = m_flatten(matrix_lf, flat_lf)
-    instance_mat_sa = m_flatten(matrix_sa, flat_sa)
-    instance_mat_rt = m_flatten(matrix_rt, flat_rt)
+    #instance_mat_sa = m_flatten(matrix_sa, flat_sa)
+    #instance_mat_rt = m_flatten(matrix_rt, flat_rt)
     instance_signed2twoscomplement = signed2twoscomplement( x, z)
+    instance_matrix_lf = matrix( ma_row, ma_col, x, flat_s_i)
+    #instance_matrix_sa = matrix( ma_row, ma_col, x, matrix_sa_i)
+    #instance_matrix_rt = matrix( ma_row, ma_col, x, matrix_rt_i) 
     return instances()
 def convert():
     top_jpeg(clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
-             noupdate_s, update_s, row_ind, col_ind,
-             matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt,
-             flat_rt, z, x, ma_row, ma_col, dout_lf,
-             dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
-             addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt,
-             we_res,dout_flgs, addr_flgs,
+noupdate_s, update_s, row_ind, col_ind,
+matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col,
+dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
+addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
+dout_flgs, addr_flgs, flat_s_i, matrix_sa_i, matrix_rt_i,
              W0=W0, LVL0=LVL0, W1=W1, LVL1=LVL1, W2=W2,
              LVL2=LVL2, W3=W3, LVL3=LVL3)
     toVHDL(top_jpeg, clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
-             noupdate_s, update_s, row_ind, col_ind,
-             matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt,
-             flat_rt, z, x, ma_row, ma_col, dout_lf,
-             dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
-             addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt,
-             we_res,dout_flgs, addr_flgs)
-    toVerilog(top_jpeg, clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
-             noupdate_s, update_s, row_ind, col_ind,
-             matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt,
-             flat_rt, z, x, ma_row, ma_col, dout_lf,
-             dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
-             addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt,
-             we_res,dout_flgs, addr_flgs)
+noupdate_s, update_s, row_ind, col_ind,
+matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col,
+dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
+addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
+dout_flgs, addr_flgs, flat_s_i, matrix_sa_i, matrix_rt_i)
+    toVerilog(top_jpeg,clk, res_out_x, left_s_i,sam_s_i, right_s_i, flgs_s_i,
+noupdate_s, update_s, row_ind, col_ind,
+matrix_lf, flat_lf, matrix_sa, flat_sa, matrix_rt, flat_rt, z, x, ma_row, ma_col,
+dout_lf, dout_sa, dout_rt, dout_res, din_lf, din_sa, din_rt, din_res,
+addr_lf, addr_sa, addr_rt, addr_res, we_lf, we_sa, we_rt, we_res,
+dout_flgs, addr_flgs, flat_s_i, matrix_sa_i, matrix_rt_i)
 #convert()
 sim = Simulation(tb_fsm)
 sim.run()
