@@ -310,6 +310,22 @@ BEGIN
 	  wait for 10 ns;
 	  update_s <= '0';
 	  wait for 10 ns;
+	  	  wait for 10 ns;
+	  addr_flgs <= b"0000000010";
+	  wait for 10 ns;
+	  flgs_s_i <= dout_flgs;
+	  wait for 10 ns;
+	  update_s <= '1';
+	  wait for 10 ns;
+	  wait for 10 ns;
+	  x <= res_out_x;
+ 
+	  wait for 10 ns;
+	  din_res <= z;
+ 
+	  wait for 10 ns;
+	  update_s <= '0';
+	  wait for 10 ns;
       wait;
    end process;
 
