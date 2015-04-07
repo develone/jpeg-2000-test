@@ -4,7 +4,7 @@
 --
 -- Create Date:   17:47:25 04/06/2015
 -- Design Name:   
--- Module Name:   C:/Xilinx/14.7/ISE_DS/lift_step/tblift_step.vhd
+-- Module Name:   C:\Users\vidal\Documents\GitHub\jpeg-2000-test\jpeg2k\parallel_jpeg\tblift_step.vhd
 -- Project Name:  lift_step
 -- Target Device:  
 -- Tool versions:  
