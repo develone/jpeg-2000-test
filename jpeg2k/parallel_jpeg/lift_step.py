@@ -3,6 +3,28 @@ from myhdl import *
 import  random
 from signed2twoscomplement import signed2twoscomplement
 from jpeg_constants import *
+def top(clk, x, z, n=16):
+   res_o = [Signal(intbv(0, min=-(2**(W0)), max=(2**(W0)))) for i in range(n)]
+   left_i = [Signal(intbv(0)[W0:]) for i in range(n)]
+   sam_i = [Signal(intbv(0)[W0:]) for i in range(n)]
+   right_i = [Signal(intbv(0)[W0:]) for i in range(n)]
+   flgs_i = [Signal(intbv(0)[W3:]) for i in range(n)]
+   update_i = [Signal(bool(0)) for i in range(n)]
+   update_o = [Signal(bool(0)) for i in range(n)]
+   jpeg_instance = [None for i in range(n)]
+   instance_signed2twoscomplement = signed2twoscomplement(x, z)
+   '''
+   print left_i
+   print sam_i
+   print right_i
+   print flgs_i
+   
+   print jpeg_instance
+   '''
+   for i in range(n):
+       jpeg_instance[i] = lift_step(left_i[i], sam_i[i], right_i[i], flgs_i[i], update_i[i], clk, res_o[i], update_o[i])
+   #print jpeg_instance
+   return jpeg_instance, instance_signed2twoscomplement
 
 def lift_step(left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o):
     @always(clk.posedge)
@@ -92,7 +114,12 @@ def test_lift_step():
 def convert():
     toVHDL(lift_step,left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o)
 #convert() 
-tb_fsm = traceSignals(test_lift_step)
-sim = Simulation(tb_fsm)
-sim.run() 
+#tb_fsm = traceSignals(test_lift_step)
+#sim = Simulation(tb_fsm)
+#sim.run()
+jpeg_instance, instance_signed2twoscomplement = top(clk, x, z)
+print  jpeg_instance
+print
+print instance_signed2twoscomplement
+toVHDL(top, clk, x, z)
 
