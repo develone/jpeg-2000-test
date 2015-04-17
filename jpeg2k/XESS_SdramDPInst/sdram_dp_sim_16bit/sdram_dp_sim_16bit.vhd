@@ -30,7 +30,7 @@ entity sdram_dp_sim_16bit is
     sdWe_bo   : out   std_logic;  -- SDRAM write-enable.
     sdBs_o    : out   std_logic_vector(1 downto 0);  -- SDRAM bank-address.
     sdAddr_o  : out   std_logic_vector(11 downto 0);  -- SDRAM address bus.
-    sdData_io : inout std_logic_vector(31 downto 0);    -- SDRAM data bus.
+    sdData_io : inout std_logic_vector(15 downto 0);    -- SDRAM data bus.
     sdDqmh_o  : out   std_logic;  -- SDRAM high-byte databus qualifier.
     sdDqml_o  : out   std_logic  -- SDRAM low-byte databus qualifier.
     );
@@ -43,7 +43,7 @@ architecture Behavioral of sdram_dp_sim_16bit is
   --00_0000 to 03_FFFF is total memory allocated
   --00_0000 to 01_FFFF is where lena256.hex is initially installed
   constant RAM_SIZE_C             : natural   := 262140;  -- Number of words in RAM.
-  constant RAM_WIDTH_C            : natural   := 32;  -- Width of RAM words.
+  constant RAM_WIDTH_C            : natural   := 16;  -- Width of RAM words.
   constant RAM_ADDR_SIZE_C            : natural   := 23;  -- Addr size .
   constant MIN_ADDR_C             : natural   := 1;  -- Process RAM from this address ...
   constant MAX_ADDR_C             : natural   := 5;  -- ... to this address.
@@ -141,7 +141,7 @@ architecture Behavioral of sdram_dp_sim_16bit is
  
   signal col_r, col_x, row_r, row_x : unsigned(7 downto 0) := (others => '0');
   signal dout_rom : unsigned(RAM_WIDTH_C-1 downto 0) := (others => '0');
-  signal addr_rom_r, addr_rom_x : unsigned(3 downto 0) := (others => '0');
+  signal addr_rom_r, addr_rom_x : unsigned(11 downto 0) := (others => '0');
 --signal needed by xess_jpeg_top.vhd*************************** 
 
 --signal needed by FIFO*************************** 
@@ -164,58 +164,58 @@ architecture Behavioral of sdram_dp_sim_16bit is
 component xess_jpeg_top is
     port (
          clk_fast: in std_logic;
-        addr0_r: inout unsigned(22 downto 0);
-        addr0_x: inout unsigned(22 downto 0);
-        addr1_r: inout unsigned(22 downto 0);
-        addr1_x: inout unsigned(22 downto 0);
+        addr0_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        addr0_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        addr1_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        addr1_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
         state_r: inout t_enum_t_State_1;
         state_x: inout t_enum_t_State_1;
-        dataToRam0_r: inout unsigned(31 downto 0);
-        dataToRam0_x: inout unsigned(31 downto 0);
-        dataFromRam0_r: inout unsigned(31 downto 0);
-        dataFromRam0_x: inout unsigned(31 downto 0);
-        dataToRam1_r: inout unsigned(31 downto 0);
-        dataToRam1_x: inout unsigned(31 downto 0);
-        dataFromRam1_r: inout unsigned(31 downto 0);
-        dataFromRam1_x: inout unsigned(31 downto 0);
+        dataToRam0_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        dataToRam0_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        dataFromRam0_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        dataFromRam0_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        dataToRam1_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        dataToRam1_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        dataFromRam1_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        dataFromRam1_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
         reset_col: out std_logic;
-        offset_r: inout unsigned(22 downto 0);
-        offset_x: inout unsigned(22 downto 0);
-        dataFromRam0_s: in unsigned(31 downto 0);
-        dataFromRam1_s: in unsigned(31 downto 0);
+        offset_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        offset_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        dataFromRam0_s: in unsigned(RAM_WIDTH_C-1 downto 0);
+        dataFromRam1_s: in unsigned(RAM_WIDTH_C-1 downto 0);
         done1_s: in std_logic;
         wr1_s: out std_logic;
         rd1_s: out std_logic;
         done0_s: in std_logic;
         wr0_s: out std_logic;
         rd0_s: out std_logic;
-        sum_r: inout unsigned(31 downto 0);
-        sum_x: inout unsigned(31 downto 0);
+        sum_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        sum_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
         empty_r: out std_logic;
         full_r: out std_logic;
         enr_r: inout std_logic;
         enw_r: inout std_logic;
-        dataout_r: inout unsigned(31 downto 0);
-        datain_r: inout unsigned(31 downto 0);
+        dataout_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        datain_r: inout unsigned(RAM_WIDTH_C-1 downto 0);
         empty_x: inout std_logic;
         full_x: inout std_logic;
         enr_x: inout std_logic;
         enw_x: inout std_logic;
-        dataout_x: inout unsigned(31 downto 0);
-        datain_x: inout unsigned(31 downto 0);
+        dataout_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        datain_x: inout unsigned(RAM_WIDTH_C-1 downto 0);
         col_r: inout unsigned(7 downto 0);
         col_x: inout unsigned(7 downto 0);
         row_r: inout unsigned(7 downto 0);
         row_x: inout unsigned(7 downto 0);
-        dout_rom: inout unsigned(31 downto 0);
-        addr_rom_r: inout unsigned(3 downto 0);
-        addr_rom_x: inout unsigned(3 downto 0);
-        index1_r: inout unsigned(22 downto 0);
-        index2_r: inout unsigned(22 downto 0);
-        index3_r: inout unsigned(22 downto 0);
-        index1_x: inout unsigned(22 downto 0);
-        index2_x: inout unsigned(22 downto 0);
-        index3_x: inout unsigned(22 downto 0)
+        dout_rom: inout unsigned(RAM_WIDTH_C-1 downto 0);
+        addr_rom_r: inout unsigned(11 downto 0);
+        addr_rom_x: inout unsigned(11 downto 0);
+        index1_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        index2_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        index3_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        index1_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        index2_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
+        index3_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0)
     );
 end component xess_jpeg_top;
 

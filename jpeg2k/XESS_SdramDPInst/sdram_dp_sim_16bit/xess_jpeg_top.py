@@ -1,4 +1,5 @@
 from myhdl import *
+from jpeg_constants import *
 #force std_logic_vectors
 #toVHDL.numeric_ports = False
 CONTENT = (
@@ -20,8 +21,7 @@ def rom(dout_rom, addr_rom_r, CONTENT):
     return read
 reset_dly_c = 10
 ASZ = 10
-DSZ = 16
-SDRAMDSZ = 16 
+ 
 enw_r = Signal(bool(0))
 enr_r = Signal(bool(0))
 empty_r = Signal(bool(0))
@@ -76,7 +76,7 @@ rst = ResetSignal(0,active=1,async=True)
 
 reset_dly_c = 10
 DATA_WIDTH = 32768
-JPEG_RAM_ADDR = 24
+
 JPEG_RES_RAM_ADDR = 9
 ROW_NUM = 8
 ACTIVE_LOW = bool(0)

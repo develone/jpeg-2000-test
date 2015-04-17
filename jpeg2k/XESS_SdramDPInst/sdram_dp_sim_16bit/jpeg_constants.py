@@ -2,10 +2,9 @@
 reset_dly_c = 10
 ASZ = 4
 """ The following 3 constants are used during testing of 32 bit sdram"""
-DSZ = 32
-SDRAMDSZ = 32
-JPEG_RAM_ADDR = 24
-
+DSZ = 16
+SDRAMDSZ = 16
+JPEG_RAM_ADDR = 23
 
 """ The following 3 constants are used during simulation testing of 32 bit sdram
 manual chgs required
