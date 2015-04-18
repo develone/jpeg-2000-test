@@ -117,7 +117,7 @@ ARCHITECTURE behavior OF sdram_dp_sim_16bitTB IS
    constant fpgaClk_period : time := 83.3333 ns; -- 12 MHz XuLA clock.
 ----signal needed by sdram_dp_sim_32bit.vhd and xess_jpeg_top.vhd*************************** 
  signal clk_s                    : std_logic;  -- Internal clock.
-  signal sumDut_s                 : std_logic_vector(RAM_WIDTH_C-1 downto 0);  -- Send sum back to PC.
+  signal sumDut_s                 : std_logic_vector(RAM_WIDTH_C-1 downto 0):= (others => '0');  -- Send sum back to PC.
 --  alias fromjpflgsDut_s is sumDut_s(107 downto 104);
 --  alias fromjprhDut_s is sumDut_s(103 downto 88);
 --  alias fromjpsaDut_s is sumDut_s(87 downto 72);
@@ -128,19 +128,19 @@ ARCHITECTURE behavior OF sdram_dp_sim_16bitTB IS
 --  alias fromsdramaddrDut_s is sumDut_s(23 downto 0);
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
 
-  signal dataFromSdram0_s          : std_logic_vector(RAM_WIDTH_C-1 downto 0);  -- Data.
-  signal dataFromSdram1_s          : std_logic_vector(RAM_WIDTH_C-1 downto 0);  -- Data.
+  signal dataFromSdram0_s          : std_logic_vector(RAM_WIDTH_C-1 downto 0):= (others => '0');  -- Data.
+  signal dataFromSdram1_s          : std_logic_vector(RAM_WIDTH_C-1 downto 0):= (others => '0');  -- Data.
 
-  signal addrSdram0_s              :std_logic_vector(RAM_ADDR_SIZE_C-1 downto 0);  -- Address.
-  signal addrSdram1_s              : std_logic_vector(RAM_ADDR_SIZE_C-1 downto 0);  -- Address.
+  signal addrSdram0_s              :std_logic_vector(RAM_ADDR_SIZE_C-1 downto 0):= (others => '0');  -- Address.
+  signal addrSdram1_s              : std_logic_vector(RAM_ADDR_SIZE_C-1 downto 0):= (others => '0');  -- Address.
 
-  signal dataToSdram0_s            : unsigned(RAM_WIDTH_C-1 downto 0);  -- Data.
-  signal dataToSdram1_s            : unsigned(RAM_WIDTH_C-1 downto 0);  -- Data.
+  signal dataToSdram0_s            : unsigned(RAM_WIDTH_C-1 downto 0):= (others => '0');  -- Data.
+  signal dataToSdram1_s            : unsigned(RAM_WIDTH_C-1 downto 0):= (others => '0');  -- Data.
    
-  signal dataFromRam0_r  : unsigned(RAM_WIDTH_C-1 downto 0);
-  signal dataFromRam1_r  : unsigned(RAM_WIDTH_C-1 downto 0);   
+  signal dataFromRam0_r  : unsigned(RAM_WIDTH_C-1 downto 0):= (others => '0');
+  signal dataFromRam1_r  : unsigned(RAM_WIDTH_C-1 downto 0):= (others => '0');   
  
-  signal sum_r, sum_x             : unsigned( RAM_WIDTH_C-1 downto 0);
+  signal sum_r, sum_x             : unsigned( RAM_WIDTH_C-1 downto 0):= (others => '0');
  
   
  
@@ -160,8 +160,8 @@ ARCHITECTURE behavior OF sdram_dp_sim_16bitTB IS
   signal index1_r, index2_r, index3_r           : unsigned(RAM_ADDR_SIZE_C-1 downto 0):= (others => '0'); 
   signal index1_x, index2_x, index3_x           : unsigned(RAM_ADDR_SIZE_C-1 downto 0):= (others => '0');
 
-  signal dataToRam0_r, dataToRam0_x, dataFromRam0_s  : unsigned(RAM_WIDTH_C-1 downto 0);  -- Data to write to RAM.
-  signal dataToRam1_r, dataToRam1_x, dataFromRam1_s  : unsigned(RAM_WIDTH_C-1 downto 0);  -- Data to write to RAM.
+  signal dataToRam0_r, dataToRam0_x, dataFromRam0_s  : unsigned(RAM_WIDTH_C-1 downto 0):= (others => '0');  -- Data to write to RAM.
+  signal dataToRam1_r, dataToRam1_x, dataFromRam1_s  : unsigned(RAM_WIDTH_C-1 downto 0):= (others => '0');  -- Data to write to RAM.
  
  
           -- Host-side port 0.
@@ -182,17 +182,17 @@ ARCHITECTURE behavior OF sdram_dp_sim_16bitTB IS
 
 --signal needed by xess_jpeg_top.vhd***************************
   signal state_r, state_x         : t_enum_t_State_1   := INIT;  -- FSM starts off in init state.
---  signal sig_in : unsigned(51 downto 0) := (others => '0');
---  signal noupdate_s : std_logic;
---  signal res_s : signed(15 downto 0) := (others => '0');
---  signal res_u : unsigned(15 downto 0) := (others => '0');
---  signal jp_lf : unsigned(15 downto 0) := (others => '0');
---  signal jp_sa: unsigned(15 downto 0) := (others => '0');
---  signal jp_rh : unsigned(15 downto 0) := (others => '0');
---  signal jp_flgs : unsigned(3 downto 0) := (others => '0');
+  signal sig_in : unsigned(51 downto 0) := (others => '0');
+  signal noupdate_s : std_logic;
+  signal res_s : signed(15 downto 0) := (others => '0');
+  signal res_u : unsigned(15 downto 0) := (others => '0');
+  signal jp_lf : unsigned(15 downto 0) := (others => '0');
+  signal jp_sa: unsigned(15 downto 0) := (others => '0');
+  signal jp_rh : unsigned(15 downto 0) := (others => '0');
+  signal jp_flgs : unsigned(3 downto 0) := (others => '0');
   signal reset_col : std_logic := '0';
---  signal rdy : std_logic := '1';
---  signal addr_not_reached : std_logic := '0';
+  signal rdy : std_logic := '1';
+  signal addr_not_reached : std_logic := '0';
   signal offset_r, offset_x           : unsigned(RAM_ADDR_SIZE_C-1 downto 0);  -- RAM address.
  
   signal col_r, col_x, row_r, row_x : unsigned(7 downto 0) := (others => '0');
@@ -362,6 +362,17 @@ xess_jpeg_top_u0 : xess_jpeg_top
           sdDqmh_o => sdDqmh_o,  -- SDRAM high-byte databus qualifier.
           sdDqml_o => sdDqml_o  -- SDRAM low-byte databus qualifier.
         );
+		   --*********************************************************************
+  -- Generate a 100 MHz clock from the 12 MHz input clock and send it out
+  -- to the SDRAM. Then feed it back in to clock the internal logic.
+  -- (The Spartan-6 FPGAs are a bit picky about what their DCM outputs
+  -- are allowed to drive, so I have to use the clkToLogic_o output to
+  -- send the clock signal to the output pin of the FPGA and on to the
+  -- SDRAM chip.)
+  --*********************************************************************
+  Clkgen_u1 : Clkgen
+    generic map (BASE_FREQ_G => 12.0, CLK_MUL_G => 25, CLK_DIV_G => 3)
+    port map(I               => fpgaClk_i, clkToLogic_o => sdClk_o);
    sdClkFb_i <= sdClk_o; -- Feedback 100 MHz clock to FPGA.
    clk_s <= sdClkFb_i;     
     -- Use the mt48lc8m16a2 declaration from above to instantiate
@@ -386,7 +397,7 @@ xess_jpeg_top_u0 : xess_jpeg_top
   DualPortSdram_u0 : DualPortSdram
     generic map(
       FREQ_G       => 100.0,  -- Use clock freq. to compute timing parameters.
-		 DATA_WIDTH_G => RAM_WIDTH_C, -- Width of data words.
+--		 DATA_WIDTH_G => RAM_WIDTH_C, -- Width of data words.
 --      DATA_WIDTH_G => RAM_WIDTH_C,       -- Width of data words.
 --		PORT_TIME_SLOTS_G => "1111000011110000",
 --		PIPE_EN_G  =>       false,
@@ -456,7 +467,7 @@ xess_jpeg_top_u0 : xess_jpeg_top
    end process;
  
 --  fromsdramaddrDut_s <= std_logic_vector(addr_r);
---  fromsdramdataDut_s <= std_logic_vector(sum_r);
+  fromsdramdataDut_s <= std_logic_vector(sum_r);
 --  fromresdataDut_s <= std_logic_vector(res_s);
 --  fromjplfDut_s <= std_logic_vector(jp_lf);
 --  fromjpsaDut_s <= std_logic_vector(jp_sa);
