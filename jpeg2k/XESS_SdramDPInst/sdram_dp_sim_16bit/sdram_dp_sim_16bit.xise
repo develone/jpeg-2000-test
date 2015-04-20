@@ -59,6 +59,9 @@
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="10"/>
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="10"/>
     </file>
+    <file xil_pn:name="XuLA2.ucf" xil_pn:type="FILE_UCF">
+      <association xil_pn:name="Implementation" xil_pn:seqID="69"/>
+    </file>
   </files>
 
   <properties>
@@ -386,7 +389,9 @@
     <property xil_pn:name="PROP_intWorkingDirUsed" xil_pn:value="No" xil_pn:valueState="non-default"/>
   </properties>
 
-  <bindings/>
+  <bindings>
+    <binding xil_pn:location="/sdram_dp_sim_16bit" xil_pn:name="XuLA2.ucf"/>
+  </bindings>
 
   <libraries/>
 
