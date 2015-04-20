@@ -117,15 +117,18 @@ ARCHITECTURE behavior OF sdram_dp_sim_16bitTB IS
    constant fpgaClk_period : time := 83.3333 ns; -- 12 MHz XuLA clock.
 ----signal needed by sdram_dp_sim_32bit.vhd and xess_jpeg_top.vhd*************************** 
  signal clk_s                    : std_logic;  -- Internal clock.
-  signal sumDut_s                 : std_logic_vector(RAM_WIDTH_C-1 downto 0):= (others => '0');  -- Send sum back to PC.
---  alias fromjpflgsDut_s is sumDut_s(107 downto 104);
---  alias fromjprhDut_s is sumDut_s(103 downto 88);
---  alias fromjpsaDut_s is sumDut_s(87 downto 72);
---  alias fromjplfDut_s is sumDut_s(71 downto 56);
---   
---  alias fromresdataDut_s is sumDut_s(55 downto 40);
-  alias fromsdramdataDut_s is sumDut_s(RAM_WIDTH_C-1 downto 0);
---  alias fromsdramaddrDut_s is sumDut_s(23 downto 0);
+ --           1         2          3          4         5          6         7          8          9        10
+-- 01234567890123456789012 34567890123456789 0123456789012345 6789012345678901 2345678901234567 8901234567890123 4567
+--                      23                40               56               72               88              104  108
+  signal sumDut_s                 : std_logic_vector(107 downto 0):= (others => '0');  -- Send sum back to PC.
+  alias fromjpflgsDut_s is sumDut_s(107 downto 104);
+  alias fromjprhDut_s is sumDut_s(103 downto 88);
+  alias fromjpsaDut_s is sumDut_s(87 downto 72);
+  alias fromjplfDut_s is sumDut_s(71 downto 56);
+   
+  alias fromresdataDut_s is sumDut_s(55 downto 40);
+  alias fromsdramdataDut_s is sumDut_s(39 downto 24);
+  alias fromsdramaddrDut_s is sumDut_s(RAM_WIDTH_C-1 downto 0);
   signal nullDutOut_s             : std_logic_vector(0 downto 0);  -- Dummy output for HostIo module.
 
   signal dataFromSdram0_s          : std_logic_vector(RAM_WIDTH_C-1 downto 0):= (others => '0');  -- Data.
@@ -234,12 +237,22 @@ component xess_jpeg_top is
         dataToRam1_x: inout unsigned(15 downto 0);
         dataFromRam1_r: inout unsigned(15 downto 0);
         dataFromRam1_x: inout unsigned(15 downto 0);
+		  sig_in: inout unsigned(51 downto 0);
+        noupdate_s: out std_logic;
+        res_s: inout signed (15 downto 0);
+        res_u: out unsigned(15 downto 0);
+        jp_lf: inout unsigned(15 downto 0);
+        jp_sa: inout unsigned(15 downto 0);
+        jp_rh: inout unsigned(15 downto 0);
+        jp_flgs: inout unsigned(3 downto 0);
         reset_col: out std_logic;
+		          rdy: inout std_logic;
+        addr_not_reached: inout std_logic;
         offset_r: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
         offset_x: inout unsigned(RAM_ADDR_SIZE_C-1 downto 0);
         dataFromRam0_s: in unsigned(15 downto 0);
         dataFromRam1_s: in unsigned(15 downto 0);
-        done1_s: in std_logic;
+		  done1_s: in std_logic;
         wr1_s: out std_logic;
         rd1_s: out std_logic;
         done0_s: in std_logic;
@@ -302,7 +315,17 @@ xess_jpeg_top_u0 : xess_jpeg_top
 	  dataFromRam1_r =>  dataFromRam1_r,
  
  
+	  sig_in => sig_in,
+	  noupdate_s => noupdate_s,
+	  res_s => res_s,
+	  res_u => res_u,
+	  jp_lf => jp_lf,
+	  jp_sa => jp_sa,
+	  jp_rh => jp_rh,
+	  jp_flgs => jp_flgs,
 	  reset_col => reset_col,
+	  rdy => rdy,
+	  addr_not_reached => addr_not_reached,
  
      offset_r => offset_r,
 	  offset_x => offset_x,
@@ -466,13 +489,13 @@ xess_jpeg_top_u0 : xess_jpeg_top
 		wait for fpgaClk_period/2;
    end process;
  
---  fromsdramaddrDut_s <= std_logic_vector(addr_r);
+----  fromsdramaddrDut_s <= std_logic_vector(addr_r);
   fromsdramdataDut_s <= std_logic_vector(sum_r);
---  fromresdataDut_s <= std_logic_vector(res_s);
---  fromjplfDut_s <= std_logic_vector(jp_lf);
---  fromjpsaDut_s <= std_logic_vector(jp_sa);
---  fromjprhDut_s <= std_logic_vector(jp_rh);
---  fromjpflgsDut_s <= std_logic_vector(jp_flgs);
+  fromresdataDut_s <= std_logic_vector(res_s);
+  fromjplfDut_s <= std_logic_vector(jp_lf);
+  fromjpsaDut_s <= std_logic_vector(jp_sa);
+  fromjprhDut_s <= std_logic_vector(jp_rh);
+  fromjpflgsDut_s <= std_logic_vector(jp_flgs);
 
    -- Stimulus process.
    -- This is not used in this testbench. The FSM in the
