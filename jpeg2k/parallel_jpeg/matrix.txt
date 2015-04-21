@@ -1,0 +1,26 @@
+Help on SignalMatrix in module sigmat object:
+
+class SignalMatrix(__builtin__.object)
+ |  Methods defined here:
+ |  
+ |  __getitem__(self, idx)
+ |  
+ |  __init__(self, size=(4, 4), stype=intbv(0L))
+ |  
+ |  get_flat_signal(self)
+ |  
+ |  m_flatten(self, flat)
+ |      convert this matrix to flat bit-vector
+ |  
+ |  m_stack(self, flat)
+ |      convert flat bit-vector to a signal matrix
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |  
+ |  __dict__
+ |      dictionary for instance variables (if defined)
+ |  
+ |  __weakref__
+ |      list of weak references to the object (if defined)
+

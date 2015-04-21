@@ -67,7 +67,7 @@ class SignalMatrix(object):
         return rtl
 
 
-def m_flat_top(clock, reset, sdi, sdo):
+def m_flat_top(clock, reset, sdo):
     ''' example convertible top-level '''
     matrix = SignalMatrix()
     flati = matrix.get_flat_signal()
@@ -76,7 +76,7 @@ def m_flat_top(clock, reset, sdi, sdo):
 
     @always_seq(clock.posedge, reset=reset)
     def rtli():
-        flati.next = concat(flati[nbits-1:0], sdi)
+        flati.next = concat(flati[nbits-1:0])
 
     gstk = matrix.m_stack(flati)
     gflt = matrix.m_flatten(flato)
@@ -93,8 +93,8 @@ def convert():
     reset = ResetSignal(0, active=1, async=False)
     sdi = Signal(bool(0))
     sdo = Signal(bool(0))
-    toVerilog(m_flat_top, clock, reset, sdi, sdo)
-    toVHDL(m_flat_top, clock, reset, sdi, sdo)
+    toVerilog(m_flat_top, clock, reset, sdo)
+    toVHDL(m_flat_top, clock, reset, sdo)
 
 
 if __name__ == '__main__':
