@@ -1,0 +1,83 @@
+Help on JPEGEnc2k in module _jpegEnc object:
+
+class JPEGEnc2k(__builtin__.object)
+ |  Methods defined here:
+ |  
+ |  __init__(self)
+ |  
+ |  fwd_dwt(self)
+ |  
+ |  get_b_subband(self)
+ |  
+ |  get_dwt_level(self)
+ |  
+ |  get_g_subband(self)
+ |  
+ |  get_gr_subband(self)
+ |  
+ |  get_height(self)
+ |  
+ |  get_img(self)
+ |  
+ |  get_img_fn(self)
+ |  
+ |  get_mode(self)
+ |  
+ |  get_origin(self)
+ |  
+ |  get_pix(self)
+ |  
+ |  get_r_subband(self)
+ |  
+ |  get_tile(self)
+ |  
+ |  get_tiles(self)
+ |  
+ |  get_width(self)
+ |  
+ |  read_image_file(self)
+ |  
+ |  set_dwt_level(self, val)
+ |  
+ |  set_img_fn(self, str)
+ |  
+ |  set_mode(self, str)
+ |  
+ |  set_origin_omega1_omega2(self, val1, val2)
+ |  
+ |  set_tile(self, val1, val2)
+ |  
+ |  set_tiles_N1_N2(self, val1, val2)
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |  
+ |  __dict__
+ |      dictionary for instance variables (if defined)
+ |  
+ |  __weakref__
+ |      list of weak references to the object (if defined)
+
+import waveletsim_53 as dwt
+from _jpegEnc import JPEGEnc2k
+
+ 
+jp2k = JPEGEnc2k()
+#jp2k.set_img_fn("../parallel_jpeg/lena_rgb_512.png")
+#jp2k.set_img_fn("../lena.jpg")
+jp2k.set_img_fn("../lena_256.png")
+
+print jp2k.get_img_fn()
+jp2k.read_image_file()
+mode = jp2k.get_mode()
+lvl = jp2k.get_dwt_level()
+jp2k.set_dwt_level(1)
+#lvl = jp2k.get_dwt_level()
+
+jp2k.fwd_dwt()
+im = jp2k.get_img()
+im.save("test1_256_fwt.png")
+../lena_256.png
+L 256 256
+Gray 256 256
+forward dwt using file  ../lena_256.png dwt_level 1
