@@ -1,0 +1,20 @@
+/AltIntegerSpec.java/1.1/Thu Dec 14 20:58:52 2006//
+/BooleanSpec.java/1.1/Thu Dec 14 20:58:52 2006//
+/IntegerSpec.java/1.1/Thu Dec 14 20:58:52 2006//
+/JJ2KExceptionHandler.java/1.1/Thu Dec 14 20:58:52 2006//
+/JJ2KInfo.java/1.1/Thu Dec 14 20:58:52 2006//
+/ModuleSpec.java/1.1/Thu Dec 14 20:58:52 2006//
+/NoNextElementException.java/1.1/Thu Dec 14 20:58:52 2006//
+/NotImplementedError.java/1.1/Thu Dec 14 20:58:52 2006//
+/StringSpec.java/1.1/Thu Dec 14 20:58:52 2006//
+D/codestream////
+D/decoder////
+D/encoder////
+D/entropy////
+D/fileformat////
+D/image////
+D/io////
+D/quantization////
+D/roi////
+D/util////
+D/wavelet////
