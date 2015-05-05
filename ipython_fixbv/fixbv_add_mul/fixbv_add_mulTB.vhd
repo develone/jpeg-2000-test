@@ -45,10 +45,11 @@ ARCHITECTURE behavior OF fixbv_add_mulTB IS
     COMPONENT fixbv_mul
     PORT(
          clk : IN  std_logic;
-         do_prod : IN  std_logic;
-         x_sig : IN  unsigned(31 downto 0);
-         y_sig : IN  unsigned(31 downto 0);
-         prod_sig : OUT  unsigned(63 downto 0)
+         do_mul : IN  std_logic;
+         x_sig : IN  signed(30 downto 0);
+         y_sig : IN  signed(30 downto 0);
+         prod_sig : OUT  unsigned(61 downto 0);
+			done_mul: out std_logic
         );
     END COMPONENT;
 	 
@@ -56,24 +57,40 @@ ARCHITECTURE behavior OF fixbv_add_mulTB IS
     port (
         clk: in std_logic;
         do_add: in std_logic;
-        x_sig: in unsigned(31 downto 0);
-        y_sig: in unsigned(31 downto 0);
-        sum_sig: out unsigned(31 downto 0)
-    );
+        x_sig: in signed(30 downto 0);
+        y_sig: in signed(30 downto 0);
+        sum_sig: out unsigned(31 downto 0);
+        done_add: out std_logic   
+		  );
     END COMPONENT;
 	 
+	 COMPONENT fixbv_sub 
+    port (
+        clk: in std_logic;
+        do_sub: in std_logic;
+        x_sig: in signed(30 downto 0);
+        y_sig: in signed(30 downto 0);
+        sub_sig: out signed(31 downto 0);
+        done_sub: out std_logic   
+		  );
+    END COMPONENT;
    --Inputs
    signal clk : std_logic := '0';
-   signal do_prod : std_logic := '0';
+   signal do_mul : std_logic := '0';
 	signal do_add : std_logic := '0';
-   signal x_sig : unsigned(31 downto 0) := (others => '0');
-   signal y_sig : unsigned(31 downto 0) := (others => '0');
+	signal do_sub : std_logic := '0';
+   signal x_sig : signed(30 downto 0) := (others => '0');
+   signal y_sig : signed(30 downto 0) := (others => '0');
 
  	--Outputs
-   signal prod_sig : unsigned(63 downto 0);
+   signal prod_sig : unsigned(61 downto 0);
    signal sum_sig: unsigned(31 downto 0);
-	
-   -- Clock period definitions
+	signal sub_sig: signed(31 downto 0);
+	signal done_mul : std_logic := '0';
+
+	signal done_add : std_logic := '0';
+   signal done_sub : std_logic := '0';  
+ -- Clock period definitions
    constant clk_period : time := 10 ns;
  
 BEGIN
@@ -81,10 +98,11 @@ BEGIN
 	-- Instantiate the Unit Under Test (UUT)
    uut: fixbv_mul PORT MAP (
           clk => clk,
-          do_prod => do_prod,
+          do_mul => do_mul,
           x_sig => x_sig,
           y_sig => y_sig,
-          prod_sig => prod_sig
+          prod_sig => prod_sig,
+			 done_mul => done_mul
         );
 
    uut1: fixbv_add PORT MAP (
@@ -92,7 +110,17 @@ BEGIN
           do_add => do_add,
           x_sig => x_sig,
           y_sig => y_sig,
-          sum_sig => sum_sig
+          sum_sig => sum_sig,
+			 done_add => done_add
+        );
+		  
+	   uut2: fixbv_sub PORT MAP (
+          clk => clk,
+          do_sub => do_sub,
+          x_sig => x_sig,
+          y_sig => y_sig,
+          sub_sig => sub_sig,
+			 done_sub => done_sub
         );
    -- Clock process definitions
    clk_process :process
@@ -113,17 +141,23 @@ BEGIN
       wait for clk_period*10;
 
       -- insert stimulus here 
-      x_sig <= X"00c90fde";
+      x_sig <= b"0000000001100100100001111110110";
 		wait for 10 ns;
-		y_sig <= X"00200000";
+		y_sig <= b"0011111111010000000000000000000";
 		wait for 10 ns;
 		do_add <= '1';
 		wait for 10 ns;
 		do_add <= '0';
 		wait for 10 ns;
-		do_prod <= '1';
+			
+		do_sub <= '1';
 		wait for 10 ns;
-		do_prod <= '0';
+		do_sub <= '0';
+		wait for 10 ns;
+		
+		do_mul <= '1';
+		wait for 10 ns;
+		do_mul <= '0';
 		wait for 10 ns;
       wait;
    end process;
