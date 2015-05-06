@@ -87,68 +87,65 @@ def fwt97(s, width, height):
         ''' Lifting is done on the cols. '''
         # Predict 1. y1
         pix = Add_mul_top()
-        for row in range(1, height-3, 4):
+        for row in range(1, height-1, 2):
 			pix.setSig_p(0)
-			pix.setSig_even_odd(1)
+			pix.setSig_even_odd(0)
 			pix.setSig_fwd_inv(1)
 			pix.setSig_left(s[row-1][col])
-			pix.setSig_left1(s[row+1][col])	
+			 
 			pix.setSig_right(s[row+1][col])
-			pix.setSig_right1(s[row+3][col])
-			even, even1, odd, odd1 = add_mul_ram(pix)
-			#print row,even, even1, odd, odd1
- 			s[row][col] += float(even)
-			s[row+2][col] += float(even1)
+			 
+			even,  odd = add_mul_ram(pix)
+			print row, even, odd
+ 			s[row][col] += float(odd)
+	 
 			#print float(d_instance[0]),s[row][col]
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
         s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
 
         # Update 1. y0
-        for row in range(2, height-2, 4):
+        for row in range(2, height, 2):
 			pix.setSig_p(0)
-			pix.setSig_even_odd(0)
+			pix.setSig_even_odd(1)
 			pix.setSig_fwd_inv(1)
 			pix.setSig_left(s[row-1][col])
 			pix.setSig_right(s[row+1][col])
-			pix.setSig_left1(s[row+1][col])
-			pix.setSig_right1(s[row+3][col])
-			even, even1, odd, odd1 = add_mul_ram(pix)
-			#print row, even, even1, odd, odd1	
-			s[row][col] += float(odd)
-			s[row+2][col] += float(odd1)
+ 
+			even, odd = add_mul_ram(pix)
+			print row, even, odd	
+			s[row][col] += float(even)
+	 
 			#print s[row][col]
             #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
         s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
         
         # Predict 2.
-        for row in range(1, height-3, 4):
-			pix.setSig_p(1)
-			pix.setSig_even_odd(1)
-			pix.setSig_fwd_inv(1)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
-			pix.setSig_left1(s[row+1][col])
-			pix.setSig_right1(s[row+3][col])
-			even, even1, odd, odd1 = add_mul_ram(pix)
-			#print row, even, even1, odd, odd1	
-			s[row][col] += float(even)
-			s[row+2][col] += float(even1)
-            #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
-        s[height-1][col] += 2 * a3 * s[height-2][col]
-        
-        # Update 2.
-        for row in range(2, height-2, 4):
+        for row in range(1, height-1, 2):
 			pix.setSig_p(1)
 			pix.setSig_even_odd(0)
 			pix.setSig_fwd_inv(1)
 			pix.setSig_left(s[row-1][col])
 			pix.setSig_right(s[row+1][col])
-			pix.setSig_left1(s[row+1][col])
-			pix.setSig_right1(s[row+3][col])
-			even, even1, odd, odd1 = add_mul_ram(pix)
-			#print row, even, even1, odd, odd1	
+ 
+			even, odd = add_mul_ram(pix)
+			print row, even, odd	
 			s[row][col] += float(odd)
-			s[row+2][col] += float(odd1)
+	 
+            #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
+        s[height-1][col] += 2 * a3 * s[height-2][col]
+        
+        # Update 2.
+        for row in range(2, height, 2):
+			pix.setSig_p(1)
+			pix.setSig_even_odd(1)
+			pix.setSig_fwd_inv(1)
+			pix.setSig_left(s[row-1][col])
+			pix.setSig_right(s[row+1][col])
+ 
+			even, odd = add_mul_ram(pix)
+			print row, even, odd	
+			s[row][col] += float(even)
+ 
  
             #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
         s[0][col] += 2 * a4 * s[1][col]
@@ -207,62 +204,58 @@ def iwt97(s, width, height):
         ''' Perform the inverse 1D transform. '''
         
         # Inverse update 2.
-        for row in range(2, height-2, 4):
+        for row in range(2, height, 2):
 			pix.setSig_p(0)
 			pix.setSig_even_odd(1)
 			pix.setSig_fwd_inv(0)
 			pix.setSig_left(s[row-1][col])
 			pix.setSig_right(s[row+1][col])
-			pix.setSig_left1(s[row+1][col])
-			pix.setSig_right1(s[row+3][col])
-			even, even1, odd, odd1 = add_mul_ram(pix)			
+ 
+			even,  odd = add_mul_ram(pix)			
 			s[row][col] += float(even)
-			s[row+2][col] += float(even1)
+	 
             #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
         s[0][col] += 2 * a4 * s[1][col]
         
         # Inverse predict 2.
-        for row in range(1, height-3, 4):
+        for row in range(1, height-1, 2):
 			pix.setSig_p(0)
 			pix.setSig_even_odd(0)
 			pix.setSig_fwd_inv(0)
 			pix.setSig_left(s[row-1][col])
 			pix.setSig_right(s[row+1][col])
-			pix.setSig_left1(s[row+1][col])
-			pix.setSig_right1(s[row+3][col])
-			even, even1, odd, odd1 = add_mul_ram(pix)			
+ 
+			even, odd = add_mul_ram(pix)			
 			s[row][col] += float(odd)
-			s[row+2][col] += float(odd1)
+			#s[row+2][col] += float(odd1)
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
         s[height-1][col] += 2 * a3 * s[height-2][col]
 
         # Inverse update 1.
-        for row in range(2, height-2, 4):
+        for row in range(2, height, 2):
 			pix.setSig_p(1)
 			pix.setSig_even_odd(1)
 			pix.setSig_fwd_inv(0)
 			pix.setSig_left(s[row-1][col])
 			pix.setSig_right(s[row+1][col])
-			pix.setSig_left1(s[row+1][col])
-			pix.setSig_right1(s[row+3][col])
-			even, even1, odd, odd1 = add_mul_ram(pix)			
+ 
+			even, odd = add_mul_ram(pix)			
 			s[row][col] += float(even)
-			s[row+2][col] += float(even1)
+ 
             #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
         s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
         
         # Inverse predict 1.
-        for row in range(1, height-3, 4):
+        for row in range(1, height-1, 2):
 			pix.setSig_p(1)
 			pix.setSig_even_odd(0)
 			pix.setSig_fwd_inv(0)
 			pix.setSig_left(s[row-1][col])
 			pix.setSig_right(s[row+1][col])
-			pix.setSig_left1(s[row+1][col])
-			pix.setSig_right1(s[row+3][col])
-			even, even1, odd, odd1 = add_mul_ram(pix)			
+ 
+			even, odd = add_mul_ram(pix)			
 			s[row][col] += float(odd)
-			s[row+2][col] += float(odd1)
+ 
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
         s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
                 
