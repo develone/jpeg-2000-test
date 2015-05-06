@@ -53,27 +53,24 @@ ARCHITECTURE behavior OF fixbv_add_mulTB IS
         );
     END COMPONENT;
 	 
-    COMPONENT fixbv_add 
+    COMPONENT fixbv_top 
     port (
         clk: in std_logic;
         do_add: in std_logic;
-        x_sig: in signed(30 downto 0);
-        y_sig: in signed(30 downto 0);
-        sum_sig: out unsigned(31 downto 0);
-        done_add: out std_logic   
-		  );
-    END COMPONENT;
-	 
-	 COMPONENT fixbv_sub 
-    port (
-        clk: in std_logic;
+        x_sig: in signed (30 downto 0);
+        y_sig: in signed (30 downto 0);
+        sum_sig: out signed (31 downto 0);
+        done_add: out std_logic;
+        do_mul: in std_logic;
+        prod_sig: out signed (62 downto 0);
+        done_mul: out std_logic;
         do_sub: in std_logic;
-        x_sig: in signed(30 downto 0);
-        y_sig: in signed(30 downto 0);
-        sub_sig: out signed(31 downto 0);
+        sub_sig: out signed (31 downto 0);
         done_sub: out std_logic   
 		  );
     END COMPONENT;
+	 
+ 
    --Inputs
    signal clk : std_logic := '0';
    signal do_mul : std_logic := '0';
@@ -83,8 +80,8 @@ ARCHITECTURE behavior OF fixbv_add_mulTB IS
    signal y_sig : signed(30 downto 0) := (others => '0');
 
  	--Outputs
-   signal prod_sig : unsigned(61 downto 0);
-   signal sum_sig: unsigned(31 downto 0);
+   signal prod_sig : signed(62 downto 0);
+   signal sum_sig: signed(31 downto 0);
 	signal sub_sig: signed(31 downto 0);
 	signal done_mul : std_logic := '0';
 
@@ -96,32 +93,22 @@ ARCHITECTURE behavior OF fixbv_add_mulTB IS
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: fixbv_mul PORT MAP (
-          clk => clk,
-          do_mul => do_mul,
-          x_sig => x_sig,
-          y_sig => y_sig,
-          prod_sig => prod_sig,
-			 done_mul => done_mul
-        );
-
-   uut1: fixbv_add PORT MAP (
+   uut: fixbv_top PORT MAP (
           clk => clk,
           do_add => do_add,
           x_sig => x_sig,
           y_sig => y_sig,
           sum_sig => sum_sig,
-			 done_add => done_add
-        );
-		  
-	   uut2: fixbv_sub PORT MAP (
-          clk => clk,
-          do_sub => do_sub,
-          x_sig => x_sig,
-          y_sig => y_sig,
+			 done_add => done_add,
+			 do_mul => do_mul,
+          prod_sig => prod_sig,
+			 done_mul => done_mul,
+			 do_sub => do_sub,
           sub_sig => sub_sig,
 			 done_sub => done_sub
         );
+
+ 
    -- Clock process definitions
    clk_process :process
    begin
