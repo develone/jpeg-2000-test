@@ -8,7 +8,7 @@ m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
 for row in range(0, len(m)):
         for col in range(0, len(m[0])):
                 m[row][col] = float(m[row][col])
-                
+               
 # Perform a forward CDF 9/7 transform on the image:
 m = dwt.fwt97_2d(m, 3)
 # Convert the list of lists matrix to an image.    

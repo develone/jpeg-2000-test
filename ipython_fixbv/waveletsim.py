@@ -1,5 +1,5 @@
 from add_mul_sim import *
-from myhdl import fixbv
+
  
 '''
 2D CDF 9/7 Wavelet Forward and Inverse Transform (lifting implementation)
@@ -86,17 +86,15 @@ def fwt97(s, width, height):
         ''' Core 1D lifting process in this loop. '''
         ''' Lifting is done on the cols. '''
         # Predict 1. y1
-        pix = Add_mul_top()
+        sim_fixbv = Add_Mul_Sim()
         for row in range(1, height-1, 2):
-			pix.setSig_p(0)
-			pix.setSig_even_odd(0)
-			pix.setSig_fwd_inv(1)
-			pix.setSig_left(s[row-1][col])
-			 
-			pix.setSig_right(s[row+1][col])
-			 
-			even,  odd = add_mul_ram(pix)
-			print row, even, odd
+			sim_fixbv.setSig_p(0)
+			sim_fixbv.setSig_even_odd(0)
+			sim_fixbv.setSig_fwd_inv(1)
+			sim_fixbv.setSig_left(s[row-1][col])
+ 			sim_fixbv.setSig_right(s[row+1][col])
+ 			even, odd = sim_fixbv.add_mul()
+			#print row, even, odd
  			s[row][col] += float(odd)
 	 
 			#print float(d_instance[0]),s[row][col]
@@ -105,14 +103,14 @@ def fwt97(s, width, height):
 
         # Update 1. y0
         for row in range(2, height, 2):
-			pix.setSig_p(0)
-			pix.setSig_even_odd(1)
-			pix.setSig_fwd_inv(1)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
+			sim_fixbv.setSig_p(0)
+			sim_fixbv.setSig_even_odd(1)
+			sim_fixbv.setSig_fwd_inv(1)
+			sim_fixbv.setSig_left(s[row-1][col])
+			sim_fixbv.setSig_right(s[row+1][col])
  
-			even, odd = add_mul_ram(pix)
-			print row, even, odd	
+			even, odd = sim_fixbv.add_mul()
+			#print row, even, odd	
 			s[row][col] += float(even)
 	 
 			#print s[row][col]
@@ -121,14 +119,14 @@ def fwt97(s, width, height):
         
         # Predict 2.
         for row in range(1, height-1, 2):
-			pix.setSig_p(1)
-			pix.setSig_even_odd(0)
-			pix.setSig_fwd_inv(1)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
+			sim_fixbv.setSig_p(1)
+			sim_fixbv.setSig_even_odd(0)
+			sim_fixbv.setSig_fwd_inv(1)
+			sim_fixbv.setSig_left(s[row-1][col])
+			sim_fixbv.setSig_right(s[row+1][col])
  
-			even, odd = add_mul_ram(pix)
-			print row, even, odd	
+			even, odd = sim_fixbv.add_mul()
+			#print row, even, odd	
 			s[row][col] += float(odd)
 	 
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
@@ -136,14 +134,14 @@ def fwt97(s, width, height):
         
         # Update 2.
         for row in range(2, height, 2):
-			pix.setSig_p(1)
-			pix.setSig_even_odd(1)
-			pix.setSig_fwd_inv(1)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
+			sim_fixbv.setSig_p(1)
+			sim_fixbv.setSig_even_odd(1)
+			sim_fixbv.setSig_fwd_inv(1)
+			sim_fixbv.setSig_left(s[row-1][col])
+			sim_fixbv.setSig_right(s[row+1][col])
  
-			even, odd = add_mul_ram(pix)
-			print row, even, odd	
+			even, odd = sim_fixbv.add_mul()
+			#print row, even, odd	
 			s[row][col] += float(even)
  
  
@@ -199,19 +197,19 @@ def iwt97(s, width, height):
         for col in range(height):
             s[row][col] = temp_bank[row][col]
 
-    pix = Add_mul_top()            
+    sim_fixbv = Add_Mul_Sim()            
     for col in range(width): # Do the 1D transform on all cols:
         ''' Perform the inverse 1D transform. '''
         
         # Inverse update 2.
         for row in range(2, height, 2):
-			pix.setSig_p(0)
-			pix.setSig_even_odd(1)
-			pix.setSig_fwd_inv(0)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
+			sim_fixbv.setSig_p(0)
+			sim_fixbv.setSig_even_odd(1)
+			sim_fixbv.setSig_fwd_inv(0)
+			sim_fixbv.setSig_left(s[row-1][col])
+			sim_fixbv.setSig_right(s[row+1][col])
  
-			even,  odd = add_mul_ram(pix)			
+			even, odd = sim_fixbv.add_mul()			
 			s[row][col] += float(even)
 	 
             #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
@@ -219,13 +217,13 @@ def iwt97(s, width, height):
         
         # Inverse predict 2.
         for row in range(1, height-1, 2):
-			pix.setSig_p(0)
-			pix.setSig_even_odd(0)
-			pix.setSig_fwd_inv(0)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
+			sim_fixbv.setSig_p(0)
+			sim_fixbv.setSig_even_odd(0)
+			sim_fixbv.setSig_fwd_inv(0)
+			sim_fixbv.setSig_left(s[row-1][col])
+			sim_fixbv.setSig_right(s[row+1][col])
  
-			even, odd = add_mul_ram(pix)			
+			even, odd = sim_fixbv.add_mul()			
 			s[row][col] += float(odd)
 			#s[row+2][col] += float(odd1)
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
@@ -233,13 +231,13 @@ def iwt97(s, width, height):
 
         # Inverse update 1.
         for row in range(2, height, 2):
-			pix.setSig_p(1)
-			pix.setSig_even_odd(1)
-			pix.setSig_fwd_inv(0)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
+			sim_fixbv.setSig_p(1)
+			sim_fixbv.setSig_even_odd(1)
+			sim_fixbv.setSig_fwd_inv(0)
+			sim_fixbv.setSig_left(s[row-1][col])
+			sim_fixbv.setSig_right(s[row+1][col])
  
-			even, odd = add_mul_ram(pix)			
+			even, odd = sim_fixbv.add_mul()			
 			s[row][col] += float(even)
  
             #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
@@ -247,13 +245,13 @@ def iwt97(s, width, height):
         
         # Inverse predict 1.
         for row in range(1, height-1, 2):
-			pix.setSig_p(1)
-			pix.setSig_even_odd(0)
-			pix.setSig_fwd_inv(0)
-			pix.setSig_left(s[row-1][col])
-			pix.setSig_right(s[row+1][col])
+			sim_fixbv.setSig_p(1)
+			sim_fixbv.setSig_even_odd(0)
+			sim_fixbv.setSig_fwd_inv(0)
+			sim_fixbv.setSig_left(s[row-1][col])
+			sim_fixbv.setSig_right(s[row+1][col])
  
-			even, odd = add_mul_ram(pix)			
+			even, odd = sim_fixbv.add_mul()			
 			s[row][col] += float(odd)
  
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
@@ -262,12 +260,12 @@ def iwt97(s, width, height):
     return s
 
 
-def seq_to_img(m, pix):
-    ''' Copy matrix m to pixel buffer pix.
-    Assumes m has the same number of rows and cols as pix. '''
+def seq_to_img(m, sim_fixbv):
+    ''' Copy matrix m to sim_fixbvel buffer sim_fixbv.
+    Assumes m has the same number of rows and cols as sim_fixbv. '''
     for row in range(len(m)):
         for col in range(len(m[row])):
-            pix[col,row] = m[row][col]
+            sim_fixbv[col,row] = m[row][col]
             
             
 if __name__ == "__main__":
@@ -275,7 +273,7 @@ if __name__ == "__main__":
     im = Image.open("../lena_256.png") # Must be a single band image! (grey)
 
     # Create an image buffer object for fast access.
-    pix = im.load()
+    sim_fixbv = im.load()
     
     # Convert the 2d image to a 1d sequence:
     m = list(im.getdata())
@@ -292,12 +290,12 @@ if __name__ == "__main__":
     # Perform a forward CDF 9/7 transform on the image:
     m = fwt97_2d(m, 1)
     
-    seq_to_img(m, pix) # Convert the list of lists matrix to an image.
+    seq_to_img(m, sim_fixbv) # Convert the list of lists matrix to an image.
     im.save("lena_256_fwt.png") # Save the transformed image.
     
     # Perform an inverse transform:
     m = iwt97_2d(m, 1)
     
-    seq_to_img(m, pix) # Convert the inverse list of lists matrix to an image.
+    seq_to_img(m, sim_fixbv) # Convert the inverse list of lists matrix to an image.
     im.save("lena_256_iwt.png") # Save the inverse transformation.
     

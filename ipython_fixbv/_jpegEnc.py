@@ -2,7 +2,7 @@ from myhdl import *
 from PIL import Image # Part of the standard Python Library
 
 import waveletsim_53 as dwt
-
+import waveletsim as f_dwt
 class JPEGEnc2k(object):
 
     def __init__(self):
@@ -27,6 +27,7 @@ class JPEGEnc2k(object):
         self.tile = [self.T1, self.T2]
         self.tiles  = (self.N1,self.N2,)
         self.origin = (self.omega1, self.omega2)
+        self.filter = [5,3]
         self.img_fn = ""
         self.mode = ""
         self.width = 0
@@ -41,6 +42,12 @@ class JPEGEnc2k(object):
         self.clock = clock
         self.reset = reset
         '''
+    def get_filter(self):
+        return self.filter
+
+    def set_filter(self, val):
+        self.filter  = val
+
     def get_dwt_level(self):
         return self.dwt_level
 
@@ -139,18 +146,31 @@ class JPEGEnc2k(object):
                self.r_subband = [self.r_subband[i:i+self.img.size[0]] for i in range(0, len(self.r_subband), self.img.size[0])]
                self.g_subband = [self.g_subband[i:i+self.img.size[0]] for i in range(0, len(self.g_subband), self.img.size[0])]
                self.b_subband = [self.b_subband[i:i+self.img.size[0]] for i in range(0, len(self.b_subband), self.img.size[0])]
-               print 'Red', len(self.r_subband[0]), len(self.r_subband[1])
-               print 'Green', len(self.g_subband[0]),len(self.g_subband[1])
-               print 'Blue', len(self.b_subband[0]),len(self.b_subband[1])
+               '''int 5/3 dwt or floating point 9/7 data required'''
+               if (self.filter[0] == 9):
+                   for row in range(0, len(self.r_subband)):
+                       for col in range(0, len(self.r_subband[0])):
+                           self.r_subband[row][col] = float(self.r_subband[row][col])
+                           self.g_subband[row][col] = float(self.g_subband[row][col])
+                           self.b_subband[row][col] = float(self.b_subband[row][col])
+                   print 'Red', len(self.r_subband[0]), len(self.r_subband[1])
+                   print 'Green', len(self.g_subband[0]),len(self.g_subband[1])
+                   print 'Blue', len(self.b_subband[0]),len(self.b_subband[1])
+               
+        
             else:
                   
                   self.gr_subband = list(self.img.getdata())
                   self.pix = self.img.load()
                   self.gr_subband = [self.gr_subband[i:i+self.img.size[0]] for i in range(0, len(self.gr_subband), self.img.size[0])] 
+                  if (self.filter[0] == 9):
+                     for row in range(0, len(self.gr_subband)):
+                        for col in range(0, len(self.gr_subband[0])):
+                            self.gr_subband[row][col] = float(self.gr_subband[row][col])
                   print 'Gray', len(self.gr_subband[0]), len(self.gr_subband[1])
 
     def fwd_dwt(self):
-        print "forward dwt using file ", self.img_fn, "dwt_level", self.dwt_level
+        print "forward dwt using file ", self.img_fn, "dwt_level", self.dwt_level, "dwt_filter", self.filter
         if (self.mode == "RGB"):
             self.fwd_r = self.r_subband
             self.fwd_g = self.g_subband
@@ -170,5 +190,28 @@ class JPEGEnc2k(object):
             self.fwd_gr = self.gr_subband
              
             self.fwd_gr = dwt.fwt97_2d(self.fwd_gr, self.dwt_level)
+            dwt.seq_to_img(self.fwd_gr, self.pix)
+
+    def fwd_f_dwt(self):
+        print "forward dwt using file ", self.img_fn, "dwt_level", self.dwt_level, "dwt_filter", self.filter
+        if (self.mode == "RGB"):
+            self.fwd_r = self.r_subband
+            self.fwd_g = self.g_subband
+            self.fwd_b = self.b_subband 
+            self.fwd_r = f_dwt.fwt97_2d(self.fwd_r, self.dwt_level)
+            self.fwd_g = f_dwt.fwt97_2d(self.fwd_g, self.dwt_level)
+            self.fwd_b = f_dwt.fwt97_2d(self.fwd_b, self.dwt_level)
+            rgb = []
+            for row in range(len(self.fwd_r)):
+                for col in range(len(self.fwd_r)):
+                    rgb.append((self.fwd_r[row][col],self.fwd_g[row][col],self.fwd_b[row][col]))
+            for row in range(len(self.fwd_r)):
+                for col in range(len(self.fwd_r)):
+                    #pix[row,col] = rgb[col + row*128]
+                    self.pix[col,row] = rgb[col + row*len(self.fwd_r)] 
+        else:
+            self.fwd_gr = self.gr_subband
+             
+            self.fwd_gr = f_dwt.fwt97_2d(self.fwd_gr, self.dwt_level)
             dwt.seq_to_img(self.fwd_gr, self.pix)
             
