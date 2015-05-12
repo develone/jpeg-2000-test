@@ -44,9 +44,11 @@ architecture Behavioral of test_lifting_jpeg_step is
   signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
   -- Connections between the shift-register module and the subtractor.
   
-  signal toSub_s : std_logic_vector(17 downto 0); -- From PC to dut 
+  signal toSub_s : std_logic_vector(17 downto 0); -- From PC to dut
+  --datatodut is mapped to pc_read datafromdut
+  --datatodut is sent back to pc using datafromdut  
   alias datatodut is toSub_s(8 downto 0); 
-  alias pc_data_rdy is toSub_s(9 downto 9);  
+  alias pc_data_rdy is toSub_s(9 downto 9);   
   alias datactn is toSub_s(17 downto 10); 
   
   signal fromSub_s : std_logic_vector(10 downto 0); -- From dut to PC.
@@ -66,13 +68,14 @@ architecture Behavioral of test_lifting_jpeg_step is
   signal tdoBlinker_s : std_logic; -- Bits from the blinker to the host PC.
   signal tdoSub_s : std_logic; -- Bits from the sbtrctr to the host PC.
   
+  signal pc_data_i: std_logic:= '0';
   signal data_in : unsigned(8 downto 0) := (others => '0');
-  signal toLift_Step :  unsigned(8 downto 0) := (others => '0');
+  
   signal  clk : std_logic;
   signal  we_in : std_logic;
   signal  muxsel_i : std_logic;
   signal addr_in :  unsigned(7  downto 0) := (others => '0');
-  signal  data_pc_in : std_logic;
+  signal  datactn_in : unsigned(7  downto 0) := (others => '0');
 
   
   COMPONENT pc_read  
@@ -82,9 +85,9 @@ architecture Behavioral of test_lifting_jpeg_step is
         toLift_Step: in unsigned(8 downto 0);
         we_in: out std_logic;
         addr_in: inout unsigned(7 downto 0);
-        muxsel_i: in std_logic
- 
- 
+        muxsel_i: in std_logic;
+ 	     datactn_in: out unsigned(7 downto 0);
+        datactn: in unsigned(7 downto 0)
     );
 END COMPONENT;
 
@@ -94,10 +97,12 @@ u1 : pc_read
 	PORT MAP (
 	  clk => clk_fast,
 	  data_in => data_in,
-	  toLift_Step => unsigned(toLift_Step),
+	  toLift_Step => unsigned(datatodut),
 	  we_in => we_in,
 	  addr_in => addr_in,
-	  muxsel_i => muxsel_i
+	  muxsel_i => muxsel_i,
+	  datactn_in => datactn_in,
+     datactn => unsigned(datactn) 
  
 	  );
 
@@ -165,11 +170,13 @@ UHostIoToSubtracter : HostIoToDut
 	end process;
    -- This is the subtractor.
 --   difference_s <= minuend_s - subtrahend_s;
-	
+
+	--pc_data_i <= std_logic(pc_data_rdy);
 	status_s <= b"11";
 	datafromdut <= datatodut;
 --   data_pc_in <= (pc_data_rdy);
    blinker_o <= cnt_r(22);
+ 
    --fromBlinker_s <= cnt_r(22 downto 22); -- Blinker output to shift reg. this commented out
 end Behavioral;
 
