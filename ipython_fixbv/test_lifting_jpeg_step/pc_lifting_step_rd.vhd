@@ -21,7 +21,10 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use work.HostIoPckg.all; -- Package for PC <=> FPGA communications.
+use IEEE.numeric_std.all;
+use std.textio.all;
 
+use work.pck_myhdl_090.all;
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --use IEEE.NUMERIC_STD.ALL;
@@ -31,21 +34,27 @@ use work.HostIoPckg.all; -- Package for PC <=> FPGA communications.
 library UNISIM;
 use UNISIM.VComponents.all;
 
-entity pc_fast_blinker_sub is
+entity test_lifting_jpeg_step is
     Port ( clk_i : in std_logic;
           blinker_o : out  STD_LOGIC);
-end pc_fast_blinker_sub;
+end test_lifting_jpeg_step;
 
-architecture Behavioral of pc_fast_blinker_sub is
+architecture Behavioral of test_lifting_jpeg_step is
   signal  clk_fast : std_logic;
   signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
   -- Connections between the shift-register module and the subtractor.
-  signal toLift_Step : std_logic_vector(15 downto 0); -- From PC to Lift_Step.
-  signal fromLift_Step : std_logic_vector(7 downto 0); -- From Lift_Step to PC.
-  alias minuend_s is toSub_s(7 downto 0); -- Subtrctr's 1st operand.
-  alias subtrahend_s is toSub_s(15 downto 8); -- Subtrctr's 2nd oprnd.
-  alias difference_s is fromSub_s; -- Subtractor's output.
+  
+  signal toSub_s : std_logic_vector(17 downto 0); -- From PC to dut 
+  alias datatodut is toSub_s(8 downto 0); 
+  alias pc_data_rdy is toSub_s(9 downto 9);  
+  alias datactn is toSub_s(17 downto 10); 
+  
+  signal fromSub_s : std_logic_vector(10 downto 0); -- From dut to PC.
+  alias datafromdut is fromSub_s(8 downto 0); 
+  alias status_s is fromSub_s(10 downto 9);
 
+--  alias  col_end is toSub_s(16); --pc signal
+--  alias  col_start is toSub_s(8); --pc signal
   -- Connections between the shift-register module and the blinker.
   --signal toBlinker_s : std_logic_vector(0 downto 0); -- From PC to blnkr.
   --signal fromBlinker_s : std_logic_vector(0 downto 0); -- From blnkr to PC.
@@ -56,7 +65,42 @@ architecture Behavioral of pc_fast_blinker_sub is
   signal tdo_s : std_logic; -- Bits from blinker to the host PC.
   signal tdoBlinker_s : std_logic; -- Bits from the blinker to the host PC.
   signal tdoSub_s : std_logic; -- Bits from the sbtrctr to the host PC.
+  
+  signal data_in : unsigned(8 downto 0) := (others => '0');
+  signal toLift_Step :  unsigned(8 downto 0) := (others => '0');
+  signal  clk : std_logic;
+  signal  we_in : std_logic;
+  signal  muxsel_i : std_logic;
+  signal addr_in :  unsigned(7  downto 0) := (others => '0');
+  signal  data_pc_in : std_logic;
+
+  
+  COMPONENT pc_read  
+    port (
+        clk: in std_logic;
+        data_in: out unsigned(8 downto 0);
+        toLift_Step: in unsigned(8 downto 0);
+        we_in: out std_logic;
+        addr_in: inout unsigned(7 downto 0);
+        muxsel_i: in std_logic
+ 
+ 
+    );
+END COMPONENT;
+
 begin
+
+u1 : pc_read 
+	PORT MAP (
+	  clk => clk_fast,
+	  data_in => data_in,
+	  toLift_Step => unsigned(toLift_Step),
+	  we_in => we_in,
+	  addr_in => addr_in,
+	  muxsel_i => muxsel_i
+ 
+	  );
+
 
 -------------------------------------------------------------------------
 -- JTAG entry point.
@@ -82,8 +126,8 @@ UHostIoToSubtracter : HostIoToDut
     tdi_i => tdi_s,
     tdo_o => tdo_s,
     -- Connections to the subtractor.
-    vectorToDut_o => toLift_Step, -- From PC to Lift_Step.
-    vectorFromDut_i => fromLift_Step -- From Lift_Step to PC.
+    vectorToDut_o => toSub_s, -- From PC to sbtrctr subtrahend & minuend.
+    vectorFromDut_i => fromSub_s -- From subtractor difference to PC.
 
     -- Connections to the blinker.
     --vectorToDut_o => toBlinker_s, this commented out 
@@ -99,8 +143,8 @@ UHostIoToSubtracter : HostIoToDut
   DCM_SP_inst : DCM_SP
    generic map (
    
-      CLKFX_DIVIDE => 1,                     -- Divide value on CLKFX outputs - D - (1-32)
-      CLKFX_MULTIPLY => 10                   -- Multiply value on CLKFX outputs - M - (2-32)
+      CLKFX_DIVIDE => 3,                     -- Divide value on CLKFX outputs - D - (1-32)
+      CLKFX_MULTIPLY => 25                   -- Multiply value on CLKFX outputs - M - (2-32)
   
    )
    port map (
@@ -110,7 +154,7 @@ UHostIoToSubtracter : HostIoToDut
        
    );
 
-
+--  clk <= clk_fast;  or u1 : pc_read PORT MAPclk => clk_fast,
 
   
 	process(clk_fast) is
@@ -120,7 +164,11 @@ UHostIoToSubtracter : HostIoToDut
 		end if;
 	end process;
    -- This is the subtractor.
-   --difference_s <= minuend_s - subtrahend_s;
+--   difference_s <= minuend_s - subtrahend_s;
+	
+	status_s <= b"11";
+	datafromdut <= datatodut;
+--   data_pc_in <= (pc_data_rdy);
    blinker_o <= cnt_r(22);
    --fromBlinker_s <= cnt_r(22 downto 22); -- Blinker output to shift reg. this commented out
 end Behavioral;
