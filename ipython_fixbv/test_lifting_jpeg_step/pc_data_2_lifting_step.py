@@ -26,7 +26,7 @@ from myhdl import *
 x0 = intbv(-2, min = -256, max = 256)
 
 datactn = intbv(0)[8:]
-datapush = bool(1)
+datapush = intbv(3)[2:]
 print bin(datapush), bin(datactn,8)
 update = bool(0)
 print
@@ -50,22 +50,22 @@ SUBTRACTOR_ID = 4  # This is the identifier for the subtractor in the FPGA.
 #print c
 #print repr(c.to_usb())
 
-subtractor = XsDut(USB_ID, SUBTRACTOR_ID, [ 9, 1, 8], [9, 2])
+subtractor = XsDut(USB_ID, SUBTRACTOR_ID, [ 9, 2, 8], [9, 2])
 #help(subtractor)
-
+'''
 for i in range(255):
     t = random.randrange(-2**(W0-1),2**(W0-1)) 
     #print t
     x0 = intbv(t, min = -256, max = 256)
     datactn = intbv(i)[8:]
     print datactn
-    print bin(x0,9) 
-    datasent,status = subtractor.Exec(x0, datapush, datactn )  # Use the subtractor in FPGA.
+    print x0, bin(x0,9) 
+    datasent, status = subtractor.Exec(x0, datapush, datactn )  # Use the subtractor in FPGA.
     
     print datasent.int, datasent,status
 '''
-for i in range(256):
-    time.sleep(5)
+for i in range(1):
+    #time.sleep(5)
     for j in range(256):
         print i,j
         x0 = m[j][i]
@@ -75,7 +75,7 @@ for i in range(256):
 
 datasent,status = subtractor.Exec(x0, datapush, datactn )
 print datasent.int, datasent, status
-''' 
+
 
 
  

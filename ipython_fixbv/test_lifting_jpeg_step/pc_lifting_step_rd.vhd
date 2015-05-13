@@ -44,12 +44,12 @@ architecture Behavioral of test_lifting_jpeg_step is
   signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
   -- Connections between the shift-register module and the subtractor.
   
-  signal toSub_s : std_logic_vector(17 downto 0); -- From PC to dut
+  signal toSub_s : std_logic_vector(18 downto 0); -- From PC to dut
   --datatodut is mapped to pc_read datafromdut
   --datatodut is sent back to pc using datafromdut  
   alias datatodut is toSub_s(8 downto 0); 
-  alias pc_data_rdy is toSub_s(9 downto 9);   
-  alias datactn is toSub_s(17 downto 10); 
+  alias pc_data_rdy is toSub_s(10 downto 9);   
+  alias datactn is toSub_s(18 downto 11); 
   
   signal fromSub_s : std_logic_vector(10 downto 0); -- From dut to PC.
   alias datafromdut is fromSub_s(8 downto 0); 
@@ -76,7 +76,7 @@ architecture Behavioral of test_lifting_jpeg_step is
   signal  muxsel_i : std_logic;
   signal addr_in :  unsigned(7  downto 0) := (others => '0');
   signal  datactn_in : unsigned(7  downto 0) := (others => '0');
-
+  signal  pc_data_in : unsigned(1  downto 0) := (others => '0');
   
   COMPONENT pc_read  
     port (
@@ -91,6 +91,13 @@ architecture Behavioral of test_lifting_jpeg_step is
     );
 END COMPONENT;
 
+   COMPONENT inter
+    port (
+        pc_data_in: out unsigned(1 downto 0);
+        pc_data_rdy: in unsigned(1 downto 0)
+    );
+END COMPONENT;
+	 
 begin
 
 u1 : pc_read 
@@ -106,7 +113,11 @@ u1 : pc_read
  
 	  );
 
-
+u2 : inter
+	PORT MAP (
+		pc_data_in => pc_data_in,
+		pc_data_rdy => unsigned(pc_data_rdy)
+		);
 -------------------------------------------------------------------------
 -- JTAG entry point.
 -------------------------------------------------------------------------
@@ -172,8 +183,11 @@ UHostIoToSubtracter : HostIoToDut
 --   difference_s <= minuend_s - subtrahend_s;
 
 	--pc_data_i <= std_logic(pc_data_rdy);
-	status_s <= b"11";
+	--status_s <= b"11";
+	 
 	datafromdut <= datatodut;
+	status_s <= std_logic_vector(pc_data_in);
+	--status_s <= b"11";
 --   data_pc_in <= (pc_data_rdy);
    blinker_o <= cnt_r(22);
  
