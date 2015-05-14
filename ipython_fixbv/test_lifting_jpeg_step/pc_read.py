@@ -15,31 +15,37 @@ addr_in = Signal(intbv(0)[8:])
 muxsel_i = Signal(bool(0))
 clk = Signal(bool(0))
 '''data from usb hostio'''
-pc_data_rdy  = Signal(bool(0))
+pc_data_in = Signal(intbv(0)[2:])
+pc_data_rdy = Signal(intbv(0)[2:])
+
 data_pc_in  = Signal(bool(0))
 datactn_in = Signal(intbv(0)[8:])
 datactn = Signal(intbv(0)[8:])
-status_i = Signal(intbv(0)[2:])
 
-def pc_read(clk, data_in, toLift_Step, we_in, addr_in, muxsel_i,datactn_in, datactn ):
+
+def pc_read(clk, data_in, toLift_Step, we_in, addr_in, muxsel_i,datactn_in, datactn, pc_data_in, pc_data_rdy ):
     @always(clk.posedge)
     def readlogic():
         if( muxsel_i == 1):
-            if (addr_in <= 256):
+            if (addr_in <= 254):
                 we_in.next = 1
                 data_in.next = toLift_Step
                 datactn_in.next = datactn 
                 addr_in.next = addr_in + 1
-                 
-    return readlogic
-def detect_data_from_pc(status_i, datapush):
     @always_comb
     def rtl():
-        if (datapush == 0):
-            status_i.next = 3
-        else:
-            status_i.next = 0
-    return rtl
+        pc_data_in.next = pc_data_rdy
+    @always(clk.posedge)
+    def rtl1():
+        if(muxsel_i == 0):
+            if (pc_data_in.next == 3):
+                muxsel_i.next = 1
+            else:
+                if (pc_data_in.next == 2):
+                    muxsel_i.next = 0
+                    
+    return readlogic, rtl, rtl1
+ 
 def tb(clk, data_in, toLift_Step, we_in, addr_in, muxsel_i, datactn_in, datactn ):
     instance_pc_read = pc_read(clk, data_in, toLift_Step, we_in, addr_in, muxsel_i, datactn_in, datactn  )
     @always(delay(10))
@@ -60,11 +66,15 @@ def tb(clk, data_in, toLift_Step, we_in, addr_in, muxsel_i, datactn_in, datactn 
 
         muxsel_i.next = 1
         yield clk.posedge
-        for i in range(255):
+        for i in range(100):
+            print ("%d wr %d addr %d ") % (now(), we_in, addr_in)
             yield clk.posedge
+            toLift_Step.next = i
+            yield clk.posedge
+            print ("%d data %d addr %d ") % (now(), data_in, addr_in)
         raise StopSimulation
     return instances()
-#tb_fsm = traceSignals( tb, clk, data_in, toLift_Step, we_in, addr_in, muxsel_i, datactn_in, datactn  )
+#tb_fsm = traceSignals( tb, clk, data_in, toLift_Step, we_in, addr_in, muxsel_i, datactn_in, datactn, pc_data_in, pc_data_rdy  )
 #sim = Simulation(tb_fsm)
 #sim.run()
-toVHDL(pc_read, clk, data_in, toLift_Step, we_in, addr_in, muxsel_i,datactn_in, datactn ) 
+#toVHDL(pc_read, clk, data_in, toLift_Step, we_in, addr_in, muxsel_i, datactn_in, datactn, pc_data_in, pc_data_rdy ) 

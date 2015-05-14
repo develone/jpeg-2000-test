@@ -87,7 +87,9 @@ architecture Behavioral of test_lifting_jpeg_step is
         addr_in: inout unsigned(7 downto 0);
         muxsel_i: in std_logic;
  	     datactn_in: out unsigned(7 downto 0);
-        datactn: in unsigned(7 downto 0)
+        datactn: in unsigned(7 downto 0);
+		  pc_data_in: inout unsigned(1 downto 0);
+        pc_data_rdy: in unsigned(1 downto 0)
     );
 END COMPONENT;
 
@@ -109,15 +111,13 @@ u1 : pc_read
 	  addr_in => addr_in,
 	  muxsel_i => muxsel_i,
 	  datactn_in => datactn_in,
-     datactn => unsigned(datactn) 
+     datactn => unsigned(datactn),
+	  pc_data_in => pc_data_in,
+	  pc_data_rdy => unsigned(pc_data_rdy)	  
  
 	  );
 
-u2 : inter
-	PORT MAP (
-		pc_data_in => pc_data_in,
-		pc_data_rdy => unsigned(pc_data_rdy)
-		);
+ 
 -------------------------------------------------------------------------
 -- JTAG entry point.
 -------------------------------------------------------------------------
