@@ -11,20 +11,32 @@ data_in = Signal(intbv(0)[W0:])
 z = Signal(intbv(0)[W0:])
 muxsel_i = Signal(bool(0))
 
-def mux_data(z, din, data_in, we_1, we, we_in, addr_1, addr, addr_in, muxsel_i):
+muxaddrsel = Signal(intbv(0)[2:])
+addr_left = Signal(intbv(0)[8:])
+addr_sam = Signal(intbv(0)[8:])
+addr_rht = Signal(intbv(0)[8:])
+
+def mux_data(z, din, data_in, we_1, we, we_in,  addr, addr_in, muxsel_i, muxaddrsel, addr_left, addr_sam, addr_rht ):
 	@always_comb
 	def muxLogic():
 		'''If  muxsel_i eq 0 ram  writing disabled to pc_read'''
 		din.next = z
 		we.next = we_1
-		addr.next = addr_1
+		if (muxaddrsel == 0):
+			addr.next = addr_left
+		elif (muxaddrsel == 1):
+			addr.next = addr_sam
+		else:
+			if (muxaddrsel == 2):
+				addr.next = addr_rht
 		 
 		if (muxsel_i == 1):
 			din.next = data_in
 			we.next =  we_in
 			addr.next = addr_in
+			
 	return muxLogic		
 def convert():
-	toVHDL(mux_data, z, din, data_in, we_1, we, we_in, addr_1, addr, addr_in, muxsel_i)
-	toVerilog(mux_data, z, din, data_in, we_1, we, we_in, addr_1, addr, addr_in, muxsel_i)
+	toVHDL(mux_data, z, din, data_in, we_1, we, we_in, addr, addr_in, muxsel_i, muxaddrsel, addr_left, addr_sam, addr_rht)
+	toVerilog(mux_data, z, din, data_in, we_1, we, we_in, addr, addr_in, muxsel_i, muxaddrsel, addr_left, addr_sam, addr_rht)
 #convert()	
