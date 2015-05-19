@@ -60,7 +60,9 @@ addr_left = Signal(intbv(0)[8:])
 addr_sam = Signal(intbv(0)[8:])
 addr_rht = Signal(intbv(0)[8:])
 do_first = Signal(bool(0))
-t_State = enum('INIT', 'ODD_L', 'ODD_S', 'ODD_R', 'EVEN', 'RD_RAM_LF', 'RD_RAM_SA', 'RD_RAM_RT', 'LIFT', 'LIFT_EXE', 'LIFT_RD', 'LIFT_WR', 'LIFT_DEL1', 'LIFT_DEL2', 'LIFT_DEL3', 'DONE', encoding="one_hot")
+end_of_col = Signal(bool(0))
+
+t_State = enum('INIT', 'ODD_L', 'ODD_S', 'ODD_R', 'RD_RAM_LF', 'RD_RAM_SA', 'RD_RAM_RT', 'LIFT', 'LIFT_EXE', 'LIFT_RD', 'LIFT_WR', 'LIFT_DEL1', 'LIFT_DEL2', 'LIFT_DEL3', 'EVEN_L', 'EVEN_S', 'EVEN_R',   'DONE', encoding="one_hot")
 state = Signal(t_State.INIT)
 
 # INIT, READ_DATA, DONE = range(3)
@@ -71,14 +73,16 @@ ACTIVE_LOW = bool(0)
 
  
 
-def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o  ):
+def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col  ):
     @always(clk.posedge, rst_fsm.negedge)
     def FSM():
         if rst_fsm == ACTIVE_LOW:
             addr_left.next = 0
             addr_sam.next = 1
             addr_rht.next = 2
-            do_first.next = 0 
+            do_first.next = 0
+            flgs_i.next = 7
+            end_of_col.next = 0 
             state.next = t_State.INIT
         else:
             if state == t_State.INIT:
@@ -86,10 +90,10 @@ def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, m
                 state.next = t_State.ODD_L
             elif state == t_State.ODD_L:
                 if (muxsel_i == 0):
-                    if ((addr_left < 254) and (do_first == 0)):
-                        if (addr_left == 252):
+                    if ((addr_left < 254) ):
+                        if (addr_left == 0) and (do_first == 0):
                             ''' do_first goes hi to execute first location'''
-                            do_first.next = 1
+                            #do_first.next = 1
                             addr_left.next = 0
                             muxaddrsel.next = 0
                             we_1.next = 0
@@ -101,16 +105,18 @@ def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, m
                             muxaddrsel.next = 0
                             we_1.next = 0
                             state.next = t_State.RD_RAM_LF
-                    
+                    '''
                     else:
                         addr_left.next = 1
                         addr_sam.next = 2
-                        addr_rht.next = 3 
-                        state.next = t_State.EVEN
-                    
+                        addr_rht.next = 3
+                        do_first.next = 0
+                        flgs_i.next = 6 
+                        state.next = t_State.EVEN_L
+                    '''                    
             elif state == t_State.ODD_S:
-                    if (addr_sam < 254):
-                        if (addr_sam == 253):
+                    if (addr_sam < 254) :
+                        if (addr_sam == 1)and (do_first == 0):
                             addr_sam.next = 1
                             muxaddrsel.next = 1
                             we_1.next = 0
@@ -122,8 +128,9 @@ def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, m
                             state.next = t_State.RD_RAM_SA
             elif state == t_State.ODD_R:
                 if (muxsel_i == 0):
-                     if (addr_rht <= 254):
-                        if (addr_rht == 254):
+                     if (addr_rht < 254):
+                        if (addr_rht == 2)and (do_first == 0):
+                            do_first.next = 1
                             addr_rht.next = 2
                             muxaddrsel.next = 2
                             we_1.next = 0
@@ -133,33 +140,99 @@ def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, m
                             muxaddrsel.next = 2
                             we_1.next = 0
                             state.next = t_State.RD_RAM_RT
- 
-            elif state == t_State.EVEN:
+                     else:
+                        addr_left.next = 1
+                        addr_sam.next = 2
+                        addr_rht.next = 3
+                        do_first.next = 0
+                        flgs_i.next = 6 
+                        state.next = t_State.EVEN_L 
+            elif state == t_State.EVEN_L:
                 if (muxsel_i == 0):
-                    if (addr_left < 253):
-                        addr_left.next = addr_left + 2
-                    if (addr_rht <= 254):
-                        addr_rht.next = addr_rht + 2
-                    if (addr_sam < 254):
-                        addr_sam.next = addr_sam + 2
-                    else:
-                        state.next = t_State.DONE
+                    if ((addr_left < 254)):
+                        if (addr_left == 1)and (do_first == 0):
 
+                            ''' do_first goes hi to execute first location'''
+                            #do_first.next = 1
+                            addr_left.next = 1
+                            muxaddrsel.next = 0
+                            we_1.next = 0
+                            state.next = t_State.RD_RAM_LF
+
+                        else:
+			    
+			    addr_left.next = addr_left + 2
+                            muxaddrsel.next = 0
+                            we_1.next = 0
+                            state.next = t_State.RD_RAM_LF
+                    '''                    
+                    else:
+                        addr_left.next = 1
+                        addr_sam.next = 2
+                        addr_rht.next = 3 
+                        state.next = t_State.DONE
+                    '''
+            elif state == t_State.EVEN_S:
+                    if (addr_sam < 254):
+                        if (addr_sam == 2)and (do_first == 0):
+                            addr_sam.next = 2
+                            muxaddrsel.next = 1
+                            we_1.next = 0
+                            state.next = t_State.RD_RAM_SA
+                        else:
+                            addr_sam.next = addr_sam + 2
+                            muxaddrsel.next = 1
+                            we_1.next = 0
+                            state.next = t_State.RD_RAM_SA
+                    else:
+                        addr_left.next = 1
+                        addr_sam.next = 2
+                        addr_rht.next = 3 
+                        state.next = t_State.DONE 
+            elif state == t_State.EVEN_R:
+
+                if (muxsel_i == 0):
+                     if (addr_rht < 254):
+                        if (addr_rht == 3)and (do_first == 0):
+                            do_first.next = 1
+                            addr_rht.next = 3
+                            muxaddrsel.next = 2
+                            we_1.next = 0
+                            state.next = t_State.RD_RAM_RT
+                        else:
+                            addr_rht.next = addr_rht + 2
+                            muxaddrsel.next = 2
+                            we_1.next = 0
+                            state.next = t_State.RD_RAM_RT
+                     else:
+                        addr_left.next = 1
+                        addr_sam.next = 2
+                        addr_rht.next = 3 
+                        state.next = t_State.DONE 
             elif state == t_State.DONE:
-                 
+                end_of_col.next = 1 
                 state.next = t_State.DONE
             elif state == t_State.RD_RAM_LF:
                 left_i.next = dout
-                state.next = t_State.ODD_S
+                if (flgs_i == 6):
+                    state.next = t_State.EVEN_S
+                else:
+                    state.next = t_State.ODD_S
             elif state == t_State.RD_RAM_SA:
                 sam_i.next = dout
-                state.next = t_State.ODD_R
+                if (flgs_i == 6):
+                    state.next = t_State.EVEN_R
+                else:
+                    state.next = t_State.ODD_R
             elif state == t_State.RD_RAM_RT:
                 right_i.next = dout
+                
+                    
                 state.next = t_State.LIFT
+ 
             elif state == t_State.LIFT:
                 '''setting addr to sam'''
-                flgs_i.next = 7
+                #flgs_i.next = 7
                 update_i.next = 1
                 we_1.next = 1 
                 muxaddrsel.next = 1 
@@ -190,7 +263,7 @@ def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, m
                 #addr_sam.next = addr_sam + 1
 		#update_i.next = 0
                 #we_1.next = 0
-                print ("time %d left %d sam %d right %d ") % (now(), left_i, sam_i, right_i)
+                print ("time %d flgs %d left %d sam %d right %d ") % (now(), flgs_i, left_i, sam_i, right_i)
                 print ("time %d addr %d din %d we %d ") % (now(), addr, din, we)        
                 state.next = t_State.LIFT_DEL3
             elif state == t_State.LIFT_DEL3:
@@ -205,8 +278,8 @@ def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, m
             
     return FSM
 
-def tb(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o ):
-    instance_Odd_Even_Fsm = Odd_Even_Fsm (state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o)
+def tb(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col ):
+    instance_Odd_Even_Fsm = Odd_Even_Fsm (state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col)
     instance_ram = ram(dout, din, addr, we, clk)
     instance_mux_data =  mux_data(z, din, data_in, we_1, we, we_in, addr, addr_in, muxsel_i, muxaddrsel, addr_left, addr_sam, addr_rht)
     instance_signed2twoscomplement = signed2twoscomplement(clk, x, z)
@@ -253,10 +326,10 @@ def tb(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel,
 def main():
 
     '''    
-    toVerilog(Odd_Even_Fsm, state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o)
-    toVHDL(Odd_Even_Fsm, state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o)
+    toVerilog(Odd_Even_Fsm, state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col)
+    toVHDL(Odd_Even_Fsm, state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col)
     '''
-    tb_fsm = traceSignals(tb,state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o)
+    tb_fsm = traceSignals(tb,state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col)
     sim = Simulation(tb_fsm)
     sim.run()
     
