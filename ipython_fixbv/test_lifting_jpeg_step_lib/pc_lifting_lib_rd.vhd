@@ -43,11 +43,10 @@ end test_lifting_jpeg_step_lib;
 architecture Behavioral of test_lifting_jpeg_step_lib is
   signal  clk_fast : std_logic;
   signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
-  -- Connections between the shift-register module and the subtractor.
+  -- Connections between the shift-register module and the pc_read.
   
   signal toSub_s : std_logic_vector(18 downto 0); -- From PC to dut
-  --datatodut is mapped to pc_read datafromdut
-  --datatodut is sent back to pc using datafromdut  
+  
   alias datatodut is toSub_s(8 downto 0); 
   alias pc_data_rdy is toSub_s(10 downto 9);   
   alias datactn is toSub_s(18 downto 11); 
@@ -56,38 +55,13 @@ architecture Behavioral of test_lifting_jpeg_step_lib is
   alias datafromdut is fromSub_s(8 downto 0); 
   alias status_s is fromSub_s(10 downto 9);
 
---  alias  col_end is toSub_s(16); --pc signal
---  alias  col_start is toSub_s(8); --pc signal
-  -- Connections between the shift-register module and the blinker.
-  --signal toBlinker_s : std_logic_vector(0 downto 0); -- From PC to blnkr.
-  --signal fromBlinker_s : std_logic_vector(0 downto 0); -- From blnkr to PC.
+
   -- Connections between JTAG entry point and the shift-register module.
   signal inShiftDr_s : std_logic; -- True when bits shift btwn PC & FPGA.
   signal drck_s : std_logic; -- Bit shift clock.
   signal tdi_s : std_logic; -- Bits from host PC to the blinker.
   signal tdo_s : std_logic; -- Bits from blinker to the host PC.
-  --********************
---     add_i       : in  std_logic;  -- Add data to the Up FIFO that sends data to the host.
---    data_i      : in  std_logic_vector(WORD_WIDTH_G-1 downto 0);  -- Data to send to the host.
---    rmv_i       : in  std_logic;  -- Remove data from the Down FIFO that receives data from the host.
---    data_o      : out std_logic_vector(WORD_WIDTH_G-1 downto 0);  -- Data downloaded from the host.
---    upEmpty_o   : out std_logic;  -- True if the Up FIFO to the host is empty.
---    upFull_o    : out std_logic;  -- True if the Up FIFO to the host is full.
---    upLevel_o   : out std_logic_vector(natural(ceil(log2(real(FIFO_LENGTH_G+1))))-1 downto 0);  -- # of data words waiting in the Up FIFO to send to the host.
---    dnEmpty_o   : out std_logic;  -- True if the Down FIFO from the host is empty.
---    dnFull_o    : out std_logic;  -- True if the Down FIFO from the host is full.
---    dnLevel_o   : out std_logic_vector(natural(ceil(log2(real(FIFO_LENGTH_G+1))))-1 downto 0);  -- # of data words available in the Down FIFO from the host.
---    break_o     : out std_logic   -- True when the host forces a break condition.
---  signal add_i       : std_logic;  -- Add data to the Up FIFO that sends data to the host.
---  signal	rmv_i       :  std_logic;  -- Remove data from the Down FIFO that receives data from the host.
---  signal upEmpty_o      : std_logic;    -- True if Up FIFO is empty.
---  signal upFull_o       : std_logic;    -- True if Up FIFO is full.
---  signal upLevel      : std_logic_vector(upLevel_o'range);  -- # of data words in Up FIFO.
---  signal dnAdd_o        : std_logic;    -- Add data to back of Down FIFO.
---  signal dnEmpty_o      : std_logic;    -- True if Down FIFO is empty.
---  signal dnFull_o       : std_logic;    -- True if Down FIFO is full.
---  signal dnLevel_o      : std_logic_vector(dnLevel_o'range);  -- # of data words in Down FIFO.
-  --********************
+  
   signal tdoBlinker_s : std_logic; -- Bits from the blinker to the host PC.
   signal tdoSub_s : std_logic; -- Bits from the sbtrctr to the host PC.
   
@@ -116,12 +90,7 @@ architecture Behavioral of test_lifting_jpeg_step_lib is
     );
 END COMPONENT;
 
-   COMPONENT inter
-    port (
-        pc_data_in: out unsigned(1 downto 0);
-        pc_data_rdy: in unsigned(1 downto 0)
-    );
-END COMPONENT;
+ 
 	 
 begin
 
@@ -165,14 +134,8 @@ UHostIoToSubtracter : HostIoToDut
     tdi_i => tdi_s,
     tdo_o => tdo_s,
     -- Connections to the subtractor.
-    vectorToDut_o => toSub_s, -- From PC to sbtrctr subtrahend & minuend.
-    vectorFromDut_i => fromSub_s -- From subtractor difference to PC.
-
-    -- Connections to the blinker.
-    --vectorToDut_o => toBlinker_s, this commented out 
-    -- From PC to blinker (dummy sig).
-    --vectorFromDut_i => fromBlinker_s -- From blinker to PC. this commented out
-
+    vectorToDut_o => toSub_s, -- From PC to pc_read
+    vectorFromDut_i => fromSub_s -- From pc_read to PC.
    );
 
    -- DCM_SP: Digital Clock Manager
@@ -193,7 +156,7 @@ UHostIoToSubtracter : HostIoToDut
        
    );
 
---  clk <= clk_fast;  or u1 : pc_read PORT MAPclk => clk_fast,
+ 
 
   
 	process(clk_fast) is
@@ -202,16 +165,11 @@ UHostIoToSubtracter : HostIoToDut
 			cnt_r <= cnt_r + 1;
 		end if;
 	end process;
-   -- This is the subtractor.
---   difference_s <= minuend_s - subtrahend_s;
-
-	--pc_data_i <= std_logic(pc_data_rdy);
-	--status_s <= b"11";
+ 
 	 
 	datafromdut <= datatodut;
 	status_s <= std_logic_vector(pc_data_in);
-	--status_s <= b"11";
---   data_pc_in <= (pc_data_rdy);
+ 
    blinker_o <= cnt_r(22);
  
    --fromBlinker_s <= cnt_r(22 downto 22); -- Blinker output to shift reg. this commented out
