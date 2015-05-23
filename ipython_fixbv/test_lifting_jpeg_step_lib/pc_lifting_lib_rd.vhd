@@ -46,15 +46,14 @@ architecture Behavioral of test_lifting_jpeg_step_lib is
   -- Connections between the shift-register module and the pc_read.
   
   signal toSub_s : std_logic_vector(18 downto 0); -- From PC to dut
+  signal fromSub_s : std_logic_vector(10 downto 0); -- From dut to PC.
   
   alias datatodut is toSub_s(8 downto 0); 
   alias pc_data_rdy is toSub_s(10 downto 9);   
-  alias datactn is toSub_s(18 downto 11); 
+  alias addr_in_toLift_Step is toSub_s(18 downto 11); 
   
-  signal fromSub_s : std_logic_vector(10 downto 0); -- From dut to PC.
   alias datafromdut is fromSub_s(8 downto 0); 
   alias status_s is fromSub_s(10 downto 9);
-
 
   -- Connections between JTAG entry point and the shift-register module.
   signal inShiftDr_s : std_logic; -- True when bits shift btwn PC & FPGA.
@@ -62,15 +61,16 @@ architecture Behavioral of test_lifting_jpeg_step_lib is
   signal tdi_s : std_logic; -- Bits from host PC to the blinker.
   signal tdo_s : std_logic; -- Bits from blinker to the host PC.
   
-  signal tdoBlinker_s : std_logic; -- Bits from the blinker to the host PC.
-  signal tdoSub_s : std_logic; -- Bits from the sbtrctr to the host PC.
+--  signal tdoBlinker_s : std_logic; -- Bits from the blinker to the host PC.
+--  signal tdoSub_s : std_logic; -- Bits from the sbtrctr to the host PC.
   
   signal pc_data_i: std_logic:= '0';
   signal data_in : unsigned(8 downto 0) := (others => '0');
   
   signal  clk : std_logic;
-  signal  we_in : std_logic;
-  signal  muxsel_i : std_logic;
+  signal  we_in : std_logic := '0';
+  signal  muxsel_i : std_logic := '0';
+  signal  read_pc_i : std_logic := '0';
   signal addr_in :  unsigned(7  downto 0) := (others => '0');
   signal  datactn_in : unsigned(7  downto 0) := (others => '0');
   signal  pc_data_in : unsigned(1  downto 0) := (others => '0');
@@ -80,13 +80,13 @@ architecture Behavioral of test_lifting_jpeg_step_lib is
         clk: in std_logic;
         data_in: out unsigned(8 downto 0);
         toLift_Step: in unsigned(8 downto 0);
-        we_in: out std_logic;
-        addr_in: inout unsigned(7 downto 0);
+        addr_in: out unsigned(7 downto 0);
+        addr_in_toLift_Step: in unsigned(7 downto 0);
+        read_pc_i: in std_logic;
         muxsel_i: in std_logic;
- 	     datactn_in: out unsigned(7 downto 0);
-        datactn: in unsigned(7 downto 0);
-		  pc_data_in: inout unsigned(1 downto 0);
-        pc_data_rdy: in unsigned(1 downto 0)
+        pc_data_in: out unsigned(1 downto 0);
+        pc_data_rdy: in unsigned(1 downto 0);
+        we_in: out std_logic
     );
 END COMPONENT;
 
@@ -94,19 +94,21 @@ END COMPONENT;
 	 
 begin
 
+read_pc_i <= '1';
+muxsel_i <= '1';
+
 u1 : pc_read 
 	PORT MAP (
 	  clk => clk_fast,
 	  data_in => data_in,
 	  toLift_Step => unsigned(datatodut),
-	  we_in => we_in,
 	  addr_in => addr_in,
+	  addr_in_toLift_Step => unsigned(addr_in_toLift_Step),
+	  read_pc_i => read_pc_i,
 	  muxsel_i => muxsel_i,
-	  datactn_in => datactn_in,
-     datactn => unsigned(datactn),
-	  pc_data_in => pc_data_in,
-	  pc_data_rdy => unsigned(pc_data_rdy)	  
- 
+ 	  pc_data_in => pc_data_in,
+	  pc_data_rdy => unsigned(pc_data_rdy),	  
+     we_in => we_in
 	  );
 
  
