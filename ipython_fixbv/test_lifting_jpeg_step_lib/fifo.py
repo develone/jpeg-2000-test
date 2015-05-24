@@ -1,5 +1,5 @@
 from myhdl import *
-toVHDL.numeric_ports = False
+#toVHDL.numeric_ports = False
 from PIL import Image
 im = Image.open("../../lena_256.png")
 pix = im.load()
@@ -34,8 +34,11 @@ readptr = Signal(intbv(0)[ASZ:])
 writeptr = Signal(intbv(0)[ASZ:])
 mem = [Signal(intbv(0)[DSZ:]) for ii in range(2**ASZ)]
 def fifo(clk, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r ):
-    """Following the code being converted requires the that both readptr
-    writeptr be initialized :="00000000" """
+    """The following between the single quotes ':= "0000"' needs to added to line below
+    signal instance_1_reset_ctn: unsigned(3 downto 0);
+    before the ';' to be like the following
+    signal instance_1_reset_ctn: unsigned(3 downto 0):= "0000";
+     """
     readptr = Signal(intbv(0)[ASZ:])
     writeptr = Signal(intbv(0)[ASZ:])
     reset_ctn = Signal(intbv(val=0, min=0, max=16))
@@ -111,5 +114,5 @@ def tb(clk, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r):
 #sim = Simulation(tbfsm)
 #sim.run()
 
-#toVHDL(fifo,clk, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r)
+toVHDL(fifo,clk, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r)
 

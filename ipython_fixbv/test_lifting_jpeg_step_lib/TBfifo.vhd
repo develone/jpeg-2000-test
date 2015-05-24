@@ -27,7 +27,10 @@
 --------------------------------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
- 
+use IEEE.numeric_std.all;
+use std.textio.all;
+
+use work.pck_myhdl_090.all; 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --USE ieee.numeric_std.ALL;
@@ -46,23 +49,51 @@ ARCHITECTURE behavior OF TBfifo IS
          full_r : OUT  std_logic;
          enr_r : IN  std_logic;
          enw_r : IN  std_logic;
-         dataout_r : OUT  std_logic_vector(8 downto 0);
-         datain_r : IN  std_logic_vector(8 downto 0)
+         dataout_r : OUT  unsigned(8 downto 0);
+         datain_r : IN  unsigned(8 downto 0)
         );
     END COMPONENT;
-    
+	 
+ 
+  signal  we_in : std_logic := '0';
+  signal  muxsel_i : std_logic := '0';
+  signal  read_pc_i : std_logic := '0';
+  signal addr_in :  unsigned(7  downto 0) := (others => '0');
+  signal  datactn_in : unsigned(7  downto 0) := (others => '0');
+  signal  pc_data_in : unsigned(1  downto 0) := (others => '0');
+  signal data_in : unsigned(8 downto 0) := (others => '0');  
+  signal datatodut :std_logic_vector (8 downto 0):= (others => '0');
+ 
+  signal pc_data_rdy :std_logic_vector(1 downto 0):= (others => '0');   
+  signal  addr_in_toLift_Step :std_logic_vector(7 downto 0):= (others => '0'); 
+	 
+    COMPONENT pc_read  
+    port (
+        clk: in std_logic;
+        data_in: out unsigned(8 downto 0);
+        toLift_Step: in unsigned(8 downto 0);
+        addr_in: out unsigned(7 downto 0);
+        addr_in_toLift_Step: in unsigned(7 downto 0);
+        read_pc_i: in std_logic;
+        muxsel_i: in std_logic;
+        pc_data_in: out unsigned(1 downto 0);
+        pc_data_rdy: in unsigned(1 downto 0);
+        we_in: out std_logic
+    );
+END COMPONENT;
 
    --Inputs
    signal clk : std_logic := '0';
    signal enr_r : std_logic := '0';
    signal enw_r : std_logic := '0';
-   signal datain_r : std_logic_vector(8 downto 0) := (others => '0');
+   signal datain_r : unsigned(8 downto 0) := (others => '0');
 
  	--Outputs
    signal empty_r : std_logic;
    signal full_r : std_logic;
-   signal dataout_r : std_logic_vector(8 downto 0);
+   signal dataout_r : unsigned(8 downto 0);
 
+ 
    -- Clock period definitions
    constant clk_period : time := 10 ns;
  
@@ -75,10 +106,25 @@ BEGIN
           full_r => full_r,
           enr_r => enr_r,
           enw_r => enw_r,
-          dataout_r => dataout_r,
-          datain_r => datain_r
+          dataout_r => (dataout_r),
+          datain_r => unsigned(datatodut)
         );
 
+u1 : pc_read 
+	PORT MAP (
+	  clk => clk,
+	  data_in => data_in,
+	  toLift_Step => unsigned(datatodut),
+	  addr_in => addr_in,
+	  addr_in_toLift_Step => unsigned(addr_in_toLift_Step),
+	  read_pc_i => read_pc_i,
+     muxsel_i => muxsel_i,
+ 	  pc_data_in => pc_data_in,
+	  pc_data_rdy => unsigned(pc_data_rdy),	  
+     we_in => we_in
+	  );
+
+ 
    -- Clock process definitions
    clk_process :process
    begin
@@ -98,14 +144,27 @@ BEGIN
       wait for clk_period*10;
 
       -- insert stimulus here 
-
-		datain_r <= b"010100000";
+      read_pc_i <= '1';
+		wait for 10 ns;
+      muxsel_i <= '1';
+      wait for 10 ns;
+		enw_r <= '0';
+		wait for 10 ns;
+		enr_r <= '0';
+		wait for 10 ns;
+      pc_data_rdy <= b"11";	
+		datatodut <= b"010100000";
+ 
 		wait for 10 ns;
 		enw_r <= '1';
 		wait for 10 ns;
-		datain_r <= b"010100100";
+		pc_data_rdy <= b"10";
+		datatodut <= b"010100100";
+ 
 		wait for 10 ns;
-		datain_r <= b"010110010";
+		pc_data_rdy <= b"10";
+		datatodut <= b"010110010";
+ 
 		wait for 10 ns;
 		enw_r <= '0';
 		wait for 10 ns;
