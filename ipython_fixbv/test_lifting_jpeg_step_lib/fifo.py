@@ -114,5 +114,5 @@ def tb(clk, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r):
 #sim = Simulation(tbfsm)
 #sim.run()
 
-toVHDL(fifo,clk, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r)
+#toVHDL(fifo,clk, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r)
 

@@ -28,12 +28,13 @@ x0 = intbv(-2, min = -256, max = 256)
 datactn = intbv(0)[8:]
 datapush = intbv(3)[2:]
 print bin(datapush), bin(datactn,8)
-update = bool(0)
+
+fifo_rd = bool(0)
 print
 print '''
 ##################################################################
 # This program tests the interface between the host PC and the FPGA 
-# on the XuLA board that has been programmed to act as a subtractor.
+# on the XuLA board that has been programmed to act as a fifo.
 ##################################################################
 '''
 im = Image.open("../../lena_256.png")
@@ -43,15 +44,15 @@ m = list(im.getdata())
 m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
 
 USB_ID = 0  # USB port index for the XuLA board connected to the host PC.
-SUBTRACTOR_ID = 4  # This is the identifier for the subtractor in the FPGA.
+FIFO_ID = 4  # This is the identifier for the fifo in the FPGA.
 
-# Create a subtractor intfc obj with two 8-bit inputs and one 8-bit output.
+# Create a fifo intfc obj with two 8-bit inputs and one 8-bit output.
 #c = XsBitArray('0b111111110111111110')
 #print c
 #print repr(c.to_usb())
 
-subtractor = XsDut(USB_ID, SUBTRACTOR_ID, [ 9, 2, 8], [9, 2])
-#help(subtractor)
+fifo = XsDut(USB_ID, FIFO_ID, [ 9, 2, 8, 1, 1], [9, 2])
+#help(fifo)
 '''
 for i in range(255):
     t = random.randrange(-2**(W0-1),2**(W0-1)) 
@@ -60,7 +61,7 @@ for i in range(255):
     datactn = intbv(i)[8:]
     print datactn
     print x0, bin(x0,9) 
-    datasent, status = subtractor.Exec(x0, datapush, datactn )  # Use the subtractor in FPGA.
+    datasent, status = FIFO.Exec(x0, datapush, datactn )  # Use the fifo in FPGA.
     
     print datasent.int, datasent,status
 '''
@@ -69,12 +70,15 @@ for i in range(1):
     for j in range(256):
         print i,j
         x0 = m[j][i]
-        print x0, bin(x0,9) 
-        datasent,status = subtractor.Exec(x0, datapush, datactn )  # Use the subtractor in FPGA.
-        print datasent.int, datasent, status
+        print x0, bin(x0,9)
+        if j == 0:
+            fifo_wr = bool(0)
+        else:
+            fifo_wr = bool(1)
+        datasent,status = fifo.Exec(x0, datapush, datactn, fifo_wr, fifo_rd )  # Use the fifo in FPGA.
+        print datasent.int, datasent, status, fifo_wr, fifo_rd
 
-datasent,status = subtractor.Exec(x0, datapush, datactn )
-print datasent.int, datasent, status
+
 
 
 

@@ -45,13 +45,14 @@ architecture Behavioral of test_lifting_jpeg_step_lib is
   signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
   -- Connections between the shift-register module and the pc_read.
   
-  signal toSub_s : std_logic_vector(18 downto 0); -- From PC to dut
+  signal toSub_s : std_logic_vector(20 downto 0); -- From PC to dut
   signal fromSub_s : std_logic_vector(10 downto 0); -- From dut to PC.
   
   alias datatodut is toSub_s(8 downto 0); 
   alias pc_data_rdy is toSub_s(10 downto 9);   
   alias addr_in_toLift_Step is toSub_s(18 downto 11); 
-  
+  alias fifo_wr is toSub_s(19);
+  alias fifo_rd is toSub_s(19);  
   alias datafromdut is fromSub_s(8 downto 0); 
   alias status_s is fromSub_s(10 downto 9);
 
@@ -74,6 +75,16 @@ architecture Behavioral of test_lifting_jpeg_step_lib is
   signal addr_in :  unsigned(7  downto 0) := (others => '0');
   signal  datactn_in : unsigned(7  downto 0) := (others => '0');
   signal  pc_data_in : unsigned(1  downto 0) := (others => '0');
+
+--   signal clk : std_logic := '0';
+--   signal enr_r : std_logic := '0';
+--   signal enw_r : std_logic := '0';
+   signal datain_r : unsigned(8 downto 0) := (others => '0');
+
+ 	--Outputs
+   signal empty_r : std_logic;
+   signal full_r : std_logic;
+   signal dataout_r : unsigned(8 downto 0);
   
   COMPONENT pc_read  
     port (
@@ -90,7 +101,17 @@ architecture Behavioral of test_lifting_jpeg_step_lib is
     );
 END COMPONENT;
 
- 
+    COMPONENT fifo
+    PORT(
+         clk : IN  std_logic;
+         empty_r : OUT  std_logic;
+         full_r : OUT  std_logic;
+         enr_r : IN  std_logic;
+         enw_r : IN  std_logic;
+         dataout_r : OUT  unsigned(8 downto 0);
+         datain_r : IN  unsigned(8 downto 0)
+        );
+    END COMPONENT; 
 	 
 begin
 
@@ -109,9 +130,17 @@ u1 : pc_read
  	  pc_data_in => pc_data_in,
 	  pc_data_rdy => unsigned(pc_data_rdy),	  
      we_in => we_in
-	  );
-
- 
+	  );   
+	  
+	  u2: fifo PORT MAP (
+          clk => clk_fast,
+          empty_r => empty_r,
+          full_r => full_r,
+          enr_r => fifo_rd,
+          enw_r => fifo_wr,
+          dataout_r => (dataout_r),
+          datain_r => unsigned(datatodut)
+        );
 -------------------------------------------------------------------------
 -- JTAG entry point.
 -------------------------------------------------------------------------

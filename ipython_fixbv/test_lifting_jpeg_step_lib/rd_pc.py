@@ -101,5 +101,5 @@ def tb(clk,data_in,toLift_Step,addr_in,addr_in_toLift_Step, read_pc_i,muxsel_i, 
 
 #sim = Simulation(tb_fsm)
 #sim.run()
-toVHDL(pc_read,clk,data_in,toLift_Step,addr_in,addr_in_toLift_Step, read_pc_i,muxsel_i, pc_data_in, pc_data_rdy, we_in)
+#toVHDL(pc_read,clk,data_in,toLift_Step,addr_in,addr_in_toLift_Step, read_pc_i,muxsel_i, pc_data_in, pc_data_rdy, we_in)
  
