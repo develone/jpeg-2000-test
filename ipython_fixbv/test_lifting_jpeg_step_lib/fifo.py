@@ -51,7 +51,8 @@ def fifo(clk, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r ):
             reset_ctn.next = reset_ctn + 1
         if ( enr_r == YES):
             dataout_r.next = mem[int(readptr)]
-            readptr.next = readptr + 1
+            if (readptr < (2**ASZ-1)):
+                readptr.next = readptr + 1
         if (enw_r == YES):
             mem[int(writeptr)].next = datain_r
             writeptr.next = writeptr + 1
@@ -76,10 +77,7 @@ def tb(clk, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r):
         clk.next = not clk
     @instance
     def stimulus():
-        empty_r.next = 0
-        yield clk.posedge
-        full_r.next = 0
-        yield clk.posedge
+
         enr_r.next = 0
         yield clk.posedge
         enw_r.next = 0
@@ -93,10 +91,12 @@ def tb(clk, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r):
         yield clk.posedge
         for j in range(1,255):
             k = 0
-            datain_r.next = m[j][k]
-            #print m[j][k]
+            if (full_r == 0):
+            	datain_r.next = m[j][k]
+            print ("%d %d %d %d") % (now(), j, full_r, m[j][k])
+            #print j, m[j][k]
             yield clk.posedge
- 
+        print ("%d %d %d") % (now(), full_r, empty_r)
         enw_r.next = 0
         yield clk.posedge
 
@@ -105,7 +105,27 @@ def tb(clk, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r):
         enr_r.next = 1
         yield clk.posedge 
         for j in range(255):
-            print ("%d %d %d") % (now(), j, dataout_r)
+            print ("%d %d  %d") % (now(), j, dataout_r)
+            yield clk.posedge
+        enr_r.next = 0
+        yield clk.posedge
+        for i in range(20):
+            yield clk.posedge
+
+        datain_r.next = m[0][0]
+        yield clk.posedge
+        enw_r.next = 1
+        yield clk.posedge
+        for j in range(1,255):
+            k = 0
+            if (full_r == 0):
+            	datain_r.next = m[j][k]
+            print ("%d %d %d %d") % (now(), j, full_r, m[j][k])
+            #print j, m[j][k]
+            yield clk.posedge
+        enw_r.next = 0
+        yield clk.posedge
+        for i in range(4):
             yield clk.posedge
         raise StopSimulation
     return instances()

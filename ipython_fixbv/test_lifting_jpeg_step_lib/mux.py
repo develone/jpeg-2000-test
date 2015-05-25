@@ -16,7 +16,7 @@ addr_left = Signal(intbv(0)[8:])
 addr_sam = Signal(intbv(0)[8:])
 addr_rht = Signal(intbv(0)[8:])
 
-def mux_data(z, din, data_in, we_1, we, we_in,  addr, addr_in, muxsel_i, muxaddrsel, addr_left, addr_sam, addr_rht ):
+def mux_data(z, din, data_in, we_1, we, we_in,  addr, addr_in, muxsel_i, muxaddrsel, addr_left, addr_sam, addr_rht,zfifo ):
 	@always_comb
 	def muxLogic():
 		'''If  muxsel_i eq 0 ram  writing disabled to pc_read'''
@@ -31,7 +31,7 @@ def mux_data(z, din, data_in, we_1, we, we_in,  addr, addr_in, muxsel_i, muxaddr
 				addr.next = addr_rht
 		 
 		if (muxsel_i == 1):
-			din.next = data_in
+			din.next = zfifo
 			we.next =  we_in
 			addr.next = addr_in
 			

@@ -3,7 +3,7 @@ import random
 '''unsigned data width signed is W0 + 1'''
 W0 = 9
 
-t = Signal(intbv(0, min= -(2**(W0)) ,max= (2**(W0))))
+ 
 x = Signal(intbv(0, min= -(2**(W0)) ,max= (2**(W0))))
 z = Signal(intbv(0)[W0:])
 clk = Signal(bool(0))

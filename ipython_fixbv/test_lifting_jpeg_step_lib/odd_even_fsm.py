@@ -6,7 +6,7 @@ from lift_step import lift_step
 from signed2twoscomplement import signed2twoscomplement
 from mux import mux_data
 from ram import ram
-
+from fifo import fifo
 from rd_pc import pc_read
 
 from PIL import Image
@@ -18,8 +18,8 @@ m = list(im.getdata())
 #print m.__sizeof__()
 m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
 #print m
-print m[0][0], m[1][0],m[2][0],m[3][0],m[4][0],m[5][0],m[6][0]
-print m[248][0],m[249][0], m[250][0],m[251][0],m[252][0],m[253][0],m[254][0]
+#print m[0][0], m[1][0],m[2][0],m[3][0],m[4][0],m[5][0],m[6][0]
+#print m[248][0],m[249][0], m[250][0],m[251][0],m[252][0],m[253][0],m[254][0]
 W0 = 9
 dout = Signal(intbv(0)[W0:])
 din = Signal(intbv(0)[W0:])
@@ -39,11 +39,13 @@ pc_data_rdy = Signal(intbv(0)[2:])
 
  
 z = Signal(intbv(0)[W0:])
+zfifo = Signal(intbv(0)[W0:])
 read_pc_i = Signal(bool(0))
 muxsel_i = Signal(bool(0))
 muxaddrsel = Signal(intbv(0)[2:])
 
 x = Signal(intbv(0, min= -(2**(W0)) ,max= (2**(W0))))
+xfifo = Signal(intbv(0, min= -(2**(W0)) ,max= (2**(W0))))
 res_o = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
 left_i = Signal(intbv(0)[W0:])
 right_i = Signal(intbv(0)[W0:])
@@ -69,10 +71,42 @@ pc_data_rdy = Signal(intbv(0)[2:])
 data_pc_in  = Signal(bool(0))
 
 addr_in_toLift_Step = Signal(intbv(0)[8:])
-
-t_State = enum('INIT', 'ODD_L', 'ODD_S', 'ODD_R', 'RD_RAM_LF', 'RD_RAM_SA', 'RD_RAM_RT', 'LIFT', 'LIFT_EXE', 'LIFT_RD', 'LIFT_WR', 'LIFT_DEL1', 'LIFT_DEL2', 'LIFT_DEL3', 'EVEN_L', 'EVEN_S', 'EVEN_R',   'DONE', encoding="one_hot")
+del_ctn = Signal(intbv(0)[8:])
+t_State = enum('INIT', 'ODD_L', 'ODD_S', 'ODD_R', 'RD_RAM_LF', 'RD_RAM_SA', 'RD_RAM_RT', 'LIFT', 'LIFT_EXE', 'LIFT_RD', 'LIFT_WR', 'LIFT_DEL1', 'LIFT_DEL2', 'LIFT_DEL3', 'EVEN_L', 'EVEN_S', 'EVEN_R',   'RD_FIFO', 'RD_FIFO_DEL', 'RD_FIFO_DEL1', 'RD_FIFO_DEL2', 'RD_FIFO_DEL3','RD_FIFO_DEL4','RD_FIFO_DEL5','RD_FIFO_DEL6','RD_FIFO_DEL7','RD_FIFO_DEL8','DONE', encoding="one_hot")
 state = Signal(t_State.INIT)
 
+reset_dly_c = 10
+ASZ = 8
+DSZ = 9
+NO = bool(0)
+YES = bool(1)
+
+clk = Signal(bool(0))
+
+enw_r = Signal(bool(0))
+enr_r = Signal(bool(0))
+empty_r = Signal(bool(0))
+full_r = Signal(bool(0))
+dataout_r = Signal(intbv(0)[DSZ:])
+datain_r = Signal(intbv(0)[DSZ:])
+
+enw_ro = Signal(bool(0))
+enr_ro = Signal(bool(0))
+empty_ro = Signal(bool(0))
+full_ro = Signal(bool(0))
+dataout_ro = Signal(intbv(0)[DSZ:])
+datain_ro = Signal(intbv(0)[DSZ:])
+'''
+enw_x = Signal(bool(0))
+enr_x = Signal(bool(0))
+empty_x = Signal(bool(0))
+full_x = Signal(bool(0))
+dataout_x = Signal(intbv(0)[DSZ:])
+datain_x = Signal(intbv(0)[DSZ:])
+'''
+readptr = Signal(intbv(0)[ASZ:])
+writeptr = Signal(intbv(0)[ASZ:])
+mem = [Signal(intbv(0)[DSZ:]) for ii in range(2**ASZ)]
 # INIT, READ_DATA, DONE = range(3)
 
 ACTIVE_LOW = bool(0)
@@ -81,7 +115,7 @@ ACTIVE_LOW = bool(0)
 
  
 
-def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col  ):
+def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col, addr_in, xfifo, enr_r, enw_r, del_ctn ):
     @always(clk.posedge, rst_fsm.negedge)
     def FSM():
         if rst_fsm == ACTIVE_LOW:
@@ -90,12 +124,17 @@ def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, m
             addr_rht.next = 2
             do_first.next = 0
             flgs_i.next = 7
-            end_of_col.next = 0 
+            end_of_col.next = 0
+            #enr_r.next = 0
+            #enw_r.next = 0
+            addr_in.next = 0     
             state.next = t_State.INIT
         else:
             if state == t_State.INIT:
-                
-                state.next = t_State.ODD_L
+                we_in.next = 1
+                muxsel_i.next = 1
+                enr_r.next = 1 
+                state.next = t_State.RD_FIFO
             elif state == t_State.ODD_L:
                 if (muxsel_i == 0):
                     if ((addr_left < 254) ):
@@ -265,35 +304,88 @@ def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, m
 		#update_i.next = 0
                 we_1.next = 0        
                 state.next = t_State.ODD_L
-
+            elif state == t_State.RD_FIFO:
+                del_ctn.next = 0
+                if (addr_in <= 128):
+                    enr_r.next = 0
+                    #xfifo.next = dataout_r[W0:]
+                    state.next = t_State.RD_FIFO_DEL
+                else:
+                    muxsel_i.next = 0
+                    enr_r.next = 0
+                    we_in.next = 0
+                    state.next = t_State.ODD_L
+            elif state == t_State.RD_FIFO_DEL:
+                    
+                    xfifo.next = dataout_r[W0:]
+                    state.next = t_State.RD_FIFO_DEL1
+            elif state == t_State.RD_FIFO_DEL1:
+                    #enr_r.next = 0
+                    if (del_ctn < 2):
+                        del_ctn.next = del_ctn + 1
+                    else:
+                        state.next = t_State.RD_FIFO_DEL7
+            elif state == t_State.RD_FIFO_DEL2:
+                    state.next = t_State.RD_FIFO_DEL3
+            elif state == t_State.RD_FIFO_DEL3:
+                    state.next = t_State.RD_FIFO_DEL4
+            elif state == t_State.RD_FIFO_DEL4:
+                    state.next = t_State.RD_FIFO_DEL5
+            elif state == t_State.RD_FIFO_DEL5:
+                     
+                    state.next = t_State.RD_FIFO_DEL6
+            elif state == t_State.RD_FIFO_DEL6:
+                    state.next = t_State.RD_FIFO_DEL7
+            elif state == t_State.RD_FIFO_DEL7:
+                    enr_r.next = 1 
+                    state.next = t_State.RD_FIFO_DEL8
+            elif state == t_State.RD_FIFO_DEL8:
+                    #enr_r.next = 1
+                    addr_in.next = addr_in.next + 1
+                    state.next = t_State.RD_FIFO
             else:
                 raise ValueError("Undefined state")
             
     return FSM
-def top_odd_even(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col ):
-
-    instance_Odd_Even_Fsm = Odd_Even_Fsm (state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col, data_in, toLift_Step, addr_in, addr_in_toLift_Step, we_in)
+def top_odd_even(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht,
+ muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, xfifo,
+ zfifo, flgs_i, update_i, res_o, update_o, end_of_col, empty_r, full_r,
+ enr_r, enw_r, dataout_r, datain_r , empty_ro, full_ro, enr_ro, enw_ro,
+ dataout_ro, datain_ro, addr_in, del_ctn):
+    instance_Odd_Even_Fsm = Odd_Even_Fsm (state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col, addr_in, xfifo, enr_r, enw_r, del_ctn)
+ 
     instance_ram = ram(dout, din, addr, we, clk)
-    instance_mux_data =  mux_data(z, din, data_in, we_1, we, we_in, addr, addr_in, muxsel_i, muxaddrsel, addr_left, addr_sam, addr_rht)
+    instance_mux_data =  mux_data(z, din, data_in, we_1, we, we_in, addr, addr_in, muxsel_i, muxaddrsel, addr_left, addr_sam, addr_rht,zfifo)
     instance_signed2twoscomplement = signed2twoscomplement(clk, x, z)
+    instance_signed2twoscomplementfifo = signed2twoscomplement(clk, xfifo, zfifo)
     instance_lift_step = lift_step(left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o)
-    instance_pd_read = pc_read(clk, data_in, toLift_Step, we_in, addr_in, muxsel_i, datactn_in, datactn, pc_data_in, pc_data_rdy ) 
+    instance_pc_in = fifo(clk, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r)
+    instance_pc_out = fifo(clk, empty_ro, full_ro, enr_ro, enw_ro, dataout_ro, datain_ro)
+    #instance_pd_read = pc_read(clk, data_in, toLift_Step, we_in, addr_in, muxsel_i, datactn_in, datactn, pc_data_in, pc_data_rdy ) 
     return instances()
 
-def tb(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col, read_pc_i, data_in, toLift_Step, addr_in, addr_in_toLift_Step, we_in):
-
-    instance_Odd_Even_Fsm = Odd_Even_Fsm (state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col)
-
+def tb(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht,
+ muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z,xfifo,
+ zfifo, flgs_i, update_i, res_o, update_o, end_of_col, empty_r, full_r,
+ enr_r, enw_r, dataout_r, datain_r, empty_ro, full_ro, enr_ro, enw_ro,
+ dataout_ro, datain_ro, addr_in, del_ctn ):
+     
+    instance_Odd_Even_Fsm = Odd_Even_Fsm (state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col, addr_in, xfifo, enr_r, enw_r, del_ctn)
+   
     instance_ram = ram(dout, din, addr, we, clk)
-
-    instance_mux_data =  mux_data(z, din, data_in, we_1, we, we_in, addr, addr_in, muxsel_i, muxaddrsel, addr_left, addr_sam, addr_rht)
+    
+    instance_mux_data =  mux_data(z, din, data_in, we_1, we, we_in, addr, addr_in, muxsel_i, muxaddrsel, addr_left, addr_sam, addr_rht,zfifo)
 
     instance_signed2twoscomplement = signed2twoscomplement(clk, x, z)
 
+    instance_signed2twoscomplementfifo = signed2twoscomplement(clk, xfifo, zfifo)
+
     instance_lift_step = lift_step(left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o)
-
-    instance_pc_read = pc_read(clk,data_in,toLift_Step,addr_in,addr_in_toLift_Step, read_pc_i,muxsel_i, pc_data_in, pc_data_rdy, we_in)
-
+    
+    instance_pc_in = fifo(clk, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r)
+    '''
+    instance_pc_out = fifo(clk, empty_ro, full_ro, enr_ro, enw_ro, dataout_ro, datain_ro)
+    '''
     @always(delay(10))
     def clkgen():
         clk.next = not clk
@@ -302,30 +394,36 @@ def tb(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel,
     def stimulus():
         rst_fsm.next = 0
         yield clk.posedge
-        pc_data_rdy.next = 3
-        yield clk.posedge
-        muxsel_i.next = 1
-        yield clk.posedge
-        read_pc_i.next = 1
-        yield clk.posedge
-        k = 0
-        for j in range(256):
-            #addr_in.next = j
-            #yield clk.posedge
-            addr_in_toLift_Step.next = j
-	    toLift_Step.next = m[addr_in][k]
-            yield clk.posedge
-        for i in range(4):
 
-            pc_data_rdy.next = 2
-            yield clk.posedge
-            muxsel_i.next = 0
-            yield clk.posedge
-            read_pc_i.next = 0
-            yield clk.posedge         
-            rst_fsm.next = 1
-            yield clk.posedge
-            print ("%d muxsel_i %d rst_fsm %d") % (now(), muxsel_i, rst_fsm)
+        muxsel_i.next = 0
+        yield clk.posedge
+        enr_r.next = 0
+        yield clk.posedge
+        enw_r.next = 0
+        yield clk.posedge 
+
+ 
+ 
+        datain_r.next = m[0][0]
+        yield clk.posedge
+        enw_r.next = 1
+        yield clk.posedge
+        for j in range(1,255):
+            k = 0
+            if (full_r == 0):
+            	datain_r.next = m[j][k]
+                yield clk.posedge
+            #print ("%d %d %d %d %d") % (now(), j, enw_r, full_r, m[j][k])     
+        enw_r.next = 0
+        yield clk.posedge
+
+ 
+        muxsel_i.next = 0
+        yield clk.posedge
+         
+        rst_fsm.next = 1
+        yield clk.posedge
+        print ("%d muxsel_i %d rst_fsm %d") % (now(), muxsel_i, rst_fsm)
         
         for i in range(10000):
             print ("time %d flgs %d left %d sam %d right %d ") % (now(), flgs_i, left_i, sam_i, right_i)
@@ -337,15 +435,19 @@ def tb(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel,
 
 def main():
 
-    '''    
-    toVerilog(Odd_Even_Fsm, state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col)
-    toVHDL(Odd_Even_Fsm, state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col)
-    
-    toVHDL(top_odd_even,state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col)
+    toVerilog(top_odd_even,state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, xfifo, zfifo, flgs_i, update_i, res_o, update_o, end_of_col, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r, empty_ro, full_ro, enr_ro, enw_ro, dataout_ro, datain_ro, addr_in, del_ctn)
+     
+    toVHDL(top_odd_even,state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, xfifo, zfifo, flgs_i, update_i, res_o, update_o, end_of_col, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r, empty_ro, full_ro, enr_ro, enw_ro, dataout_ro, datain_ro, addr_in, del_ctn)
     '''
-    tb_fsm = traceSignals(tb,state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col, read_pc_i, data_in, toLift_Step, addr_in, addr_in_toLift_Step, we_in)
-    sim = Simulation(tb_fsm)
-    sim.run()
+    tb_fsm = traceSignals(tb, state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht,
+ muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z,xfifo,
+ zfifo, flgs_i, update_i, res_o, update_o, end_of_col, empty_r, full_r,
+ enr_r, enw_r, dataout_r, datain_r, empty_ro, full_ro, enr_ro, enw_ro,
+ dataout_ro, datain_ro, addr_in, del_ctn)
+    '''    
+    #tb_fsm = traceSignals(tb,state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z,xfifo, zfifo, flgs_i, update_i, res_o, update_o, end_of_col, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r , empty_ro, full_ro, enr_ro, enw_ro, dataout_ro, datain_ro, addr_in, del_ctn)
+    #sim = Simulation(tb_fsm)
+    #sim.run()
     
     
 
