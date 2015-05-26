@@ -116,6 +116,7 @@ ACTIVE_LOW = bool(0)
  
 
 def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col, addr_in, xfifo, enr_r, enw_r, del_ctn ):
+
     @always(clk.posedge, rst_fsm.negedge)
     def FSM():
         if rst_fsm == ACTIVE_LOW:
@@ -353,7 +354,7 @@ def top_odd_even(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht,
  enr_r, enw_r, dataout_r, datain_r , empty_ro, full_ro, enr_ro, enw_ro,
  dataout_ro, datain_ro, addr_in, del_ctn):
     instance_Odd_Even_Fsm = Odd_Even_Fsm (state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, flgs_i, update_i, res_o, update_o, end_of_col, addr_in, xfifo, enr_r, enw_r, del_ctn)
- 
+
     instance_ram = ram(dout, din, addr, we, clk)
     instance_mux_data =  mux_data(z, din, data_in, we_1, we, we_in, addr, addr_in, muxsel_i, muxaddrsel, addr_left, addr_sam, addr_rht,zfifo)
     instance_signed2twoscomplement = signed2twoscomplement(clk, x, z)
@@ -460,13 +461,37 @@ def tb(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht,
             yield clk.posedge  
         raise StopSimulation
     return instances()
-
-def main():
-    '''
+def convert():
     toVerilog(top_odd_even,state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, xfifo, zfifo, flgs_i, update_i, res_o, update_o, end_of_col, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r, empty_ro, full_ro, enr_ro, enw_ro, dataout_ro, datain_ro, addr_in, del_ctn)
      
     toVHDL(top_odd_even,state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, xfifo, zfifo, flgs_i, update_i, res_o, update_o, end_of_col, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r, empty_ro, full_ro, enr_ro, enw_ro, dataout_ro, datain_ro, addr_in, del_ctn)
-    '''
+
+def iverilogtest(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht,
+ muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z,xfifo,
+ zfifo, flgs_i, update_i, res_o, update_o, end_of_col, empty_r, full_r,
+ enr_r, enw_r, dataout_r, datain_r, empty_ro, full_ro, enr_ro, enw_ro,
+ dataout_ro, datain_ro, addr_in, del_ctn):
+ 
+
+    cmd = "iverilog -o odd_even_fsm top_odd_even.v tb_top_odd_even.v"
+    os.system(cmd)
+    def _test():
+#        dut = Cosimulation("vvp -m ./myhdl.vpi const_assign", aBit=my_bit, aByte=my_byte)
+#         dut = const_assign(aBit=my_bit, aByte=my_byte)
+    	def _test():
+            dut = Cosimulation("vvp -m ./myhdl.vpi odd_even_fsm", aBit=my_bit, aByte=my_byte)
+#           dut = odd_even_fsm(aBit=my_bit, aByte=my_byte)
+
+        @instance
+        def stim():
+
+            raise StopSimulation
+
+        return dut, stim
+def main():
+    
+
+    
     tb_fsm = traceSignals(tb, state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht,
  muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z,xfifo,
  zfifo, flgs_i, update_i, res_o, update_o, end_of_col, empty_r, full_r,
@@ -480,3 +505,60 @@ def main():
 
 if __name__ == '__main__':
     main()
+    '''
+    import os
+from myhdl import *
+
+
+def const_assign(aBit, aByte):
+
+    b = Signal(bool(True)) # to avoid "myhdl.AlwaysCombError: sensitivity list is empty"
+
+    @always_comb
+    def logic():
+        aBit.next = b
+        aByte.next = 0x55
+
+    return logic
+
+def convert():
+    my_bit = Signal(bool(0))
+    my_byte = Signal(intbv(0)[8:])
+    toVerilog(const_assign, my_bit, my_byte)
+
+def test():
+    my_bit = Signal(bool(0))
+    my_byte = Signal(intbv(0)[8:])
+
+    cmd = "iverilog -o const_assign const_assign.v tb_const_assign.v"
+    os.system(cmd)
+
+    def _test():
+        dut = Cosimulation("vvp -m ./myhdl.vpi const_assign", aBit=my_bit, aByte=my_byte)
+#         dut = const_assign(aBit=my_bit, aByte=my_byte)
+
+        @instance
+        def stim():
+            print "-------------"
+
+            yield delay(10)
+            print "Expected ({}, {}), detected ({}, {})".format(True, 0x55, my_bit, my_byte)
+
+            yield delay(10)
+            print "Expected ({}, {}), detected ({}, {})".format(True, 0x55, my_bit, my_byte)
+
+            yield delay(10)
+            print "Expected ({}, {}), detected ({}, {})".format(True, 0x55, my_bit, my_byte)
+
+            print "-------------"
+
+            raise StopSimulation
+
+        return dut, stim
+
+    Simulation(_test()).run()
+
+if __name__ == '__main__':
+    convert()
+    test()
+    '''

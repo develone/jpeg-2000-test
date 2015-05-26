@@ -1,0 +1,27 @@
+#! /usr/local/bin/vvp
+:ivl_version "0.9.7 " "(s20141205-294-g2a210df)";
+:vpi_time_precision - 11;
+:vpi_module "system";
+:vpi_module "v2005_math";
+:vpi_module "va_math";
+S_0x21cded0 .scope module, "tb_const_assign" "tb_const_assign" 2 1;
+ .timescale -9 -11;
+v0x21ffff0_0 .net "aBit", 0 0, L_0x22001e0; 1 drivers
+v0x22000c0_0 .net "aByte", 7 0, C4<01010101>; 1 drivers
+S_0x21cdb50 .scope module, "dut" "const_assign" 2 13, 3 8, S_0x21cded0;
+ .timescale -9 -11;
+L_0x22001e0 .functor BUFZ 1, C4<1>, C4<0>, C4<0>, C4<0>;
+v0x21ce140_0 .alias "aBit", 0 0, v0x21ffff0_0;
+v0x21ffeb0_0 .alias "aByte", 7 0, v0x22000c0_0;
+v0x21fff50_0 .net "b", 0 0, C4<1>; 1 drivers
+    .scope S_0x21cded0;
+T_0 ;
+    %vpi_call 2 7 "$to_myhdl", v0x21ffff0_0, v0x22000c0_0;
+    %end;
+    .thread T_0;
+# The file index is used to find the file name in the following table.
+:file_names 4;
+    "N/A";
+    "<interactive>";
+    "tb_const_assign.v";
+    "const_assign.v";
