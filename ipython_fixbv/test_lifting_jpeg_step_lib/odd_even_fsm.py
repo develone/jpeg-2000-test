@@ -306,7 +306,7 @@ def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, m
                 state.next = t_State.ODD_L
             elif state == t_State.RD_FIFO:
                 del_ctn.next = 0
-                if (addr_in <= 128):
+                if (addr_in <= 254):
                     enr_r.next = 0
                     #xfifo.next = dataout_r[W0:]
                     state.next = t_State.RD_FIFO_DEL
@@ -383,9 +383,9 @@ def tb(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht,
     instance_lift_step = lift_step(left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o)
     
     instance_pc_in = fifo(clk, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r)
-    '''
+    
     instance_pc_out = fifo(clk, empty_ro, full_ro, enr_ro, enw_ro, dataout_ro, datain_ro)
-    '''
+    
     @always(delay(10))
     def clkgen():
         clk.next = not clk
@@ -425,16 +425,44 @@ def tb(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht,
         yield clk.posedge
         print ("%d muxsel_i %d rst_fsm %d") % (now(), muxsel_i, rst_fsm)
         
-        for i in range(10000):
+        while (end_of_col == 0):
+
             print ("time %d flgs %d left %d sam %d right %d ") % (now(), flgs_i, left_i, sam_i, right_i)
             print ("time %d addr %d din %d we %d ") % (now(), addr, din, we)   
             yield clk.posedge
-        print ("%d ") % (now())
+            print ("%d ") % (now())
+        print "end of col"
+
+        muxsel_i.next = 1
+        yield clk.posedge
+        rst_fsm.next = 0
+        yield clk.posedge
+        addr_in.next = 0
+        yield clk.posedge
+        we_in.next = 0
+        m[0][k] = dout
+        datain_ro.next= m[0][k]
+        yield clk.posedge
+        print ("%d data to ram %d %d") % (now(), datain_ro, addr_in)
+        addr_in.next = addr_in + 1
+        yield clk.posedge
+
+        enw_ro.next = 1
+        yield clk.posedge
+        for j in range(1,254):
+            m[0][k] = dout
+            datain_ro.next= m[j][k]
+            yield clk.posedge
+            addr_in.next = addr_in + 1
+            print ("%d data to ram %d %d") % (now(), datain_ro, addr_in)
+            yield clk.posedge
+            enw_ro.next = 1
+            yield clk.posedge  
         raise StopSimulation
     return instances()
 
 def main():
-
+    '''
     toVerilog(top_odd_even,state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, xfifo, zfifo, flgs_i, update_i, res_o, update_o, end_of_col, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r, empty_ro, full_ro, enr_ro, enw_ro, dataout_ro, datain_ro, addr_in, del_ctn)
      
     toVHDL(top_odd_even,state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z, xfifo, zfifo, flgs_i, update_i, res_o, update_o, end_of_col, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r, empty_ro, full_ro, enr_ro, enw_ro, dataout_ro, datain_ro, addr_in, del_ctn)
@@ -444,10 +472,9 @@ def main():
  zfifo, flgs_i, update_i, res_o, update_o, end_of_col, empty_r, full_r,
  enr_r, enw_r, dataout_r, datain_r, empty_ro, full_ro, enr_ro, enw_ro,
  dataout_ro, datain_ro, addr_in, del_ctn)
-    '''    
-    #tb_fsm = traceSignals(tb,state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i, do_first, x, z,xfifo, zfifo, flgs_i, update_i, res_o, update_o, end_of_col, empty_r, full_r, enr_r, enw_r, dataout_r, datain_r , empty_ro, full_ro, enr_ro, enw_ro, dataout_ro, datain_ro, addr_in, del_ctn)
-    #sim = Simulation(tb_fsm)
-    #sim.run()
+ 
+    sim = Simulation(tb_fsm)
+    sim.run()
     
     
 
