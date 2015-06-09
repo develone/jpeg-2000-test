@@ -179,6 +179,6 @@ def block_dwt(s):
 
 m = block_dwt(m)
 m = block_dwt(m)
-#lower_upper(m,256,256)
+lower_upper(m,256,256)
 seq_to_img(m, pix)
 im.save("block_256_fwt.png")
