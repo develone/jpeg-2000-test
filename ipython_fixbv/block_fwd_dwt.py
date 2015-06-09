@@ -7,6 +7,20 @@ m = list(im.getdata())
 '''transform 1D list to 2D'''
 m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
 
+def lower_upper(s, width, height):
+
+	temp_bank = [[0]*width for i in range(height)]
+	for col in range(width/2,width,1):
+
+		for row in range(height/2,height,1):
+
+			temp_bank[col-width/2][row-height/2] = s[row][col]
+
+	for row in range(width):
+		for col in range(height):
+			s[row][col] = temp_bank[col][row]
+	return s
+
 def print_list(cblk):
     for i in range(8):
          
@@ -72,26 +86,53 @@ def block_dwt(s):
             '''8 x 8 cblk prior to fwd dwt'''
             print 'prior'
             print_list(cblk)
+            '''
+            This is the first 8 x 8 cblk from the image
+            ../lena_256.png
+            [156, 156, 164, 164, 164, 164, 156, 164]
+            [164, 164, 164, 164, 164, 164, 156, 164]
+            [164, 164, 164, 164, 164, 164, 156, 156]
+            [164, 164, 164, 156, 156, 156, 156, 156]
+            [156, 156, 156, 156, 164, 156, 156, 156]
+            [156, 156, 156, 156, 156, 156, 164, 156]
+            [156, 156, 156, 164, 156, 164, 156, 156]
+            [164, 156, 156, 156, 156, 156, 156, 156]
+            
+            [246, 246, 256, 257, 257, 257, 244, 256]
+            [203, 203, 205, 206, 206, 206, 195, 204]
+            [0, 0, 0, 4, 4, 4, 0, -4]
+            [163, 163, 163, 157, 159, 157, 155, 155]
+            [-4, -4, -4, 0, 8, 0, -4, 0]
+            [154, 155, 155, 158, 158, 158, 162, 156]
+            [-4, 0, 0, 8, 0, 8, -4, 0]
+            [126, 117, 117, 115, 117, 115, 118, 117]
+ 
+            '''
+
             for i in range(8):
+                '''i is the col of an 8x8 cblk
+                j is the row of an 8x8 cblk
+                even samples'''
+                '''fwd dwt for even samples'''
+                for j in range(2,8,2):
+                    #print 'even',j,i,cblk[j-1][i], cblk[j][i], cblk[j+1][i]
+                    cblk[j][i] = cblk[j][i] - ((cblk[j-1][i] + cblk[j+1][i])>>1)
+                    #print 'even dwt',j,i,j-1, j+1, cblk[j][i]
+                '''i is the col of an 8x8 cblk
+                j is the row of an 8x8 cblk
+                fwd dwt for odd samples'''
                 for j in range(1,9-1,2):
                     #print 'odd',j,i,cblk[j-1][i], cblk[j][i], cblk[j+1][i]
                     if (j < 7):
-                        '''fwd dwt for odd samples'''
-                        cblk[j][i] = cblk[j][i] - ((cblk[j-1][i] + cblk[j+1][i])>>1)
+                        cblk[j][i] = cblk[j][i] + (((cblk[j-1][i]) + (cblk[j + 1][i]) + 2)>>2)
                         #print j, i,j-1,j+1,  cblk[j-1][i], cblk[j][i], cblk[j+1][i]
                     else:
-                        '''fwd dwt for even samples'''
-                        cblk[j][i] = cblk[j][i] - ((cblk[j-1][i] + extra_row_bot[j])>>1)
+                        cblk[j][i] = cblk[j][i] - (((cblk[j-1][i]) + (extra_row_bot[j]) +2)>>2)
+                        #cblk[j][i] = cblk[j][i] - ((cblk[j-1][i] + extra_row_bot[j])>>1)
                         #print  j, i,  cblk[j-1][i], cblk[j][i], extra_row_bot[i]
                 #print 'odd',j,i,j-1,j+1,cblk[j][i]
                 #print_list()
-                '''i is the row
-                j is the col of an 8x8 cblk
-                even samples'''
-                for j in range(2,8,2):
-                    #print 'even',j,i,cblk[j-1][i], cblk[j][i], cblk[j+1][i]
-                    cblk[j][i] = cblk[j][i] + (((cblk[j-1][i]) + (cblk[j + 1][i]) +2)>>2)
-                    #print 'even dwt',j,i,j-1, j+1, cblk[j][i]
+                
                 
             for j in range(8): 
                 cblk[0][j] = cblk[0][j] + ((extra_row_top[j] + cblk[1][j] + 2)>>2)
@@ -138,5 +179,6 @@ def block_dwt(s):
 
 m = block_dwt(m)
 m = block_dwt(m)
+#lower_upper(m,256,256)
 seq_to_img(m, pix)
 im.save("block_256_fwt.png")
