@@ -4,11 +4,11 @@ from _jpegEnc import JPEGEnc2k
  
 jp2k = JPEGEnc2k()
 #help(jp2k)
-#jp2k.set_img_fn("../parallel_jpeg/lena_rgb_512.png")
+jp2k.set_img_fn("../jpeg2k/parallel_jpeg/lena_rgb_512.png")
 #jp2k.set_img_fn("../lena.jpg")
-jp2k.set_img_fn("../lena_256.png")
-
-f = [9, 7]
+#jp2k.set_img_fn("../lena_256.png")
+#jp2k.set_img_fn("../grabber002.png")
+f = [5, 3]
 jp2k.set_filter(f)
 
 print jp2k.get_img_fn()
