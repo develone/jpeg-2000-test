@@ -169,6 +169,17 @@ class JPEGEnc2k(object):
                             self.gr_subband[row][col] = float(self.gr_subband[row][col])
                   print 'Gray', len(self.gr_subband[0]), len(self.gr_subband[1])
 
+    def col_dwt(self,cc):
+        #print cc
+        for row in range(2, self.get_height(), 2):
+            #print cc, row-1, row, row + 1, self.fwd_gr[row-1][cc], self.fwd_gr[row][cc], self.fwd_gr[row+1][cc]
+            self.fwd_gr[row][cc] = (self.fwd_gr[row][cc] - ((int(self.fwd_gr[row-1][cc])>>1) + (int(self.fwd_gr[row+1][cc])>>1))) 
+            #print self.fwd_gr[row][cc]      
+        for row in range(1, self.get_height()-1, 2):
+            #print cc, row-1, row, row + 1, self.fwd_gr[row-1][cc], self.fwd_gr[row][cc], self.fwd_gr[row+1][cc]
+            self.fwd_gr[row][cc] = (self.fwd_gr[row][cc] + (2 + (int(self.fwd_gr[row-1][cc])) + (int(self.fwd_gr[row+1][cc]))>>2)) 
+            #print self.fwd_gr[row][cc] 
+
     def fwd_dwt(self):
         print "forward dwt using file ", self.img_fn, "dwt_level", self.dwt_level, "dwt_filter", self.filter
         if (self.mode == "RGB"):
@@ -188,9 +199,22 @@ class JPEGEnc2k(object):
                     self.pix[col,row] = rgb[col + row*len(self.fwd_r)] 
         else:
             self.fwd_gr = self.gr_subband
-             
+            #'''
+            # Not calling the waveletsim_53 fwt97_2d
+            # Instead using the a local function which performs 1 col at time
+            print 'performing 1 column at a time'
+            for ccc in range(self.get_width()):
+                self.col_dwt(ccc)
+            self.fwd_gr = dwt.de_interleave(self.fwd_gr,self.get_height(),self.get_width())
+            for ccc in range(self.get_width()):
+                self.col_dwt(ccc)
+            self.fwd_gr = dwt.de_interleave(self.fwd_gr,self.get_height(),self.get_width())
+            self.fwd_gr = dwt.lower_upper(self.fwd_gr,self.get_height(),self.get_width())
+            '''
             self.fwd_gr = dwt.fwt97_2d(self.fwd_gr, self.dwt_level)
+            '''
             dwt.seq_to_img(self.fwd_gr, self.pix)
+           
 
     def fwd_f_dwt(self):
         print "forward dwt using file ", self.img_fn, "dwt_level", self.dwt_level, "dwt_filter", self.filter
@@ -211,7 +235,7 @@ class JPEGEnc2k(object):
                     self.pix[col,row] = rgb[col + row*len(self.fwd_r)] 
         else:
             self.fwd_gr = self.gr_subband
-             
+
             self.fwd_gr = f_dwt.fwt97_2d(self.fwd_gr, self.dwt_level)
             dwt.seq_to_img(self.fwd_gr, self.pix)
             
