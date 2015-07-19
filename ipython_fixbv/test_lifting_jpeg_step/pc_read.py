@@ -47,7 +47,7 @@ def pc_read(clk, data_in, toLift_Step, we_in, addr_in, muxsel_i,datactn_in, data
     return readlogic, rtl, rtl1
  
 def tb(clk, data_in, toLift_Step, we_in, addr_in, muxsel_i, datactn_in, datactn ):
-    instance_pc_read = pc_read(clk, data_in, toLift_Step, we_in, addr_in, muxsel_i, datactn_in, datactn  )
+    instance_pc_read = pc_read(clk, data_in, toLift_Step, we_in, addr_in, muxsel_i,datactn_in, datactn, pc_data_in, pc_data_rdy   )
     @always(delay(10))
     def clkgen():
         clk.next = not clk
@@ -74,7 +74,7 @@ def tb(clk, data_in, toLift_Step, we_in, addr_in, muxsel_i, datactn_in, datactn 
             print ("%d data %d addr %d ") % (now(), data_in, addr_in)
         raise StopSimulation
     return instances()
-#tb_fsm = traceSignals( tb, clk, data_in, toLift_Step, we_in, addr_in, muxsel_i, datactn_in, datactn, pc_data_in, pc_data_rdy  )
-#sim = Simulation(tb_fsm)
-#sim.run()
+tb_fsm = traceSignals( tb, clk, data_in, toLift_Step, we_in, addr_in, muxsel_i, datactn_in, datactn  )
+sim = Simulation(tb_fsm)
+sim.run()
 #toVHDL(pc_read, clk, data_in, toLift_Step, we_in, addr_in, muxsel_i, datactn_in, datactn, pc_data_in, pc_data_rdy ) 

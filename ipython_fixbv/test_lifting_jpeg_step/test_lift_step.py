@@ -26,6 +26,7 @@ we = Signal(bool(0))
 clk = Signal(bool(0))
 we_in = Signal(bool(0))
 we_1 = Signal(bool(0))
+addr_1 = Signal(intbv(0)[8:])
 addr_in = Signal(intbv(0)[8:])
  
 toLift_Step = Signal(intbv(0)[W0:])
@@ -67,7 +68,7 @@ def top_lift_step(clk, dout, din,  data_in, toLift_Step, z,we_1, we, we_in,  add
 	instance_lift_step = lift_step(left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o)
 	instance_ram = ram(dout, din, addr, we, clk)
 	instance_mux_data =  mux_data(z, din, data_in, we_1, we, we_in, addr, addr_in, muxsel_i, muxaddrsel, addr_left, addr_sam, addr_rht)
-	instance_Odd_Even_Fsm = Odd_Even_Fsm( state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht )
+	instance_Odd_Even_Fsm = Odd_Even_Fsm( state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i )
 	instance_signed2twoscomplement = signed2twoscomplement(clk, x, z)
 	
 	
@@ -77,7 +78,7 @@ def top_lift_step(clk, dout, din,  data_in, toLift_Step, z,we_1, we, we_in,  add
 def tb(clk, dout, din, data_in, toLift_Step, z, we_1, we, we_in, addr_1, addr, addr_in, muxsel_i, x, res_o, left_i, right_i, sam_i, flgs_i, update_i, update_o, rst_fsm, datactn_in, datactn, pc_data_in, pc_data_rdy):
 	instance_lift_step = lift_step(left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o)
 	instance_ram = ram(dout, din, addr, we, clk) 
-	instance_mux_data =  mux_data(z, din, data_in, we_1, we, we_in, addr, addr_in, muxsel_i)
+	instance_mux_data =  mux_data(z, din, data_in, we_1, we, we_in,  addr, addr_in, muxsel_i, muxaddrsel, addr_left, addr_sam, addr_rht)
 	instance_signed2twoscomplement = signed2twoscomplement(clk, x, z)
 	 
 	 
@@ -169,7 +170,7 @@ def tb(clk, dout, din, data_in, toLift_Step, z, we_1, we, we_in, addr_1, addr, a
 		raise StopSimulation
 				
 	return instances()
-#tb_fsm = traceSignals( tb,clk, dout, din, data_in, toLift_Step, z, we_1, we, we_in, addr_1, addr, addr_in, muxsel_i, x, res_o, left_i, right_i, sam_i, flgs_i, update_i, update_o, rst_fsm, datactn_in, datactn, pc_data_in, pc_data_rdy)
-#sim = Simulation(tb_fsm)
-#sim.run()
-toVHDL(top_lift_step, clk, dout, din, data_in, toLift_Step, z, we_1, we, we_in, addr, addr_in, muxsel_i, x, res_o, left_i, right_i, sam_i, flgs_i, update_i, update_o, rst_fsm, datactn_in, datactn, pc_data_in, pc_data_rdy, muxaddrsel, addr_left, addr_sam, addr_rht) 
+tb_fsm = traceSignals( tb,clk, dout, din, data_in, toLift_Step, z, we_1, we, we_in, addr_1, addr, addr_in, muxsel_i, x, res_o, left_i, right_i, sam_i, flgs_i, update_i, update_o, rst_fsm, datactn_in, datactn, pc_data_in, pc_data_rdy)
+sim = Simulation(tb_fsm)
+sim.run()
+#toVHDL(top_lift_step, clk, dout, din, data_in, toLift_Step, z, we_1, we, we_in, addr, addr_in, muxsel_i, x, res_o, left_i, right_i, sam_i, flgs_i, update_i, update_o, rst_fsm, datactn_in, datactn, pc_data_in, pc_data_rdy, muxaddrsel, addr_left, addr_sam, addr_rht) 

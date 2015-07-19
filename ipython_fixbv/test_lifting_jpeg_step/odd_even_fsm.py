@@ -5,6 +5,7 @@ from myhdl import *
 from signed2twoscomplement import signed2twoscomplement
 from mux import mux_data
 from ram import ram
+from lift_step import lift_step
 W0 = 9
 dout = Signal(intbv(0)[W0:])
 din = Signal(intbv(0)[W0:])
@@ -120,7 +121,8 @@ def Odd_Even_Fsm(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, m
     return FSM
 
 def tb(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i):
-    instance_1 = Odd_Even_Fsm (state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i)
+    instance_lift_step = lift_step(left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o)
+    instance_Odd_Even_Fsm = Odd_Even_Fsm (state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel, we_1, dout, left_i, sam_i, right_i)
     instance_ram = ram(dout, din, addr, we, clk)
     instance_mux_data =  mux_data(z, din, data_in, we_1, we, we_in, addr, addr_in, muxsel_i, muxaddrsel, addr_left, addr_sam, addr_rht)
 
@@ -138,7 +140,7 @@ def tb(state, clk, rst_fsm, addr_left, muxsel_i, addr_sam, addr_rht, muxaddrsel,
         yield clk.posedge
         for i in range(4):
             yield clk.posedge
-        print ("%d muxsetl_i %d rst_fsm %d") % (now(), muxsel_i, rst_fsm)
+        print ("%d muxsel_i %d rst_fsm %d") % (now(), muxsel_i, rst_fsm)
         
         for i in range(10000):
  
