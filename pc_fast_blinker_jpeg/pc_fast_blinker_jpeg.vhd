@@ -47,14 +47,16 @@ architecture Behavioral of pc_fast_blinker_jpeg is
   signal sam_i : unsigned (7 downto 0) := (others => '0');
   signal  update_o : std_logic;
   signal  update : std_logic;
+  signal z : unsigned (7 downto 0) := (others => '0');  
+  
   --***********signals from lift_step to lift_step*************************
-  signal lift_step_dut : std_logic_vector(8 downto 0);
+  signal lift_step_dut : std_logic_vector(7 downto 0);
   signal  clk_fast : std_logic;
   signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
   
   --***********signals from pc to pc*************************  
   signal tojpeg_s : std_logic_vector(26 downto 0); -- From PC to jpeg.
-  signal fromjpeg_s : std_logic_vector(8 downto 0); -- From jpeg to PC.
+  signal fromjpeg_s : std_logic_vector(7 downto 0); -- From jpeg to PC.
   alias left_s is tojpeg_s(7 downto 0); -- left.
   alias sam_s is tojpeg_s(15 downto 8); -- sam.
   alias right_s is tojpeg_s(23 downto 16); -- sam.
@@ -90,6 +92,14 @@ architecture Behavioral of pc_fast_blinker_jpeg is
     );
   end component;
   
+  component signed2twoscomplement is
+    port (
+	     clk: in std_logic;
+        x: in signed (8 downto 0);
+        z: out unsigned(7 downto 0)
+     );
+  end component;
+  
 begin
    update <= YES;
    ulift_step : lift_step 
@@ -103,6 +113,13 @@ begin
 		    update_o => update_o,
           clk_i => clk_fast
 	);
+	
+	usigned2twoscomplement : signed2twoscomplement
+	    port map(
+          clk => clk_fast,
+          x => res_o,
+          z => z
+       );			 
 -------------------------------------------------------------------------
 -- JTAG entry point.
 -------------------------------------------------------------------------
@@ -166,9 +183,10 @@ UHostIoToJpeg : HostIoToDut
 	end process;
    -- This is iifting_step.
 	 
-  lift_step_dut <= std_logic_vector(signed(res_o));
+  lift_step_dut <= std_logic_vector(unsigned(z));
   lifting_step_s <= lift_step_dut;
+  --lifting_step_s <= z;
   blinker_o <= cnt_r(22);
-   --fromBlinker_s <= cnt_r(22 downto 22); -- Blinker output to shift reg. this commented out
+   
 end Behavioral;
 

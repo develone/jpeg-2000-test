@@ -31,8 +31,8 @@ print '''
 USB_ID = 0  # USB port index for the XuLA board connected to the host PC.
 LIFT_STEP_ID = 4  # This is the identifier for the subtractor in the FPGA.
 
-# Create a lift_step intfc obj with 3 8-bit & 1 4-bit inputs and one 8-bit output.
-lift_step = XsDut(USB_ID, LIFT_STEP_ID, [8, 8, 8, 3], [9])
+# Create a lift_step intfc obj with 3 8-bit & 1 3-bit inputs and one 8-bit output.
+lift_step = XsDut(USB_ID, LIFT_STEP_ID, [8, 8, 8, 3], [8])
 
 # Test lift_step by iterating through some random inputs.
 for i in range(0, 256):
@@ -42,5 +42,5 @@ for i in range(0, 256):
     flgs = 7
      
     jpeg = lift_step.Exec(lft, rht, sa, flgs)  # Use the lift_step in FPGA.
-    print '%3d %3d %3d %3d %4d \n' % (lft, rht, sa, flgs, jpeg.int)
+    print '%3d %3d %3d %3d %s \n' % (lft, rht, sa, flgs, jpeg)
  
