@@ -27,10 +27,19 @@ print '''
 # on the XuLA board that has been programmed to act as a LIFT_STEP.
 ##################################################################
 '''
-
+def jpeg_test(lft,sa,rht,flgs):
+	lift = 0
+	if (flgs == 7):
+		lift = (int(sa) - ( (int(lft >> 1)) + (int(rht >> 1)) ))
+	elif (flgs == 6):
+		lift = (int(sa) + ((int(lft) + int(rht) + 2) >> 2))
+	elif (flgs == 5):
+		lift = (int(sa) + ( (int(lft >> 1)) + (int(rht >> 1)) ))
+	elif (flgs == 4):
+		lift = (int(sa) - ((int(lft) + int(rht) + 2) >> 2))
+	print '%4d \n' % (lift) 
 USB_ID = 0  # USB port index for the XuLA board connected to the host PC.
 LIFT_STEP_ID = 4  # This is the identifier for the subtractor in the FPGA.
-
 # Create a lift_step intfc obj with 3 8-bit & 1 3-bit inputs and one 8-bit output.
 lift_step = XsDut(USB_ID, LIFT_STEP_ID, [8, 8, 8, 3], [8])
 
@@ -39,8 +48,16 @@ for i in range(0, 256):
     lft = randint(0, 255)  # Get a random, positive byte..
     rht = randint(0, 255)  # Get a random, positive byte..
     sa = randint(0, 255)  # Get a random, positive byte..
-    flgs = 7
-     
+    if (i <= 64):
+        flgs = 7
+    elif ( i <= 128):
+	flgs = 6
+    elif (i <= 192):
+	flgs = 5
+    elif (i <= 256):
+	flgs = 4
+    jpeg_test(lft,sa, rht,flgs)
+    
     jpeg = lift_step.Exec(lft, sa, rht, flgs)  # Use the lift_step in FPGA.
-    print '%3d %3d %3d %3d %s \n' % (lft, sa, rht, flgs, jpeg)
+    print '%3d %3d %3d %3d %4d %s \n' % (lft, sa, rht, flgs, jpeg.int, jpeg)
  
