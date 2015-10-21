@@ -41,6 +41,6 @@ for i in range(0, 256):
     sa = randint(0, 255)  # Get a random, positive byte..
     flgs = 7
      
-    jpeg = lift_step.Exec(lft, rht, sa, flgs)  # Use the lift_step in FPGA.
-    print '%3d %3d %3d %3d %s \n' % (lft, rht, sa, flgs, jpeg)
+    jpeg = lift_step.Exec(lft, sa, rht, flgs)  # Use the lift_step in FPGA.
+    print '%3d %3d %3d %3d %s \n' % (lft, sa, rht, flgs, jpeg)
  
