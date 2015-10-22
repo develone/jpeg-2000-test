@@ -32,7 +32,7 @@ module lift_step_tb;
 	reg [7:0] sam_i;
 	reg [7:0] right_i;
 	reg clk_i;
-   reg signed [8:0] x;
+    
 	// Outputs
 	wire signed [8:0] res_o;
    wire update_o;
@@ -51,7 +51,7 @@ module lift_step_tb;
    
 	signed2twoscomplement uut1 (
 	    .clk(clk_i),
-       .x(res_o),
+       .res_o(res_o),
        .z(z)
 	);
   initial begin
@@ -81,19 +81,23 @@ module lift_step_tb;
 		#140 flags_i = 7;
 		#150 update_i = 1;
 		#160 update_i = 0;
+		 
 		#170 left_i = 164;
 		#180 right_i = 160;
 		#190 sam_i = 250;
 		#200 flags_i = 5;
 		#210 update_i = 1;
 		#220 update_i = 0;
+		 
 		#230 flags_i = 6;
 		#240 update_i = 1;
 		#250 update_i = 0;
+		 
 		#260 sam_i = 459;
 		#270 flags_i = 4;
 		#280 update_i = 1;
 		#290 update_i = 0;
+		 
 	end
       
 endmodule
