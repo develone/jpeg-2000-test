@@ -95,7 +95,7 @@ architecture Behavioral of pc_fast_blinker_jpeg is
   component signed2twoscomplement is
     port (
 	     clk: in std_logic;
-        x: in signed (8 downto 0);
+        res_o: in signed (8 downto 0);
         z: out unsigned(7 downto 0)
      );
   end component;
@@ -117,7 +117,7 @@ begin
 	usigned2twoscomplement : signed2twoscomplement
 	    port map(
           clk => clk_fast,
-          x => res_o,
+          res_o => res_o,
           z => z
        );			 
 -------------------------------------------------------------------------
