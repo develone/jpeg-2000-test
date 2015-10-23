@@ -82,22 +82,24 @@ module lift_step_tb;
 		#150 update_i = 1;
 		#160 update_i = 0;
 		 
-		#170 left_i = 164;
-		#180 right_i = 160;
-		#190 sam_i = 250;
+		#170 left_i = 68;
+		#180 right_i = 163;
+		#190 sam_i = 231;
 		#200 flags_i = 5;
 		#210 update_i = 1;
 		#220 update_i = 0;
-		 
-		#230 flags_i = 6;
-		#240 update_i = 1;
-		#250 update_i = 0;
-		 
-		#260 sam_i = 459;
-		#270 flags_i = 4;
-		#280 update_i = 1;
-		#290 update_i = 0;
-		 
+
+		#230 left_i = 164;
+		#240 right_i = 160;
+		#250 sam_i = 250;
+		#260 flags_i = 6;
+		#270 update_i = 1;
+		#280 update_i = 0;		
+		#290 sam_i = 203;
+		#300 flags_i = 4;
+		#310 update_i = 1;
+		#320 update_i = 0;
+ 		 
 	end
       
 endmodule
