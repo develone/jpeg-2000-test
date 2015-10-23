@@ -25,7 +25,7 @@
 module lift_step_tb;
 
 	// Inputs
-	reg [3:0] flags_i;
+	reg [2:0] flags_i;
 	reg update_i;
 	//reg update_o;
 	reg [7:0] left_i;

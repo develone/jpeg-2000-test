@@ -41,7 +41,7 @@ end pc_fast_blinker_jpeg;
 architecture Behavioral of pc_fast_blinker_jpeg is
   --***********signals from lift_step to lift_step*************************
   signal res_o : signed (8 downto 0) := (others => '0');
-  signal flags_i : unsigned (3 downto 0) := (others => '0');
+  signal flags_i : unsigned (2 downto 0) := (others => '0');
   signal left_i : unsigned (7 downto 0) := (others => '0');
   signal right_i : unsigned (7 downto 0) := (others => '0');
   signal sam_i : unsigned (7 downto 0) := (others => '0');
