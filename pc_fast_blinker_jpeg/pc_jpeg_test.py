@@ -69,15 +69,15 @@ sa = 218
 rht = 163
 flgs = 7
 jpeg = lift_step.Exec(lft, sa, rht, flgs)  # Use the lift_step in FPGA.
-print '%3d %3d %3d %3d %s \n' % (lft, sa, rht, flgs, jpeg)
-lft = 164
+print '%3d %3d %3d %3d %s %s \n' % (lft, sa, rht, flgs, jpeg, hex(sa))
+lft = 68
 
-sa = 250
+sa = 231
 
-rht = 160
+rht = 163
 flgs = 5
 jpeg = lift_step.Exec(lft, sa, rht, flgs)  # Use the lift_step in FPGA.
-print '%3d %3d %3d %3d %s \n' % (lft, sa, rht, flgs, jpeg)
+print '%3d %3d %3d %3d %s %s \n' % (lft, sa, rht, flgs, jpeg, hex(sa))
 lft = 164
 
 sa = 250
@@ -85,4 +85,12 @@ sa = 250
 rht = 160
 flgs = 6
 jpeg = lift_step.Exec(lft, sa, rht, flgs)  # Use the lift_step in FPGA.
-print '%3d %3d %3d %3d %s \n' % (lft, sa, rht, flgs, jpeg)
+print '%3d %3d %3d %3d %s %s \n' % (lft, sa, rht, flgs, jpeg, hex(sa))
+lft = 164
+
+sa = 203
+
+rht = 160
+flgs = 4
+jpeg = lift_step.Exec(lft, sa, rht, flgs)  # Use the lift_step in FPGA.
+print '%3d %3d %3d %3d %s %s \n' % (lft, sa, rht, flgs, jpeg, hex(sa))
