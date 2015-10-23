@@ -80,7 +80,7 @@ jpeg = lift_step.Exec(lft, sa, rht, flgs)  # Use the lift_step in FPGA.
 print '%3d %3d %3d %3d %s \n' % (lft, sa, rht, flgs, jpeg)
 lft = 164
 
-sa = 203
+sa = 250
 
 rht = 160
 flgs = 6
