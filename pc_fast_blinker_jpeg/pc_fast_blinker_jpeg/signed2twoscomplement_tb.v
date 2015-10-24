@@ -26,10 +26,10 @@ module signed2twoscomplement_tb;
 
 	// Inputs
 	reg clk;
-	reg [8:0] res_o;
+	reg [9:0] res_o;
 
 	// Outputs
-	wire [7:0] z;
+	wire [8:0] z;
 
 	// Instantiate the Unit Under Test (UUT)
 	signed2twoscomplement uut (

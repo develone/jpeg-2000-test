@@ -40,27 +40,27 @@ end pc_fast_blinker_jpeg;
 
 architecture Behavioral of pc_fast_blinker_jpeg is
   --***********signals from lift_step to lift_step*************************
-  signal res_o : signed (8 downto 0) := (others => '0');
+  signal res_o : signed (9 downto 0) := (others => '0');
   signal flags_i : unsigned (2 downto 0) := (others => '0');
-  signal left_i : unsigned (7 downto 0) := (others => '0');
-  signal right_i : unsigned (7 downto 0) := (others => '0');
-  signal sam_i : unsigned (7 downto 0) := (others => '0');
+  signal left_i : unsigned (8 downto 0) := (others => '0');
+  signal right_i : unsigned (8 downto 0) := (others => '0');
+  signal sam_i : unsigned (8 downto 0) := (others => '0');
   signal  update_o : std_logic;
   signal  update : std_logic;
-  signal z : unsigned (7 downto 0) := (others => '0');  
+  signal z : unsigned (8 downto 0) := (others => '0');  
   
   --***********signals from lift_step to lift_step*************************
-  signal lift_step_dut : std_logic_vector(7 downto 0);
+  signal lift_step_dut : std_logic_vector(8 downto 0);
   signal  clk_fast : std_logic;
   signal cnt_r : std_logic_vector(22 downto 0) := (others => '0');
   
   --***********signals from pc to pc*************************  
-  signal tojpeg_s : std_logic_vector(26 downto 0); -- From PC to jpeg.
-  signal fromjpeg_s : std_logic_vector(7 downto 0); -- From jpeg to PC.
-  alias left_s is tojpeg_s(7 downto 0); -- left.
-  alias sam_s is tojpeg_s(15 downto 8); -- sam.
-  alias right_s is tojpeg_s(23 downto 16); -- sam.
-  alias flags_s is tojpeg_s(26 downto 24);
+  signal tojpeg_s : std_logic_vector(29 downto 0); -- From PC to jpeg.
+  signal fromjpeg_s : std_logic_vector(8 downto 0); -- From jpeg to PC.
+  alias left_s is tojpeg_s(8 downto 0); -- left.
+  alias sam_s is tojpeg_s(17 downto 9); -- sam.
+  alias right_s is tojpeg_s(26 downto 18); -- sam.
+  alias flags_s is tojpeg_s(29 downto 27);
   alias lifting_step_s is fromjpeg_s; -- lift_step output.
   --***********signals from pc to pc*************************
   
@@ -83,10 +83,10 @@ architecture Behavioral of pc_fast_blinker_jpeg is
     port (
 	     flags_i: in unsigned(2 downto 0);
 		  update_i : in std_logic;
-        left_i: in unsigned(7 downto 0);
-        sam_i: in unsigned(7 downto 0);
-        right_i: in unsigned(7 downto 0);
-        res_o: out signed (8 downto 0);
+        left_i: in unsigned(8 downto 0);
+        sam_i: in unsigned(8 downto 0);
+        right_i: in unsigned(8 downto 0);
+        res_o: out signed (9 downto 0);
 		  update_o : out std_logic;
         clk_i: in std_logic
     );
@@ -95,8 +95,8 @@ architecture Behavioral of pc_fast_blinker_jpeg is
   component signed2twoscomplement is
     port (
 	     clk: in std_logic;
-        res_o: in signed (8 downto 0);
-        z: out unsigned(7 downto 0)
+        res_o: in signed (9 downto 0);
+        z: out unsigned(8 downto 0)
      );
   end component;
   

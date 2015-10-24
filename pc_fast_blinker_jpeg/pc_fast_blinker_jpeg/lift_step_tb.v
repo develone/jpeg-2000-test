@@ -28,15 +28,15 @@ module lift_step_tb;
 	reg [2:0] flags_i;
 	reg update_i;
 	//reg update_o;
-	reg [7:0] left_i;
-	reg [7:0] sam_i;
-	reg [7:0] right_i;
+	reg [8:0] left_i;
+	reg [8:0] sam_i;
+	reg [8:0] right_i;
 	reg clk_i;
     
 	// Outputs
-	wire signed [8:0] res_o;
+	wire signed [9:0] res_o;
    wire update_o;
-	wire [7:0] z;
+	wire [8:0] z;
 	// Instantiate the Unit Under Test (UUT)
 	lift_step uut (
 		.flags_i(flags_i),
