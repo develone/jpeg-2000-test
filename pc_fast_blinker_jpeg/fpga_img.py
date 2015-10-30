@@ -3,10 +3,10 @@ from PIL import Image # Part of the standard Python Library
 im = Image.open("../lena_64.png")
 pix = im.load()
 m = list(im.getdata())
-print m.__sizeof__()
+#print m.__sizeof__()
 m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
-print m.__sizeof__()
-print len(m[0]), len(m[1])
+#print m.__sizeof__()
+#print len(m[0]), len(m[1])
 width = len(m[0])
 #width = 1
 #height = 16
@@ -54,6 +54,18 @@ def even_odd(width, height):
     for col in range(width): # Do the 1D transform on all cols:
         flgs = 7
         for row in range(2, height, 2):
+            lft =  m[row-1][col]	  
+            sa =  m[row][col]   
+            rht =  m[row+1][col]   
+            jpeg = lift_step.Exec(lft,sa,rht,flgs)
+            if (jpeg.int < 0):
+                m[row][col] = 512 + jpeg.int
+            else:
+                m[row][col] = jpeg.int
+            #print 'row col flgs left sam right result'        
+            print '%3d %3d  %3d  %3d  %3d  %3d' % (row,col,lft,sa,rht,jpeg.int)
+        flgs = 6
+        for row in range(1, height-1, 2):
             lft = m[row-1][col]
             sa = m[row][col]
             rht =  m[row+1][col] 
@@ -63,18 +75,7 @@ def even_odd(width, height):
             else:
                 m[row][col] = jpeg.int
             #print 'row col flgs left sam right result'        
-            #print '%3d %3d %3d  %3d  %3d  %3d  %3d  \n' % (row,col,flgs,lft,sa,rht,jpeg.int)
-        flgs = 6
-        for row in range(1, height-1, 2):
-            lft = m[row-1][col]
-            sa = m[row][col]
-            rht =  m[row+1][col] 
-            if (jpeg.int < 0):
-                m[row][col] = 512 + jpeg.int
-            else:
-                m[row][col] = jpeg.int
-            #print 'row col flgs left sam right result'        
-            #print '%3d %3d %3d  %3d  %3d  %3d  %3d  \n' % (row,col,flgs,lft,sa,rht,jpeg.int)
+            print '%3d %3d  %3d  %3d  %3d  %3d ' % (row,col,lft,sa,rht,jpeg.int)
              
 
 # /***********************************************************************************
@@ -99,12 +100,12 @@ def even_odd(width, height):
 from xstools.xsdutio import *  # Import funcs/classes for PC <=> FPGA link.
 from random import *  # Import some random number generator routines.
 
-print '''
+#print '''
 ##################################################################
 # This program tests the interface between the host PC and the FPGA 
 # on the XuLA board that has been programmed to act as a LIFT_STEP.
 ##################################################################
-'''
+#'''
 
 USB_ID = 0  # USB port index for the XuLA board connected to the host PC.
 LIFT_STEP_ID = 4  # This is the identifier for the subtractor in the FPGA.
