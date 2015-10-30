@@ -1,0 +1,78 @@
+diff --git a/ipython_fixbv/t_wave_53.py b/ipython_fixbv/t_wave_53.py
+index 9f3dba3..5bc30bf 100644
+--- a/ipython_fixbv/t_wave_53.py
++++ b/ipython_fixbv/t_wave_53.py
+@@ -27,7 +27,7 @@ def convert_list_to_bin():
+ 			f.write(pack(fmt,m[row][col]))
+ 	f.close()
+ 
+-im = dwt.Image.open("../lena_256.png")
++im = dwt.Image.open("../lena_64.png")
+ pix = im.load()
+ m = list(im.getdata())
+ #print m.__sizeof__()
+@@ -35,16 +35,16 @@ m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
+ #print m.__sizeof__()
+ #print len(m[0]), len(m[1])
+ """Converts the 16bit to list m[row][col] this is the procedure that will be needed in the FPGA"""
+-convert_intelhex_to_list()
++#convert_intelhex_to_list()
+ #print m[0][0].__sizeof__()
+ m = dwt.fwt97_2d(m, 1)
+ # Convert the list of lists matrix to an image.
+ dwt.seq_to_img(m, pix)
+-convert_list_to_bin()
++#convert_list_to_bin()
+ # Save the transformed image.
+-im.save("test1_256_fwt.png")
+-w, h = im.size
+-m = dwt.upper_lower(m, w, h)
+-mm = dwt.iwt97_2d(m, 1)
+-dwt.seq_to_img(mm, pix)
+-im.save("test1_256_iwt.png") 
++im.save("test1_64_fwt.png")
++#w, h = im.size
++#m = dwt.upper_lower(m, w, h)
++#mm = dwt.iwt97_2d(m, 1)
++#dwt.seq_to_img(mm, pix)
++#im.save("test1_256_iwt.png") 
+diff --git a/ipython_fixbv/waveletsim_53.py b/ipython_fixbv/waveletsim_53.py
+index 3500b23..5f432bb 100644
+--- a/ipython_fixbv/waveletsim_53.py
++++ b/ipython_fixbv/waveletsim_53.py
+@@ -71,10 +71,10 @@ def fwt97_2d(m, nlevels=1):
+     h = len(m)
+     for i in range(nlevels):
+         m = fwt97(m, w, h) # cols
+-        m = fwt97(m, w, h) # rows
+-        lower_upper(m, w, h)
+-        w /= 2
+-        h /= 2
++        #m = fwt97(m, w, h) # rows
++        #lower_upper(m, w, h)
++        #w /= 2
++        #h /= 2
+ 
+     return m
+ 
+@@ -118,16 +118,13 @@ def fwt97(s, width, height):
+         # Predict 1. y1
+ 
+         for row in range(2, height, 2):
+-
+-			s[row][col] = (s[row][col] - ((int(s[row-1][col])>>1) + (int(s[row+1][col])>>1)))
+-            #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])
+-
+-
+-        # Update 1. y0
+-
++            sa = s[row][col]
++            s[row][col] = (s[row][col] - ((int(s[row-1][col])>>1) + (int(s[row+1][col])>>1)))
++            print '%3d %3d %3d %3d %3d %3d ' % (row,col,int(s[row-1][col]),sa,int(s[row+1][col]),int(s[row][col]))
+         for row in range(1, height-1, 2):
+ 
+-			s[row][col] = (s[row][col] + ((int(s[row-1][col]) + int(s[row+1][col]) + 2)>>2))
++	    s[row][col] = (s[row][col] + ((int(s[row-1][col]) + int(s[row+1][col]) + 2)>>2))
++            print '%3d %3d %3d %3d %3d %3d ' % (row,col,int(s[row-1][col]),sa,int(s[row+1][col]),int(s[row][col]))
+     s = de_interleave(s,height,width)
+     return s
