@@ -1,5 +1,5 @@
 from PIL import Image # Part of the standard Python Library
-
+import time
 im = Image.open("../lena_64.png")
 pix = im.load()
 m = list(im.getdata())
@@ -11,7 +11,20 @@ width = len(m[0])
 #width = 1
 #height = 16
 height = len(m)
-def de_interleave(height,width):
+'''
+.1
+Wed 11 Nov 02:49:53 UTC 2015
+Wed 11 Nov 03:05:31 UTC 2015
+.075
+Wed 11 Nov 03:19:36 UTC 2015
+Wed 11 Nov 03:31:55 UTC 2015
+0.085
+Wed 11 Nov 03:40:18 UTC 2015
+Wed 11 Nov 03:53:57 UTC 2015
+'''
+ 
+
+def de_interleave(m,height,width):
 	# de-interleave
 	temp_bank = [[0]*width for i in range(height)]
 	for row in range(width):
@@ -30,7 +43,7 @@ def de_interleave(height,width):
 			m[row][col] = temp_bank[row][col]
 
 
-def lower_upper(width, height):
+def lower_upper(m,width,height):
 
 	temp_bank = [[0]*width for i in range(height)]
 	for col in range(width/2,width,1):
@@ -50,7 +63,7 @@ def seq_to_img(m, pix):
         for col in range(len(m[row])):
             pix[col,row] = m[row][col]
             
-def even_odd(width, height):
+def even_odd(m,width,height):
     for col in range(width): # Do the 1D transform on all cols:
         flgs = 7
         for row in range(2, height, 2):
@@ -58,24 +71,26 @@ def even_odd(width, height):
             sa =  m[row][col]   
             rht =  m[row+1][col]   
             jpeg = lift_step.Exec(lft,sa,rht,flgs)
+            time.sleep (110.0 / 1000.0) 
             if (jpeg.int < 0):
                 m[row][col] = 512 + jpeg.int
             else:
                 m[row][col] = jpeg.int
             #print 'row col flgs left sam right result'        
-            print '%3d %3d  %3d  %3d  %3d  %3d' % (row,col,lft,sa,rht,jpeg.int)
+            #print '%3d %3d  %3d  %3d  %3d  %3d' % (row,col,lft,sa,rht,jpeg.int)
         flgs = 6
         for row in range(1, height-1, 2):
             lft = m[row-1][col]
             sa = m[row][col]
             rht =  m[row+1][col] 
             jpeg = lift_step.Exec(lft,sa,rht,flgs)
+            time.sleep (110.0 / 1000.0) 
             if (jpeg.int < 0):
                 m[row][col] = 512 + jpeg.int
             else:
                 m[row][col] = jpeg.int
             #print 'row col flgs left sam right result'        
-            print '%3d %3d  %3d  %3d  %3d  %3d ' % (row,col,lft,sa,rht,jpeg.int)
+            #print '%3d %3d  %3d  %3d  %3d  %3d ' % (row,col,lft,sa,rht,jpeg.int)
              
 
 # /***********************************************************************************
@@ -113,11 +128,17 @@ LIFT_STEP_ID = 4  # This is the identifier for the subtractor in the FPGA.
 lift_step = XsDut(USB_ID, LIFT_STEP_ID, [9, 9, 9, 3], [9])
 
 # Test lift_step by iterating through some random inputs.
-even_odd(width, height)
-de_interleave(height,width)
-#even_odd(width, height)
-#lower_upper(width, height)
+even_odd(m,width,height)
+de_interleave(m,height,width)
+#even_odd(m,width,height)
+#de_interleave(m,height,width)
+#lower_upper(m,width,height)
 seq_to_img(m, pix)
 
 im.save("test1_64_fwt.png")
 
+even_odd(m,width,height)
+de_interleave(m,height,width)
+lower_upper(m,width,height)
+seq_to_img(m, pix)
+im.save("test2_64_fwt.png")
