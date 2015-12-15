@@ -1,9 +1,8 @@
  
 from myhdl import *
  
-W0 = 9 
 
-def jpeg_cat(left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o):
+def jpeg_cat(left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o, clk):
     @always(clk.posedge)
     def rtl ():
         if (update_i == 1):
@@ -19,18 +18,21 @@ def jpeg_cat(left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o):
         else:
             update_o.next = 1
     return rtl    
-		
-res_o = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
-left_i = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
-right_i = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
-sam_i = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
-flgs_i = Signal(intbv(0)[4:])
-clk = Signal(bool(0))
-update_i = Signal(bool(0))
-update_o = Signal(bool(0))
 
-def tb(jpeg_cat,left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o):
-    instance_jpeg_cat = jpeg_cat(left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o)
+def jpeg_signals():
+    W0 = 9		
+    res_o = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+    left_i = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+    right_i = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+    sam_i = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+    flgs_i = Signal(intbv(0)[4:])
+    update_i = Signal(bool(0))
+    update_o = Signal(bool(0))
+    clk = Signal(bool(0))
+    return  left_i, right_i, sam_i, flgs_i, update_i, res_o, update_o, clk
+
+def tb(jpeg_cat,left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o, clk):
+    instance_jpeg_cat = jpeg_cat(left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o, clk)
 
     @always(delay(10))
     def clkgen():
@@ -81,12 +83,14 @@ def tb(jpeg_cat,left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o):
     return instances()
 
 def convert():
-    toVerilog(jpeg_cat,left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o) 
+    left_i, right_i, sam_i, flgs_i, update_i, res_o, update_o, clk = jpeg_signals()
+    toVerilog(jpeg_cat, left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o, clk) 
 '''
 convert()
 '''
 '''
-tb_fsm = traceSignals(tb, jpeg_cat, left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o) 
+left_i, right_i, sam_i, flgs_i, update_i, res_o, update_o, clk = jpeg_signals()
+tb_fsm = traceSignals(tb, jpeg_cat, left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o, clk) 
 sim = Simulation(tb_fsm)
 sim.run()
 ''' 
