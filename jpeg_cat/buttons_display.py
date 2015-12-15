@@ -26,7 +26,7 @@ from ice40_primitives import *
 from jpeg_cat import *
 
 def buttons_display(d0_o, d1_o, d2_o, d3_o, d4_o, d5_o, d6_o, d7_o, clk_i,
-                    sw1_i, sw2_i, sw3_i, left_i, right_i, sam_i, flgs_i, update_i, res_o, update_o):
+                    sw1_i, sw2_i, sw3_i, left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o):
     '''Module for testing buttons and DIP switches.
     d0_o, ... d7_o: 3-state outputs to drive the StickIt! LEDDigits board.
     clk_i: Input clock.
@@ -71,8 +71,8 @@ def buttons_display(d0_o, d1_o, d2_o, d3_o, d4_o, d5_o, d6_o, d7_o, clk_i,
                                  drvrs[4], drvrs[5], drvrs[6], drvrs[7], clk_i,
                                  sw1_digit, space, space, space, space, space,
                                  space, sw2_digit)
-    #left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o
-    jpeg = jpeg_cat(left_i, right_i, sam_i, flgs_i, update_i, res_o, update_o, clk_i)
+    #left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o, clk
+    jpeg = jpeg_cat(left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o, clk_i)
     # Attach the LEDDigits drivers to the output pins of this module.
     @always_comb
     def io_logic():
@@ -94,11 +94,11 @@ def buttons_display_tb():
                                       for _ in range(8)]
     clk, sw1, sw2 = [Signal(bool(0)) for _ in range(3)]
     sw3 = Signal(intbv(0)[4:])
-    left_i, right_i, sam_i, flgs_i, update_i, res_o, update_o, xx = jpeg_signals()
+    left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o, xx = jpeg_signals()
     #jpeg = res_o(left_i, sam_i, right_i, flgs_i, update_i, clk, res_o, update_o)
     dut = buttons_display(d0.driver(), d1.driver(), d2.driver(), d3.driver(),
                           d4.driver(), d5.driver(), d6.driver(), d7.driver(),
-                          clk, sw1, sw2, sw3, left_i, right_i, sam_i, flgs_i, update_i, res_o, update_o)
+                          clk, sw1, sw2, sw3, left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o)
 
     @always(delay(10))
     def clk_gen():
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     flgs_i 4 odd sam_imples inverse
     '''  
        
-    left_i, right_i, sam_i, flgs_i, update_i, res_o, update_o, clk = jpeg_signals()
+    left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o, clk = jpeg_signals()
     
     Simulation(traceSignals(buttons_display_tb)).run()
 
@@ -145,4 +145,4 @@ if __name__ == '__main__':
     sw3 = Signal(intbv(0)[4:])
     toVerilog(buttons_display, d0.driver(), d1.driver(), d2.driver(),
               d3.driver(), d4.driver(), d5.driver(), d6.driver(), d7.driver(),
-              clk, sw1, sw2, sw3, left_i, right_i, sam_i, flgs_i, update_i, res_o, update_o)
+              clk, sw1, sw2, sw3, left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o)

@@ -83,7 +83,7 @@ def tb(jpeg_cat,left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o, clk):
     return instances()
 
 def convert():
-    left_i, right_i, sam_i, flgs_i, update_i, res_o, update_o, clk = jpeg_signals()
+    left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o, clk = jpeg_signals()
     toVerilog(jpeg_cat, left_i, sam_i, right_i, flgs_i, update_i, res_o, update_o, clk) 
 '''
 convert()
