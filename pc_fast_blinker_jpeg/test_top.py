@@ -2,6 +2,7 @@ from myhdl import *
 
 from jpeg import dwt
 from signed2twoscomplement import signed2twoscomplement
+from l2r import lift2res
 W0 = 9
 
 clock = Signal(bool(0))
@@ -84,6 +85,8 @@ instance_1 = dwt(clock, upd, flgs1, lft1, sam1, rht1, done1, lift1)
 instance_2 = dwt(clock, upd, flgs2, lft2, sam2, rht2, done2, lift2)
 instance_3 = dwt(clock, upd, flgs3, lft3, sam3, rht3, done3, lift3)
 
+
+		
 def dwt_top(clock):
 	instance_0 = dwt(flgs0, upd, lft0, sam0, rht0, lift0, done0, clock)
 	instance_1 = dwt(flgs1, upd, lft1, sam1, rht1, lift1, done1, clock)
@@ -93,17 +96,20 @@ def dwt_top(clock):
 	instance_5 = dwt(flgs5, upd, lft5, sam5, rht5, lift5, done5, clock)
 	instance_6 = dwt(flgs6, upd, lft6, sam6, rht6, lift6, done6, clock)
 	instance_7 = dwt(flgs7, upd, lft7, sam7, rht7, lift7, done7, clock)
-	instance_8 = signed2twoscomplement(res0, z0)
-	instance_9 = signed2twoscomplement(res1, z1)
-	instance_10 = signed2twoscomplement(res2, z2)
-	instance_11 = signed2twoscomplement(res3, z3)
-	instance_12 = signed2twoscomplement(res4, z4)
-	instance_13 = signed2twoscomplement(res5, z5)
-	instance_14 = signed2twoscomplement(res6, z6)
-	instance_15 = signed2twoscomplement(res7, z7)
+	
+	instance_8 = lift2res(lift0,res0, lift1,res1, lift2,res2, lift3,res3, lift4,res4, lift5,res5,lift6,res6,lift7,res7)
+ 
+	instance_16 = signed2twoscomplement(res0, z0)
+	instance_17 = signed2twoscomplement(res1, z1)
+	instance_18 = signed2twoscomplement(res2, z2)
+	instance_19 = signed2twoscomplement(res3, z3)
+	instance_20 = signed2twoscomplement(res4, z4)
+	instance_21 = signed2twoscomplement(res5, z5)
+	instance_22 = signed2twoscomplement(res6, z6)
+	instance_23 = signed2twoscomplement(res7, z7)
 	return instances()	
-#dwt_top(clock)
-toVerilog(dwt_top,clock)
+
+ 
 def tb(clock):
 	@always(delay(10))
 	def clkgen():
@@ -116,14 +122,16 @@ def tb(clock):
 	instance_5 = dwt(flgs5, upd, lft5, sam5, rht5, lift5, done5, clock)
 	instance_6 = dwt(flgs6, upd, lft6, sam6, rht6, lift6, done6, clock)
 	instance_7 = dwt(flgs7, upd, lft7, sam7, rht7, lift7, done7, clock)
-	instance_8 = signed2twoscomplement(res0, z0)
-	instance_9 = signed2twoscomplement(res1, z1)
-	instance_10 = signed2twoscomplement(res2, z2)
-	instance_11 = signed2twoscomplement(res3, z3)
-	instance_12 = signed2twoscomplement(res4, z4)
-	instance_13 = signed2twoscomplement(res5, z5)
-	instance_14 = signed2twoscomplement(res6, z6)
-	instance_15 = signed2twoscomplement(res7, z7)
+	instance_8 = lift2res(lift0,res0, lift1,res1, lift2,res2, lift3,res3, lift4,res4, lift5,res5,lift6,res6,lift7,res7)
+ 
+	instance_16 = signed2twoscomplement(res0, z0)
+	instance_17 = signed2twoscomplement(res1, z1)
+	instance_18 = signed2twoscomplement(res2, z2)
+	instance_19 = signed2twoscomplement(res3, z3)
+	instance_20 = signed2twoscomplement(res4, z4)
+	instance_21 = signed2twoscomplement(res5, z5)
+	instance_22 = signed2twoscomplement(res6, z6)
+	instance_23 = signed2twoscomplement(res7, z7)
 	@instance
         def stimulus():
 	    lft0.next = 164
@@ -138,8 +146,7 @@ def tb(clock):
 	    yield clock.posedge
 	    upd.next = 0
 	    yield clock.posedge
-	    res0.next = lift0[W0:]
-            yield clock.posedge
+ 
             sam0.next = 505
             yield clock.posedge
             flgs0.next = 5
@@ -147,8 +154,7 @@ def tb(clock):
             upd.next = 1
             yield clock.posedge
             upd.next = 0
-	    res0.next = lift0[W0:]
-            yield clock.posedge
+ 
 	    lft1.next = 164
 	    yield clock.posedge
 	    sam1.next = 160
@@ -161,8 +167,7 @@ def tb(clock):
 	    yield clock.posedge
 	    upd.next = 0
             yield clock.posedge
-	    res1.next = lift1[W0:]
-            yield clock.posedge
+ 
             sam1.next = 505
             yield clock.posedge
             flgs1.next = 5
@@ -171,8 +176,7 @@ def tb(clock):
             yield clock.posedge
             upd.next = 0
             yield clock.posedge 
-	    res1.next = lift1[W0:]
-            yield clock.posedge
+ 
 	    lft2.next = 164
 	    yield clock.posedge
 	    sam2.next = 160
@@ -185,8 +189,7 @@ def tb(clock):
 	    yield clock.posedge
 	    upd.next = 0
             yield clock.posedge
-	    res2.next = lift2[W0:]
-            yield clock.posedge
+ 
             sam3.next = 505
             yield clock.posedge
             flgs3.next = 5
@@ -195,8 +198,7 @@ def tb(clock):
             yield clock.posedge
             upd.next = 0
             yield clock.posedge 
-	    res3.next = lift3[W0:]
-            yield clock.posedge
+ 
             yield clock.posedge
 	    lft3.next = 164
 	    yield clock.posedge
@@ -210,8 +212,7 @@ def tb(clock):
 	    yield clock.posedge
 	    upd.next = 0
             yield clock.posedge
-	    res3.next = lift3[W0:]
-            yield clock.posedge
+ 
             sam1.next = 505
             yield clock.posedge
             flgs3.next = 5
@@ -219,13 +220,16 @@ def tb(clock):
             upd.next = 1
             yield clock.posedge
             upd.next = 0
-	    res3.next = lift3[W0:]
-            yield clock.posedge
+ 
             
             
             raise StopSimulation	
 	return instances()
+'''
+toVerilog(dwt_top,clock)
+toVHDL(dwt_top,clock)
 		
 tb_fsm = traceSignals(tb, clock)
 sim = Simulation(tb_fsm)
 sim.run()	
+'''
