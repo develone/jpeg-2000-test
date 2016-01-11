@@ -2,23 +2,22 @@ from myhdl import *
 import random
 '''unsigned data width signed is W0 + 1'''
 W0 = 9
-
+clk = Signal(bool(0))
 t = Signal(intbv(0, min= -(2**(W0)) ,max= (2**(W0))))  
 res_o = Signal(intbv(0, min= -(2**(W0)) ,max= (2**(W0))))
 z = Signal(intbv(0)[W0:])
-clk = Signal(bool(0))
-def signed2twoscomplement(clk, res_o, z):
+def signed2twoscomplement(res_o, z):
 	
-	@always(clk.posedge)
+	@always_comb
 	def unsigned_logic():
-		z.next = res_o
-
+		z.next = res_o	
 	return unsigned_logic
+	    
 def convert():
-	toVHDL(signed2twoscomplement, clk, res_o, z)
-	toVerilog(signed2twoscomplement, clk, res_o, z)
+	toVHDL(signed2twoscomplement, res_o, z)
+	toVerilog(signed2twoscomplement, res_o, z)
 def tb(clk, res_o, z):
-    instance_1 = signed2twoscomplement(clk, res_o, z)
+    instance_1 = signed2twoscomplement(res_o, z)
     @always(delay(10))
     def clkgen():
         clk.next = not clk
@@ -34,7 +33,7 @@ def tb(clk, res_o, z):
         raise StopSimulation
     return instances()
 '''
-tb_fsm = traceSignals(tb,clk, res_o, z)
+tb_fsm = traceSignals(tb, clk, res_o, z)
 sim = Simulation(tb_fsm)
 sim.run()
 
