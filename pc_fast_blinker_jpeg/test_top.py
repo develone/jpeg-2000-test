@@ -460,8 +460,8 @@ def tb(clock):
 toVerilog(dwt_top,clock)
 
 toVHDL(dwt_top,clock)
-'''		
+		
 tb_fsm = traceSignals(tb, clock)
 sim = Simulation(tb_fsm)
 sim.run()	
-
+'''
