@@ -184,6 +184,18 @@ def dwt_top(clock):
 
  
 def tb(clock):
+        from PIL import Image
+        im = Image.open("../lena_256.png")
+        pix = im.load()
+        m = list(im.getdata())
+        #print m.__sizeof__()
+        m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])] 
+        #print m
+        print len(m[0]), len(m[1])
+        for row in range(2,18,2):
+            print row-1, row, row+1 
+            print m[0][row-1], m[0][row], m[0][row+1]
+            print ("%s %s %s") % (bin(m[0][row-1],9),bin(m[0][row],9),bin(m[0][row+1],9))
 	@always(delay(10))
 	def clkgen():
 		clock.next = not clock
@@ -460,8 +472,8 @@ def tb(clock):
 toVerilog(dwt_top,clock)
 
 toVHDL(dwt_top,clock)
-		
+'''		
 tb_fsm = traceSignals(tb, clock)
 sim = Simulation(tb_fsm)
 sim.run()	
-'''
+
