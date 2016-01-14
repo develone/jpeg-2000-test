@@ -1,5 +1,5 @@
 from myhdl import *
-
+import argparse
 from jpeg import dwt
 from signed2twoscomplement import signed2twoscomplement
 from l2r import lift2res
@@ -140,7 +140,13 @@ rht7 = Signal(intbv(0)[W0:])
 sam7 = Signal(intbv(0)[W0:])
 lift7 = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
 
- 
+def cliparse():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--build", default=False, action='store_true')
+    parser.add_argument("--test", default=False, action='store_true')
+    parser.add_argument("--convert", default=False, action='store_true')
+    args = parser.parse_args()
+    return args 
 
 		
 def dwt_top(clock):
@@ -192,10 +198,7 @@ def tb(clock):
         m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])] 
         #print m
         print len(m[0]), len(m[1])
-        for row in range(2,18,2):
-            print row-1, row, row+1 
-            print m[0][row-1], m[0][row], m[0][row+1]
-            print ("%s %s %s") % (bin(m[0][row-1],9),bin(m[0][row],9),bin(m[0][row+1],9))
+
 	@always(delay(10))
 	def clkgen():
 		clock.next = not clock
@@ -245,235 +248,339 @@ def tb(clock):
             reset.next = 1
             yield clock.posedge
             print ("reset %d ") % (reset)
+            #************************************0
             fB0.next = 1
             yield clock.posedge
+            #fB0.next = 0
+            #yield clock.posedge
+            si0.next = 1
+            yield clock.posedge
+            print ("update firstBit %s %d %d ") % (bin(po0,31),fB0,si0) 
+            si0.next = 1
+            yield clock.posedge
+            print ("first flgs firstBit %s %d %d ") % (bin(po0,31),fB0,si0)
+            si0.next = 1
+            yield clock.posedge
+            print ("2nd flg firstBit %s %d %d ") % (bin(po0,31),fB0,si0) 
+            '''flgs'''
+            si0.next = 1
+            yield clock.posedge
+            print ("3rd flgs %s %d ") % (bin(po0,31),si0)
+ 
+ 
+ 
+            '''end of flgs'''
+
+            ''' starting 27bits'''
+
+            x = m[0][2+1]
+            print ("Right %s %d") % (bin(x,9), x)
+            for i in range(W0-1,0,-1):
+                si0.next = ((x&(1<<i))!=0)
+                yield clock.posedge
+                print ("31 bits %s %d %d ") % (bin(po0,31),si0,i)
+            si0.next = ((x&(1<<0))!=0)
+            yield clock.posedge 
+            print ("LSB rht %s %d %d ") % (bin(po0,31),si0,i-1)
+
+            x = m[0][2]
+            print ("Sam %s %d") % (bin(x,9), x)
+            for i in range(W0-1,0,-1):
+                si0.next = ((x&(1<<i))!=0)
+                yield clock.posedge
+                print ("31 bits %s %d %d ") % (bin(po0,31),si0,i)
+            si0.next = ((x&(1<<0))!=0)
+            yield clock.posedge 
+            print ("LSB sam %s %d %d ") % (bin(po0,31),si0,i-1)
+
+            x = m[0][2-1]
+            print ("Left %s %d") % (bin(x,9), x)
+            for i in range(W0-1,0,-1):
+                si0.next = ((x&(1<<i))!=0)
+                yield clock.posedge
+                print ("31 bits %s %d %d ") % (bin(po0,31),si0,i)
+            si0.next = ((x&(1<<0))!=0)
+            yield clock.posedge 
+            print ("LSB lft %s %d %d ") % (bin(po0,31),si0,i-1)
+            yield clock.posedge  
+            fB0.next = 0
+            yield clock.posedge
+ 
             print ("fB0 %d ") % (fB0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            print ("fB0 %d ") % (fB0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 0
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 0
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 0
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 0
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 0
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 0
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 0
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 0
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 0
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 0
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 0
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
             
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 0
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
-            si0.next = 1
-            yield clock.posedge
-            print ("31 bits %s %d ") % (bin(po0,31),si0)
+
+            
+
+            
             sig0.next = po0
             yield clock.posedge
-            sig1.next = po0
-            yield clock.posedge
-            sig2.next = po0
-            yield clock.posedge
-            sig3.next = po0
-            yield clock.posedge
-            sig4.next = po0
-            yield clock.posedge
-            sig5.next = po0
-            yield clock.posedge
-            sig6.next = po0
-            yield clock.posedge
-            sig7.next = po0
-            yield clock.posedge
+
             for i in range(10):
                 yield clock.posedge
-            
-	    lft0.next = 164
-	    yield clock.posedge
-	    sam0.next = 160
-	    yield clock.posedge
-	    rht0.next = 170
-	    yield clock.posedge
-	    flgs0.next = 7
-	    yield clock.posedge
-	    upd0.next = 1
-	    yield clock.posedge
-	    upd0.next = 0
-	    yield clock.posedge
+            #************************************0
+            sig4.next = po0
+            yield clock.posedge
+            for i in range(10):
+                yield clock.posedge            
+            #************************************4
+            #************************************1             
+            reset.next = 1
+            yield clock.posedge
+            print ("reset %d ") % (reset)
+            reset.next = 0
+            yield clock.posedge
+            print ("reset %d ") % (reset)
+            reset.next = 1
+            yield clock.posedge
+            print ("reset %d ") % (reset)
+
+            fB1.next = 1
+            yield clock.posedge
+            #fB0.next = 0
+            #yield clock.posedge
+            si1.next = 1
+            yield clock.posedge
+            print ("update firstBit %s %d %d ") % (bin(po1,31),fB1,si1) 
+            si1.next = 1
+            yield clock.posedge
+            print ("first flgs firstBit %s %d %d ") % (bin(po1,31),fB1,si1)
+            si1.next = 1
+            yield clock.posedge
+            print ("2nd flg firstBit %s %d %d ") % (bin(po1,31),fB1,si1) 
+            '''flgs'''
+            si1.next = 1
+            yield clock.posedge
+            print ("3rd flgs %s %d ") % (bin(po1,31),si1)
  
-            sam0.next = 505
-            yield clock.posedge
-            flgs0.next = 5
-            yield clock.posedge
-            upd0.next = 1
-            yield clock.posedge
-            upd0.next = 0
  
-	    lft1.next = 164
-	    yield clock.posedge
-	    sam1.next = 160
-	    yield clock.posedge
-	    rht1.next = 170
-	    yield clock.posedge
-	    flgs1.next = 7
-	    yield clock.posedge
-	    upd1.next = 1
-	    yield clock.posedge
-	    upd1.next = 0
-            yield clock.posedge
  
-            sam1.next = 505
-            yield clock.posedge
-            flgs1.next = 5
-            yield clock.posedge
-            upd1.next = 1
-            yield clock.posedge
-            upd1.next = 0
+            '''end of flgs'''
+
+            ''' starting 27bits'''
+
+            x = m[0][4+1]
+            print ("Right %s %d") % (bin(x,9), x)
+            for i in range(W0-1,0,-1):
+                si1.next = ((x&(1<<i))!=0)
+                yield clock.posedge
+                print ("31 bits %s %d %d ") % (bin(po1,31),si1,i)
+            si1.next = ((x&(1<<0))!=0)
             yield clock.posedge 
- 
-	    lft2.next = 164
-	    yield clock.posedge
-	    sam2.next = 160
-	    yield clock.posedge
-	    rht2.next = 170
-	    yield clock.posedge
-	    flgs2.next = 7
-	    yield clock.posedge
-	    upd2.next = 1
-	    yield clock.posedge
-	    upd2.next = 0
-            yield clock.posedge
- 
-            sam3.next = 505
-            yield clock.posedge
-            flgs3.next = 5
-            yield clock.posedge
-            upd3.next = 1
-            yield clock.posedge
-            upd3.next = 0
+            print ("LSB rht %s %d %d ") % (bin(po1,31),si1,i-1)
+
+            x = m[0][4]
+            print ("Sam %s %d") % (bin(x,9), x)
+            for i in range(W0-1,0,-1):
+                si1.next = ((x&(1<<i))!=0)
+                yield clock.posedge
+                print ("31 bits %s %d %d ") % (bin(po1,31),si1,i)
+            si1.next = ((x&(1<<0))!=0)
             yield clock.posedge 
+            print ("LSB sam %s %d %d ") % (bin(po1,31),si1,i-1)
+
+            x = m[0][4-1]
+            print ("Left %s %d") % (bin(x,9), x)
+            for i in range(W0-1,0,-1):
+                si1.next = ((x&(1<<i))!=0)
+                yield clock.posedge
+                print ("31 bits %s %d %d ") % (bin(po1,31),si1,i)
+            si1.next = ((x&(1<<0))!=0)
+            yield clock.posedge 
+            print ("LSB lft %s %d %d ") % (bin(po1,31),si1,i-1)
+            yield clock.posedge  
+            fB1.next = 0
+            yield clock.posedge
  
-            yield clock.posedge
-	    lft3.next = 164
-	    yield clock.posedge
-	    sam3.next = 160
-	    yield clock.posedge
-	    rht3.next = 170
-	    yield clock.posedge
-	    flgs3.next = 7
-	    yield clock.posedge
-	    upd3.next = 1
-	    yield clock.posedge
-	    upd3.next = 0
-            yield clock.posedge
- 
-            sam1.next = 505
-            yield clock.posedge
-            flgs3.next = 5
-            yield clock.posedge
-            upd3.next = 1
-            yield clock.posedge
-            upd3.next = 0
- 
+            print ("fB1 %d ") % (fB1)
             
+            sig1.next = po1
+            yield clock.posedge
+            for i in range(10):
+                yield clock.posedge            
+            #************************************1
+            sig5.next = po1
+            yield clock.posedge
+            for i in range(10):
+                yield clock.posedge 
+            #************************************5 
+            reset.next = 1
+            yield clock.posedge
+            print ("reset %d ") % (reset)
+            reset.next = 0
+            yield clock.posedge
+            print ("reset %d ") % (reset)
+            reset.next = 1
+            yield clock.posedge
+            print ("reset %d ") % (reset)
+
+            fB2.next = 1
+            yield clock.posedge
+            #fB0.next = 0
+            #yield clock.posedge
+            si2.next = 1
+            yield clock.posedge
+            print ("update firstBit %s %d %d ") % (bin(po2,31),fB2,si2) 
+            si2.next = 1
+            yield clock.posedge
+            print ("first flgs firstBit %s %d %d ") % (bin(po2,31),fB2,si2)
+            si2.next = 1
+            yield clock.posedge
+            print ("2nd flg firstBit %s %d %d ") % (bin(po2,31),fB0,si0) 
+            '''flgs'''
+            si2.next = 1
+            yield clock.posedge
+            print ("3rd flgs %s %d ") % (bin(po2,31),si2)
+ 
+ 
+ 
+            '''end of flgs'''
+
+            ''' starting 27bits'''
+
+            x = m[0][6+1]
+            print ("Right %s %d") % (bin(x,9), x)
+            for i in range(W0-1,0,-1):
+                si2.next = ((x&(1<<i))!=0)
+                yield clock.posedge
+                print ("31 bits %s %d %d ") % (bin(po2,31),si2,i)
+            si2.next = ((x&(1<<0))!=0)
+            yield clock.posedge 
+            print ("LSB rht %s %d %d ") % (bin(po2,31),si2,i-1)
+            x = m[0][6]
+            print ("Sam %s %d") % (bin(x,9), x)
+            for i in range(W0-1,0,-1):
+                si2.next = ((x&(1<<i))!=0)
+                yield clock.posedge
+                print ("31 bits %s %d %d ") % (bin(po2,31),si2,i)
+            si2.next = ((x&(1<<0))!=0)
+            yield clock.posedge 
+            print ("LSB sam %s %d %d ") % (bin(po2,31),si2,i-1)
+
+            x = m[0][4-1]
+            print ("Left %s %d") % (bin(x,9), x)
+            for i in range(W0-1,0,-1):
+                si2.next = ((x&(1<<i))!=0)
+                yield clock.posedge
+                print ("31 bits %s %d %d ") % (bin(po2,31),si2,i)
+            si2.next = ((x&(1<<0))!=0)
+            yield clock.posedge 
+            print ("LSB lft %s %d %d ") % (bin(po2,31),si2,i-1)
+            yield clock.posedge  
+            fB2.next = 0
+            yield clock.posedge
+ 
+            print ("fB2 %d ") % (fB2)
+            sig2.next = po2
+            yield clock.posedge
+            for i in range(10):
+                yield clock.posedge 
+            #************************************2
+            sig6.next = po2
+            yield clock.posedge
+            for i in range(10):
+                yield clock.posedge 
+            #************************************6
+            reset.next = 1
+            yield clock.posedge
+            print ("reset %d ") % (reset)
+            reset.next = 0
+            yield clock.posedge
+            print ("reset %d ") % (reset)
+            reset.next = 1
+            yield clock.posedge
+            print ("reset %d ") % (reset)
+
+            fB3.next = 1
+            yield clock.posedge
+            #fB0.next = 0
+            #yield clock.posedge
+            si3.next = 1
+            yield clock.posedge
+            print ("update firstBit %s %d %d ") % (bin(po3,31),fB3,si3) 
+            si3.next = 1
+            yield clock.posedge
+            print ("first flgs firstBit %s %d %d ") % (bin(po3,31),fB3,si3)
+            si3.next = 1
+            yield clock.posedge
+            print ("2nd flg firstBit %s %d %d ") % (bin(po3,31),fB0,si0) 
+            '''flgs'''
+            si3.next = 1
+            yield clock.posedge
+            print ("3rd flgs %s %d ") % (bin(po3,31),si3)
+ 
+ 
+ 
+            '''end of flgs'''
+
+            ''' starting 27bits'''
+
+            x = m[0][8+1]
+            print ("Right %s %d") % (bin(x,9), x)
+            for i in range(W0-1,0,-1):
+                si3.next = ((x&(1<<i))!=0)
+                yield clock.posedge
+                print ("31 bits %s %d %d ") % (bin(po3,31),si3,i)
+            si3.next = ((x&(1<<0))!=0)
+            yield clock.posedge 
+            print ("LSB rht %s %d %d ") % (bin(po3,31),si3,i-1)
+            x = m[0][8]
+            print ("Sam %s %d") % (bin(x,9), x)
+            for i in range(W0-1,0,-1):
+                si3.next = ((x&(1<<i))!=0)
+                yield clock.posedge
+                print ("31 bits %s %d %d ") % (bin(po3,31),si3,i)
+            si3.next = ((x&(1<<0))!=0)
+            yield clock.posedge 
+            print ("LSB sam %s %d %d ") % (bin(po3,31),si3,i-1)
+
+            x = m[0][8-1]
+            print ("Left %s %d") % (bin(x,9), x)
+            for i in range(W0-1,0,-1):
+                si3.next = ((x&(1<<i))!=0)
+                yield clock.posedge
+                print ("31 bits %s %d %d ") % (bin(po3,31),si3,i)
+            si3.next = ((x&(1<<0))!=0)
+            yield clock.posedge 
+            print ("LSB lft %s %d %d ") % (bin(po3,31),si3,i-1)
+            yield clock.posedge  
+            fB3.next = 0
+            yield clock.posedge
+ 
+            print ("fB3 %d ") % (fB3)            
+
+            
+            sig3.next = po3
+            yield clock.posedge
+
+            for i in range(10):
+                yield clock.posedge
+            #************************************3 
+            sig7.next = po3
+            yield clock.posedge
+            for i in range(10):
+                yield clock.posedge 
+            #************************************7
+
+            for row in range(2,10,2):
+                print row-1, row, row+1 
+                print m[0][row-1], m[0][row], m[0][row+1]
+                print ("%s %s %s") % (bin(m[0][row-1],9),bin(m[0][row],9),bin(m[0][row+1],9))
             
             raise StopSimulation	
 	return instances()
-'''
-toVerilog(dwt_top,clock)
+ 
+def convert(args):
+    toVerilog(dwt_top,clock)
+    #toVHDL(dwt_top,clock)
+ 
+def main():
+    args = cliparse()
+    if args.test:
+       tb_fsm = traceSignals(tb, clock)
+       sim = Simulation(tb_fsm)
+       sim.run()  
+    if args.convert:
+        convert(args)
 
-toVHDL(dwt_top,clock)
-'''		
-tb_fsm = traceSignals(tb, clock)
-sim = Simulation(tb_fsm)
-sim.run()	
-
+if __name__ == '__main__':
+    main()

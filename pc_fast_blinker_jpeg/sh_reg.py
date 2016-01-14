@@ -1,5 +1,5 @@
 from myhdl import *
-
+import argparse
 ACTIVE_LOW = 0
 
 WIDTH = 31
@@ -16,6 +16,13 @@ flgs_o = Signal(intbv(0)[3:])
 lft_o = Signal(intbv(0)[W0:])
 rht_o = Signal(intbv(0)[W0:])
 sam_o = Signal(intbv(0)[W0:])
+
+def cliparse():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--convert", default=False, action='store_true')
+    parser.add_argument("--test", default=False, action='store_true')
+    args = parser.parse_args()
+    return args
 def ShiftReg(clk, WIDTH, reset, fB, si, po):
 
    reg = Signal(intbv(0)[WIDTH:])
@@ -186,16 +193,23 @@ def tb(clk, WIDTH, reset, fB, si, po, sig,flgs_o,lft_o,sam_o,rht_o,upd_o):
             yield clk.posedge
         raise StopSimulation
     return instances() 
-'''
-toVerilog.name = "shift_reg"
-SHIFT_REG_0 = toVerilog(ShiftReg, clk, WIDTH, reset, fB, si, po)
+ 
+def convert(args):
+    toVerilog.name = "shift_reg"
+    SHIFT_REG_0 = toVerilog(ShiftReg, clk, WIDTH, reset, fB, si, po)
+    toVerilog(toSig, clk, sig,flgs_o,lft_o,sam_o,rht_o,upd_o)
+    #toVHDL(dwt_top,clock)
+ 
+def main():
+    args = cliparse()
+    if args.test:
+       tb_fsm = traceSignals(tb, clk, WIDTH, reset, fB, si, po, sig,flgs_o,lft_o,sam_o,rht_o,upd_o)
+       sim = Simulation(tb_fsm)
+       sim.run()  
+    if args.convert:
+        convert(args)
 
-toVerilog(toSig, clk, sig,flgs_o,lft_o,sam_o,rht_o,upd_o)
-
-tb_fsm = traceSignals(tb, clk, WIDTH, reset, fB, si, po, sig,flgs_o,lft_o,sam_o,rht_o,upd_o)
-sim = Simulation(tb_fsm)
-sim.run()
-'''
-
+if __name__ == '__main__':
+    main()
 
 
