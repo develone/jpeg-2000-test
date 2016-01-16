@@ -4,7 +4,9 @@ from jpeg import dwt
 from signed2twoscomplement import signed2twoscomplement
 from l2r import lift2res
 from sh_reg import ShiftReg, toSig
+from para2ser import para2ser
 
+WIDTH_OUT = 36
 WIDTH = 31
 W0 = 9
 
@@ -140,6 +142,9 @@ rht7 = Signal(intbv(0)[W0:])
 sam7 = Signal(intbv(0)[W0:])
 lift7 = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
 
+pp0 = Signal(intbv(0)[WIDTH_OUT:])
+ld = Signal(bool(0)) 
+ss0 = Signal(bool(0))
 def cliparse():
     parser = argparse.ArgumentParser()
     parser.add_argument("--build", default=False, action='store_true')
@@ -186,6 +191,8 @@ def dwt_top(clock):
 	instance_30 = signed2twoscomplement(res5, z5)
 	instance_31 = signed2twoscomplement(res6, z6)
 	instance_32 = signed2twoscomplement(res7, z7)
+
+        instance_40 = para2ser(clock, pp0, ss0, ld)
 	return instances()	
 
  
@@ -236,6 +243,8 @@ def tb(clock):
 	instance_30 = signed2twoscomplement(res5, z5)
 	instance_31 = signed2twoscomplement(res6, z6)
 	instance_32 = signed2twoscomplement(res7, z7)
+
+        instance_40 = para2ser(clock, pp0, ss0, ld)
 
 	@instance
         def stimulus():
@@ -551,7 +560,25 @@ def tb(clock):
             
             sig3.next = po3
             yield clock.posedge
+            pp0.next = z0 << 27
+            yield clock.posedge
+        
+            pp0.next = pp0 + (z1 << 18)
+            yield clock.posedge
+        
+            pp0.next = pp0 + (z2 << 9)
+            yield clock.posedge
+            pp0.next = pp0 + z3
+            yield clock.posedge
+        
+            ld.next = 1
+            yield clock.posedge
+ 
+            ld.next = 0
+            yield clock.posedge
 
+            for j in range(40):
+                yield clock.posedge  
             for i in range(10):
                 yield clock.posedge
             #************************************3 
