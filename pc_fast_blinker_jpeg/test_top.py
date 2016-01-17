@@ -26,7 +26,7 @@ def cliparse():
     return args 
 
 		
-def dwt_top(clock):
+def dwt_top(clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld):
 	instance_0 = dwt(flgs0, upd0, lft0, sam0, rht0, lift0, done0, clock)
 	instance_1 = dwt(flgs1, upd1, lft1, sam1, rht1, lift1, done1, clock)
 	instance_2 = dwt(flgs2, upd2, lft2, sam2, rht2, lift2, done2, clock)
@@ -102,7 +102,7 @@ def dwt_top(clock):
 	return instances()	
 
  
-def tb(clock):
+def tb(clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld):
         from PIL import Image
         im = Image.open("../lena_256.png")
         pix = im.load()
@@ -539,13 +539,13 @@ def tb(clock):
 	return instances()
  
 def convert(args):
-    toVerilog(dwt_top,clock)
+    toVerilog(dwt_top,clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld)
     #toVHDL(dwt_top,clock)
  
 def main():
     args = cliparse()
     if args.test:
-       tb_fsm = traceSignals(tb, clock)
+       tb_fsm = traceSignals(tb,clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld)
        sim = Simulation(tb_fsm)
        sim.run()  
     if args.convert:

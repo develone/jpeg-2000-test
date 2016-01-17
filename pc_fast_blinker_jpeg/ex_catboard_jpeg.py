@@ -29,6 +29,33 @@ from test_top import dwt_top
 def run_catboard():
     # Get the CAT Board object.
     brd = get_board('catboard')
+    '''testing connecting signals to the PM2 & PM3 connectors on
+    CAT-Board
+    '''
+    #PM2-A1
+    brd.add_port('reset', 'A1')
+    #PM3-A1
+    brd.add_port('si0', 'A11')
+    #PM3-B1
+    brd.add_port('fB0', 'B10')
+    #PM3-A2
+    brd.add_port('si1', 'B12')
+    #PM3-B2
+    brd.add_port('fB1', 'B11')
+    #PM3-A3
+    brd.add_port('si2', 'B14')
+    #PM3-B3
+    brd.add_port('fB2', 'B13')
+    #PM3-A4
+    brd.add_port('si3', 'B15')
+    #PM3-B4
+    brd.add_port('fB3', 'A15')
+    #PM2-B1
+    brd.add_port('pp0', 'A2')
+    #PM2-A2
+    brd.add_port('ss0', 'B3')
+    #PM2-A3
+    brd.add_port('ld', 'B5')
     flow = brd.get_flow(top=dwt_top)
     flow.run()
 
