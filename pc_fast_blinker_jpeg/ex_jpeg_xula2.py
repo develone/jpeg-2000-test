@@ -28,27 +28,27 @@ def run_xula():
     pp0 R9 #BCM4	CHAN29 	B1
     '''
     #CHAN8
-    brd.add_port('reset', 'J14')
+    brd.add_port('reset', 'J14', pullup=True)
     #CHAN27
-    brd.add_port('si0', 'E2')
+    brd.add_port('si0', 'E2', pullup=True)
     #CHAN0
-    brd.add_port('fB0', 'R7')
+    brd.add_port('fB0', 'R7', pullup=True)
     #CHAN10
-    brd.add_port('si1', 'F16')
+    brd.add_port('si1', 'F16', pullup=True)
     #CHAN11
-    brd.add_port('fB1', 'C16')
+    brd.add_port('fB1', 'C16', pullup=True)
     #CHAN3
-    brd.add_port('si2', 'M15')
+    brd.add_port('si2', 'M15', pullup=True)
     #CHAN4
-    brd.add_port('fB2', 'M16')
+    brd.add_port('fB2', 'M16', pullup=True)
     #CHAN6
-    brd.add_port('si3', 'K16')
+    brd.add_port('si3', 'K16', pullup=True)
     #CHAN7
-    brd.add_port('fB3', 'J16')
+    brd.add_port('fB3', 'J16', pullup=True)
     #CHAN5
     brd.add_port('pp0', 'K15')
     #CHAN22
-    brd.add_port('ss0', 'H1')
+    brd.add_port('ss0', 'H1', pullup=True)
     #CHAN29
     brd.add_port('ld', 'B1')
     flow = build.flow.ISE(brd=brd, top=dwt_top)
@@ -77,27 +77,27 @@ def run_xula():
     pp0 R9 #BCM4	CHAN29 	B1
     '''
     #CHAN8
-    brd.add_port('reset', 'J14')
+    brd.add_port('reset', 'J14', pullup=True)
     #CHAN27
-    brd.add_port('si0', 'E2')
+    brd.add_port('si0', 'E2', pullup=True)
     #CHAN0
-    brd.add_port('fB0', 'R7')
+    brd.add_port('fB0', 'R7', pullup=True)
     #CHAN10
-    brd.add_port('si1', 'F16')
+    brd.add_port('si1', 'F16', pullup=True)
     #CHAN11
-    brd.add_port('fB1', 'C16')
+    brd.add_port('fB1', 'C16', pullup=True)
     #CHAN3
-    brd.add_port('si2', 'M15')
+    brd.add_port('si2', 'M15', pullup=True)
     #CHAN4
-    brd.add_port('fB2', 'M16')
+    brd.add_port('fB2', 'M16', pullup=True)
     #CHAN6
-    brd.add_port('si3', 'K16')
+    brd.add_port('si3', 'K16', pullup=True)
     #CHAN7
-    brd.add_port('fB3', 'J16')
+    brd.add_port('fB3', 'J16', pullup=True)
     #CHAN5
     brd.add_port('pp0', 'K15')
     #CHAN22
-    brd.add_port('ss0', 'H1')
+    brd.add_port('ss0', 'H1', pullup=True)
     #CHAN29
     brd.add_port('ld', 'B1')
     flow = build.flow.ISE(brd=brd, top=dwt_top)
