@@ -31,18 +31,18 @@ def run_catboard():
     brd = get_board('catboard')
     '''testing connecting signals to gpio on RPi2B
     CAT-Board
-    si3 T8 #BCM8
-    ld R10 #BCM27
-    reset T2 BCM26
-    fB3 T9 #BCM24
-    ss0 P9 #BCM23
-    fB0 R4 #BCM16
-    si0 R5 #BCM13
-    fB1 R6 BCM12
-    fB2 T7 #BCM7
-    si1 T5 #BCM6
-    si2 T6 #BCM5
-    pp0 R9 #BCM4 
+    si3 T8 #BCM8	CHAN8	J14	
+    ld R10 #BCM27	CHAN27	E2
+    reset T2 BCM26	CHAN0	R7
+    fB3 T9 #BCM24	CHAN10	F16
+    ss0 P9 #BCM23	CHAN11	C16
+    fB0 R4 #BCM16	CHAN3	M15
+    si0 R5 #BCM13	CHAN4	M16
+    fB1 R6 BCM12	CHAN6	K16
+    fB2 T7 #BCM7	CHAN7	J16
+    si1 T5 #BCM6	CHAN5	K15
+    si2 T6 #BCM5	CHAN22	H1
+    pp0 R9 #BCM4	CHAN29 	B1
     '''
     #BCM26
     brd.add_port('reset', 'T2')
