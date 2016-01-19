@@ -29,7 +29,7 @@ from test_top import dwt_top
 def run_catboard():
     # Get the CAT Board object.
     brd = get_board('catboard')
-    '''testing connecting signals to the PM2 & PM3 connectors on
+    '''testing connecting signals to gpio on RPi2B
     CAT-Board
     si3 T8 #BCM8
     ld R10 #BCM27
