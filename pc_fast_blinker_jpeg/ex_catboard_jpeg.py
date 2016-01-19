@@ -31,31 +31,44 @@ def run_catboard():
     brd = get_board('catboard')
     '''testing connecting signals to the PM2 & PM3 connectors on
     CAT-Board
+    si3 T8 #BCM8
+    ld R10 #BCM27
+    reset T2 BCM26
+    fB3 T9 #BCM24
+    ss0 P9 #BCM23
+    fB0 R4 #BCM16
+    si0 R5 #BCM13
+    fB1 R6 BCM12
+    fB2 T7 #BCM7
+    si1 T5 #BCM6
+    si2 T6 #BCM5
+    pp0 R9 #BCM4 
     '''
-    #PM2-A1
-    brd.add_port('reset', 'A1')
-    #PM3-A1
-    brd.add_port('si0', 'A11')
-    #PM3-B1
-    brd.add_port('fB0', 'B10')
+    #BCM26
+    brd.add_port('reset', 'T2')
+    #BCM13
+    brd.add_port('si0', 'R5')
+    #BCM16
+    brd.add_port('fB0', 'R4')
     #PM3-A2
-    brd.add_port('si1', 'B12')
-    #PM3-B2
-    brd.add_port('fB1', 'B11')
-    #PM3-A3
-    brd.add_port('si2', 'B14')
-    #PM3-B3
-    brd.add_port('fB2', 'B13')
-    #PM3-A4
-    brd.add_port('si3', 'B15')
-    #PM3-B4
-    brd.add_port('fB3', 'A15')
-    #PM2-B1
-    brd.add_port('pp0', 'A2')
-    #PM2-A2
-    brd.add_port('ss0', 'B3')
-    #PM2-A3
-    brd.add_port('ld', 'B5')
+    #BCM6
+    brd.add_port('si1', 'T5')
+    #BCM12
+    brd.add_port('fB1', 'R6')
+    #BCM5
+    brd.add_port('si2', 'T6')
+    #BCM7
+    brd.add_port('fB2', 'T7')
+    #BCM8
+    brd.add_port('si3', 'T8')
+    #BCM24
+    brd.add_port('fB3', 'T9')
+    #BCM4
+    brd.add_port('pp0', 'R9')
+    #BCM23
+    brd.add_port('ss0', 'P9')
+    #BCM27
+    brd.add_port('ld', 'R10')
     flow = brd.get_flow(top=dwt_top)
     flow.run()
 
