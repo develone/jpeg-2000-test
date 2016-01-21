@@ -94,7 +94,7 @@ def dwt_top(clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld_o,clkInOut):
 	instance_84 = signed2twoscomplement(res14, z14)
 	instance_85 = signed2twoscomplement(res15, z15)
 
-        instance_90 = para2ser(clock, pp0, ss0, ld,ld_o)
+        instance_90 = para2ser(clkInOut, pp0, ss0, ld,ld_o)
         instance_91 = div_4(clock,clkInOut,ctn)
 	return instances()	
 
@@ -183,7 +183,7 @@ def tb(clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld_o,clkInout):
 	instance_84 = signed2twoscomplement(res14, z14)
 	instance_85 = signed2twoscomplement(res15, z15)
 
-        instance_90 = para2ser(clock, pp0, ss0, ld, ld_o)
+        instance_90 = para2ser(clkInOut, pp0, ss0, ld, ld_o)
         instance_91 = div_4(clock,clkInOut,ctn)
 	@instance
         def stimulus():
@@ -511,12 +511,12 @@ def tb(clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld_o,clkInout):
             yield clock.posedge
         
             ld.next = 1
-            yield clock.posedge
+            yield clkInOut.posedge
  
             ld.next = 0
-            yield clock.posedge
+            yield clkInOut.posedge
 
-            for j in range(40):
+            for j in range(6*40):
                 yield clock.posedge  
             for i in range(10):
                 yield clock.posedge
