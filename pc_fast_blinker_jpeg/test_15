@@ -1,0 +1,42 @@
+#!/bin/bash
+#need to do the following before running 
+#python ex_sending.py
+#sudo config_cat iceriver/catboard.bin
+#echo 15 > /sys/class/gpio/export
+echo in > /sys/class/gpio/gpio15/direction
+sudo cat /sys/class/gpio/gpio15/value > tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
+sudo cat /sys/class/gpio/gpio15/value >> tt.txt
