@@ -231,3 +231,11 @@ fB14 = Signal(bool(0))
 fB15 = Signal(bool(0))
 
 reset = Signal(bool(1))
+
+ld_o = Signal(bool(0))
+pp0 = Signal(intbv(0)[WIDTH_OUT:])
+ld = Signal(bool(0)) 
+ss0 = Signal(bool(0))
+
+clkInOut = Signal(bool(0))
+ctn = Signal(intbv(0)[3:])

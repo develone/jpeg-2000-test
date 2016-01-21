@@ -31,10 +31,10 @@ def run_catboard():
     brd = get_board('catboard')
     #BCM23
     brd.add_port('ss0', 'P9')
-    #BCM3
-    brd.add_port('clkInOut', 'T16')
+    #BCM15
+    brd.add_port('clkInOut', 'T14')
     #BCM27
-    brd.add_port('ld_out', 'R10')
+    brd.add_port('ld_o', 'R10')
     flow = brd.get_flow(top=top_sending)
     flow.run()
 

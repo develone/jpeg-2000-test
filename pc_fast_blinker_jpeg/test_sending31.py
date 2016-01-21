@@ -9,7 +9,7 @@ clkInOut = Signal(bool(0))
 ctn = Signal(intbv(0)[3:])
 pp0 = Signal(intbv(0)[WIDTH_OUT:])
 ld = Signal(bool(0))
-ld_out = Signal(bool(0)) 
+ld_o = Signal(bool(0)) 
 ss0 = Signal(bool(0)) 
 def cliparse():
     parser = argparse.ArgumentParser()
@@ -18,13 +18,11 @@ def cliparse():
     parser.add_argument("--convert", default=False, action='store_true')
     args = parser.parse_args()
     return args
-def top_sending(clock,clkInOut,ss0, ld_out):
-    @always_comb
-    def rtl():
-       ld_out.next = ld
+def top_sending(clock,clkInOut,ss0, ld_o):
+ 
      
     instance_1 = div_4(clock,clkInOut,ctn)
-    instance_2 = para2ser(clkInOut, pp0, ss0, ld)
+    instance_2 = para2ser(clkInOut, pp0, ss0, ld,ld_o)
     return instances()
 def tb(clock,clkInOut,ctn,pp0,ss0,ld):
     instance_1 = div_4(clock,clkInOut,ctn)
@@ -58,12 +56,12 @@ def tb(clock,clkInOut,ctn,pp0,ss0,ld):
     return instances()
 
 def convert(args):
-    toVerilog(top_sending,clock,clkInOut,ss0, ld_out)
+    toVerilog(top_sending,clock,clkInOut,ss0, ld_o)
 
 def main():
     args = cliparse()
     if args.test:
-       tb_fsm = traceSignals(tb,clock,clkInOut,ctn,pp0,ss0,ld)
+       tb_fsm = traceSignals(tb,clock,clkInOut,ctn,pp0,ss0,ld,ld_o)
        sim = Simulation(tb_fsm)
        sim.run()  
     if args.convert:

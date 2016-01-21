@@ -10,6 +10,7 @@ pp0 = Signal(intbv(0)[WIDTH_OUT:])
 ss0 = Signal(bool(0))
 clk = Signal(bool(0))
 ld = Signal(bool(0))
+ld_o = Signal(bool(0))
 def cliparse():
     parser = argparse.ArgumentParser()
     parser.add_argument("--build", default=False, action='store_true')
@@ -18,7 +19,7 @@ def cliparse():
     args = parser.parse_args()
     return args 
 
-def para2ser(clk, pp0, ss0, ld):
+def para2ser(clk, pp0,ss0,ld,ld_o):
  
     t = Signal(bool(0))
     temp = Signal(intbv(0)[WIDTH_OUT:])
@@ -32,11 +33,13 @@ def para2ser(clk, pp0, ss0, ld):
           temp.next = concat(temp[35:0], "0")
 
         ss0.next = t
-        
-    return logic
+    @always_comb
+    def rtl():
+       ld_o.next = ld    
+    return logic,rtl
   
-def tb(clk, pp0, ss0, ld):
-    instance_1 = para2ser(clk, pp0, ss0, ld)
+def tb(clk,pp0,ss0,ld,ld_o):
+    instance_1 = para2ser(clk,pp0,ss0,ld,ld_o)
      
     @always(delay(10))
     def clkgen():
@@ -86,14 +89,14 @@ def tb(clk, pp0, ss0, ld):
     
     return instances()
 def convert(args): 
-    #toVHDL(para2ser,clk, pp0, ss0, ld)
-    toVerilog(para2ser,clk, pp0, ss0, ld)    
+    #toVHDL(para2ser,clk,pp0,ss0,ld,ld_o)
+    toVerilog(para2ser,clk,pp0,ss0,ld,ld_o)    
  
  
 def main():
     args = cliparse()
     if args.test:
-       tb_fsm = traceSignals(tb,clk, pp0, ss0, ld)
+       tb_fsm = traceSignals(tb,clk,pp0,ss0,ld,ld_o)
        sim = Simulation(tb_fsm)
        sim.run()  
     if args.convert:

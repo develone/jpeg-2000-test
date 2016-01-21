@@ -5,18 +5,14 @@ from signed2twoscomplement import signed2twoscomplement
 from l2r import lift2res
 from sh_reg import ShiftReg, toSig
 from para2ser import para2ser
+from div_clk import div_4
 from jpeg_sig import *
-WIDTH_OUT = 36
-WIDTH = 31
-W0 = 9
+ 
 
 clock = Signal(bool(0))
  
  
 
-pp0 = Signal(intbv(0)[WIDTH_OUT:])
-ld = Signal(bool(0)) 
-ss0 = Signal(bool(0))
 def cliparse():
     parser = argparse.ArgumentParser()
     parser.add_argument("--build", default=False, action='store_true')
@@ -26,7 +22,7 @@ def cliparse():
     return args 
 
 		
-def dwt_top(clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld):
+def dwt_top(clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld_o,clkInOut):
 	instance_0 = dwt(flgs0, upd0, lft0, sam0, rht0, lift0, done0, clock)
 	instance_1 = dwt(flgs1, upd1, lft1, sam1, rht1, lift1, done1, clock)
 	instance_2 = dwt(flgs2, upd2, lft2, sam2, rht2, lift2, done2, clock)
@@ -98,11 +94,12 @@ def dwt_top(clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld):
 	instance_84 = signed2twoscomplement(res14, z14)
 	instance_85 = signed2twoscomplement(res15, z15)
 
-        instance_90 = para2ser(clock, pp0, ss0, ld)
+        instance_90 = para2ser(clock, pp0, ss0, ld,ld_o)
+        instance_91 = div_4(clock,clkInOut,ctn)
 	return instances()	
 
  
-def tb(clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld):
+def tb(clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld_o,clkInout):
         from PIL import Image
         im = Image.open("../lena_256.png")
         pix = im.load()
@@ -186,8 +183,8 @@ def tb(clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld):
 	instance_84 = signed2twoscomplement(res14, z14)
 	instance_85 = signed2twoscomplement(res15, z15)
 
-        instance_90 = para2ser(clock, pp0, ss0, ld)
-
+        instance_90 = para2ser(clock, pp0, ss0, ld, ld_o)
+        instance_91 = div_4(clock,clkInOut,ctn)
 	@instance
         def stimulus():
             reset.next = 1
@@ -539,13 +536,13 @@ def tb(clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld):
 	return instances()
  
 def convert(args):
-    toVerilog(dwt_top,clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld)
+    toVerilog(dwt_top,clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld_o,clkInOut)
     #toVHDL(dwt_top,clock)
  
 def main():
     args = cliparse()
     if args.test:
-       tb_fsm = traceSignals(tb,clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld)
+       tb_fsm = traceSignals(tb,clock,si0,fB0,si1,fB1,si2,fB2,si3,fB3,reset,pp0,ss0,ld_o,clkInOut)
        sim = Simulation(tb_fsm)
        sim.run()  
     if args.convert:

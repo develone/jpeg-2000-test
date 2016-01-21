@@ -32,7 +32,7 @@ def run_catboard():
     '''testing connecting signals to gpio on RPi2B
     CAT-Board
     si3 T8 #BCM8	CHAN8	J14	
-    ld R10 #BCM27	CHAN27	E2
+    ld_o R10 #BCM27	CHAN27	E2
     reset T2 BCM26	CHAN0	R7
     fB3 T9 #BCM24	CHAN10	F16
     ss0 P9 #BCM23	CHAN11	C16
@@ -43,6 +43,7 @@ def run_catboard():
     si1 T5 #BCM6	CHAN5	K15
     si2 T6 #BCM5	CHAN22	H1
     pp0 R9 #BCM4	CHAN29 	B1
+    clkInOut T14 #BCM15
     '''
     #BCM26
     brd.add_port('reset', 'T2')
@@ -68,7 +69,9 @@ def run_catboard():
     #BCM23
     brd.add_port('ss0', 'P9')
     #BCM27
-    brd.add_port('ld', 'R10')
+    brd.add_port('ld_o', 'R10')
+    #BCM15
+    brd.add_port('clkInOut', 'T14')
     flow = brd.get_flow(top=dwt_top)
     flow.run()
 
