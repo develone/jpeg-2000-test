@@ -5,7 +5,8 @@ from para2ser import para2ser
 from jpeg_sig import *
  
 clock = Signal(bool(0))
-ctn1 = Signal(intbv(0)[6:]) 
+ctn1 = Signal(intbv(0)[6:])
+ctn2 = Signal(intbv(0)[6:]) 
 def cliparse():
     parser = argparse.ArgumentParser()
     parser.add_argument("--build", default=False, action='store_true')
@@ -14,7 +15,20 @@ def cliparse():
     args = parser.parse_args()
     return args
 def top_sending(clock,clkInOut,ss0, ld_o):
- 
+    @always(clkInOut.posedge)
+    def rtl3():
+	if (ctn2 == 36):
+            ctn2.next = 0
+            
+        else:
+            ctn2.next = ctn2 + 1
+
+    @always(clkInOut.posedge)
+    def rtl2():
+        if(ctn2 == 0):
+            pp0.next = (170 << 27) + (170 << 18) + (170 << 9) + 120
+        else:
+            pp0.next = 0 
 
     @always(clkInOut.posedge)
     def rtl1():
@@ -37,6 +51,20 @@ def top_sending(clock,clkInOut,ss0, ld_o):
     instance_2 = para2ser(clkInOut, pp0, ss0, ld,ld_o)
     return instances()
 def tb(clock,clkInOut,ctn,pp0,ss0,ld_o):
+    @always(clkInOut.posedge)
+    def rtl3():
+	if (ctn2 == 36):
+            ctn2.next = 0
+            
+        else:
+            ctn2.next = ctn2 + 1
+
+    @always(clkInOut.posedge)
+    def rtl2():
+        if(ctn2 == 0):
+            pp0.next = (170 << 27) + (170 << 18) + (170 << 9) + 120
+        else:
+            pp0.next = 0 
     @always(clkInOut.posedge)
     def rtl1():
         if(ctn1 == 0):
