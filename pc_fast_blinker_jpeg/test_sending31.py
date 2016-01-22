@@ -3,7 +3,7 @@ import argparse
 from div_clk import div_4
 from para2ser import para2ser
 from jpeg_sig import *
-from extra_meth import meth1,meth2,meth3,meth4 
+from extra_meth import meth1,meth2,meth3,meth4, meth5
 clock = Signal(bool(0))
 ctn1 = Signal(intbv(0)[6:])
 ctn2 = Signal(intbv(0)[6:]) 
@@ -25,7 +25,7 @@ def top_sending(clock,clkInOut,ss0, ld_o):
     instance_4 = meth2()
     instance_5 = meth3()
     instance_6 = meth4()
-
+    instance_7 = meth5()
     return instances()
 def tb(clock,clkInOut,ctn,pp0,ss0,ld_o):
  
@@ -35,7 +35,8 @@ def tb(clock,clkInOut,ctn,pp0,ss0,ld_o):
     instance_3 = meth1()
     instance_4 = meth2()
     instance_5 = meth3()
-    instance_6 = meth4()    
+    instance_6 = meth4()
+    instance_7 = meth5()    
     @always(delay(10))
     def clkgen():
 	clock.next = not clock
