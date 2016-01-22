@@ -88,15 +88,15 @@ def tb(clock,clkInOut,ctn,pp0,ss0,ld_o):
     @instance
     def stimulus():
          
-        pp0.next = 164 << 27
+        pp0.next = 170 << 27
         yield clock.posedge
         
-        pp0.next = pp0 + (511 << 18)
+        pp0.next = pp0 + (170 << 18)
         yield clock.posedge
         
-        pp0.next = pp0 + (481 << 9)
+        pp0.next = pp0 + (170 << 9)
         yield clock.posedge
-        pp0.next = pp0 + 156
+        pp0.next = pp0 + 120
         yield clock.posedge
         ld.next = 1
         yield clkInOut.posedge
