@@ -3,7 +3,7 @@ import argparse
 from div_clk import div_4
 from para2ser import para2ser
 from jpeg_sig import *
- 
+from extra_meth import meth1,meth2,meth3,meth4 
 clock = Signal(bool(0))
 ctn1 = Signal(intbv(0)[6:])
 ctn2 = Signal(intbv(0)[6:]) 
@@ -15,79 +15,33 @@ def cliparse():
     args = parser.parse_args()
     return args
 def top_sending(clock,clkInOut,ss0, ld_o):
-    @always(clkInOut.posedge)
-    def rtl3():
-	if (ctn2 == 36):
-            ctn2.next = 0
-            
-        else:
-            ctn2.next = ctn2 + 1
 
-    @always(clkInOut.posedge)
-    def rtl2():
-        if(ctn2 == 0):
-            pp0.next = (170 << 27) + (170 << 18) + (170 << 9) + 120
-        else:
-            pp0.next = 0 
-
-    @always(clkInOut.posedge)
-    def rtl1():
-        if(ctn1 == 0):
-            ld.next = 1
-        else:
-            ld.next = 0
-    
-    @always(clkInOut.posedge)
-    def rtl():
-	if (ctn1 == 38):
-            ctn1.next = 0
-            
-        else:
-            ctn1.next = ctn1 + 1
             
                
      
     instance_1 = div_4(clock,clkInOut,ctn)
     instance_2 = para2ser(clkInOut, pp0, ss0, ld,ld_o)
+    instance_3 = meth1()
+    instance_4 = meth2()
+    instance_5 = meth3()
+    instance_6 = meth4()
+
     return instances()
 def tb(clock,clkInOut,ctn,pp0,ss0,ld_o):
-    @always(clkInOut.posedge)
-    def rtl3():
-	if (ctn2 == 36):
-            ctn2.next = 0
-            
-        else:
-            ctn2.next = ctn2 + 1
-
-    @always(clkInOut.posedge)
-    def rtl2():
-        if(ctn2 == 0):
-            pp0.next = (170 << 27) + (170 << 18) + (170 << 9) + 120
-        else:
-            pp0.next = 0 
-    @always(clkInOut.posedge)
-    def rtl1():
-        if(ctn1 == 0):
-            ld.next = 1
-        else:
-            ld.next = 0
-
-    @always(clkInOut.posedge)
-    def rtl():
-	if (ctn1 == 38):
-            ctn1.next = 0
-            
-        else:
-            ctn1.next = ctn1 + 1
+ 
+ 
     instance_1 = div_4(clock,clkInOut,ctn)
     instance_2 = para2ser(clkInOut, pp0, ss0, ld,ld_o)
-    
+    instance_3 = meth1()
+    instance_4 = meth2()
+    instance_5 = meth3()
+    instance_6 = meth4()    
     @always(delay(10))
     def clkgen():
 	clock.next = not clock
     @instance
     def stimulus():
-         
+        ''' 
         pp0.next = 170 << 27
         yield clock.posedge
         
@@ -103,6 +57,7 @@ def tb(clock,clkInOut,ctn,pp0,ss0,ld_o):
  
         ld.next = 0
         yield clkInOut.posedge
+        '''
         for i in range(6*40):
             yield clock.posedge
              
