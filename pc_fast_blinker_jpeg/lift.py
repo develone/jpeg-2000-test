@@ -1,4 +1,6 @@
 from myhdl import *
+import argparse
+
 W0 = 9
 flags_i = Signal(intbv(0)[3:])
 left_i = Signal(intbv(0)[W0:])
@@ -8,6 +10,14 @@ clk_i = Signal(bool(0))
 update_i = Signal(bool(0))
 update_o = Signal(bool(0))
 res_o = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+def cliparse():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--build", default=False, action='store_true')
+    parser.add_argument("--test", default=False, action='store_true')
+    parser.add_argument("--convert", default=False, action='store_true')
+    args = parser.parse_args()
+    return args
+
 def lift_step(flags_i,update_i,left_i,sam_i,right_i,res_o,update_o,clk_i):
     @always(clk_i.posedge)
     def rtl ():
@@ -51,14 +61,19 @@ def tb(flags_i,update_i,left_i,sam_i,right_i,res_o,update_o,clk_i):
         
         raise StopSimulation
     return instances()
-def main():
-    '''
+ 
+def convert(args):
+    #toVerilog(dwt,flgs,upd,lft,sam,rht,lift,done,clock)
     toVHDL(lift_step,flags_i,update_i,left_i,sam_i,right_i,res_o,update_o,clk_i)
-    toVerilog(lift_step,flags_i,update_i,left_i,sam_i,right_i,res_o,update_o,clk_i)
-    
-    tb_fsm = traceSignals(tb,flags_i,update_i,left_i,sam_i,right_i,res_o,update_o,clk_i)
-    sim = Simulation(tb_fsm)
-    sim.run()
-    '''
+ 
+def main():
+    args = cliparse()
+    if args.test:
+       tb_fsm = traceSignals(tb,flags_i,update_i,left_i,sam_i,right_i,res_o,update_o,clk_i)
+       sim = Simulation(tb_fsm)
+       sim.run()  
+    if args.convert:
+        convert(args)
+
 if __name__ == '__main__':
-    main()    
+    main()   
