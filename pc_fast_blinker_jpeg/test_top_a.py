@@ -66,19 +66,19 @@ def dwt_top(
 	   lft0,
 	   sam0, 
 	   rht0, 
-	   lift0, 
+	    
 	   done0, 
 	   clock, 
-	   res0, 
+	    
 	   z0,
 	   flgs1, 
 	   upd1, 
 	   lft1,
 	   sam1, 
 	   rht1, 
-	   lift1, 
+	   
 	   done1,  
-	   res1, 
+	    
 	   z1,	   
 	   ):
 	instance_0 = dwt(flgs0, upd0, lft0, sam0, rht0, lift0, done0, clock)
@@ -97,19 +97,19 @@ def tb(
 	   lft0,
 	   sam0, 
 	   rht0, 
-	   lift0, 
+	    
 	   done0, 
 	   clock, 
-	   res0, 
+	    
 	   z0,
 	   flgs1, 
 	   upd1, 
 	   lft1,
 	   sam1, 
 	   rht1, 
-	   lift1, 
+	    
 	   done1,  
-	   res1, 
+	    
 	   z1,	   
 	   ):
         from PIL import Image
@@ -303,19 +303,19 @@ def convert(args):
 	   lft0,
 	   sam0, 
 	   rht0, 
-	   lift0, 
+	    
 	   done0, 
 	   clock, 
-	   res0, 
+	   
 	   z0,
 	   flgs1, 
 	   upd1, 
 	   lft1,
 	   sam1, 
 	   rht1, 
-	   lift1, 
+	    
 	   done1,  
-	   res1, 
+	    
 	   z1,	   
 	   )
   
@@ -330,19 +330,19 @@ def main():
 	   lft0,
 	   sam0, 
 	   rht0, 
-	   lift0, 
+	    
 	   done0, 
 	   clock, 
-	   res0, 
+	   
 	   z0,
 	   flgs1, 
 	   upd1, 
 	   lft1,
 	   sam1, 
 	   rht1, 
-	   lift1, 
+	    
 	   done1,  
-	   res1, 
+	   
 	   z1,	   
 	   )
 	   sim = Simulation(tb_fsm)
