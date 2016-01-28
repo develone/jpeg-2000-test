@@ -30,3 +30,9 @@ def lift2res(lift0, res0, lift1, res1, lift2, res2, lift3, res3, lift4, res4, li
 		res6.next = lift6[W0:]
 		res7.next = lift7[W0:]		
 	return rtl
+def lift2res1(lift0, res0 ):
+	
+	@always_comb
+	def rtl():
+		res0.next = lift0[W0:]
+	return rtl
