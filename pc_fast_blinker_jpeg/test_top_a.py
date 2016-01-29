@@ -125,10 +125,10 @@ def tb(
     def clkgen():
         clock.next = not clock
     instance_0 = dwt(flgs0, upd0, lft0, sam0, rht0, lift0, done0, clock)
-    #instance_16 = lift2res1(lift0,res0)
-    #instance_70 = signed2twoscomplement(res0, z0)
+    instance_16 = lift2res1(lift0,res0)
+    instance_70 = signed2twoscomplement(res0, z0)
 
-    #instance_1 = dwt(flgs1, upd1, lft1, sam1, rht1, lift1, done1, clock)
+    instance_1 = dwt(flgs1, upd1, lft1, sam1, rht1, lift1, done1, clock)
     #instance_17 = lift2res1(lift1,res1)
     #instance_71 = signed2twoscomplement(res1, z1)
  
@@ -148,41 +148,23 @@ def tb(
                 yield clock.posedge
                 upd0.next = 0
                 yield clock.posedge
+                #this needs to be the rht1
                 m[row][col] = lift0[W0:]
-                #yield clock.posedge
-                
-                #print ("%d %d %d %d" % (lft0,sam0,rht0,z0))
-                #print ("%s %s %s" % (bin(lift0,10),bin(res0,10),bin(z0,9)))
-                
-                #m[row][col] = z0
-                
-                #print ("%d %d %d" % (row,col,m[row][col]))
-                
-                #yield clock.posedge
-            for row in range(1,256-1,2):
-                lft0.next = m[row-1][col]
+                rht1.next = z0
                 yield clock.posedge
-                sam0.next = m[row][col]
+                lft1.next = m[row-2][col]
                 yield clock.posedge
-                rht0.next = m[row+1][col]
+                sam1.next = lft0
                 yield clock.posedge
-                flgs0.next = 6
+                flgs1.next = 6
                 yield clock.posedge
-                upd0.next = 1
+                upd1.next = 1
                 yield clock.posedge
-                upd0.next = 0
+                upd1.next = 0
                 yield clock.posedge
-                m[row][col] = lift0[W0:]
-                #yield clock.posedge
-                
-                #print ("%d %d %d %d" % (lft0,sam0,rht0,z0))
-                #print ("%s %s %s" % (bin(lift0,10),bin(res0,10),bin(z0,9)))
-                
-                #m[row][col] = z0
-                
-                #print ("%d %d %d" % (row,col,m[row][col]))
-                
-                #yield clock.posedge
+                #this needs to be the rht1
+                m[row-1][col] = lift1[W0:]
+ 
         de_interleave(m,256,256)
         seq_to_img(m, pix)
         im.save("test1_256_fwt1pass.png")        
@@ -200,39 +182,22 @@ def tb(
                 yield clock.posedge
                 upd0.next = 0
                 yield clock.posedge
+                #this needs to be the rht1
                 m[row][col] = lift0[W0:]
-                #yield clock.posedge
-                
-                #print ("%d %d %d %d" % (lft0,sam0,rht0,z0))
-                #print ("%s %s %s" % (bin(lift0,10),bin(res0,10),bin(z0,9)))
-                
-                #m[row][col] = z0
-                
-                #print ("%d %d %d" % (row,col,m[row][col]))
-                
-                #yield clock.posedge
-            for row in range(1,256-1,2):
-                lft0.next = m[row-1][col]
+                rht1.next = z0
                 yield clock.posedge
-                sam0.next = m[row][col]
+                lft1.next = m[row-2][col]
                 yield clock.posedge
-                rht0.next = m[row+1][col]
+                sam1.next = lft0
                 yield clock.posedge
-                flgs0.next = 6
+                flgs1.next = 6
                 yield clock.posedge
-                upd0.next = 1
+                upd1.next = 1
                 yield clock.posedge
-                upd0.next = 0
+                upd1.next = 0
                 yield clock.posedge
-                m[row][col] = lift0[W0:]
-                #yield clock.posedge
-                
-                #print ("%d %d %d %d" % (lft0,sam0,rht0,z0))
-                #print ("%s %s %s" % (bin(lift0,10),bin(res0,10),bin(z0,9)))
-                
-                #m[row][col] = z0
-                
-                #print ("%d %d %d" % (row,col,m[row][col]))
+                #this needs to be the rht1
+                m[row-1][col] = lift1[W0:] 
         de_interleave(m,256,256)
         seq_to_img(m, pix)
         im.save("test1_256_fwt2pass.png")        
