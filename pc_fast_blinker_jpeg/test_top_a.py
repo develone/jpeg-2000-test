@@ -61,9 +61,18 @@ def dwt_top(
     instance_0 = dwt(flgs0, upd0, lft0, sam0, rht0, lift0, done0, clock)
     instance_16 = lift2res1(lift0,res0)
     instance_70 = signed2twoscomplement(res0, z0)
+
     instance_1 = dwt(flgs1, upd1, lft1, sam1, rht1, lift1, done1, clock)
     instance_17 = lift2res1(lift1,res1)
     instance_71 = signed2twoscomplement(res1, z1)
+
+    instance_2 = dwt(flgs2, upd2, lft2, sam2, rht2, lift2, done2, clock)
+    instance_18 = lift2res1(lift2,res2) 
+    instance_72 = signed2twoscomplement(res2, z2)
+
+    instance_3 = dwt(flgs3, upd3, lft3, sam3, rht4, lift3, done3, clock)
+    instance_19 = lift2res1(lift3,res3)
+    instance_73 = signed2twoscomplement(res3, z3) 
     
     return instances()    
 
@@ -129,18 +138,38 @@ def tb(
     instance_70 = signed2twoscomplement(res0, z0)
 
     instance_1 = dwt(flgs1, upd1, lft1, sam1, rht1, lift1, done1, clock)
-    #instance_17 = lift2res1(lift1,res1)
-    #instance_71 = signed2twoscomplement(res1, z1)
- 
+    instance_17 = lift2res1(lift1,res1)
+    instance_71 = signed2twoscomplement(res1, z1)
+
+    instance_2 = dwt(flgs2, upd2, lft2, sam2, rht2, lift2, done2, clock)
+    instance_18 = lift2res1(lift2,res2) 
+    instance_72 = signed2twoscomplement(res2, z2)
+
+    instance_3 = dwt(flgs3, upd3, lft3, sam3, rht4, lift3, done3, clock)
+    instance_19 = lift2res1(lift3,res3)
+    instance_73 = signed2twoscomplement(res3, z3) 
     @instance
     def stimulus():
         for col in range(256):
-            for row in range(2,256,2):
-                lft0.next = m[row-1][col]
+            for row in range(6,256,2):
+                '''
+                sending from host to FPGA 
+                m[row-5][col] m[row-4][col] m[row-3][col] 
+                m[row-6][col] m[row-3][col] m[row-2][col]
+                flgs0 upd0 flgs1 upd1 flgs2 upd2 flgs3 upd3 
+                returning to host from FPGA
+                m[row-4][col] m[row-5][col] m[row-2][col] m[row-3][col]
+                First pass even odd samples  
+                1 2 3  0 1 2
+                1
+                '''
+                lft0.next = m[row-5][col]
                 yield clock.posedge
-                sam0.next = m[row][col]
+                # 2
+                sam0.next = m[row-4][col]
                 yield clock.posedge
-                rht0.next = m[row+1][col]
+                # 3
+                rht0.next = m[row-3][col]
                 yield clock.posedge
                 flgs0.next = 7
                 yield clock.posedge
@@ -149,11 +178,16 @@ def tb(
                 upd0.next = 0
                 yield clock.posedge
                 #this needs to be the rht1
-                m[row][col] = lift0[W0:]
+                #1 2 3  0 1 2
+                # 2
+                m[row-4][col] = lift0[W0:]
+                # 2
                 rht1.next = z0
                 yield clock.posedge
-                lft1.next = m[row-2][col]
+                # 0
+                lft1.next = m[row-6][col]
                 yield clock.posedge
+                # 1
                 sam1.next = lft0
                 yield clock.posedge
                 flgs1.next = 6
@@ -162,19 +196,66 @@ def tb(
                 yield clock.posedge
                 upd1.next = 0
                 yield clock.posedge
-                #this needs to be the rht1
-                m[row-1][col] = lift1[W0:]
+                #this needs to be the rht2
+                # 1
+                m[row-5][col] = lift1[W0:]
+                
+                #3 4 5  2 3 4
+                # 5
+                rht2.next = z1
+                yield clock.posedge
+                # 3
+                lft2.next = rht0
+                #lft2.next = m[row-3][col]
+                yield clock.posedge
+                # 4
+                sam2.next = m[row-2][col]
+                yield clock.posedge
  
+                flgs2.next = 7
+                yield clock.posedge
+                upd2.next = 1
+                yield clock.posedge
+                upd2.next = 0
+                yield clock.posedge
+                #this needs to be the rht3
+                # 4
+                m[row-2][col] = lift2[W0:]
+                #3 4 5  2 3 4
+                # 4
+                rht3.next = z2
+                yield clock.posedge
+                # 2
+                lft3.next = z1
+                #lft3.next = m[row-4][col] 
+                yield clock.posedge
+                # 3
+                sam3.next = lft2
+                yield clock.posedge
+                flgs3.next = 6
+                yield clock.posedge
+                upd3.next = 1
+                yield clock.posedge
+                upd3.next = 0
+                yield clock.posedge
+                #this needs to be the rht1
+                # 3
+                m[row-3][col] = lift3[W0:]
+                 
         de_interleave(m,256,256)
         seq_to_img(m, pix)
         im.save("test1_256_fwt1pass.png")        
         for col in range(256):
-            for row in range(2,256,2):
-                lft0.next = m[row-1][col]
+            for row in range(6,256,2):
+                #1 2 3  0 1 2
+                # 1
+                lft0.next = m[row-5][col]
                 yield clock.posedge
-                sam0.next = m[row][col]
+                # 2
+                sam0.next = m[row-4][col]
                 yield clock.posedge
-                rht0.next = m[row+1][col]
+                # 3
+                rht0.next = m[row-3][col]
                 yield clock.posedge
                 flgs0.next = 7
                 yield clock.posedge
@@ -183,11 +264,16 @@ def tb(
                 upd0.next = 0
                 yield clock.posedge
                 #this needs to be the rht1
-                m[row][col] = lift0[W0:]
+                #1 2 3  0 1 2
+                # 2
+                m[row-4][col] = lift0[W0:]
+                # 2
                 rht1.next = z0
                 yield clock.posedge
-                lft1.next = m[row-2][col]
+                # 0
+                lft1.next = m[row-6][col]
                 yield clock.posedge
+                # 1
                 sam1.next = lft0
                 yield clock.posedge
                 flgs1.next = 6
@@ -196,8 +282,9 @@ def tb(
                 yield clock.posedge
                 upd1.next = 0
                 yield clock.posedge
-                #this needs to be the rht1
-                m[row-1][col] = lift1[W0:] 
+                #this needs to be the rht2
+                # 1
+                m[row-5][col] = lift1[W0:] 
         de_interleave(m,256,256)
         seq_to_img(m, pix)
         im.save("test1_256_fwt2pass.png")        
