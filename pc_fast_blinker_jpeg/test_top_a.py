@@ -186,6 +186,57 @@ def tb(
         de_interleave(m,256,256)
         seq_to_img(m, pix)
         im.save("test1_256_fwt1pass.png")        
+        for col in range(256):
+            for row in range(2,256,2):
+                lft0.next = m[row-1][col]
+                yield clock.posedge
+                sam0.next = m[row][col]
+                yield clock.posedge
+                rht0.next = m[row+1][col]
+                yield clock.posedge
+                flgs0.next = 7
+                yield clock.posedge
+                upd0.next = 1
+                yield clock.posedge
+                upd0.next = 0
+                yield clock.posedge
+                m[row][col] = lift0[W0:]
+                #yield clock.posedge
+                
+                #print ("%d %d %d %d" % (lft0,sam0,rht0,z0))
+                #print ("%s %s %s" % (bin(lift0,10),bin(res0,10),bin(z0,9)))
+                
+                #m[row][col] = z0
+                
+                #print ("%d %d %d" % (row,col,m[row][col]))
+                
+                #yield clock.posedge
+            for row in range(1,256-1,2):
+                lft0.next = m[row-1][col]
+                yield clock.posedge
+                sam0.next = m[row][col]
+                yield clock.posedge
+                rht0.next = m[row+1][col]
+                yield clock.posedge
+                flgs0.next = 6
+                yield clock.posedge
+                upd0.next = 1
+                yield clock.posedge
+                upd0.next = 0
+                yield clock.posedge
+                m[row][col] = lift0[W0:]
+                #yield clock.posedge
+                
+                #print ("%d %d %d %d" % (lft0,sam0,rht0,z0))
+                #print ("%s %s %s" % (bin(lift0,10),bin(res0,10),bin(z0,9)))
+                
+                #m[row][col] = z0
+                
+                #print ("%d %d %d" % (row,col,m[row][col]))
+        de_interleave(m,256,256)
+        seq_to_img(m, pix)
+        im.save("test1_256_fwt2pass.png")        
+                
         raise StopSimulation    
     return instances()
  
