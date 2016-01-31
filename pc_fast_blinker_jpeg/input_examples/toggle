@@ -1,0 +1,59 @@
+#!/bin/bash
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+python dr_input_clk_on.py
+
+python dr_input_clk_off.py
+
