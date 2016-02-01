@@ -1,0 +1,11 @@
+#!/bin/bash
+i="0"
+while [ $i -lt 200000 ]
+do
+python dr_input_clk_on2.py
+python dr_input_clk_off3.py
+python dr_input_clk_on3.py
+python dr_input_clk_off2.py
+i=$[$i+1]
+done
+
