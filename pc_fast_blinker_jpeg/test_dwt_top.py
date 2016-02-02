@@ -67,7 +67,7 @@ def test_dwt_top(args):
     m = list(im.getdata())
     #print m.__sizeof__()
     m = [m[i:i+im.size[0]] for  i in range(0, len(m), im.size[0])]
-    tbdut =  _prep_cosim(args,clock=clock,flgs0=flgs0,upd0=upd0,lft0=lft0,sam0=sam0,rht0=rht0,done0=done0,z0=z0,flgs1=flgs1,upd1=upd1,lft1=lft1,sam1=sam1,rht1=rht1,done1=done1,z1=z1 )
+    tbdut =  _prep_cosim(args,flgs0=flgs0,upd0=upd0,lft0=lft0,sam0=sam0,rht0=rht0,done0=done0,clock=clock,z0=z0,flgs1=flgs1,upd1=upd1,lft1=lft1,sam1=sam1,rht1=rht1,done1=done1,z1=z1 )
 
     @always(delay(10))
     def tbclk():
