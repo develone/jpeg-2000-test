@@ -152,17 +152,8 @@ def tb(
     def stimulus():
         for col in range(256):
             for row in range(6,256,2):
-                '''
-                sending from host to FPGA 
-                m[row-5][col] m[row-4][col] m[row-3][col] 
-                m[row-6][col] m[row-3][col] m[row-2][col]
-                flgs0 upd0 flgs1 upd1 flgs2 upd2 flgs3 upd3 
-                returning to host from FPGA
-                m[row-4][col] m[row-5][col] m[row-2][col] m[row-3][col]
-                First pass even odd samples  
-                1 2 3  0 1 2
-                1
-                '''
+                #1 2 3  0 1 2
+                # 1
                 lft0.next = m[row-5][col]
                 yield clock.posedge
                 # 2
@@ -198,49 +189,7 @@ def tb(
                 yield clock.posedge
                 #this needs to be the rht2
                 # 1
-                m[row-5][col] = lift1[W0:]
-                
-                #3 4 5  2 3 4
-                # 5
-                rht2.next = z1
-                yield clock.posedge
-                # 3
-                lft2.next = rht0
-                #lft2.next = m[row-3][col]
-                yield clock.posedge
-                # 4
-                sam2.next = m[row-2][col]
-                yield clock.posedge
- 
-                flgs2.next = 7
-                yield clock.posedge
-                upd2.next = 1
-                yield clock.posedge
-                upd2.next = 0
-                yield clock.posedge
-                #this needs to be the rht3
-                # 4
-                m[row-2][col] = lift2[W0:]
-                #3 4 5  2 3 4
-                # 4
-                rht3.next = z2
-                yield clock.posedge
-                # 2
-                lft3.next = z1
-                #lft3.next = m[row-4][col] 
-                yield clock.posedge
-                # 3
-                sam3.next = lft2
-                yield clock.posedge
-                flgs3.next = 6
-                yield clock.posedge
-                upd3.next = 1
-                yield clock.posedge
-                upd3.next = 0
-                yield clock.posedge
-                #this needs to be the rht1
-                # 3
-                m[row-3][col] = lift3[W0:]
+                m[row-5][col] = lift1[W0:] 
                  
         de_interleave(m,256,256)
         seq_to_img(m, pix)
