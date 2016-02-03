@@ -44,9 +44,9 @@ def de_interleave(m,height,width):
             # k1 and k2 scale the vals
             # simultaneously transpose the matrix when deinterleaving
             if row % 2 == 0:
-                temp_bank[col][row/2] =  m[row][col]
+                temp_bank[col][row//2] =  m[row][col]
             else:
-                temp_bank[col][row/2 + height/2] =  m[row][col]
+                temp_bank[col][row//2 + height//2] =  m[row][col]
     # write temp_bank to s:
     for row in range(width):
         for col in range(height):
@@ -116,7 +116,7 @@ def test_dwt_top(args):
                 #print ("%8d: %d %d %d %d %d %d" % (now(),row,col,lft1,sam1,rht1,z1))
                 m[row][col] = int(z1)
         print ("8%d :%d %d" % (now(),h,w))
-        #de_interleave(m,h,w)
+        de_interleave(m,h,w)
         seq_to_img(m, pix)
         print("%8d: writing test1_256_fwt1pass.png " % (now()))
         im.save("test1_256_fwt1pass.png")
