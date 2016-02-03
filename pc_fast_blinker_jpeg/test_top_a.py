@@ -171,7 +171,7 @@ def tb(
                 #this needs to be the rht1
                 #1 2 3  0 1 2
                 # 2
-                m[row-4][col] = lift0[W0:]
+                m[row-4][col] = int(z0)
                 # 2
                 rht1.next = z0
                 yield clock.posedge
@@ -189,7 +189,7 @@ def tb(
                 yield clock.posedge
                 #this needs to be the rht2
                 # 1
-                m[row-5][col] = lift1[W0:] 
+                m[row-5][col] = int(z1)
                  
         de_interleave(m,256,256)
         seq_to_img(m, pix)
@@ -215,7 +215,7 @@ def tb(
                 #this needs to be the rht1
                 #1 2 3  0 1 2
                 # 2
-                m[row-4][col] = lift0[W0:]
+                m[row-4][col] = int(z0)
                 # 2
                 rht1.next = z0
                 yield clock.posedge
@@ -233,7 +233,7 @@ def tb(
                 yield clock.posedge
                 #this needs to be the rht2
                 # 1
-                m[row-5][col] = lift1[W0:] 
+                m[row-5][col] = int(z1)
         de_interleave(m,256,256)
         seq_to_img(m, pix)
         im.save("test1_256_fwt2pass.png")        
