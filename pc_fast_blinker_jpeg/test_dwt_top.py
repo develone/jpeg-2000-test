@@ -120,6 +120,50 @@ def test_dwt_top(args):
         seq_to_img(m, pix)
         print("%8d: writing test1_256_fwt1pass.png " % (now()))
         im.save("test1_256_fwt1pass.png")
+        for col in range(256):
+            for row in range(2,256,2):
+ 
+                lft0.next = m[row-1][col]
+                yield clock.posedge
+                
+                sam0.next = m[row][col]
+                yield clock.posedge
+                
+                rht0.next = m[row+1][col]
+                yield clock.posedge
+                 
+                flgs0.next = 7
+                yield clock.posedge
+                upd0.next = 1
+                yield clock.posedge
+                upd0.next = 0
+                yield clock.posedge
+ 
+                #print ("%8d: %d %d %d %d %d %d" % (now(),row,col,lft0,sam0,rht0,z0))
+                m[row][col] = int(z0)
+ 
+            for row in range(1,256-1,2):
+                lft1.next = m[row-1][col]
+                yield clock.posedge
+                # 1
+                sam1.next = m[row][col]
+                yield clock.posedge
+                rht1.next = m[row+1][col]
+                yield clock.posedge
+                flgs1.next = 6
+                yield clock.posedge
+                upd1.next = 1
+                yield clock.posedge
+                upd1.next = 0
+                yield clock.posedge
+ 
+                #print ("%8d: %d %d %d %d %d %d" % (now(),row,col,lft1,sam1,rht1,z1))
+                m[row][col] = int(z1)
+        print ("8%d :%d %d" % (now(),h,w))
+        de_interleave(m,h,w)
+        seq_to_img(m, pix)
+        print("%8d: writing test1_256_fwt2pass.png " % (now()))
+        im.save("test1_256_fwt2pass.png")
       
         raise StopSimulation
 
