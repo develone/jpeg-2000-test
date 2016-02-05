@@ -2,6 +2,11 @@ from myhdl import *
 
 
 import argparse
+from rhea.cores.memmap import memmap_command_bridge
+from rhea.cores.misc import glbl_timer_ticks
+from rhea.system import Barebone
+from rhea.system import FIFOBus
+from rhea.system import Global, Clock, Reset
 
 clock = Signal(bool(0))
 clkInOut = Signal(bool(0))
@@ -13,8 +18,8 @@ pi_in2 = Signal(bool(0))
 cat_out2 = Signal(bool(0))
 pi_in3 = Signal(bool(0))
 cat_out3 = Signal(bool(0))
-
-  
+clock=Clock(0, frequency=50e6)
+glbl = Global(clock, None)  
 def cliparse():
     parser = argparse.ArgumentParser()
     parser.add_argument("--xbuild", default=False, action='store_true')
@@ -46,12 +51,12 @@ def tb(pi_in,cat_out):
 	return instances()
 
 def convert(args):
-    toVerilog(cat_top,clock,pi_in,cat_out,pi_in1,cat_out1,pi_in2,cat_out2,pi_in3,cat_out3,clkInOut,ss0,ld_o)
+    toVerilog(cat_top,clock,pi_in,cat_out,pi_in1,cat_out1,pi_in2,cat_out2,pi_in3,cat_out3)
 
 def build(args):
 	import rhea.build as build
 	from rhea.build.boards import get_board
-	#from input_clk import cat_in:
+	 
 
 
 	def run_catboard():
@@ -72,8 +77,7 @@ def build(args):
 		brd.add_port('pi_in2', 'T9')
 		#BCM20
 		brd.add_port('pi_in3', 'R3')
-                #BCM15
-                brd.add_port('clkInOut', 'T14')
+ 
                 #BCM26
                 brd.add_port('ss0', 'T2')
                 #BCM27
@@ -94,7 +98,8 @@ def xbuild(args):
                 
 		#LED1
                 #CHAN0
-                brd.add_port('cat_out', 'R7', pullup=True)
+                #brd.add_port('cat_out', 'R7', pullup=True)
+                brd.add_port('cat_out', 'R7')
 		#brd.add_port('cat_out', 'A9')
 		#LED2
                 #CHAN22
@@ -122,12 +127,21 @@ def xbuild(args):
                 pprint(info)
 	run_xula()
 def cat_top(clock,pi_in,cat_out,pi_in1,cat_out1,pi_in2,cat_out2,pi_in3,cat_out3):
- 
+    
     instance_1 = cat_in(pi_in,cat_out)
     instance_2 = cat_in(pi_in1,cat_out1)
     instance_3 = cat_in(pi_in2,cat_out2)
     instance_4 = cat_in(pi_in3,cat_out3)
-  
+    # create the timer tick instance
+    tick_inst = glbl_timer_ticks(glbl, include_seconds=True)
+    # create the interfaces to the UART
+    fbustx = FIFOBus(width=8, size=4)
+    fbusrx = FIFOBus(width=8, size=4)
+    # create the memmap (CSR) interface
+    memmap = Barebone(glbl, data_width=32, address_width=32)
+    # create the packet command instance
+    cmd_inst = memmap_command_bridge(glbl, fbusrx, fbustx, memmap)
+
     return instances()
 '''
 LED1	A9  
