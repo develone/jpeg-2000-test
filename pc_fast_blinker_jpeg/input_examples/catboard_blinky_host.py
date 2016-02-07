@@ -14,12 +14,12 @@ from rhea.system import FIFOBus
 from rhea.build.boards import get_board
 
 
-def icestick_blinky_host(clock, led, pmod, uart_tx, uart_rx,
+def catboard_blinky_host(clock, led, pmod, uart_tx, uart_rx,
                          uart_dtr, uart_rts):
     """
     This example is similar to the other examples in this directory but
     the LEDs are controlled externally via command packets sent from a
-    host via the UART on the icestick.
+    host via the UART on the catboard.
 
     Ports:
       clock:
@@ -79,13 +79,13 @@ def icestick_blinky_host(clock, led, pmod, uart_tx, uart_rx,
 
 
 def build(args):
-    brd = get_board('icestick')
-    flow = brd.get_flow(top=icestick_blinky_host)
+    brd = get_board('catboard')
+    flow = brd.get_flow(top=catboard_blinky_host)
     flow.run()
 
 
 def program(args):
-    subprocess.check_call(["iceprog", "iceriver/icestick.bin"])
+    subprocess.check_call(["iceprog", "iceriver/catboard.bin"])
 
 
 def cliparse():
@@ -103,8 +103,8 @@ def main():
     if args.test:
         # check for basic syntax errors, use test_ice* to test
         # functionality
-        icestick_blinky_host(
-            clock=Clock(0, frequency=50e6),
+        catboard_blinky_host(
+            clock=Clock(0, frequency=100e6),
             led=Signal(intbv(0)[8:]), 
             pmod=Signal(intbv(0)[8:]),
             uart_tx=Signal(bool(0)),
