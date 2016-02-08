@@ -14,8 +14,7 @@ from rhea.system import FIFOBus
 from rhea.build.boards import get_board
 
 
-def catboard_blinky_host(clock, led, pmod, uart_tx, uart_rx,
-                         uart_dtr, uart_rts):
+def catboard_blinky_host(clock, led, uart_tx, uart_rx):
     """
     This example is similar to the other examples in this directory but
     the LEDs are controlled externally via command packets sent from a
@@ -70,7 +69,7 @@ def catboard_blinky_host(clock, led, pmod, uart_tx, uart_rx,
             tone.next = (~tone) & 0x1
         led.next = ledreg | tone[5:] 
             
-        pmod.next = 0
+        #pmod.next = 0
 
     # @todo: PMOD OLED memmap control
 
@@ -80,6 +79,10 @@ def catboard_blinky_host(clock, led, pmod, uart_tx, uart_rx,
 
 def build(args):
     brd = get_board('catboard')
+    #BCM15
+    brd.add_port('uart_rx', 'T14')
+    #BCM14
+    brd.add_port('uart_tx', 'T15')
     flow = brd.get_flow(top=catboard_blinky_host)
     flow.run()
 
@@ -106,11 +109,8 @@ def main():
         catboard_blinky_host(
             clock=Clock(0, frequency=100e6),
             led=Signal(intbv(0)[8:]), 
-            pmod=Signal(intbv(0)[8:]),
             uart_tx=Signal(bool(0)),
-            uart_rx=Signal(bool(0)),
-            uart_dtr=Signal(bool(0)),
-            uart_rts=Signal(bool(0)) )
+            uart_rx=Signal(bool(0)) )
         
     if args.build:
         build(args)
