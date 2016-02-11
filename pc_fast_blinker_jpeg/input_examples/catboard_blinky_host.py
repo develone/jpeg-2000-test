@@ -140,12 +140,19 @@ def catboard_blinky_host(clock, led, uart_tx, uart_rx):
             elif memmap.mem_addr == 8:
                  myregister2.next = memmap.write_data 
             elif memmap.mem_addr == 12:
-                 myregister3.next = memmap.write_data        
+                 myregister3.next = memmap.write_data 
+    
+    @always_seq(clock.posedge, reset=None)
+    def beh_setz1():
+        if (myregister1 == 4):     
+            if(done1 == 0): 
+                cmd_inst_data = z1
+        
     return (tick_inst, uart_inst, cmd_inst, 
             beh_led_control, beh_led_read, beh_assign, beh_my_registers,
             jpeg0, l2res0, sign0, jpeg1, l2res1, sign1, 
             jpeg2, l2res2, sign2, jpeg3, l2res3, sign3, 
-            inst_sig0, inst_sig1, inst_sig2, inst_sig3)
+            inst_sig0, inst_sig1, inst_sig2, inst_sig3,beh_setz1)
 
 
 def build(args):
