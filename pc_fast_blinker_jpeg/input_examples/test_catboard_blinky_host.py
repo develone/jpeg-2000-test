@@ -11,11 +11,16 @@ from rhea.utils import CommandPacket
 from rhea.utils.command_packet import PACKET_LENGTH
 
 from catboard_blinky_host import catboard_blinky_host
-
+from dwt_image import (seq_to_img, de_interleave, lower_upper, rd_img, lsr)
 
 def test_ibh(args=None):
     args = tb_default_args(args)
     numbytes = 13
+
+    imgfn = "../../lena_256.png"
+
+    im, m, pix = rd_img(imgfn)
+     
 
     clock = Clock(0, frequency=50e6)
     glbl = Global(clock, None)
@@ -33,24 +38,36 @@ def test_ibh(args=None):
         @instance
         def tbstim():
             yield delay(1000)
-            
+            row = 2
+            col = 0
+            flag = 7
+            v0 = lsr(row,col,m,flag)
             # send a write that should enable all five LEDs
-            pkt = CommandPacket(False, address=0x00, vals=[0x70A29CA8 ])
+            pkt = CommandPacket(False, address=0x00, vals=[v0])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
-            yield delay(waitticks) 
-            pkt = CommandPacket(False, address=0x04, vals=[0x70A69CA4 ])
+            yield delay(waitticks)
+            row = 1
+            flag = 6
+            v1 = lsr(row,col,m,flag)              
+            pkt = CommandPacket(False, address=0x04, vals=[v1])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
-            yield delay(waitticks) 
-            pkt = CommandPacket(False, address=0x08, vals=[0x70A49CAA ])
+            yield delay(waitticks)
+            row = 4
+            flag = 7
+            v2 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x08, vals=[v2])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
-            yield delay(waitticks) 
-            pkt = CommandPacket(False, address=0x0C, vals=[0x70A49CAA ])
+            yield delay(waitticks)
+            row = 3
+            flag = 6
+            v3 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x0C, vals=[v3 ])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
