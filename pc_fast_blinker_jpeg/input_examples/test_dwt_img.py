@@ -24,14 +24,14 @@ row = 1
 col = 0
 flag = 6
 print m[row-1][col], m[row][col], m[row+1][col]
-x3 = lsr(row,col,m,flag) 
+v = lsr(row,col,m,flag) 
 print hex(x3), x3
 print bin(x3,32)
 
-pkt = CommandPacket(False, address=0x04, vals=[x3])
-print pkt.rawbytes[0], pkt.rawbytes[6], pkt.rawbytes[7]
+pkt = CommandPacket(False, address=0x04, vals=[v])
+
 for bb in pkt.rawbytes:
     print bin(bb,8)
-    ser.write(bb)
+    ser.write('bb')
 reply = ser.read(12) 
 print "this is the reply", reply
