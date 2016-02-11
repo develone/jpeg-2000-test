@@ -25,8 +25,8 @@ col = 0
 flag = 6
 print m[row-1][col], m[row][col], m[row+1][col]
 v = lsr(row,col,m,flag) 
-print hex(x3), x3
-print bin(x3,32)
+print hex(v), v
+print bin(v,32)
 
 pkt = CommandPacket(False, address=0x04, vals=[v])
 
