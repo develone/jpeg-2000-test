@@ -2,7 +2,7 @@
 from __future__ import print_function, division
 
 import myhdl
-from myhdl import (Signal, intbv, instance, delay, StopSimulation)
+from myhdl import *
 
 from rhea.system import Global, Clock, Reset
 from rhea.models.uart import UARTModel
@@ -38,8 +38,8 @@ def test_ibh(args=None):
         @instance
         def tbstim():
             yield delay(1000)
-            row = 2
             col = 0
+            row = 2
             flag = 7
             v0 = lsr(row,col,m,flag)
             # send a write that should enable all five LEDs
@@ -48,15 +48,16 @@ def test_ibh(args=None):
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
-            row = 1
-            flag = 6
+            row = 4
+            flag = 7
             v1 = lsr(row,col,m,flag)              
             pkt = CommandPacket(False, address=0x04, vals=[v1])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
-            row = 4
+
+            row = 6
             flag = 7
             v2 = lsr(row,col,m,flag)    
             pkt = CommandPacket(False, address=0x08, vals=[v2])
@@ -64,20 +65,71 @@ def test_ibh(args=None):
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
-            row = 3
-            flag = 6
+            row = 8
+            flag = 7
             v3 = lsr(row,col,m,flag)    
             pkt = CommandPacket(False, address=0x0C, vals=[v3 ])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks) 
-            pkt = CommandPacket(False, address=0x20, vals=[0xFF])
+
+            row = 10
+            flag = 7
+            v4 = lsr(row,col,m,flag)
+            
+            pkt = CommandPacket(False, address=0x10, vals=[v4])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
-            yield delay(waitticks) 
+            yield delay(waitticks)
+            row = 12
+            flag = 7
+            v5 = lsr(row,col,m,flag)              
+            pkt = CommandPacket(False, address=0x14, vals=[v5])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+
+            row = 14
+            flag = 7
+            v6 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x18, vals=[v6])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+            row = 16
+            flag = 7
+            v7 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x1C, vals=[v7 ])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+
+            v9 = 0
+            pkt = CommandPacket(False, address=0x20, vals=[v9])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+
+
+            v9 = 0
+            pkt = CommandPacket(False, address=0x24, vals=[v9])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)  
             timeout = 100
+            yield delay(waitticks)
+            # send a write that should enable all five LEDs
+            pkt = CommandPacket(False, address=0x40, vals=[0xFF])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks) 
             # get the response packet
             for ii in range(PACKET_LENGTH):
@@ -95,7 +147,7 @@ def test_ibh(args=None):
             yield delay(1000)
             raise StopSimulation
 
-        return tbclk, tbmdl, tbdut, tbstim
+        return instances()
 
     run_testbench(bench_ibh, args=args)
     myhdl.toVerilog.directory = 'output'

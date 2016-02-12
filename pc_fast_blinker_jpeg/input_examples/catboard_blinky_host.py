@@ -2,7 +2,7 @@
 import argparse
 import subprocess
 
-from myhdl import (Signal, intbv, always_seq, always_comb, concat,)
+from myhdl import *
 
 from rhea.cores.uart import uartlite
 from rhea.cores.memmap import memmap_command_bridge
@@ -56,10 +56,59 @@ rht2 = Signal(intbv(0)[W0:])
 rht3 = Signal(intbv(0)[W0:])
 lift2 = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
 lift3 = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+
+upd4 = Signal(bool(0))
+upd5 = Signal(bool(0))
+z4 = Signal(intbv(0)[W0:])
+z5 = Signal(intbv(0)[W0:])
+done4 = Signal(bool(0))
+done5 = Signal(bool(0))
+res4 = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+res5 = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+flgs4 = Signal(intbv(0)[3:])
+flgs5 = Signal(intbv(0)[3:])
+lft4 = Signal(intbv(0)[W0:])
+lft5 = Signal(intbv(0)[W0:])
+sam4 = Signal(intbv(0)[W0:])
+sam5 = Signal(intbv(0)[W0:])
+rht4 = Signal(intbv(0)[W0:])
+rht5 = Signal(intbv(0)[W0:])
+lift4 = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+lift5 = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+
+upd6 = Signal(bool(0))
+upd7 = Signal(bool(0))
+z6 = Signal(intbv(0)[W0:])
+z7 = Signal(intbv(0)[W0:])
+done6 = Signal(bool(0))
+done7 = Signal(bool(0))
+res6 = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+res7 = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+flgs6 = Signal(intbv(0)[3:])
+flgs7 = Signal(intbv(0)[3:])
+lft6 = Signal(intbv(0)[W0:])
+lft7 = Signal(intbv(0)[W0:])
+sam6 = Signal(intbv(0)[W0:])
+sam7 = Signal(intbv(0)[W0:])
+rht6 = Signal(intbv(0)[W0:])
+rht7 = Signal(intbv(0)[W0:])
+lift6 = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+lift7 = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
+
+
 myregister0 = Signal(intbv(0)[32:])
 myregister1 = Signal(intbv(0)[32:])
 myregister2 = Signal(intbv(0)[32:])
 myregister3 = Signal(intbv(0)[32:])
+myregister4 = Signal(intbv(0)[32:])
+myregister5 = Signal(intbv(0)[32:])
+myregister6 = Signal(intbv(0)[32:])
+myregister7 = Signal(intbv(0)[32:])
+ 
+data_to_host0 = Signal(intbv(0)[32:])
+data_to_host1 = Signal(intbv(0)[32:])
+data_to_host2 = Signal(intbv(0)[32:])
+data_to_host3 = Signal(intbv(0)[32:])
 def catboard_blinky_host(clock, led, uart_tx, uart_rx):
     """
     The LEDs are controlled from the RPi over the UART
@@ -93,13 +142,32 @@ def catboard_blinky_host(clock, led, uart_tx, uart_rx):
         if memmap.write and memmap.mem_addr == 0x20:
             ledreg.next = memmap.write_data
 
+    @always_seq(clock.posedge, reset=None)
+    def beh_led_control():
+        memmap.done.next = not (memmap.write or memmap.read)
+        if memmap.write and memmap.mem_addr == 0x40:
+            ledreg.next = memmap.write_data
+    '''
     @always_comb
     def beh_led_read():
-        if memmap.read and memmap.mem_addr == 0x20:
+        if memmap.read and memmap.mem_addr == 0x40:
             memmap.read_data.next = ledreg
         else:
             memmap.read_data.next = 0
+    '''
+    @always_comb
+    def set_data():
+        data_to_host0.next = z1 << 9 | z0
+        data_to_host1.next = z3 << 9 | z2
+        data_to_host2.next = z5 << 9 | z4
+        data_to_host3.next = z7 << 9 | z6
+ 
 
+    @always_comb
+    def beh_led_read():
+        if (done1 == 0):
+            if memmap.read and memmap.mem_addr == 0x04:
+                memmap.read_data.next = data_to_host0
     # blink one of the LEDs
     tone = Signal(intbv(0)[8:])
 
@@ -125,10 +193,31 @@ def catboard_blinky_host(clock, led, uart_tx, uart_rx):
     l2res3 = lift2res1(lift3,res3)
     sign3 = signed2twoscomplement(res3, z3)
 
-    inst_sig0 = toSig(clock, myregister0,flgs0,lft0,sam0,rht0, upd0) 
-    inst_sig1 = toSig(clock, myregister1,flgs1,lft1,sam1,rht1, upd1)
-    inst_sig2 = toSig(clock, myregister2,flgs2,lft2,sam2,rht2, upd2) 
-    inst_sig3 = toSig(clock, myregister3,flgs3,lft3,sam3,rht3, upd3)
+    jpeg4 = dwt(flgs4, upd4, lft4, sam4, rht4, lift4, done4, clock)
+    l2res4 = lift2res1(lift4,res4)
+    sign4 = signed2twoscomplement(res4, z4)
+
+    jpeg5 = dwt(flgs5, upd5, lft5, sam5, rht5, lift5, done5, clock)
+    l2res5 = lift2res1(lift5,res5)
+    sign5 = signed2twoscomplement(res5, z5)
+
+    jpeg6 = dwt(flgs6, upd6, lft6, sam6, rht6, lift6, done6, clock)
+    l2res6 = lift2res1(lift6,res6)
+    sign6 = signed2twoscomplement(res6, z6)
+
+    jpeg7 = dwt(flgs7, upd7, lft7, sam7, rht7, lift7, done7, clock)
+    l2res7 = lift2res1(lift7,res7)
+    sign7 = signed2twoscomplement(res7, z7)
+    
+    inst_sig0 = toSig(clock, myregister0,flgs0,lft0,sam0,rht0) 
+    inst_sig1 = toSig(clock, myregister1,flgs1,lft1,sam1,rht1)
+    inst_sig2 = toSig(clock, myregister2,flgs2,lft2,sam2,rht2) 
+    inst_sig3 = toSig(clock, myregister3,flgs3,lft3,sam3,rht3)
+    
+    inst_sig4 = toSig(clock, myregister4,flgs4,lft4,sam4,rht4) 
+    inst_sig5 = toSig(clock, myregister5,flgs5,lft5,sam5,rht5)
+    inst_sig6 = toSig(clock, myregister6,flgs6,lft6,sam6,rht6) 
+    inst_sig7 = toSig(clock, myregister7,flgs7,lft7,sam7,rht7) 
   
     @always_seq(clock.posedge, reset=None) 
     def beh_my_registers():
@@ -141,18 +230,36 @@ def catboard_blinky_host(clock, led, uart_tx, uart_rx):
                  myregister2.next = memmap.write_data 
             elif memmap.mem_addr == 12:
                  myregister3.next = memmap.write_data 
+            if memmap.mem_addr == 16:
+                myregister4.next = memmap.write_data
+            elif memmap.mem_addr == 20:
+                myregister5.next = memmap.write_data
+            elif memmap.mem_addr == 24:
+                 myregister6.next = memmap.write_data 
+            elif memmap.mem_addr == 28:
+                 myregister7.next = memmap.write_data 
+            elif memmap.mem_addr == 32:
+                 upd0.next = 1    
+                 upd1.next = 1 
+                 upd2.next = 1
+                 upd3.next = 1
+                 upd4.next = 1    
+                 upd5.next = 1 
+                 upd6.next = 1
+                 upd7.next = 1
+            elif memmap.mem_addr == 36:
+                 upd0.next = 0    
+                 upd1.next = 0 
+                 upd2.next = 0
+                 upd3.next = 0
+                 upd4.next = 0    
+                 upd5.next = 0 
+                 upd6.next = 0
+                 upd7.next = 0 
     
-    @always_seq(clock.posedge, reset=None)
-    def beh_setz1():
-        if (myregister1 == 4):     
-            if(done1 == 0): 
-                cmd_inst_data = z1
+ 
         
-    return (tick_inst, uart_inst, cmd_inst, 
-            beh_led_control, beh_led_read, beh_assign, beh_my_registers,
-            jpeg0, l2res0, sign0, jpeg1, l2res1, sign1, 
-            jpeg2, l2res2, sign2, jpeg3, l2res3, sign3, 
-            inst_sig0, inst_sig1, inst_sig2, inst_sig3,beh_setz1)
+    return instances()
 
 
 def build(args):

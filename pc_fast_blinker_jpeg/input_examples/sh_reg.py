@@ -40,19 +40,18 @@ def ShiftReg(clk, WIDTH, reset, fB, si, po):
                po.next = reg
 
    return instances()
-def toSig(clk, sig,flgs_o,lft_o,sam_o,rht_o, upd_o):
+def toSig(clk, sig,flgs_o,lft_o,sam_o,rht_o):
     lft_s = sig(9,0)
     sam_s = sig(18,9)
     rht_s = sig(27,18)
     flgs_s = sig(30,27)
-    upd_s = sig(31,30)
+    #upd_s = sig(31,30)
     @always_comb
     def rtl():
         flgs_o.next = flgs_s
         rht_o.next = rht_s
         sam_o.next = sam_s
         lft_o.next = lft_s
-        upd_o.next = upd_s
     return rtl
  
 def tb(clk, WIDTH, reset, fB, si, po, sig,flgs_o,lft_o,sam_o,rht_o,upd_o):

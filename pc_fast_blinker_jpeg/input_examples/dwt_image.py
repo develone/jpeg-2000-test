@@ -51,5 +51,5 @@ def lsr(row,col,m,flag):
     x1 = m[row][col] << 9
     x2 = m[row+1][col]
     f = flag << 27
-    upd = 1 << 30
-    return (upd+f+x0+x1+x2)
+    #upd = 0 << 30
+    return (f+x0+x1+x2)
