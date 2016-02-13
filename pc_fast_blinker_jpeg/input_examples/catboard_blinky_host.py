@@ -136,11 +136,7 @@ def catboard_blinky_host(clock, led, uart_tx, uart_rx):
     # create the packet command instance
     cmd_inst = memmap_command_bridge(glbl, fbusrx, fbustx, memmap)
 
-    @always_seq(clock.posedge, reset=None)
-    def beh_led_control():
-        memmap.done.next = not (memmap.write or memmap.read)
-        if memmap.write and memmap.mem_addr == 0x20:
-            ledreg.next = memmap.write_data
+ 
 
     @always_seq(clock.posedge, reset=None)
     def beh_led_control():
