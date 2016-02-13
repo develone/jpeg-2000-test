@@ -140,7 +140,117 @@ def test_ibh(args=None):
                     timeout -= 1
                 if rb is None:
                     raise TimeoutError
+            '''these need to be read from FPGA'''        
+            m[0][0] = 0
+            m[2][0] = 508
+            m[4][0] = 508
+            m[6][0] = 508
+            m[8][0] = 0
+            m[10][0] = 0
+            m[12][0] = 0
+            m[14][0] = 0
+            col = 0
+            row = 1
+            flag = 6
+            v0 = lsr(row,col,m,flag)
+            # send a write that should enable all five LEDs
+            pkt = CommandPacket(False, address=0x00, vals=[v0])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+            row = 3
+            flag = 6
+            v1 = lsr(row,col,m,flag)              
+            pkt = CommandPacket(False, address=0x04, vals=[v1])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
 
+            row = 5
+            flag = 6
+            v2 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x08, vals=[v2])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+            row = 7
+            flag = 6
+            v3 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x0C, vals=[v3 ])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks) 
+
+            row = 9
+            flag = 6
+            v4 = lsr(row,col,m,flag)
+            
+            pkt = CommandPacket(False, address=0x10, vals=[v4])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+            row = 11
+            flag = 6
+            v5 = lsr(row,col,m,flag)              
+            pkt = CommandPacket(False, address=0x14, vals=[v5])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+
+            row = 13
+            flag = 6
+            v6 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x18, vals=[v6])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+            row = 15
+            flag = 6
+            v7 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x1C, vals=[v7 ])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+
+            v9 = 0
+            pkt = CommandPacket(False, address=0x20, vals=[v9])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+
+
+            v9 = 0
+            pkt = CommandPacket(False, address=0x24, vals=[v9])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)  
+            timeout = 100
+            yield delay(waitticks)
+            # send a write that should enable all five LEDs
+            pkt = CommandPacket(False, address=0x40, vals=[0xFF])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks) 
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
             # the last byte should be the byte written
             #assert rb == 0xFF
 
