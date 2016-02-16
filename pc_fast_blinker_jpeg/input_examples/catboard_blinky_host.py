@@ -143,27 +143,15 @@ def catboard_blinky_host(clock, led, uart_tx, uart_rx):
         memmap.done.next = not (memmap.write or memmap.read)
         if memmap.write and memmap.mem_addr == 0x40:
             ledreg.next = memmap.write_data
-    '''
-    @always_comb
-    def beh_led_read():
-        if memmap.read and memmap.mem_addr == 0x40:
-            memmap.read_data.next = ledreg
-        else:
-            memmap.read_data.next = 0
-    '''
+ 
     @always_comb
     def set_data():
-        data_to_host0.next = z1 << 9 | z0
-        data_to_host1.next = z3 << 9 | z2
-        data_to_host2.next = z5 << 9 | z4
-        data_to_host3.next = z7 << 9 | z6
- 
-
-    @always_comb
-    def beh_led_read():
-        if (done1 == 0):
-            if memmap.read and memmap.mem_addr == 0x04:
-                memmap.read_data.next = data_to_host0
+        if (upd0 == 1):
+            data_to_host0.next = z1 << 16 | z0
+            data_to_host1.next = z3 << 16 | z2
+            data_to_host2.next = z5 << 16 | z4
+            data_to_host3.next = z7 << 16 | z6
+   
     # blink one of the LEDs
     tone = Signal(intbv(0)[8:])
 
