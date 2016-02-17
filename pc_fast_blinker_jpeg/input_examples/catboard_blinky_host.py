@@ -146,11 +146,11 @@ def catboard_blinky_host(clock, led, uart_tx, uart_rx):
  
     @always_comb
     def set_data():
-        if (upd0 == 1):
-            data_to_host0.next = z1 << 16 | z0
-            data_to_host1.next = z3 << 16 | z2
-            data_to_host2.next = z5 << 16 | z4
-            data_to_host3.next = z7 << 16 | z6
+       
+        data_to_host0.next = z1 << 16 | z0
+        data_to_host1.next = z3 << 16 | z2
+        data_to_host2.next = z5 << 16 | z4
+        data_to_host3.next = z7 << 16 | z6
    
     # blink one of the LEDs
     tone = Signal(intbv(0)[8:])
@@ -202,7 +202,18 @@ def catboard_blinky_host(clock, led, uart_tx, uart_rx):
     inst_sig5 = toSig(clock, myregister5,flgs5,lft5,sam5,rht5)
     inst_sig6 = toSig(clock, myregister6,flgs6,lft6,sam6,rht6) 
     inst_sig7 = toSig(clock, myregister7,flgs7,lft7,sam7,rht7) 
-  
+
+    @always_seq(clock.posedge, reset=None) 
+    def beh_my_ret_reg():
+        if memmap.read:
+            if (memmap.mem_addr == 36):
+                memmap.read_data.next = data_to_host0
+            if (memmap.mem_addr == 40):
+                memmap.read_data.next = data_to_host1 
+            if (memmap.mem_addr == 44):
+                memmap.read_data.next = data_to_host2
+            if (memmap.mem_addr == 48):
+                memmap.read_data.next = data_to_host3  
     @always_seq(clock.posedge, reset=None) 
     def beh_my_registers():
         if memmap.write:

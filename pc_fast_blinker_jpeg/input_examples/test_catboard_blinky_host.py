@@ -123,6 +123,27 @@ def test_ibh(args=None):
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)  
+
+            v9 = 0
+            pkt = CommandPacket(False, address=0x28, vals=[v9])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+
+            v9 = 0
+            pkt = CommandPacket(False, address=0x2C, vals=[v9])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)  
+
+            v9 = 0
+            pkt = CommandPacket(False, address=0x30, vals=[v9])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)    
             timeout = 100
             yield delay(waitticks)
             # send a write that should enable all five LEDs
