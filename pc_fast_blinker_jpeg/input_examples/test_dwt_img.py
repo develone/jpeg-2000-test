@@ -65,7 +65,17 @@ for row in range(2,18, 2):
 v = 0	
 pkt = CommandPacket(False, address=0x20, vals=[v])
 wr2file(pkt)
+#read z1 & z0 @ address 36
 pkt = CommandPacket(False, address=0x24, vals=[v])
+wr2file(pkt)
+#read z3 & z2 @ address 40
+pkt = CommandPacket(False, address=0x28, vals=[v])
+wr2file(pkt)
+#read z5 & z4 @ address 44
+pkt = CommandPacket(False, address=0x2C, vals=[v])
+wr2file(pkt)
+#read z7 & z6 @ address 48
+pkt = CommandPacket(False, address=0x30, vals=[v])
 wr2file(pkt)
 v = 255
 pkt = CommandPacket(False, address=0x40, vals=[v])
@@ -76,14 +86,14 @@ file_out = open("data_to_fpga.bin","rb")
 
 reply = []
 
-for j in range(11):
+for j in range(14):
 	data = file_out.read(12)
 	for i in range(12):
 		
 		#print (data[i])
 		ser.write(data[i])
 	reply = ser.read(12)
-	 
+	file_in.write(reply) 
 	print "this is the reply", reply
  
 file_out.close()
@@ -91,7 +101,7 @@ file_out.close()
 getting ready to read the results
 and send the odd samples
 '''
-file_out = open("data_to_fpga.bin","wb")
+file_out = open("data_to_fpga1.bin","wb")
 for row in range(1,17, 2):
 	flag = 6
 	v = lsr(row,col,m,flag)
@@ -106,7 +116,7 @@ v = 0
 pkt = CommandPacket(False, address=0x40, vals=[v])
 wr2file(pkt)
 file_out.close()		
-file_out = open("data_to_fpga.bin","rb")	
+file_out = open("data_to_fpga1.bin","rb")	
 		
 for j in range(11):
 	data = file_out.read(12)
@@ -115,5 +125,6 @@ for j in range(11):
 		#print (data[i])
 		ser.write(data[i])
 	reply = ser.read(12)
-	 
+	file_in.write(reply) 
 	print "this is the reply", reply
+
