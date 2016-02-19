@@ -15,7 +15,7 @@ from jpeg import dwt
 from signed2twoscomplement import signed2twoscomplement
 from l2r import lift2res1
 from sh_reg import toSig
-
+from pprint import pprint
 WIDTH_OUT = 36
 WIDTH = 31
 W0 = 9
@@ -265,6 +265,8 @@ def build(args):
     #brd.add_port_name(**led_port_pin_map['xula2'])
     flow = brd.get_flow(top=xula2_blinky_host)
     flow.run()
+    info = flow.get_utilization()
+    pprint(info)
 
 
 def program(args):
