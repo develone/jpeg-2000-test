@@ -1,0 +1,757 @@
+INFO:HDLCompiler:1845 - Analyzing Verilog file
+   "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xu
+   la2.v" into library work
+INFO:ProjectMgmt - Parsing design hierarchy completed successfully.
+
+Started : "Synthesize - XST".
+Running xst...
+Command Line: xst -intstyle ise -ifn "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.xst" -ofn "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.syr"
+Reading design: xula2.prj
+
+=========================================================================
+*                          HDL Parsing                                  *
+=========================================================================
+Analyzing Verilog file "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" into library work
+Parsing module <xula2>.
+
+=========================================================================
+*                            HDL Elaboration                            *
+=========================================================================
+
+Elaborating module <xula2>.
+"/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 249. $display *** AssertionError ***
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 201: Assignment to cmd_inst_mmc_inst_tocnt ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 314: Result of 9-bit expression is truncated to fit in 8-bit target.
+"/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 325. $display *** AssertionError ***
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 376: Result of 9-bit expression is truncated to fit in 8-bit target.
+"/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 401. $display *** AssertionError ***
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 257: Assignment to cmd_inst_bytemon ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 411: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 415: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 418: Assignment to done4 ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 514: Result of 32-bit expression is truncated to fit in 8-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 568: Assignment to done3 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 592: Assignment to done2 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 616: Assignment to done1 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 640: Assignment to done0 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 664: Assignment to done7 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 688: Assignment to done6 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 712: Assignment to done5 ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 764: Result of 15-bit expression is truncated to fit in 14-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 791: Result of 11-bit expression is truncated to fit in 10-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 824: Assignment to uart_inst_insttxfifo_fbus_rvld ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 845: Result of 32-bit expression is truncated to fit in 2-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 851: Result of 3-bit expression is truncated to fit in 2-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 872: Result of 4-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 873: Result of 32-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 876: Result of 32-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 877: Result of 4-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 884: Assignment to uart_inst_insttxfifo_fbus_count ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 927: Result of 5-bit expression is truncated to fit in 4-bit target.
+"/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 948. $display *** AssertionError ***
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 993: Result of 32-bit expression is truncated to fit in 2-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 999: Result of 3-bit expression is truncated to fit in 2-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 975: Assignment to uart_inst_instrxfifo_fbus_full ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1020: Result of 4-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1021: Result of 32-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1024: Result of 32-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1025: Result of 4-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1032: Assignment to uart_inst_instrxfifo_fbus_count ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1045: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1075: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1118: Result of 32-bit expression is truncated to fit in 11-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1122: Result of 12-bit expression is truncated to fit in 11-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1136: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1153: Result of 32-bit expression is truncated to fit in 8-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1155: Result of 8-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1160: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1164: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1168: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1172: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1215: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1219: Result of 10-bit expression is truncated to fit in 9-bit target.
+
+=========================================================================
+*                           HDL Synthesis                               *
+=========================================================================
+
+Synthesizing Unit <xula2>.
+    Related source file is "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v".
+    Found 1-bit register for signal <memmap_write>.
+    Found 28-bit register for signal <memmap_mem_addr>.
+    Found 32-bit register for signal <memmap_write_data>.
+    Found 8-bit register for signal <ledreg>.
+    Found 14-bit register for signal <tick_inst_mscnt>.
+    Found 1-bit register for signal <tick_inst_g2_increment>.
+    Found 10-bit register for signal <tick_inst_seccnt>.
+    Found 1-bit register for signal <glbl_tick_sec>.
+    Found 2-bit register for signal <uart_inst_instsynctx_staps>.
+    Found 1-bit register for signal <uart_inst_tx>.
+    Found 8-bit register for signal <tone>.
+    Found 4-bit register for signal <led>.
+    Found 14-bit adder for signal <tick_inst_mscnt[13]_GND_1_o_add_372_OUT> created at line 764.
+    Found 10-bit adder for signal <tick_inst_seccnt[9]_GND_1_o_add_381_OUT> created at line 791.
+    WARNING:Xst:2404 -  FFs/Latches <memmap_done<0:0>> (without init value) have a constant value of 0 in block <xula2>.
+    WARNING:Xst:2404 -  FFs/Latches <uart_inst_insttx_fbustx_rd<0:0>> (without init value) have a constant value of 0 in block <xula2>.
+    Summary:
+	inferred   2 Adder/Subtractor(s).
+	inferred 110 D-type flip-flop(s).
+Unit <xula2> synthesized.
+
+=========================================================================
+HDL Synthesis Report
+
+Macro Statistics
+# Adders/Subtractors                                   : 2
+ 10-bit adder                                          : 1
+ 14-bit adder                                          : 1
+# Registers                                            : 12
+ 1-bit register                                        : 4
+ 10-bit register                                       : 1
+ 14-bit register                                       : 1
+ 2-bit register                                        : 1
+ 28-bit register                                       : 1
+ 32-bit register                                       : 1
+ 4-bit register                                        : 1
+ 8-bit register                                        : 2
+
+=========================================================================
+
+=========================================================================
+*                       Advanced HDL Synthesis                          *
+=========================================================================
+
+WARNING:Xst:1710 - FF/Latch <memmap_mem_addr_19> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_20> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_21> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_22> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_23> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_24> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_25> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_26> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_27> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_write_data_0> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_write_data_1> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_write_data_2> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_write_data_3> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <uart_inst_tx> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <led_1> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <led_2> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <led_3> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <tone_1> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <tone_2> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <tone_3> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_write> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_0> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_1> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_2> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_3> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_4> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_5> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_6> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_7> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_8> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_9> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_10> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_11> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_12> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_13> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_14> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_15> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_16> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_17> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_18> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <uart_inst_instsynctx_staps_0> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <ledreg_0> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <ledreg_1> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <ledreg_2> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <ledreg_3> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <uart_inst_instsynctx_staps_1> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:2677 - Node <memmap_write_data_4> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_5> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_6> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_7> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_8> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_9> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_10> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_11> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_12> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_13> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_14> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_15> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_16> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_17> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_18> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_19> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_20> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_21> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_22> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_23> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_24> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_25> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_26> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_27> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_28> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_29> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_30> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_31> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <ledreg_4> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <ledreg_5> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <ledreg_6> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <ledreg_7> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <tone_4> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <tone_5> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <tone_6> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <tone_7> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2404 -  FFs/Latches <tone<7:1>> (without init value) have a constant value of 0 in block <xula2>.
+
+Synthesizing (advanced) Unit <xula2>.
+The following registers are absorbed into counter <tick_inst_mscnt>: 1 register on signal <tick_inst_mscnt>.
+The following registers are absorbed into counter <tick_inst_seccnt>: 1 register on signal <tick_inst_seccnt>.
+Unit <xula2> synthesized (advanced).
+WARNING:Xst:2677 - Node <memmap_write_data_4> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_5> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_6> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_7> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_8> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_9> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_10> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_11> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_12> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_13> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_14> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_15> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_16> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_17> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_18> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_19> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_20> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_21> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_22> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_23> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_24> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_25> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_26> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_27> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_28> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_29> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_30> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <memmap_write_data_31> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <ledreg_4> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <ledreg_5> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <ledreg_6> of sequential type is unconnected in block <xula2>.
+WARNING:Xst:2677 - Node <ledreg_7> of sequential type is unconnected in block <xula2>.
+
+=========================================================================
+Advanced HDL Synthesis Report
+
+Macro Statistics
+# Counters                                             : 2
+ 10-bit up counter                                     : 1
+ 14-bit up counter                                     : 1
+# Registers                                            : 47
+ Flip-Flops                                            : 47
+
+=========================================================================
+
+=========================================================================
+*                         Low Level Synthesis                           *
+=========================================================================
+WARNING:Xst:1710 - FF/Latch <memmap_mem_addr_12> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_13> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_14> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_15> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_16> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_17> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_18> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_19> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_20> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_21> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_22> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_23> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_24> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_25> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_26> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_27> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <uart_inst_tx> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_write_data_0> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_write_data_1> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_write_data_2> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_write_data_3> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_write> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_0> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_1> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_2> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_3> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_4> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_5> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_6> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_7> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_8> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_9> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_10> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_mem_addr_11> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <uart_inst_instsynctx_staps_0> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <ledreg_0> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <ledreg_1> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <ledreg_2> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <ledreg_3> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <led_3> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <led_2> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <led_1> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <uart_inst_instsynctx_staps_1> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+
+Optimizing unit <xula2> ...
+
+Mapping all equations...
+Building and optimizing final netlist ...
+Found area constraint ratio of 100 (+ 5) on block xula2, actual ratio is 0.
+
+Final Macro Processing ...
+
+=========================================================================
+Final Register Report
+
+Macro Statistics
+# Registers                                            : 28
+ Flip-Flops                                            : 28
+
+=========================================================================
+
+=========================================================================
+*                           Partition Report                            *
+=========================================================================
+
+Partition Implementation Status
+-------------------------------
+
+  No Partitions were found in this design.
+
+-------------------------------
+
+=========================================================================
+*                            Design Summary                             *
+=========================================================================
+
+Clock Information:
+------------------
+-----------------------------------+------------------------+-------+
+Clock Signal                       | Clock buffer(FF name)  | Load  |
+-----------------------------------+------------------------+-------+
+clock                              | BUFGP                  | 28    |
+-----------------------------------+------------------------+-------+
+
+Asynchronous Control Signals Information:
+----------------------------------------
+No asynchronous control signals found in this design
+
+Timing Summary:
+---------------
+Speed Grade: -2
+
+   Minimum period: 4.310ns (Maximum Frequency: 232.019MHz)
+   Minimum input arrival time before clock: No path found
+   Maximum output required time after clock: 4.118ns
+   Maximum combinational path delay: No path found
+
+=========================================================================
+
+Process "SINFO:TclTasksC:1850 - process run : Synthesize - XST is done.
+ynthesize - XST" completed successfully
+INFO:TclTasksC:1850 - process run : Translate is done.
+
+Started : "Translate".
+Running ngdbuild...
+Command Line: ngdbuild -intstyle ise -dd _ngo -nt timestamp -uc xula2.ucf -p xc6slx9-ftg256-2 xula2.ngc xula2.ngd
+
+Command Line: /opt/Xilinx/14.6/ISE_DS/ISE/bin/lin64/unwrapped/ngdbuild -intstyle
+ise -dd _ngo -nt timestamp -uc xula2.ucf -p xc6slx9-ftg256-2 xula2.ngc xula2.ngd
+
+Reading NGO file
+"/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2
+.ngc" ...
+Gathering constraint information from source properties...
+Done.
+
+Annotating constraints to design from ucf file "xula2.ucf" ...
+Resolving constraint associations...
+Checking Constraint Associations...
+Done...
+
+Checking expanded design ...
+
+Partition Implementation Status
+-------------------------------
+
+  No Partitions were found in this design.
+
+-------------------------------
+
+NGDBUILD Design Results Summary:
+  Number of errors:     0
+  Number of warnings:   0
+
+Writing NGD file "xula2.ngd" ...
+Total REAL time to NGDBUILD completion:  4 sec
+Total CPU time to NGDBUILD completion:   4 sec
+
+Writing NGDBUILD log file "xula2.bld"...
+
+NGDBUILD done.
+
+Process "Translate" completed successfully
+
+Started : "Map".
+Running map...
+Command Line: map -intstyle ise -p xc6slx9-ftg256-2 -w -logic_opt off -ol high -t 1 -xt 0 -register_duplication off -r 4 -global_opt off -mt off -ir off -pr off -lc off -power off -o xula2_map.ncd xula2.ngd xula2.pcf
+Using target part "6slx9ftg256-2".
+Mapping design into LUTs...
+Running directed packing...
+Running delay-based LUT packing...
+Updating timing models...
+INFO:Map:215 - The Interim Design Summary has been generated in the MAP Report
+   (.mrp).
+Running timing-driven placement...
+Total REAL time at the beginning of Placer: 4 secs 
+Total CPU  time at the beginning of Placer: 4 secs 
+
+Phase 1.1  Initial Placement Analysis
+Phase 1.1  Initial Placement Analysis (Checksum:50e4be99) REAL time: 5 secs 
+
+Phase 2.7  Design Feasibility Check
+Phase 2.7  Design Feasibility Check (Checksum:50e4be99) REAL time: 5 secs 
+
+Phase 3.31  Local Placement Optimization
+Phase 3.31  Local Placement Optimization (Checksum:50e4be99) REAL time: 5 secs 
+
+Phase 4.2  Initial Placement for Architecture Specific Features
+
+Phase 4.2  Initial Placement for Architecture Specific Features
+(Checksum:4fcf7bd2) REAL time: 7 secs 
+
+Phase 5.36  Local Placement Optimization
+Phase 5.36  Local Placement Optimization (Checksum:4fcf7bd2) REAL time: 7 secs 
+
+Phase 6.30  Global Clock Region Assignment
+Phase 6.30  Global Clock Region Assignment (Checksum:4fcf7bd2) REAL time: 7 secs 
+
+Phase 7.3  Local Placement Optimization
+Phase 7.3  Local Placement Optimization (Checksum:4fcf7bd2) REAL time: 7 secs 
+
+Phase 8.5  Local Placement Optimization
+Phase 8.5  Local Placement Optimization (Checksum:4fcf7bd2) REAL time: 7 secs 
+
+Phase 9.8  Global Placement
+...
+...
+Phase 9.8  Global Placement (Checksum:abbf0c2e) REAL time: 7 secs 
+
+Phase 10.5  Local Placement Optimization
+Phase 10.5  Local Placement Optimization (Checksum:abbf0c2e) REAL time: 7 secs 
+
+Phase 11.18  Placement Optimization
+Phase 11.18  Placement Optimization (Checksum:9e234ce) REAL time: 7 secs 
+
+Phase 12.5  Local Placement Optimization
+Phase 12.5  Local Placement Optimization (Checksum:9e234ce) REAL time: 7 secs 
+
+Phase 13.34  Placement Validation
+Phase 13.34  Placement Validation (Checksum:9e234ce) REAL time: 7 secs 
+
+Total REAL time to Placer completion: 7 secs 
+Total CPU  time to Placer completion: 7 secs 
+Running post-placement packing...
+Writing output files...
+
+Design Summary:
+Number of errors:      0
+Number of warnings:    0
+Slice Logic Utilization:
+  Number of Slice Registers:                    28 out of  11,440    1%
+    Number used as Flip Flops:                  28
+    Number used as Latches:                      0
+    Number used as Latch-thrus:                  0
+    Number used as AND/OR logics:                0
+  Number of Slice LUTs:                         55 out of   5,720    1%
+    Number used as logic:                       53 out of   5,720    1%
+      Number using O6 output only:              30
+      Number using O5 output only:              20
+      Number using O5 and O6:                    3
+      Number used as ROM:                        0
+    Number used as Memory:                       0 out of   1,440    0%
+    Number used exclusively as route-thrus:      2
+      Number with same-slice register load:      0
+      Number with same-slice carry load:         2
+      Number with other load:                    0
+
+Slice Logic Distribution:
+  Number of occupied Slices:                    18 out of   1,430    1%
+  Number of MUXCYs used:                        28 out of   2,860    1%
+  Number of LUT Flip Flop pairs used:           56
+    Number with an unused Flip Flop:            29 out of      56   51%
+    Number with an unused LUT:                   1 out of      56    1%
+    Number of fully used LUT-FF pairs:          26 out of      56   46%
+    Number of unique control sets:               1
+    Number of slice register sites lost
+      to control set restrictions:               4 out of  11,440    1%
+
+  A LUT Flip Flop pair for this architecture represents one LUT paired with
+  one Flip Flop within a slice.  A control set is a unique combination oINFO:TclTasksC:1850 - process run : Map is done.
+f
+  clock, reset, set, and enable signals for a registered element.
+  The Slice Logic Distribution report is not meaningful if the design is
+  over-mapped for a non-slice resource or if Placement fails.
+
+IO Utilization:
+  Number of bonded IOBs:                         7 out of     186    3%
+    Number of LOCed IOBs:                        7 out of       7  100%
+
+Specific Feature Utilization:
+  Number of RAMB16BWERs:                         0 out of      32    0%
+  Number of RAMB8BWERs:                          0 out of      64    0%
+  Number of BUFIO2/BUFIO2_2CLKs:                 0 out of      32    0%
+  Number of BUFIO2FB/BUFIO2FB_2CLKs:             0 out of      32    0%
+  Number of BUFG/BUFGMUXs:                       1 out of      16    6%
+    Number used as BUFGs:                        1
+    Number used as BUFGMUX:                      0
+  Number of DCM/DCM_CLKGENs:                     0 out of       4    0%
+  Number of ILOGIC2/ISERDES2s:                   0 out of     200    0%
+  Number of IODELAY2/IODRP2/IODRP2_MCBs:         0 out of     200    0%
+  Number of OLOGIC2/OSERDES2s:                   0 out of     200    0%
+  Number of BSCANs:                              0 out of       4    0%
+  Number of BUFHs:                               0 out of     128    0%
+  Number of BUFPLLs:                             0 out of       8    0%
+  Number of BUFPLL_MCBs:                         0 out of       4    0%
+  Number of DSP48A1s:                            0 out of      16    0%
+  Number of ICAPs:                               0 out of       1    0%
+  Number of MCBs:                                0 out of       2    0%
+  Number of PCILOGICSEs:                         0 out of       2    0%
+  Number of PLL_ADVs:                            0 out of       2    0%
+  Number of PMVs:                                0 out of       1    0%
+  Number of STARTUPs:                            0 out of       1    0%
+  Number of SUSPEND_SYNCs:                       0 out of       1    0%
+
+Average Fanout of Non-Clock Nets:                2.81
+
+Peak Memory Usage:  665 MB
+Total REAL time to MAP completion:  7 secs 
+Total CPU time to MAP completion:   7 secs 
+
+Mapping completed.
+See MAP report file "xula2_map.mrp" for details.
+
+Process "Map" completed successfully
+
+Started : "Place & Route".
+Running par...
+Command Line: par -w -intstyle ise -ol high -mt off xula2_map.ncd xula2.ncd xula2.pcf
+
+
+
+Constraints file: xula2.pcf.
+Loading device for application Rf_Device from file '6slx9.nph' in environment /opt/Xilinx/14.6/ISE_DS/ISE/.
+   "xula2" is an NCD, version 3.2, device xc6slx9, package ftg256, speed -2
+
+Initializing temperature to 85.000 Celsius. (default - Range: 0.000 to 85.000 Celsius)
+Initializing voltage to 1.140 Volts. (default - Range: 1.140 to 1.260 Volts)
+
+
+Device speed data version:  "PRODUCTION 1.23 2013-06-08".
+
+
+
+Device Utilization Summary:
+
+Slice Logic Utilization:
+  Number of Slice Registers:                    28 out of  11,440    1%
+    Number used as Flip Flops:                  28
+    Number used as Latches:                      0
+    Number used as Latch-thrus:                  0
+    Number used as AND/OR logics:                0
+  Number of Slice LUTs:                         55 out of   5,720    1%
+    Number used as logic:                       53 out of   5,720    1%
+      Number using O6 output only:              30
+      Number using O5 output only:              20
+      Number using O5 and O6:                    3
+      Number used as ROM:                        0
+    Number used as Memory:                       0 out of   1,440    0%
+    Number used exclusively as route-thrus:      2
+      Number with same-slice register load:      0
+      Number with same-slice carry load:         2
+      Number with other load:                    0
+
+Slice Logic Distribution:
+  Number of occupied Slices:                    18 out of   1,430    1%
+  Number of MUXCYs used:                        28 out of   2,860    1%
+  Number of LUT Flip Flop pairs used:           56
+    Number with an unused Flip Flop:            29 out of      56   51%
+    Number with an unused LUT:                   1 out of      56    1%
+    Number of fully used LUT-FF pairs:          26 out of      56   46%
+    Number of slice register sites lost
+      to control set restrictions:               0 out of  11,440    0%
+
+  A LUT Flip Flop pair for this architecture represents one LUT paired with
+  one Flip Flop within a slice.  A control set is a unique combination of
+  clock, reset, set, and enable signals for a registered element.
+  The Slice Logic Distribution report is not meaningful if the design is
+  over-mapped for a non-slice resource or if Placement fails.
+
+IO Utilization:
+  Number of bonded IOBs:                         7 out of     186    3%
+    Number of LOCed IOBs:                        7 out of       7  100%
+
+Specific Feature Utilization:
+  Number of RAMB16BWERs:                         0 out of      32    0%
+  Number of RAMB8BWERs:                          0 out of      64    0%
+  Number of BUFIO2/BUFIO2_2CLKs:                 0 out of      32    0%
+  Number of BUFIO2FB/BUFIO2FB_2CLKs:             0 out of      32    0%
+  Number of BUFG/BUFGMUXs:                       1 out of      16    6%
+    Number used as BUFGs:                        1
+    Number used as BUFGMUX:                      0
+  Number of DCM/DCM_CLKGENs:                     0 out of       4    0%
+  Number of ILOGIC2/ISERDES2s:                   0 out of     200    0%
+  Number of IODELAY2/IODRP2/IODRP2_MCBs:         0 out of     200    0%
+  Number of OLOGIC2/OSERDES2s:                   0 out of     200    0%
+  Number of BSCANs:                              0 out of       4    0%
+  Number of BUFHs:                               0 out of     128    0%
+  Number of BUFPLLs:                             0 out of       8    0%
+  Number of BUFPLL_MCBs:                         0 out of       4    0%
+  Number of DSP48A1s:                            0 out of      16    0%
+  Number of ICAPs:                               0 out of       1    0%
+  Number of MCBs:                                0 out of       2    0%
+  Number of PCILOGICSEs:                         0 out of       2    0%
+  Number of PLL_ADVs:                            0 out of       2    0%
+  Number of PMVs:                                0 out of       1    0%
+  Number of STARTUPs:                            0 out of       1    0%
+  Number of SUSPEND_SYNCs:                       0 out of       1    0%
+
+
+Overall effort level (-ol):   High 
+Router effort level (-rl):    High 
+
+Starting initial Timing Analysis.  REAL time: 3 secs 
+Finished initial Timing Analysis.  REAL time: 3 secs 
+
+WARNING:Par:288 - The signal uart_rx_IBUF has no load.  PAR will not attempt to route this signal.
+Starting Router
+
+
+Phase  1  : 218 unrouted;      REAL time: 4 secs 
+
+Phase  2  : 183 unrouted;      REAL time: 4 secs 
+
+Phase  3  : 46 unrouted;      REAL time: 4 secs 
+
+Phase  4  : 46 unrouted; (Setup:0, Hold:0, Component Switching Limit:0)     REAL time: 4 secs 
+
+Updating file: xula2.ncd with current fully routed design.
+
+Phase  5  : 0 unrouted; (Setup:0, Hold:0, Component Switching Limit:0)     REAL time: 4 secs 
+
+Phase  6  : 0 unrouted; (Setup:0, Hold:0, Component Switching Limit:0)     REAL time: 4 secs 
+
+Phase  7  : 0 unrouted; (Setup:0, Hold:0, Component Switching Limit:0)     REAL time: 4 secs 
+
+Phase  8  : 0 unrouted; (Setup:0, Hold:0, Component Switching Limit:0)     REAL time: 4 secs 
+
+Phase  9  : 0 unrouted; (Setup:0, Hold:0, Component Switching Limit:0)     REAL time: 4 secs 
+
+Phase 10  : 0 unrouted; (Setup:0, Hold:0, Component Switching Limit:0)     REAL time: 4 secs 
+Total REAL time to Router completion: 4 secs 
+Total CPU time to Router completion: 4 secs 
+
+Partition Implementation Status
+-------------------------------
+
+  No Partitions were found in this design.
+
+-------------------------------
+
+Generating "PAR" statistics.
+
+**************************
+Generating Clock Report
+**************************
+
++---------------------+--------------+------+------+------------+-------------+
+|        Clock Net    |   Resource   |Locked|Fanout|Net Skew(ns)|Max Delay(ns)|
++---------------------+--------------+------+------+------------+-------------+
+|         clock_BUFGP |  BUFGMUX_X2Y2| No   |   11 |  0.090     |  1.485      |
++---------------------+--------------+------+------+------------+-------------+
+
+* Net Skew is the difference between the minimum and maximum routing
+only delays for the net. Note this is different from Clock Skew which
+is reported in TRCE timing report. Clock Skew is the difference between
+the minimum and maximum path delays which includes logic delays.
+
+* The fanout is the number of component pins not the individual BEL loads,
+for example SLICE loads not FF loads.
+
+Timing Score: 0 (Setup: 0, Hold: 0, Component Switching Limit: 0)
+
+Asterisk (*) preceding a constraint indicates it was not met.
+   This may be due to a setup or hold violation.
+
+----------------------------------------------------------------------------------------------------------
+  Constraint                                |    Check    | Worst Case |  Best Case | Timing |   Timing   
+                                            |             |    Slack   | Achievable | Errors |    Score   
+----------------------------------------------------------------------------------------------------------
+  TS_clock = PERIOD TIMEGRP "clock" 83.3333 | SETUP       |    79.788ns|     3.545ns|       0|           0
+  333 ns HIGH 50%                           | HOLD        |     0.444ns|            |       0|           0
+----------------------------------------------------------------------------------------------------------
+
+
+All constraints were met.
+
+
+Generating Pad Report.
+
+All signals are completely routed.
+
+WARNING:Par:283 - There are 1 loadless signals in this design. This design will cause Bitgen to issue DRC warnings.
+
+Total REAL time to PAR completion: 5 secs 
+Total CPU time to PAR completion: 4 secs 
+
+Peak Memory Usage:  617 MB
+
+Placer: Placement generated during map.
+Routing: Completed - No errors found.
+Timing: Completed - No errors found.
+
+Number of error messages: 0
+Number of warning messages: 3
+Number of info messages: 0
+
+Writing design to file xula2.ncd
+
+
+
+PAR done!
+
+Process "Place & Route" completed successfully
+
+Started : "Generate Post-Place & Route Static Timing".
+Running trce...
+Command Line: trce -intstylINFO:TclTasksC:1850 - process run : Place & Route is done.
+e ise -v 3 -s 2 -n 3 -fastpaths -xml xula2.twx xula2.ncd -o xula2.twr xula2.pcf -ucf xula2.ucf
+Loading device for application Rf_Device from file '6slx9.nph' in environment
+/opt/Xilinx/14.6/ISE_DS/ISE/.
+   "xula2" is an NCD, version 3.2, device xc6slx9, package ftg256, speed -2
+
+Analysis completed Fri Feb 19 10:31:03 2016
+--------------------------------------------------------------------------------
+
+Generating Report ...
+
+Number of warnings: 0
+Total time: 3 secs 
+
+Process "Generate Post-Place & Route Static Timing" completed successfully
+INFO:TclTasksC:1850 - process run : Generate Programming File is done.
+
+Started : "Generate Programming File".
+Running bitgen...
+Command Line: bitgen -intstyle ise -f xula2.ut xula2.ncd
+
+Process "Generate Programming File" completed successfully
