@@ -5,7 +5,7 @@ import subprocess
 from myhdl import *
 
 from rhea.cores.uart import uartlite
-from rhea.cores.memmap import memmap_command_bridge
+from rhea.cores.memmap import command_bridge
 from rhea.cores.misc import glbl_timer_ticks
 from rhea.system import Global, Clock, Reset
 from rhea.system import Barebone
@@ -109,7 +109,7 @@ data_to_host0 = Signal(intbv(0)[32:])
 data_to_host1 = Signal(intbv(0)[32:])
 data_to_host2 = Signal(intbv(0)[32:])
 data_to_host3 = Signal(intbv(0)[32:])
-def catboard_blinky_host(clock, led, uart_tx, uart_rx):
+def catboard_blinky_host(clock, reset, led, uart_tx, uart_rx):
     """
     The LEDs are controlled from the RPi over the UART
     to the FPGA.
@@ -134,7 +134,7 @@ def catboard_blinky_host(clock, led, uart_tx, uart_rx):
                          serial_out=uart_tx)
 
     # create the packet command instance
-    cmd_inst = memmap_command_bridge(glbl, fbusrx, fbustx, memmap)
+    cmd_inst = command_bridge(glbl, fbusrx, fbustx, memmap)
 
  
 
@@ -261,6 +261,7 @@ def build(args):
     brd = get_board('catboard')
     brd.add_port_name('uart_rx', 'bcm14_txd')                           
     brd.add_port_name('uart_tx', 'bcm15_rxd')
+    brd.add_reset('reset', active=0, async=True, pins=('N11',))
     flow = brd.get_flow(top=catboard_blinky_host)
     flow.run()
 
