@@ -1,11 +1,16 @@
 #
-NET "led<0>" LOC = "R7" ;
-NET "led<1>" LOC = "H1" ;
-NET "led<2>" LOC = "R2" ;
-NET "led<3>" LOC = "T4" ;
+NET "reset" LOC = "H2" ;
+NET "bcm15_rxd" LOC = "B16" ;
+NET "led<0>" LOC = "T4" ;
+NET "led<1>" LOC = "R1" ;
+NET "led<2>" LOC = "M1" ;
+NET "led<3>" LOC = "J4" ;
+NET "led<4>" LOC = "R2" ;
+NET "led<5>" LOC = "M2" ;
+NET "led<6>" LOC = "K3" ;
+NET "led<7>" LOC = "H1" ;
 NET "clock" LOC = "A9" ;
-NET "uart_tx" LOC = "B16" ;
-NET "uart_rx" LOC = "B15" ;
+NET "bcm14_txd" LOC = "B15" ;
 #
 NET "clock" TNM_NET = "clock"; 
 TIMESPEC "TS_clock" = PERIOD "clock" 83.3333333 ns HIGH 50%;

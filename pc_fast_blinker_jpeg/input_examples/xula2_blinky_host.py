@@ -5,7 +5,7 @@ import subprocess
 from myhdl import *
 
 from rhea.cores.uart import uartlite
-from rhea.cores.memmap import memmap_command_bridge
+from rhea.cores.memmap import command_bridge
 from rhea.cores.misc import glbl_timer_ticks
 from rhea.system import Global, Clock, Reset
 from rhea.system import Barebone
@@ -109,7 +109,7 @@ data_to_host0 = Signal(intbv(0)[32:])
 data_to_host1 = Signal(intbv(0)[32:])
 data_to_host2 = Signal(intbv(0)[32:])
 data_to_host3 = Signal(intbv(0)[32:])
-def xula2_blinky_host(clock, led, uart_tx, uart_rx):
+def xula2_blinky_host(clock, reset, led, bcm14_txd, bcm15_rxd):
     """
     The LEDs are controlled from the RPi over the UART
     to the FPGA.
@@ -130,11 +130,11 @@ def xula2_blinky_host(clock, led, uart_tx, uart_rx):
 
     # create the UART instance.
     uart_inst = uartlite(glbl, fbustx, fbusrx,
-                         serial_in=uart_rx,
-                         serial_out=uart_tx)
+                         serial_in=bcm14_txd,
+                         serial_out=bcm15_rxd)
 
     # create the packet command instance
-    cmd_inst = memmap_command_bridge(glbl, fbusrx, fbustx, memmap)
+    cmd_inst = command_bridge(glbl, fbusrx, fbustx, memmap)
 
  
 
@@ -258,11 +258,12 @@ def xula2_blinky_host(clock, led, uart_tx, uart_rx):
 
 
 def build(args):
-    brd = get_board('xula2')
+    brd = get_board('xula2_stickit_mb')
     brd.device = 'XC6SLX9'
-    brd.add_port_name('uart_rx', 'bcm14_txd')                          
-    brd.add_port_name('uart_tx', 'bcm15_rxd')
-    #brd.add_port_name(**led_port_pin_map['xula2'])
+ 
+    brd.add_port_name('led', 'pm2', slice(0, 8))
+    brd.add_reset('reset', active=0, async=True, pins=('H2',))
+     
     flow = brd.get_flow(top=xula2_blinky_host)
     flow.run()
     info = flow.get_utilization()
@@ -289,8 +290,8 @@ def test_instance():
     xula2_blinky_host(
         clock=Clock(0, frequency=12e6),
         led=Signal(intbv(0)[8:]), 
-        uart_tx=Signal(bool(0)),
-        uart_rx=Signal(bool(0)), )
+        bcm14_txd=Signal(bool(0)),
+        bcm15_rxd=Signal(bool(0)), )
 
     
 def main():
