@@ -1,5 +1,4 @@
 #
-NET "reset" LOC = "H2" ;
 NET "bcm15_rxd" LOC = "B16" ;
 NET "led<0>" LOC = "T4" ;
 NET "led<1>" LOC = "R1" ;
