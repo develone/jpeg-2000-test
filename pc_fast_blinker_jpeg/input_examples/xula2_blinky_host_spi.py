@@ -22,7 +22,7 @@ from rhea.cores.spi import SPIBus
 from rhea.system import Wishbone
 
 
-def xula2_blinky_host(clock, led, bcm14_txd, bcm15_rxd):
+def xula2_blinky_host_spi(clock, led, bcm14_txd, bcm15_rxd):
     """
     The LEDs are controlled from the RPi over the UART
     to the FPGA.
@@ -185,13 +185,20 @@ def xula2_blinky_host(clock, led, bcm14_txd, bcm15_rxd):
  
     base_address = ba = 0x400
     regbus = Wishbone(glbl)
-    map = regbus.interconnect()
+    #map = regbus.interconnect()
     #rf = regbus.regfiles['SPI_000']
     spibus = SPIBus()    
     fiforx, fifotx = FIFOBus(size=16), FIFOBus(size=16) 
     spi_control = spi_controller(glbl, regbus, 
                           fiforx, fifotx, spibus,
-                          base_address=base_address)                                            
+                          base_address=base_address)
+    interconnect_inst = regbus.interconnect()                       
+    def beh_spi_loop():
+		spibus.miso.next = spibus.mosi
+
+		fifotx.data.next = fiforx.data
+		fifotx.wr.next = not fiforx.empty
+		fiforx.rd.next = True                                                                     
     return instances()
 
 def build(args):
@@ -199,7 +206,7 @@ def build(args):
     brd.device = 'XC6SLX9' 
     brd.add_port_name('led', 'pm2', slice(0, 8))
     #brd.add_reset('reset', active=0, async=True, pins=('H2',))
-    flow = brd.get_flow(top=xula2_blinky_host)
+    flow = brd.get_flow(top=xula2_blinky_host_spi)
     flow.run()
     info = flow.get_utilization()
     pprint(info)
@@ -224,17 +231,43 @@ def cliparse():
 def test_instance():    
     # check for basic syntax errors, use test_ice* to test
     # functionality
-    xula2_blinky_host(
-        clock=Clock(0, frequency=50e6),
+    reset = ResetSignal(0, active=0,async=True)
+    clock = Signal(bool(0))
+    glbl = Global(clock, reset)
+    
+    inst_1 = xula2_blinky_host_spi(
+        clock=Clock(0, frequency=12e6),
         led=Signal(intbv(0)[8:]), 
-        uart_tx=Signal(bool(0)),
-        uart_rx=Signal(bool(0)), )
-
+        bcm14_txd=Signal(bool(0)),
+        bcm15_rxd=Signal(bool(0)), )
+       
+    base_address = ba = 0x400
+    regbus = Wishbone(glbl)
+ 
+    spibus = SPIBus()    
+    fiforx, fifotx = FIFOBus(size=16), FIFOBus(size=16) 
+    spi_control = spi_controller(glbl, regbus, 
+                          fiforx, fifotx, spibus,
+                          base_address=base_address)
+    interconnect_inst = regbus.interconnect()
+    @always(delay(10))
+    def clkgen():
+        clock.next = not clock
+    @instance
+    def stimulus():
+		for i in range(1000):
+			yield clock.posedge
+		raise StopSimulation	
+    return instances()
     
 def main():
     args = cliparse()
     if args.test:
-        test_instance()
+        tb_fsm = traceSignals(test_instance)
+        toVerilog(test_instance)
+        #sim = Simulation(tb_fsm)
+        #sim.run()
+       
         
     if args.build:
         build(args)
