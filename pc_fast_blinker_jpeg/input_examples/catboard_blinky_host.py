@@ -15,7 +15,7 @@ from jpeg import dwt
 from signed2twoscomplement import signed2twoscomplement
 from l2r import lift2res1
 from sh_reg import toSig
-from uart_sig import *
+from jpeg_sig import *
  
 def catboard_blinky_host(clock, reset, led, uart_tx, uart_rx):
     """
@@ -111,17 +111,68 @@ def catboard_blinky_host(clock, reset, led, uart_tx, uart_rx):
     inst_sig6 = toSig(clock, myregister6,flgs6,lft6,sam6,rht6) 
     inst_sig7 = toSig(clock, myregister7,flgs7,lft7,sam7,rht7) 
 
+    jpeg8 = dwt(flgs8, upd8, lft8, sam8, rht8, lift8, done8, clock)
+    l2res8 = lift2res1(lift8,res8)
+    sign8 = signed2twoscomplement(res8, z8)
+
+    jpeg9 = dwt(flgs9, upd9, lft9, sam9, rht9, lift9, done9, clock)
+    l2res9 = lift2res1(lift9,res9)
+    sign9 = signed2twoscomplement(res9, z9)
+
+    jpeg10= dwt(flgs10, upd10, lft10, sam10, rht10, lift10, done10, clock)
+    l2res10= lift2res1(lift10,res10)
+    sign10= signed2twoscomplement(res10, z10)
+
+    jpeg11 = dwt(flgs11, upd11, lft11, sam11, rht11, lift11, done11, clock)
+    l2res11 = lift2res1(lift11,res11)
+    sign11 = signed2twoscomplement(res11, z11)
+
+    jpeg12 = dwt(flgs12, upd12, lft12, sam12, rht12, lift12, done12, clock)
+    l2res12 = lift2res1(lift12,res12)
+    sign12 = signed2twoscomplement(res12, z12)
+
+    jpeg13 = dwt(flgs13, upd13, lft13, sam13, rht13, lift13, done13, clock)
+    l2res13 = lift2res1(lift13,res13)
+    sign13 = signed2twoscomplement(res13, z13)
+
+    jpeg14 = dwt(flgs14, upd14, lft14, sam14, rht14, lift14, done14, clock)
+    l2res14 = lift2res1(lift14,res14)
+    sign14 = signed2twoscomplement(res14, z14)
+
+    jpeg15 = dwt(flgs15, upd15, lft15, sam15, rht15, lift15, done15, clock)
+    l2res15 = lift2res1(lift15,res15)
+    sign15 = signed2twoscomplement(res15, z15)
+    
+ 
+
+    inst_sig8 = toSig(clock, myregister8,flgs8,lft8,sam8,rht8) 
+    inst_sig9 = toSig(clock, myregister9,flgs9,lft9,sam9,rht9)
+    inst_sig10 = toSig(clock, myregister10,flgs10,lft10,sam10,rht10) 
+    inst_sig11 = toSig(clock, myregister11,flgs11,lft11,sam11,rht11)
+    
+    inst_sig12 = toSig(clock, myregister12,flgs12,lft12,sam12,rht12) 
+    inst_sig13 = toSig(clock, myregister13,flgs13,lft13,sam13,rht13)
+    inst_sig14 = toSig(clock, myregister14,flgs14,lft14,sam14,rht14) 
+    inst_sig15 = toSig(clock,myregister15,flgs15,lft15,sam15,rht15) 
     @always(clock.posedge) 
     def beh_my_ret_reg():
         if memmap.read:
-            if (memmap.mem_addr == 36):
+            if (memmap.mem_addr == 70):
                 memmap.read_data.next = data_to_host0
-            if (memmap.mem_addr == 40):
+            if (memmap.mem_addr == 74):
                 memmap.read_data.next = data_to_host1 
-            if (memmap.mem_addr == 44):
+            if (memmap.mem_addr == 78):
                 memmap.read_data.next = data_to_host2
-            if (memmap.mem_addr == 48):
-                memmap.read_data.next = data_to_host3  
+            if (memmap.mem_addr == 82):
+                memmap.read_data.next = data_to_host3 
+            if (memmap.mem_addr == 86):
+                memmap.read_data.next = data_to_host4
+            if (memmap.mem_addr == 90):
+                memmap.read_data.next = data_to_host5 
+            if (memmap.mem_addr == 94):
+                memmap.read_data.next = data_to_host6
+            if (memmap.mem_addr == 98):
+                memmap.read_data.next = data_to_host7 
     @always(clock.posedge) 
     def beh_my_registers():
         if memmap.write:
@@ -141,7 +192,23 @@ def catboard_blinky_host(clock, reset, led, uart_tx, uart_rx):
                  myregister6.next = memmap.write_data 
             elif memmap.mem_addr == 28:
                  myregister7.next = memmap.write_data 
-            elif memmap.mem_addr == 32:
+            if memmap.mem_addr == 32:
+                myregister8.next = memmap.write_data
+            elif memmap.mem_addr == 36:
+                myregister9.next = memmap.write_data
+            elif memmap.mem_addr == 40:
+                 myregister10.next = memmap.write_data 
+            elif memmap.mem_addr == 44:
+                 myregister11.next = memmap.write_data 
+            if memmap.mem_addr == 48:
+                myregister12.next = memmap.write_data
+            elif memmap.mem_addr == 52:
+                myregister13.next = memmap.write_data
+            elif memmap.mem_addr == 56:
+                 myregister14.next = memmap.write_data 
+            elif memmap.mem_addr == 60:
+                 myregister15.next = memmap.write_data                 
+            elif memmap.mem_addr == 64:
                  upd0.next = 1    
                  upd1.next = 1 
                  upd2.next = 1
@@ -150,6 +217,14 @@ def catboard_blinky_host(clock, reset, led, uart_tx, uart_rx):
                  upd5.next = 1 
                  upd6.next = 1
                  upd7.next = 1
+                 upd8.next = 1    
+                 upd9.next = 1 
+                 upd10.next = 1
+                 upd11.next = 1
+                 upd12.next = 1    
+                 upd13.next = 1 
+                 upd14.next = 1
+                 upd15.next = 1         
             elif memmap.mem_addr == 36:
                  upd0.next = 0    
                  upd1.next = 0 
@@ -159,7 +234,14 @@ def catboard_blinky_host(clock, reset, led, uart_tx, uart_rx):
                  upd5.next = 0 
                  upd6.next = 0
                  upd7.next = 0 
-    
+                 upd8.next = 0    
+                 upd9.next = 0 
+                 upd10.next = 0
+                 upd11.next = 0
+                 upd12.next = 0    
+                 upd13.next = 0 
+                 upd14.next = 0
+                 upd15.next = 0           
  
         
     return instances()

@@ -53,32 +53,69 @@ def pkt_get(row,v):
 		pkt = CommandPacket(False, address=0x1C, vals=[v])
 		wr2file(pkt)
 
+	if (row == 18) or (row ==17):
+		pkt = CommandPacket(False, address=0x20, vals=[v])
+		wr2file(pkt)
+	elif (row == 20) or (row ==19):
+		pkt = CommandPacket(False, address=0x24, vals=[v])
+		wr2file(pkt)
+	elif (row == 22) or (row ==21):
+		pkt = CommandPacket(False, address=0x28, vals=[v])
+		wr2file(pkt)
+	elif (row == 24) or (row ==23):
+		pkt = CommandPacket(False, address=0x2C, vals=[v])
+		wr2file(pkt)
+	elif (row == 26) or (row ==25):
+		pkt = CommandPacket(False, address=0x30, vals=[v])
+		wr2file(pkt)
+	elif (row == 28) or (row ==27):
+		pkt = CommandPacket(False, address=0x34, vals=[v])
+		wr2file(pkt)
+	elif (row == 30) or (row ==29):
+		pkt = CommandPacket(False, address=0x38, vals=[v])
+		wr2file(pkt)
+	elif (row == 32) or (row ==31):
+		pkt = CommandPacket(False, address=0x3c, vals=[v])
+		wr2file(pkt)
 ser = serial.Serial ("/dev/ttyAMA0")    
 ser.baudrate = 115200 
 
 col = 0
-for row in range(2,18, 2):
+for row in range(2,34, 2):
 	flag = 7
 	v = lsr(row,col,m,flag)
 	print row, v, hex(v)
 	pkt_get(row,v)
 v = 0	
-pkt = CommandPacket(False, address=0x20, vals=[v])
-wr2file(pkt)
-#read z1 & z0 @ address 36
-pkt = CommandPacket(False, address=0x24, vals=[v])
-wr2file(pkt)
-#read z3 & z2 @ address 40
-pkt = CommandPacket(False, address=0x28, vals=[v])
-wr2file(pkt)
-#read z5 & z4 @ address 44
-pkt = CommandPacket(False, address=0x2C, vals=[v])
-wr2file(pkt)
-#read z7 & z6 @ address 48
-pkt = CommandPacket(False, address=0x30, vals=[v])
-wr2file(pkt)
-v = 255
 pkt = CommandPacket(False, address=0x40, vals=[v])
+wr2file(pkt)
+#read z1 & z0 @ address 68
+pkt = CommandPacket(False, address=0x44, vals=[v])
+wr2file(pkt)
+#read z3 & z2 @ address 72
+pkt = CommandPacket(False, address=0x48, vals=[v])
+wr2file(pkt)
+#read z5 & z4 @ address 76
+pkt = CommandPacket(False, address=0x4C, vals=[v])
+wr2file(pkt)
+#read z7 & z6 @ address 80
+pkt = CommandPacket(False, address=0x50, vals=[v])
+wr2file(pkt)
+#read z9 & z8 @ address 84
+pkt = CommandPacket(False, address=0x54, vals=[v])
+wr2file(pkt)
+#read z11 & z10 @ address 88
+pkt = CommandPacket(False, address=0x58, vals=[v])
+wr2file(pkt)
+#read z13 & z12 @ address 92
+pkt = CommandPacket(False, address=0x5C, vals=[v])
+wr2file(pkt)
+#read z15 & z14 @ address 96
+pkt = CommandPacket(False, address=0x60, vals=[v])
+wr2file(pkt)
+
+v = 255
+pkt = CommandPacket(False, address=0x80, vals=[v])
 wr2file(pkt)		
 
 file_out.close()
@@ -86,7 +123,7 @@ file_out = open("data_to_fpga.bin","rb")
 
 reply = []
 
-for j in range(14):
+for j in range(26):
 	data = file_out.read(12)
 	for i in range(12):
 		
