@@ -49,7 +49,7 @@ def catboard_blinky_host(clock, reset, led, uart_tx, uart_rx):
     @always(clock.posedge)
     def beh_led_control():
         memmap.done.next = not (memmap.write or memmap.read)
-        if memmap.write and memmap.mem_addr == 0x40:
+        if memmap.write and memmap.mem_addr == 0x80:
             ledreg.next = memmap.write_data
  
     @always_comb
@@ -59,7 +59,10 @@ def catboard_blinky_host(clock, reset, led, uart_tx, uart_rx):
         data_to_host1.next = z3 << 16 | z2
         data_to_host2.next = z5 << 16 | z4
         data_to_host3.next = z7 << 16 | z6
-   
+        data_to_host4.next = z9 << 16 | z8
+        data_to_host5.next = z11 << 16 | z10
+        data_to_host6.next = z13 << 16 | z12
+        data_to_host7.next = z14 << 16 | z14                 
     # blink one of the LEDs
     tone = Signal(intbv(0)[8:])
 
