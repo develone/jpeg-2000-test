@@ -72,6 +72,94 @@ def catboard_blinky_host(clock, reset, led, uart_tx, uart_rx):
             tone.next = (~tone) & 0x1
         led.next = ledreg | tone[5:] 
     
+    @always(clock.posedge) 
+    def beh_my_ret_reg():
+        if memmap.read:
+            if (memmap.mem_addr == 72):
+                memmap.read_data.next = data_to_host0
+            if (memmap.mem_addr == 76):
+                memmap.read_data.next = data_to_host1 
+            if (memmap.mem_addr == 80):
+                memmap.read_data.next = data_to_host2
+            if (memmap.mem_addr == 84):
+                memmap.read_data.next = data_to_host3 
+            if (memmap.mem_addr == 88):
+                memmap.read_data.next = data_to_host4
+            if (memmap.mem_addr == 92):
+                memmap.read_data.next = data_to_host5 
+            if (memmap.mem_addr == 96):
+                memmap.read_data.next = data_to_host6
+            if (memmap.mem_addr == 100):
+                memmap.read_data.next = data_to_host7
+    @always(clock.posedge) 
+    def beh_my_registers():
+        if memmap.write:
+            if memmap.mem_addr == 0:
+                myregister0.next = memmap.write_data
+            elif memmap.mem_addr == 4:
+                myregister1.next = memmap.write_data
+            elif memmap.mem_addr == 8:
+                 myregister2.next = memmap.write_data 
+            elif memmap.mem_addr == 12:
+                 myregister3.next = memmap.write_data 
+            if memmap.mem_addr == 16:
+                myregister4.next = memmap.write_data
+            elif memmap.mem_addr == 20:
+                myregister5.next = memmap.write_data
+            elif memmap.mem_addr == 24:
+                 myregister6.next = memmap.write_data 
+            elif memmap.mem_addr == 28:
+                 myregister7.next = memmap.write_data 
+            if memmap.mem_addr == 32:
+                myregister8.next = memmap.write_data
+            elif memmap.mem_addr == 36:
+                myregister9.next = memmap.write_data
+            elif memmap.mem_addr == 40:
+                 myregister10.next = memmap.write_data 
+            elif memmap.mem_addr == 44:
+                 myregister11.next = memmap.write_data 
+            if memmap.mem_addr == 48:
+                myregister12.next = memmap.write_data
+            elif memmap.mem_addr == 52:
+                myregister13.next = memmap.write_data
+            elif memmap.mem_addr == 56:
+                 myregister14.next = memmap.write_data 
+            elif memmap.mem_addr == 60:
+                 myregister15.next = memmap.write_data                 
+            elif memmap.mem_addr == 64:
+                 upd0.next = 1    
+                 upd1.next = 1 
+                 upd2.next = 1
+                 upd3.next = 1
+                 upd4.next = 1    
+                 upd5.next = 1 
+                 upd6.next = 1
+                 upd7.next = 1
+                 upd8.next = 1    
+                 upd9.next = 1 
+                 upd10.next = 1
+                 upd11.next = 1
+                 upd12.next = 1    
+                 upd13.next = 1 
+                 upd14.next = 1
+                 upd15.next = 1         
+            elif memmap.mem_addr == 68:
+                 upd0.next = 0    
+                 upd1.next = 0 
+                 upd2.next = 0
+                 upd3.next = 0
+                 upd4.next = 0    
+                 upd5.next = 0 
+                 upd6.next = 0
+                 upd7.next = 0 
+                 upd8.next = 0    
+                 upd9.next = 0 
+                 upd10.next = 0
+                 upd11.next = 0
+                 upd12.next = 0    
+                 upd13.next = 0 
+                 upd14.next = 0
+                 upd15.next = 0           
     jpeg0 = dwt(flgs0, upd0, lft0, sam0, rht0, lift0, done0, clock)
     l2res0 = lift2res1(lift0,res0)
     sign0 = signed2twoscomplement(res0, z0)
@@ -156,96 +244,7 @@ def catboard_blinky_host(clock, reset, led, uart_tx, uart_rx):
     inst_sig12 = toSig(clock, myregister12,flgs12,lft12,sam12,rht12) 
     inst_sig13 = toSig(clock, myregister13,flgs13,lft13,sam13,rht13)
     inst_sig14 = toSig(clock, myregister14,flgs14,lft14,sam14,rht14) 
-    inst_sig15 = toSig(clock,myregister15,flgs15,lft15,sam15,rht15) 
-    @always(clock.posedge) 
-    def beh_my_ret_reg():
-        if memmap.read:
-            if (memmap.mem_addr == 70):
-                memmap.read_data.next = data_to_host0
-            if (memmap.mem_addr == 74):
-                memmap.read_data.next = data_to_host1 
-            if (memmap.mem_addr == 78):
-                memmap.read_data.next = data_to_host2
-            if (memmap.mem_addr == 82):
-                memmap.read_data.next = data_to_host3 
-            if (memmap.mem_addr == 86):
-                memmap.read_data.next = data_to_host4
-            if (memmap.mem_addr == 90):
-                memmap.read_data.next = data_to_host5 
-            if (memmap.mem_addr == 94):
-                memmap.read_data.next = data_to_host6
-            if (memmap.mem_addr == 98):
-                memmap.read_data.next = data_to_host7 
-    @always(clock.posedge) 
-    def beh_my_registers():
-        if memmap.write:
-            if memmap.mem_addr == 0:
-                myregister0.next = memmap.write_data
-            elif memmap.mem_addr == 4:
-                myregister1.next = memmap.write_data
-            elif memmap.mem_addr == 8:
-                 myregister2.next = memmap.write_data 
-            elif memmap.mem_addr == 12:
-                 myregister3.next = memmap.write_data 
-            if memmap.mem_addr == 16:
-                myregister4.next = memmap.write_data
-            elif memmap.mem_addr == 20:
-                myregister5.next = memmap.write_data
-            elif memmap.mem_addr == 24:
-                 myregister6.next = memmap.write_data 
-            elif memmap.mem_addr == 28:
-                 myregister7.next = memmap.write_data 
-            if memmap.mem_addr == 32:
-                myregister8.next = memmap.write_data
-            elif memmap.mem_addr == 36:
-                myregister9.next = memmap.write_data
-            elif memmap.mem_addr == 40:
-                 myregister10.next = memmap.write_data 
-            elif memmap.mem_addr == 44:
-                 myregister11.next = memmap.write_data 
-            if memmap.mem_addr == 48:
-                myregister12.next = memmap.write_data
-            elif memmap.mem_addr == 52:
-                myregister13.next = memmap.write_data
-            elif memmap.mem_addr == 56:
-                 myregister14.next = memmap.write_data 
-            elif memmap.mem_addr == 60:
-                 myregister15.next = memmap.write_data                 
-            elif memmap.mem_addr == 64:
-                 upd0.next = 1    
-                 upd1.next = 1 
-                 upd2.next = 1
-                 upd3.next = 1
-                 upd4.next = 1    
-                 upd5.next = 1 
-                 upd6.next = 1
-                 upd7.next = 1
-                 upd8.next = 1    
-                 upd9.next = 1 
-                 upd10.next = 1
-                 upd11.next = 1
-                 upd12.next = 1    
-                 upd13.next = 1 
-                 upd14.next = 1
-                 upd15.next = 1         
-            elif memmap.mem_addr == 36:
-                 upd0.next = 0    
-                 upd1.next = 0 
-                 upd2.next = 0
-                 upd3.next = 0
-                 upd4.next = 0    
-                 upd5.next = 0 
-                 upd6.next = 0
-                 upd7.next = 0 
-                 upd8.next = 0    
-                 upd9.next = 0 
-                 upd10.next = 0
-                 upd11.next = 0
-                 upd12.next = 0    
-                 upd13.next = 0 
-                 upd14.next = 0
-                 upd15.next = 0           
- 
+    inst_sig15 = toSig(clock,myregister15,flgs15,lft15,sam15,rht15)  
         
     return instances()
 

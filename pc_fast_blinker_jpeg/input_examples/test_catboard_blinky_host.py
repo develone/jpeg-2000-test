@@ -12,7 +12,7 @@ from rhea.utils.command_packet import PACKET_LENGTH
 
 from catboard_blinky_host import catboard_blinky_host
 from dwt_image import (seq_to_img, de_interleave, lower_upper, rd_img, lsr)
-
+reset = ResetSignal(0, active=0,async=True)
 def test_ibh(args=None):
     args = tb_default_args(args)
     numbytes = 13
@@ -32,7 +32,7 @@ def test_ibh(args=None):
     def bench_ibh():
         tbclk = clock.gen()
         tbmdl = uartmdl.process(glbl, uart_tx, uart_rx)
-        tbdut = catboard_blinky_host(clock, led, 
+        tbdut = catboard_blinky_host(clock, reset, led, 
                                      uart_tx, uart_rx)
 
         @instance
@@ -109,8 +109,77 @@ def test_ibh(args=None):
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
 
+            row = 18
+            flag = 7
+            v0 = lsr(row,col,m,flag)
+            # send a write that should enable all five LEDs
+            pkt = CommandPacket(False, address=0x20, vals=[v0])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+            row = 20
+            flag = 7
+            v1 = lsr(row,col,m,flag)              
+            pkt = CommandPacket(False, address=0x24, vals=[v1])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+
+            row = 22
+            flag = 7
+            v2 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x28, vals=[v2])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+            row = 24
+            flag = 7
+            v3 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x2C, vals=[v3 ])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks) 
+
+            row = 26
+            flag = 7
+            v4 = lsr(row,col,m,flag)
+            
+            pkt = CommandPacket(False, address=0x30, vals=[v4])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+            row = 28
+            flag = 7
+            v5 = lsr(row,col,m,flag)              
+            pkt = CommandPacket(False, address=0x34, vals=[v5])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+
+            row = 30
+            flag = 7
+            v6 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x38, vals=[v6])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
+            row = 32
+            flag = 7
+            v7 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x3C, vals=[v7 ])
+            for bb in pkt.rawbytes:
+                uartmdl.write(bb)
+            waitticks = int((1/115200.) / 1e-9) * 10 * 28
+            yield delay(waitticks)
             v9 = 0
-            pkt = CommandPacket(False, address=0x20, vals=[v9])
+            pkt = CommandPacket(False, address=0x40, vals=[v9])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
@@ -118,28 +187,28 @@ def test_ibh(args=None):
 
 
             v9 = 0
-            pkt = CommandPacket(False, address=0x24, vals=[v9])
+            pkt = CommandPacket(False, address=0x44, vals=[v9])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)  
 
             v9 = 0
-            pkt = CommandPacket(False, address=0x28, vals=[v9])
+            pkt = CommandPacket(False, address=0x48, vals=[v9])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
 
             v9 = 0
-            pkt = CommandPacket(False, address=0x2C, vals=[v9])
+            pkt = CommandPacket(False, address=0x4C, vals=[v9])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)  
 
             v9 = 0
-            pkt = CommandPacket(False, address=0x30, vals=[v9])
+            pkt = CommandPacket(False, address=0x50, vals=[v9])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
@@ -147,7 +216,7 @@ def test_ibh(args=None):
             timeout = 100
             yield delay(waitticks)
             # send a write that should enable all five LEDs
-            pkt = CommandPacket(False, address=0x40, vals=[0xFF])
+            pkt = CommandPacket(False, address=0x80, vals=[0xFF])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28

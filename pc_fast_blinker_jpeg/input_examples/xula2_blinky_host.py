@@ -51,23 +51,22 @@ def xula2_blinky_host(clock, led, bcm14_txd, bcm15_rxd):
         memmap.done.next = not (memmap.write or memmap.read)
         if memmap.write and memmap.mem_addr == 0x80:
             ledreg.next = memmap.write_data
-    '''
-    @always_comb
-    def beh_led_read():
-        if memmap.read and memmap.mem_addr == 0x20:
-            memmap.read_data.next = ledreg
-        else:
-            memmap.read_data.next = 0
-    '''
+ 
+
+    def set_data():
+       
+        data_to_host0.next = z1 << 16 | z0
+        data_to_host1.next = z3 << 16 | z2
+        data_to_host2.next = z5 << 16 | z4
+        data_to_host3.next = z7 << 16 | z6
+        data_to_host4.next = z9 << 16 | z8
+        data_to_host5.next = z11 << 16 | z10
+        data_to_host6.next = z13 << 16 | z12
+        data_to_host7.next = z14 << 16 | z14 
     # blink one of the LEDs
     tone = Signal(intbv(0)[8:])
     reset_dly_cnt = Signal(intbv(0)[32:])
-    @always(clock.posedge)
-    def beh_assign():
-        if glbl.tick_sec:
-            tone.next = (~tone) & 0x1
-        led.next = ledreg | tone[5:] 
-
+    
     @always(clock.posedge)
     def reset_tst():
         if (reset_dly_cnt < 700):
@@ -78,35 +77,31 @@ def xula2_blinky_host(clock, led, bcm14_txd, bcm15_rxd):
                 reset.next = 0
         else:
             reset.next = 1
-    @always_comb
-    def set_data():
-       
-        data_to_host0.next = z1 << 16 | z0
-        data_to_host1.next = z3 << 16 | z2
-        data_to_host2.next = z5 << 16 | z4
-        data_to_host3.next = z7 << 16 | z6
-        data_to_host4.next = z9 << 16 | z8
-        data_to_host5.next = z11 << 16 | z10
-        data_to_host6.next = z13 << 16 | z12
-        data_to_host7.next = z14 << 16 | z14                    
+
+	
+    @always(clock.posedge)
+    def beh_assign():
+        if glbl.tick_sec:
+            tone.next = (~tone) & 0x1
+        led.next = ledreg | tone[5:]                   
     @always(clock.posedge) 
     def beh_my_ret_reg():
         if memmap.read:
-            if (memmap.mem_addr == 70):
+            if (memmap.mem_addr == 72):
                 memmap.read_data.next = data_to_host0
-            if (memmap.mem_addr == 74):
+            if (memmap.mem_addr == 76):
                 memmap.read_data.next = data_to_host1 
-            if (memmap.mem_addr == 78):
+            if (memmap.mem_addr == 80):
                 memmap.read_data.next = data_to_host2
-            if (memmap.mem_addr == 82):
+            if (memmap.mem_addr == 84):
                 memmap.read_data.next = data_to_host3 
-            if (memmap.mem_addr == 86):
+            if (memmap.mem_addr == 88):
                 memmap.read_data.next = data_to_host4
-            if (memmap.mem_addr == 90):
+            if (memmap.mem_addr == 92):
                 memmap.read_data.next = data_to_host5 
-            if (memmap.mem_addr == 94):
+            if (memmap.mem_addr == 96):
                 memmap.read_data.next = data_to_host6
-            if (memmap.mem_addr == 98):
+            if (memmap.mem_addr == 100):
                 memmap.read_data.next = data_to_host7                   
     @always(clock.posedge) 
     def beh_my_registers():

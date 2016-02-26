@@ -86,34 +86,37 @@ for row in range(2,34, 2):
 	v = lsr(row,col,m,flag)
 	print row, v, hex(v)
 	pkt_get(row,v)
-v = 0	
+v = 0
+#upd on	
 pkt = CommandPacket(False, address=0x40, vals=[v])
 wr2file(pkt)
-#read z1 & z0 @ address 68
+#upd off
 pkt = CommandPacket(False, address=0x44, vals=[v])
 wr2file(pkt)
-#read z3 & z2 @ address 72
+#read z1 & z0 @ address 72
 pkt = CommandPacket(False, address=0x48, vals=[v])
 wr2file(pkt)
-#read z5 & z4 @ address 76
+#read z3 & z2 @ address 76
 pkt = CommandPacket(False, address=0x4C, vals=[v])
 wr2file(pkt)
-#read z7 & z6 @ address 80
+#read z5 & z4 @ address 80
 pkt = CommandPacket(False, address=0x50, vals=[v])
 wr2file(pkt)
-#read z9 & z8 @ address 84
+#read z7 & z6 @ address 84
 pkt = CommandPacket(False, address=0x54, vals=[v])
 wr2file(pkt)
-#read z11 & z10 @ address 88
+#read z9 & z8 @ address 88
 pkt = CommandPacket(False, address=0x58, vals=[v])
 wr2file(pkt)
-#read z13 & z12 @ address 92
+#read z11 & z10 @ address 92
 pkt = CommandPacket(False, address=0x5C, vals=[v])
 wr2file(pkt)
-#read z15 & z14 @ address 96
+#read z13 & z12 @ address 96
 pkt = CommandPacket(False, address=0x60, vals=[v])
 wr2file(pkt)
-
+#read z15 & z14 @ address 100
+pkt = CommandPacket(False, address=0x60, vals=[v])
+wr2file(pkt)
 v = 255
 pkt = CommandPacket(False, address=0x80, vals=[v])
 wr2file(pkt)		
