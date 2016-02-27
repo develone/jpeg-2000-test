@@ -81,6 +81,7 @@ ser = serial.Serial ("/dev/ttyAMA0")
 ser.baudrate = 115200 
 
 col = 0
+#send 16 samples
 for row in range(2,34, 2):
 	flag = 7
 	v = lsr(row,col,m,flag)
@@ -115,11 +116,8 @@ wr2file(pkt)
 pkt = CommandPacket(False, address=0x60, vals=[v])
 wr2file(pkt)
 #read z15 & z14 @ address 100
-pkt = CommandPacket(False, address=0x60, vals=[v])
+pkt = CommandPacket(False, address=0x64, vals=[v])
 wr2file(pkt)
-v = 255
-pkt = CommandPacket(False, address=0x80, vals=[v])
-wr2file(pkt)		
 
 file_out.close()
 file_out = open("data_to_fpga.bin","rb")
@@ -137,34 +135,7 @@ for j in range(26):
 	print "this is the reply", reply
  
 file_out.close()
-'''even samples uploaded
-getting ready to read the results
-and send the odd samples
-'''
-file_out = open("data_to_fpga1.bin","wb")
-for row in range(1,17, 2):
-	flag = 6
-	v = lsr(row,col,m,flag)
-	print row, v, hex(v)
-	pkt_get(row,v)
-v = 0	
-pkt = CommandPacket(False, address=0x20, vals=[v])
-wr2file(pkt)
-pkt = CommandPacket(False, address=0x24, vals=[v])
-wr2file(pkt)
-v = 0
-pkt = CommandPacket(False, address=0x40, vals=[v])
-wr2file(pkt)
-file_out.close()		
-file_out = open("data_to_fpga1.bin","rb")	
+file_in.close()
+
 		
-for j in range(11):
-	data = file_out.read(12)
-	for i in range(12):
-		
-		#print (data[i])
-		ser.write(data[i])
-	reply = ser.read(12)
-	file_in.write(reply) 
-	print "this is the reply", reply
 

@@ -710,7 +710,7 @@ Phase 9.8  Global Placement
 Phase 9.8  Global Placement (Checksum:a27731b9) REAL time: 11 secs 
 
 Phase 10.5  Local Placement Optimization
-Phase 10.5  Local Placement Optimization (Checksum:a27731b9) REAL time: 11 secs 
+Phase 10.5  Local Placement Optimization (Checksum:a27731b9) REAL time: 12 secs 
 
 Phase 11.18  Placement Optimization
 Phase 11.18  Placement Optimization (Checksum:12a2ee61) REAL time: 12 secs 
@@ -722,7 +722,7 @@ Phase 13.34  Placement Validation
 Phase 13.34  Placement Validation (Checksum:12a2ee61) REAL time: 12 secs 
 
 Total REAL time to Placer completion: 12 secs 
-Total CPU  time to Placer completion: 9 secs 
+Total CPU  time to Placer completion: 10 secs 
 Running post-placement packing...
 Writing output files...
 
@@ -759,8 +759,8 @@ Slice Logic Distribution:
   Number of LUT Flip Flop pairs used:          401
     Number with an unused Flip Flop:           170 out of     401   42%
     Number with an unused LUT:                  50 out of     401   12%
-    NumbINFO:TclTasksC:1850 - process run : Map is done.
-er of fully used LUT-FF pairs:         181 out of     401   45%
+    NumINFO:TclTasksC:1850 - process run : Map is done.
+ber of fully used LUT-FF pairs:         181 out of     401   45%
     Number of unique control sets:              25
     Number of slice register sites lost
       to control set restrictions:              50 out of  11,440    1%
@@ -1011,7 +1011,7 @@ Loading device for application Rf_Device from file '6slx9.nph' in environment
 /opt/Xilinx/14.6/ISE_DS/ISE/.
    "xula2" is an NCD, version 3.2, device xc6slx9, package ftg256, speed -2
 
-Analysis completed Fri Feb 26 16:41:27 2016
+Analysis completed Sat Feb 27 04:24:41 2016
 --------------------------------------------------------------------------------
 
 Generating Report ...

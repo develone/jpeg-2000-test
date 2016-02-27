@@ -8,6 +8,6 @@ led_off.bin which can be uploaded to ICE40 FPGA
 
 '''
 file = open("led_off.bin","wb")
-file.write("\xde\x02\x00\x00\x00\x40\x04\xca\x00\x00\x00\x00")
+file.write("\xde\x02\x00\x00\x00\x80\x04\xca\x00\x00\x00\x00")
 file.close
  
