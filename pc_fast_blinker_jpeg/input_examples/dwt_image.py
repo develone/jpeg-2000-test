@@ -52,4 +52,5 @@ def lsr(row,col,m,flag):
     x2 = m[row+1][col]
     f = flag << 27
     #upd = 0 << 30
+    print ("%d %s %s %s" % (row, hex(m[row-1][col]), hex(m[row][col]), hex(m[row+1][col])))
     return (f+x0+x1+x2)
