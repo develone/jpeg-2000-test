@@ -62,7 +62,7 @@ def xula2_blinky_host(clock, led, bcm14_txd, bcm15_rxd):
         data_to_host4.next = z9 << 16 | z8
         data_to_host5.next = z11 << 16 | z10
         data_to_host6.next = z13 << 16 | z12
-        data_to_host7.next = z14 << 16 | z14 
+        data_to_host7.next = z15 << 16 | z14 
     # blink one of the LEDs
     tone = Signal(intbv(0)[8:])
     reset_dly_cnt = Signal(intbv(0)[32:])
