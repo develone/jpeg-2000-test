@@ -51,8 +51,7 @@ def xula2_blinky_host(clock, led, bcm14_txd, bcm15_rxd):
         memmap.done.next = not (memmap.write or memmap.read)
         if memmap.write and memmap.mem_addr == 0x80:
             ledreg.next = memmap.write_data
- 
-
+    @always_comb
     def set_data():
        
         data_to_host0.next = z1 << 16 | z0

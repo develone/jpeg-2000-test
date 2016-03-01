@@ -48,6 +48,15 @@ def test_ibh(args=None):
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError            
             row = 4
             flag = 7
             v1 = lsr(row,col,m,flag)              
@@ -56,7 +65,15 @@ def test_ibh(args=None):
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
-
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
             row = 6
             flag = 7
             v2 = lsr(row,col,m,flag)    
@@ -65,6 +82,15 @@ def test_ibh(args=None):
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
             row = 8
             flag = 7
             v3 = lsr(row,col,m,flag)    
@@ -73,7 +99,15 @@ def test_ibh(args=None):
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks) 
-
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
             row = 10
             flag = 7
             v4 = lsr(row,col,m,flag)
@@ -83,6 +117,15 @@ def test_ibh(args=None):
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError            
             row = 12
             flag = 7
             v5 = lsr(row,col,m,flag)              
@@ -91,7 +134,15 @@ def test_ibh(args=None):
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
-
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
             row = 14
             flag = 7
             v6 = lsr(row,col,m,flag)    
@@ -100,6 +151,15 @@ def test_ibh(args=None):
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError            
             row = 16
             flag = 7
             v7 = lsr(row,col,m,flag)    
@@ -108,148 +168,301 @@ def test_ibh(args=None):
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
-
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
             row = 18
             flag = 7
-            v0 = lsr(row,col,m,flag)
-            # send a write that should enable all five LEDs
-            pkt = CommandPacket(False, address=0x20, vals=[v0])
+            v8 = lsr(row,col,m,flag)
+            
+            pkt = CommandPacket(False, address=0x20, vals=[v8])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
             row = 20
             flag = 7
-            v1 = lsr(row,col,m,flag)              
-            pkt = CommandPacket(False, address=0x24, vals=[v1])
+            v9 = lsr(row,col,m,flag)              
+            pkt = CommandPacket(False, address=0x24, vals=[v9])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
-
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
             row = 22
             flag = 7
-            v2 = lsr(row,col,m,flag)    
-            pkt = CommandPacket(False, address=0x28, vals=[v2])
+            v10 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x28, vals=[v10])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError            
             row = 24
             flag = 7
-            v3 = lsr(row,col,m,flag)    
-            pkt = CommandPacket(False, address=0x2C, vals=[v3 ])
+            v11 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x2C, vals=[v11 ])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks) 
-
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
             row = 26
             flag = 7
-            v4 = lsr(row,col,m,flag)
+            v12 = lsr(row,col,m,flag)
             
-            pkt = CommandPacket(False, address=0x30, vals=[v4])
+            pkt = CommandPacket(False, address=0x30, vals=[v12])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError            
             row = 28
             flag = 7
-            v5 = lsr(row,col,m,flag)              
-            pkt = CommandPacket(False, address=0x34, vals=[v5])
+            v13 = lsr(row,col,m,flag)              
+            pkt = CommandPacket(False, address=0x34, vals=[v13])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
-
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
             row = 30
             flag = 7
-            v6 = lsr(row,col,m,flag)    
-            pkt = CommandPacket(False, address=0x38, vals=[v6])
+            v14 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x38, vals=[v14])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError            
             row = 32
             flag = 7
-            v7 = lsr(row,col,m,flag)    
-            pkt = CommandPacket(False, address=0x3C, vals=[v7 ])
+            v15 = lsr(row,col,m,flag)    
+            pkt = CommandPacket(False, address=0x3C, vals=[v15 ])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
-            v9 = 0
-            pkt = CommandPacket(False, address=0x40, vals=[v9])
+            v16 = 0
+            pkt = CommandPacket(False, address=0x40, vals=[v16])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
-
-
-            v9 = 0
-            pkt = CommandPacket(False, address=0x44, vals=[v9])
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
+            
+            v17 = 0
+            pkt = CommandPacket(False, address=0x44, vals=[v17])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)  
-
-            v9 = 0
-            pkt = CommandPacket(False, address=0x48, vals=[v9])
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
+            v1 = 0
+            pkt = CommandPacket(False, address=0x48, vals=[v1])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)
-
-            v9 = 0
-            pkt = CommandPacket(False, address=0x4C, vals=[v9])
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                print ("%s" % (hex(rb)))
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
+            print ("%s" % ("new packet"))
+                    
+            v2 = 0
+            pkt = CommandPacket(False, address=0x4C, vals=[v2])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)  
-
-            v9 = 0
-            pkt = CommandPacket(False, address=0x50, vals=[v9])
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                print ("%s" % (hex(rb)))
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
+            print ("%s" % ("new packet"))
+            v3 = 0
+            pkt = CommandPacket(False, address=0x50, vals=[v3])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)    
             timeout = 100
             yield delay(waitticks)
-
-            v9 = 0
-            pkt = CommandPacket(False, address=0x54, vals=[v9])
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                print ("%s" % (hex(rb)))
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
+            print ("%s" % ("new packet"))
+            v4 = 0
+            pkt = CommandPacket(False, address=0x54, vals=[v4])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)    
             timeout = 100
             yield delay(waitticks)
-            v9 = 0
-            pkt = CommandPacket(False, address=0x58, vals=[v9])
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                print ("%s" % (hex(rb)))
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
+            print ("%s" % ("new packet"))           
+            v5 = 0
+            pkt = CommandPacket(False, address=0x58, vals=[v5])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
+                print ("%s" % (hex(rb)))
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)    
             timeout = 100
             yield delay(waitticks)
-            v9 = 0
-            pkt = CommandPacket(False, address=0x5C, vals=[v9])
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                print ("%s" % (hex(rb)))
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
+            print ("%s" % ("new packet"))          
+            v6 = 0
+            pkt = CommandPacket(False, address=0x5C, vals=[v6])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
+                print ("%s" % (hex(rb)))
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)    
             timeout = 100
             yield delay(waitticks)
-            v9 = 0
-            pkt = CommandPacket(False, address=0x60, vals=[v9])
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    print ("%s" % (hex(rb)))
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
+            print ("%s" % ("new packet"))           
+            v7 = 0
+            pkt = CommandPacket(False, address=0x60, vals=[v7])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
+                print ("%s" % (hex(rb)))
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks)    
             timeout = 100
             yield delay(waitticks)
-            v9 = 0
-            pkt = CommandPacket(False, address=0x64, vals=[v9])
+            # get the response packet
+            for ii in range(PACKET_LENGTH):
+                rb = uartmdl.read()
+                while rb is None and timeout > 0:
+                    yield clock.posedge
+                    rb = uartmdl.read()
+                    print ("%s" % (hex(rb)))
+                    timeout -= 1
+                if rb is None:
+                    raise TimeoutError
+            print ("%s" % ("new packet"))                   
+            v8 = 0
+            pkt = CommandPacket(False, address=0x64, vals=[v8])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
@@ -260,6 +473,7 @@ def test_ibh(args=None):
             pkt = CommandPacket(False, address=0x80, vals=[0xFF])
             for bb in pkt.rawbytes:
                 uartmdl.write(bb)
+                print ("%s" % (hex(rb)))
             waitticks = int((1/115200.) / 1e-9) * 10 * 28
             yield delay(waitticks) 
             # get the response packet
