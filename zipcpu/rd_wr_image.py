@@ -1,6 +1,26 @@
 from __future__ import division
 from __future__ import print_function
-
+'''
+reads the file ../lena_256.png
+starts 0x800000 
+ends 0x8ffff
+0000000 0000 9c00 0000 a400 0000 a400 0000 a400
+0000020 0000 9c00 0000 9c00 0000 9c00 0000 a400
+0000040 0000 9c00 0000 9c00 0000 9c00 0000 9c00
+ 		.
+		.
+		. 
+0777720 0000 3c00 0000 3c00 0000 2c00 0000 3400
+0777740 0000 3c00 0000 2c00 0000 3400 0000 4400
+0777760 0000 4c00 0000 5c00 0000 6400 0000 6c00
+1000000
+loads the sdram with the data from the file img_to_fpga.bin
+dumpsdram jpeg-2000-test/zipcpu/img_to_fpga.bin xx
+col 0 0x800000 0x8000ff
+col 1 0x800100 0x8001ff
+col 2 0x800200 0x8002ff
+col 255 0x80ff00 0x80ffff
+''' 
 from PIL import Image # Part of the standard Python Library
 
 import binascii
@@ -22,17 +42,18 @@ w, h = im.size
 file_out = open("img_to_fpga.bin","wb") 
 
 print ("w = %d h = %d" % (w, h))
-
+memsdram = 0x00800000
 for col in range(w):
 	for row in range(h):
                 pixel = m[row][col]
-		print ("col %d row %d pixel %d " % (col, row, pixel))
+		print ("col %d row %d pixel %d sdram %s" % (col, row, pixel,hex(memsdram)))
                 ml = []
                 for jj in range(3):
                 	ml.append(0)
  		ml.append(pixel)
 		ba = bytearray(ml)
 		file_out.write(ba)
+                memsdram = memsdram + 1
 file_out.close()
 
 
