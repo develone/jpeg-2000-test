@@ -100,7 +100,6 @@ int main(int argc, char **argv) {
 			nr = BUFLN;
 			if (nr + pos > SDRAMBASE*2)
 				nr = SDRAMBASE*2 - pos;
-				printf ("%x %d\n",sizeof(FPGA::BUSW),nr);
 			nr = fread(buf, sizeof(FPGA::BUSW), nr, fpin);
 			if (nr <= 0)
 				break;
@@ -109,7 +108,7 @@ int main(int argc, char **argv) {
 				for(int i=0; i<nr; i++)
 					m_fpga->writeio(pos+i, buf[i]);
 			} else
-				printf("%x %x %x \n",pos, nr, *buf);
+			    printf("%x %x %x \n",pos, nr, *buf);
 				m_fpga->writei(pos, nr, buf);
 			pos += nr;
 		} while((nr > 0)&&(pos < 2*SDRAMBASE));
@@ -151,6 +150,7 @@ int main(int argc, char **argv) {
 					buf[i] = m_fpga->readio(pos+i);
 			} else
 				m_fpga->readi(pos, nr, buf);
+
 			pos += nr;
 			nw = fwrite(buf, sizeof(FPGA::BUSW), nr, fp);
 			if (nw < nr) {
