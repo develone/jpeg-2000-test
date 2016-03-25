@@ -4,6 +4,18 @@ from __future__ import print_function
 reads the file ../lena_256.png
 starts 0x800000 
 ends 0x8ffff
+little endian
+0000000 009c 0000 00a4 0000 00a4 0000 00a4 0000
+0000020 009c 0000 009c 0000 009c 0000 00a4 0000
+0000040 009c 0000 009c 0000 009c 0000 009c 0000
+		.
+		.
+		.
+0777720 003c 0000 003c 0000 002c 0000 0034 0000
+0777740 003c 0000 002c 0000 0034 0000 0044 0000
+0777760 004c 0000 005c 0000 0064 0000 006c 0000
+
+big emdian
 0000000 0000 9c00 0000 a400 0000 a400 0000 a400
 0000020 0000 9c00 0000 9c00 0000 9c00 0000 a400
 0000040 0000 9c00 0000 9c00 0000 9c00 0000 9c00
@@ -48,9 +60,10 @@ for col in range(w):
                 pixel = m[row][col]
 		print ("col %d row %d pixel %d sdram %s" % (col, row, pixel,hex(memsdram)))
                 ml = []
+                ml.append(pixel)
                 for jj in range(3):
                 	ml.append(0)
- 		ml.append(pixel)
+ 		#ml.append(pixel)
 		ba = bytearray(ml)
 		file_out.write(ba)
                 memsdram = memsdram + 1
