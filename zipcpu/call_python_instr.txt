@@ -1,0 +1,15 @@
+vidal@ws009:~/wkg/jpeg-2000-test/zipcpu$ 
+
+gcc call_function.c -I /usr/include/python2.7 -L /usr/lib/ -l python2.7 -o call_function
+
+vidal@ws009:~/wkg/jpeg-2000-test/zipcpu$ python 
+Python 2.7.3 (default, Jun 22 2015, 19:33:41) 
+[GCC 4.6.3] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from py_function import *
+>>> multiply()
+The result of 12345 x 6789 : 83810205
+83810205
+
+vidal@ws009:~/wkg/jpeg-2000-test/zipcpu$ ./call_function py_function.py multiply
+
