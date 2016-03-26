@@ -55,8 +55,8 @@ file_out = open("img_to_fpga.bin","wb")
 
 print ("w = %d h = %d" % (w, h))
 memsdram = 0x00800000
-for col in range(w):
-	for row in range(h):
+for row in range(w):
+	for col in range(h):
                 pixel = m[row][col]
 		print ("col %d row %d pixel %d sdram %s" % (col, row, pixel,hex(memsdram)))
                 ml = []

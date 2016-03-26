@@ -50,9 +50,13 @@ FPGA	*m_fpga;
 
 int main(int argc, char **argv) {
 //int *ptr_one;
-int index;
+int index,row,col;
 index = 0;
+row = 0;
+col = 0;
+int img[256][256];
 int bb[65536];
+int temp[256][256];
  
 	FILE		*fp, *fpin, *fpout;
 	unsigned	pos=0;
@@ -108,12 +112,12 @@ int bb[65536];
 			nr = fread(buf, sizeof(FPGA::BUSW), nr, fpin);
 			/*for(int ii= 0;ii<nr;ii++) 
 				printf("%d \n",buf[ii]);*/
-			printf("%d %d %d\n",sizeof(FPGA::BUSW), nr,sizeof(buf));
+			//printf("%d %d %d\n",sizeof(FPGA::BUSW), nr,sizeof(buf));
 			//This loop puts the data in array bb
 			for(int ii= 0;ii<nr;ii++)
 			{
 				bb[index] =buf[ii];
-				printf("%d %d \n",index, bb[index]);
+				//printf("%d %d \n",index, bb[index]);
 				index = index + 1;
 			}
 			//printf("%d %d\n",sizeof(FPGA::BUSW), nr);
@@ -138,7 +142,7 @@ int bb[65536];
 		fprintf(stderr, "Other error\n");
 		exit(-3);
 	}
-
+/*
 	rewind(fpin);
 
 	fp = fopen(argv[1], "wb");
@@ -217,21 +221,98 @@ int bb[65536];
 			printf("2ndary Fail: MEM[%08x] = %08x(read) != %08x(expected)\n",
 				mmaddr[i], bv, mmval[i]);
 	}
-	
+*/	
 	delete	m_fpga;
-    for (int jj = 0; jj<256;jj++) { 
-	for (int ii=(2+(jj*256));ii<(256+(jj*256));ii=ii+2) {
-		printf("%d %d %d %d\n",ii,bb[ii-1],bb[ii],bb[ii+1]);
-		bb[ii] = bb[ii] - ( (bb[ii-1] + bb[ii+1]) >> 1);
-		//printf("%d\n",bb[ii]);
+	/* Placing the read data in the img[row][col]
+	 * The following lines were when the python program
+	 * read the image and wrote the data to the
+	 * file img_to_fpga.bin
+	 * col 17 row 16 pixel 164 sdram 0x801011
+     * col 18 row 16 pixel 172 sdram 0x801012
+     * col 19 row 16 pixel 164 sdram 0x801013
+
+	 * col 175 row 60 pixel 156 sdram 0x803caf
+     * col 176 row 60 pixel 148 sdram 0x803cb0
+     * col 177 row 60 pixel 148 sdram 0x803cb1
+     * col 178 row 60 pixel 156 sdram 0x803cb2
+     * 			.
+     * 			.
+     * col 252 row 255 pixel 92 sdram 0x80fffc
+     * col 253 row 255 pixel 92 sdram 0x80fffd
+     * col 254 row 255 pixel 100 sdram 0x80fffe
+     * col 255 row 255 pixel 108 sdram 0x80ffff
+
+     * The following lines were when the 
+     * dumpsdram read the file img_to_fpga.bin
+     * col 17 row 16 164
+	 * col 18 row 16 172
+     * col 19 row 16 164
+     * 			.
+     *          .
+     * col 175 row 60 156
+     * col 176 row 60 148
+     * col 177 row 60 148
+	 * col 178 row 60 156
+	 * 			.
+	 * 			.
+	 * col 252 row 255 92
+     * col 253 row 255 92
+     * col 254 row 255 100
+     * col 255 row 255 108
+
+
+	 */
+	index = 0;
+	for(row = 0 ; row < 256;row++) {
+		for(col = 0; col < 256;col++) {
+			
+			img[row][col] = bb[index];
+			//printf ("col %d row %d %d\n", col,row,img[row][col]);
+			index = index + 1;
+		}
 	}
-	for (int ii=(1+(jj*256));ii<((256+(jj*256))-1);ii=ii+2) {
-		printf("%d %d %d %d\n",ii,bb[ii-1],bb[ii],bb[ii+1]);
-		bb[ii] = bb[ii] - ( (bb[ii-1] + bb[ii+1] +2) >> 2);
-		//printf("%d\n",bb[ii]);
-	} 
+		
+    for (int col = 0; col<256;col++) { 
+		for (int row = 2;row<256;row=row+2) {
+			printf("row %d col %d lft %d sam %d rht %d\n",row,col,img[row-1][col],img[row][col],img[row+1][col]);
+			img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col]) >> 1);
+			printf("%d\n",img[row][col]);
+	    }
+		for (int row = 1;row<256-2;row=row+2) {
+			printf("row %d col %d lft %d sam %d rht %d\n",row,col,img[row-1][col],img[row][col],img[row+1][col]);
+			img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col] +2) >> 2);
+			printf("%d\n",img[row][col]);
+		} 
 	}
+	
+	// de-interleave
+	 
+	for (int row = 0 ; row < 256; row++) {
+		
+		for (int col = 0; col < 256;col++) {  
+ 
+			if (row % 2 == 0) {
+				printf("if row %d col %d %d\n", row, col, row/2);
+				temp[col][row/2] =  img[row][col];
+			}	
+			else {
+				printf("else row %d col %d %d\n", row, col, row/2);
+				temp[col][row/2 + 256/2] =  img[row][col];
+			}	
+		}
+	}
+    //write temp to img
+	for (int row = 1;row < 256-2;row++) {
+		for (int col = 0;col < 256;col++) {
+			img[row][col] = temp[row][col];
+		}
+	}
+	
+
+	/*
 	fpout = fopen("pass.bin", "wb");
 	for (int jj= 0; jj<65536; jj++) fwrite(&bb[jj],sizeof(int),1,fpout);
+	*/
 }
+
 
