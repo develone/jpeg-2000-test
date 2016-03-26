@@ -49,7 +49,12 @@
 FPGA	*m_fpga;
 
 int main(int argc, char **argv) {
-	FILE		*fp, *fpin;
+//int *ptr_one;
+int index;
+index = 0;
+int bb[65536];
+ 
+	FILE		*fp, *fpin, *fpout;
 	unsigned	pos=0;
 	int		port = FPGAPORT, skp;
 	const int	BUFLN = 127;
@@ -101,6 +106,17 @@ int main(int argc, char **argv) {
 			if (nr + pos > SDRAMBASE*2)
 				nr = SDRAMBASE*2 - pos;
 			nr = fread(buf, sizeof(FPGA::BUSW), nr, fpin);
+			/*for(int ii= 0;ii<nr;ii++) 
+				printf("%d \n",buf[ii]);*/
+			printf("%d %d %d\n",sizeof(FPGA::BUSW), nr,sizeof(buf));
+			//This loop puts the data in array bb
+			for(int ii= 0;ii<nr;ii++)
+			{
+				bb[index] =buf[ii];
+				printf("%d %d \n",index, bb[index]);
+				index = index + 1;
+			}
+			//printf("%d %d\n",sizeof(FPGA::BUSW), nr);
 			if (nr <= 0)
 				break;
 
@@ -108,7 +124,7 @@ int main(int argc, char **argv) {
 				for(int i=0; i<nr; i++)
 					m_fpga->writeio(pos+i, buf[i]);
 			} else
-			    printf("%x %x %x \n",pos, nr, *buf);
+			    //printf("%x %x %x \n",pos, nr, *buf);
 				m_fpga->writei(pos, nr, buf);
 			pos += nr;
 		} while((nr > 0)&&(pos < 2*SDRAMBASE));
@@ -201,7 +217,21 @@ int main(int argc, char **argv) {
 			printf("2ndary Fail: MEM[%08x] = %08x(read) != %08x(expected)\n",
 				mmaddr[i], bv, mmval[i]);
 	}
-
+	
 	delete	m_fpga;
+    for (int jj = 0; jj<256;jj++) { 
+	for (int ii=(2+(jj*256));ii<(256+(jj*256));ii=ii+2) {
+		printf("%d %d %d %d\n",ii,bb[ii-1],bb[ii],bb[ii+1]);
+		bb[ii] = bb[ii] - ( (bb[ii-1] + bb[ii+1]) >> 1);
+		//printf("%d\n",bb[ii]);
+	}
+	for (int ii=(1+(jj*256));ii<((256+(jj*256))-1);ii=ii+2) {
+		printf("%d %d %d %d\n",ii,bb[ii-1],bb[ii],bb[ii+1]);
+		bb[ii] = bb[ii] - ( (bb[ii-1] + bb[ii+1] +2) >> 2);
+		//printf("%d\n",bb[ii]);
+	} 
+	}
+	fpout = fopen("pass.bin", "wb");
+	for (int jj= 0; jj<65536; jj++) fwrite(&bb[jj],sizeof(int),1,fpout);
 }
 
