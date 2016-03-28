@@ -271,17 +271,38 @@ int temp[256][256];
 			index = index + 1;
 		}
 	}
-		
+	/*From line 276 to 330 Needs to be perform twice currently only once.
+	 */ 	
     for (int col = 0; col<256;col++) { 
 		for (int row = 2;row<256;row=row+2) {
-			printf("row %d col %d lft %d sam %d rht %d\n",row,col,img[row-1][col],img[row][col],img[row+1][col]);
+			//printf("row %d col %d lft %d sam %d rht %d\n",row,col,img[row-1][col],img[row][col],img[row+1][col]);
 			img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col]) >> 1);
-			printf("%d\n",img[row][col]);
+			//printf("%d %d %d\n",row,col,img[row][col]);
+			/*
+			C					Python
+			116 248 0			116 248 0
+			118 248 -4			118 248 -4
+			120 248 4			120 248 4
+			122 248 0			122 248 0
+			124 248 8			124 248 8
+			126 248 4			126 248 4
+			*/
+			
 	    }
 		for (int row = 1;row<256-2;row=row+2) {
-			printf("row %d col %d lft %d sam %d rht %d\n",row,col,img[row-1][col],img[row][col],img[row+1][col]);
+			//printf("row %d col %d lft %d sam %d rht %d\n",row,col,img[row-1][col],img[row][col],img[row+1][col]);
 			img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col] +2) >> 2);
-			printf("%d\n",img[row][col]);
+			printf("%d %d %d\n",row,col,img[row][col]);
+			/*
+			C					Python
+			81 253 156			81 253 156			
+			83 253 155			83 253 157**			
+			85 253 147			85 253 149**
+			87 253 147			87 253 149**
+			89 253 157			89 253 155**
+
+
+			 */
 		} 
 	}
 	
@@ -290,19 +311,19 @@ int temp[256][256];
 	for (int row = 0 ; row < 256; row++) {
 		
 		for (int col = 0; col < 256;col++) {  
- 
+            //printf("row %d col %d %d\n", row, col, row/2);
 			if (row % 2 == 0) {
-				printf("if row %d col %d %d\n", row, col, row/2);
+				//printf("if row %d col %d %d\n", row, col, row/2);
 				temp[col][row/2] =  img[row][col];
 			}	
 			else {
-				printf("else row %d col %d %d\n", row, col, row/2);
+				//printf("else row %d col %d %d\n", row, col, row/2);
 				temp[col][row/2 + 256/2] =  img[row][col];
 			}	
 		}
 	}
     //write temp to img
-	for (int row = 1;row < 256-2;row++) {
+	for (int row = 0;row < 256-2;row++) {
 		for (int col = 0;col < 256;col++) {
 			img[row][col] = temp[row][col];
 		}
@@ -313,6 +334,13 @@ int temp[256][256];
 	fpout = fopen("pass.bin", "wb");
 	for (int jj= 0; jj<65536; jj++) fwrite(&bb[jj],sizeof(int),1,fpout);
 	*/
+	fpout = fopen("pass.bin", "wb");
+	for (int row = 0 ; row < 256; row++) {
+		
+	for (int col = 0; col < 256;col++) { 
+		fwrite(&img[row][col],sizeof(int),1,fpout);
+	}
+    } 
 }
 
 
