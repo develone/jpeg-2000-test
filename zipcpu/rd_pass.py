@@ -1,5 +1,6 @@
 from __future__ import division
 from __future__ import print_function
+import struct
 '''
 reads the file ../lena_256.png
 starts 0x800000 
@@ -38,8 +39,8 @@ from array import array
 import sys
 
 import binascii
-if sys.byteorder != 'little':
-    arr.byteswap()
+#print ("%s" % (sys.byteorder))
+
 def seq_to_img(m, pix):
     ''' Copy matrix m to pixel buffer pix.
     Assumes m has the same number of rows and cols as pix. '''
@@ -73,36 +74,34 @@ def rd_img(imgfn):
     #print m.__sizeof__()
     m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
     return im, m, pix
-file_out = open("img_to_fpga.bin","wb")
+#file_out = open("img_to_fpga.bin","wb")
 
 imgfn = "../lena_256.png"
 im, m, pix = rd_img(imgfn)
 #print type(im), type(m), type(pix)
 w, h = im.size
-
-#file_in = open("pass.bin","rb") 
  
-        
-arr = array('B')
-with open("pass.bin", 'rb') as fileobj:
-    arr.fromfile(fileobj, 65536)
-
-for i in range(65536):     
-	print ("%d" % (arr[i]))  
-index = 0
-for col in range(w):
-	for row in range(h):
-		m[row][col] =  arr[index]
-		index = index + 1
-		
-
-print ("%d %d" % (w,h))
-for i in range(256):
-	print ("%s" % (m[i]))
-m = de_interleave(m,h,w)		
+file  = open("pass.bin", 'rb')
+m = []
+fmt = '<i'
+nbytes = 4
+for i in range(65536):
+	packed_data = file.read(nbytes)
+	unpacked_data = struct.unpack(fmt, packed_data)
+	#print ('Sample: ', i, 'Value: ',unpacked_data)
+	m.append(int(unpacked_data[0]))
+file.close()
+   
+m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]	
+#print("%s " % (m))
 seq_to_img(m, pix) 
 im.save("test1_256_fwt.png")  
+
 '''
+#m = de_interleave(m,h,w)		
+seq_to_img(mm, pix) 
+im.save("test1_256_fwt.png")  
+
 memsdram = 0x00800000
 for col in range(w):
 	for row in range(h):
