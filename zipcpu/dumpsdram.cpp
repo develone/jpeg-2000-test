@@ -49,14 +49,17 @@
 FPGA	*m_fpga;
 
 int main(int argc, char **argv) {
-//int *ptr_one;
+
 int index,row,col;
+int w,h;
+w = 256;
+h = 256;
 index = 0;
 row = 0;
 col = 0;
-int img[256][256];
-int bb[65536];
-int temp[256][256];
+int img[w][h];
+int bb[w*h];
+int temp[w][h];
  
 	FILE		*fp, *fpin, *fpout;
 	unsigned	pos=0;
@@ -142,86 +145,7 @@ int temp[256][256];
 		fprintf(stderr, "Other error\n");
 		exit(-3);
 	}
-/*
-	rewind(fpin);
-
-	fp = fopen(argv[1], "wb");
-	if (fp == NULL) {
-		fprintf(stderr, "Could not open: %s\n", argv[2]);
-		exit(-1);
-	}
-
-	unsigned	mmaddr[65536], mmval[65536], mmidx = 0;
-
-	try {
-		pos = SDRAMBASE;
-		const unsigned int MAXRAM = SDRAMBASE*2;
-		bool	mismatch = false;
-		unsigned	total_reread = 0;
-		do {
-			int nw, nr;
-			if (MAXRAM-pos > BUFLN)
-				nr = BUFLN;
-			else
-				nr = MAXRAM-pos;
-
-			if (false) {
-				for(int i=0; i<nr; i++)
-					buf[i] = m_fpga->readio(pos+i);
-			} else
-				m_fpga->readi(pos, nr, buf);
-
-			pos += nr;
-			nw = fwrite(buf, sizeof(FPGA::BUSW), nr, fp);
-			if (nw < nr) {
-				printf("Only wrote %d of %d words!\n", nw, nr);
-				exit(-2);
-			} // printf("nr = %d, pos = %08x (%08x / %08x)\n", nr,
-			//	pos, SDRAMBASE, MAXRAM);
-
-			{int cr;
-			cr = fread(cmp, sizeof(FPGA::BUSW), nr, fpin);
-			total_reread += cr;
-			for(int i=0; i<cr; i++)
-				if (cmp[i] != buf[i]) {
-					printf("MISMATCH: MEM[%08x] = %08x(read) != %08x(expected)\n",
-						pos-nr+i, buf[i], cmp[i]);
-					mmaddr[mmidx] = pos-nr+i;
-					mmval[mmidx] = cmp[i];
-					if (mmidx < 65536)
-						mmidx++;
-					mismatch = true;
-				}
-			if (cr != nr) {
-				printf("Only read %d words from our input file\n", total_reread);
-				break;
-			}
-			}
-		} while(pos < MAXRAM);
-		if (mismatch)
-			printf("Read %04x (%6d) words from memory.  These did not match the source file.  (Failed test)\n",
-				pos-SDRAMBASE, pos-SDRAMBASE);
-		else
-			printf("Successfully  read&copied %04x (%6d) words from memory\n",
-				pos-SDRAMBASE, pos-SDRAMBASE);
-	} catch(BUSERR a) {
-		fprintf(stderr, "BUS Err at address 0x%08x\n", a.addr);
-		fprintf(stderr, "... is your program too long for this memory?\n");
-		exit(-2);
-	} catch(...) {
-		fprintf(stderr, "Other error\n");
-		exit(-3);
-	}
-
-	for(unsigned i=0; i<mmidx; i++) {
-		unsigned bv = m_fpga->readio(mmaddr[i]);
-		if (bv == mmval[i])
-			printf("Re-match, MEM[%08x]\n", mmaddr[i]);
-		else
-			printf("2ndary Fail: MEM[%08x] = %08x(read) != %08x(expected)\n",
-				mmaddr[i], bv, mmval[i]);
-	}
-*/	
+ 	
 	delete	m_fpga;
 	/* Placing the read data in the img[row][col]
 	 * The following lines were when the python program
@@ -332,7 +256,24 @@ int temp[256][256];
 		}
 	}
 }
-
+	//lower to upper
+    for (int row = 0;row < 256-2;row++) {
+		for (int col = 0;col < 256;col++) {
+			temp[row][col] = 0;
+		}
+	}
+    for (int col = w/2; col < w; col++) {
+		for (int row = h/2; row < h; row++) {
+		
+			temp[(col-(w/2))][(row-(h/2))] = img[row][col];
+		}	
+	}
+    for (int row = 0; row < h; row++) {
+		for (int col = 0; col < w; col++) {	
+ 
+			img[row][col] = temp[col][row];
+		}
+	}
 	/*
 	fpout = fopen("pass.bin", "wb");
 	for (int jj= 0; jj<65536; jj++) fwrite(&bb[jj],sizeof(int),1,fpout);
