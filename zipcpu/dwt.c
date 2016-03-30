@@ -1,6 +1,6 @@
 // . setzipcpuPath.sh
 // xsload --usb 0 --fpga tmp_svn_bld_bitfiles/toplevel.bit
-// to compile zip-gcc -fno-builtin -nostdlib dwt.c -o dwt -T xulalink.x
+// to compile zip-gcc -fno-builtin -nostdlib -O3 dwt.c -o dwt -T xulalink.x
 // to disasmble
 // zipobj-dump -d dwt
 // ziprun test_zipcpu/dwt
@@ -39,6 +39,12 @@ const char msg[] = "Hello, world!\n";
 
 void entry(void) {
 	register IOSPACE	*sys = (IOSPACE *)0x0100;
+	int	counts = 0;
+
+	// Let's set ourselves up for 9600 baud, 8-bit characters, no parity,
+	// and one stop bit.
+	sys->io_uart_ctrl = 8333;
+
 	int *img_ptr = (int *)0x800000;
 	int *img_ptr1 = (int *)0x810000;
 	int col,row;
@@ -52,7 +58,7 @@ void entry(void) {
 	for (int col = 0; col<256;col++) { 
 		//even samples
 		for (int row = 2;row<256;row=row+2) { 
-			
+			*(img_ptr+col+row*256) = *(img_ptr+col+row*256) - ((*(img_ptr+col+(row-1)*256) + *(img_ptr+col+(row+1)*256)) >> 1);
 		}
 		//odd samples
 		for (int row = 1; row < h -2 ; row = row + 2) {
@@ -60,7 +66,28 @@ void entry(void) {
 		}
 		 
 	}
-	
+	while(1) {
+		const char	*ptr;
+
+		ptr = msg;
+		while(*ptr) {
+			// Wait while our transmitter is busy
+			while(sys->io_uart_tx)
+				;
+			sys->io_uart_tx = *ptr++; // Transmit our character
+		}
+
+		// Now, wait for the top of the second
+		unsigned secv = sys->io_rtc_clock;
+		while(secv == sys->io_rtc_clock)
+			;
+
+		// And repeat, saying Hello, World! once each second
+
+		// Let's keep track of how many times we do this too ... so we
+		// can know that the program is still working
+		counts++;
+	}
  
 }
 
