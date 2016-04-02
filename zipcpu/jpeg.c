@@ -2,41 +2,12 @@
 #include <stdlib.h> 
  
 	
-   	
-   int *jpeg_process(int *img_ptr, int w, int h) {
-	   int img[w][h];
-	   int tt[w][h];
-	   int *de_interleave;
-	   de_interleave = &tt;
-	   &img = img_ptr;
-		for ( p =0; p < 2; p++) {
-	for ( col = 0; col<256;col++) { 
-		for (row = 2;row<256;row=row+2) {
-			img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col]) >> 1);
-		}
-		for (row = 1;row<256-2;row=row+2) {
-			img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col] +2) >> 2);
-		}
-	}
-	for ( row = 0 ; row < 256; row++) {
-		for (col = 0; col < 256;col++) {  
-			if (row % 2 == 0) {
-				tt[col][row/2] =  img[row][col];
-			}	
-			else {
-				tt[col][row/2 + 256/2] =  img[row][col];
-			}	
-		}
-	}   
-	for ( row = 0;row < 256-2;row++) {
-		for (col = 0;col < 256;col++) {
-			img[row][col] = tt[row][col];
-		}
-	}
-
-	
-	return de_interleave;
-    }
+/*	
+gcc jpeg.c -o jpeg
+python rd_wr_image.py 
+./jpeg img_to_fpga.bin pass.bin
+python rd_pass.py
+*/
 	
 	
 	int main(int argc, char **argv) {
@@ -72,7 +43,30 @@
 				   index++;
         }
 	}
-     de_interleave = jpeg_process(img_ptr,  w, h);
+	for ( p =0; p < 2; p++) {
+	for ( col = 0; col<256;col++) { 
+		for (row = 2;row<256;row=row+2) {
+			img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col]) >> 1);
+		}
+		for (row = 1;row<256-2;row=row+2) {
+			img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col] +2) >> 2);
+		}
+	}
+	for ( row = 0 ; row < 256; row++) {
+		for (col = 0; col < 256;col++) {  
+			if (row % 2 == 0) {
+				tt[col][row/2] =  img[row][col];
+			}	
+			else {
+				tt[col][row/2 + 256/2] =  img[row][col];
+			}	
+		}
+	}   
+	for ( row = 0;row < 256-2;row++) {
+		for (col = 0;col < 256;col++) {
+			img[row][col] = tt[row][col];
+		}
+	}
 	img_ptr = &img[0][0];
         fpout = fopen(argv[2], "wb");
         for (row = 0; row < h; row++) {
