@@ -19,72 +19,72 @@ Parsing module <xula2>.
 =========================================================================
 
 Elaborating module <xula2>.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 275: Assignment to done0 ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 331: Result of 10-bit expression is truncated to fit in 9-bit target.
-"/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 396. $display *** AssertionError ***
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 348: Assignment to cmd_inst_mmc_inst_tocnt ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 461: Result of 9-bit expression is truncated to fit in 8-bit target.
-"/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 472. $display *** AssertionError ***
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 523: Result of 9-bit expression is truncated to fit in 8-bit target.
-"/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 548. $display *** AssertionError ***
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 404: Assignment to cmd_inst_bytemon ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 558: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 562: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 565: Assignment to done4 ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 717: Result of 32-bit expression is truncated to fit in 8-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 736: Assignment to done9 ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 788: Assignment to done3 ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 812: Assignment to done2 ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 850: Assignment to done7 ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 874: Assignment to done6 ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 898: Assignment to done5 ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 923: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 943: Result of 15-bit expression is truncated to fit in 14-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 970: Result of 11-bit expression is truncated to fit in 10-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1003: Assignment to uart_inst_insttxfifo_fbus_rvld ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1024: Result of 32-bit expression is truncated to fit in 2-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1030: Result of 3-bit expression is truncated to fit in 2-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1051: Result of 4-bit expression is truncated to fit in 3-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1052: Result of 32-bit expression is truncated to fit in 3-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1055: Result of 32-bit expression is truncated to fit in 3-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1056: Result of 4-bit expression is truncated to fit in 3-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1063: Assignment to uart_inst_insttxfifo_fbus_count ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1106: Result of 5-bit expression is truncated to fit in 4-bit target.
-"/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1127. $display *** AssertionError ***
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1172: Result of 32-bit expression is truncated to fit in 2-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1178: Result of 3-bit expression is truncated to fit in 2-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1154: Assignment to uart_inst_instrxfifo_fbus_full ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1199: Result of 4-bit expression is truncated to fit in 3-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1200: Result of 32-bit expression is truncated to fit in 3-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1203: Result of 32-bit expression is truncated to fit in 3-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1204: Result of 4-bit expression is truncated to fit in 3-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1211: Assignment to uart_inst_instrxfifo_fbus_count ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1224: Result of 5-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1254: Result of 5-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1297: Result of 32-bit expression is truncated to fit in 11-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1301: Result of 12-bit expression is truncated to fit in 11-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1315: Result of 5-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1351: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1355: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1359: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1363: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1367: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1379: Result of 32-bit expression is truncated to fit in 8-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1386: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1397: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1400: Assignment to done8 ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1436: Assignment to done12 ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1469: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1472: Assignment to done11 ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1497: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1504: Assignment to done10 ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1529: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1548: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1582: Result of 10-bit expression is truncated to fit in 9-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1585: Assignment to done13 ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1630: Assignment to done1 ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1654: Assignment to done15 ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1678: Assignment to done14 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 282: Assignment to done0 ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 338: Result of 10-bit expression is truncated to fit in 9-bit target.
+"/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 403. $display *** AssertionError ***
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 355: Assignment to cmd_inst_mmc_inst_tocnt ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 468: Result of 9-bit expression is truncated to fit in 8-bit target.
+"/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 479. $display *** AssertionError ***
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 530: Result of 9-bit expression is truncated to fit in 8-bit target.
+"/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 555. $display *** AssertionError ***
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 411: Assignment to cmd_inst_bytemon ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 565: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 569: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 572: Assignment to done4 ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 724: Result of 32-bit expression is truncated to fit in 8-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 743: Assignment to done9 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 795: Assignment to done3 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 819: Assignment to done2 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 857: Assignment to done7 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 881: Assignment to done6 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 905: Assignment to done5 ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 930: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 950: Result of 15-bit expression is truncated to fit in 14-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 977: Result of 11-bit expression is truncated to fit in 10-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1014: Result of 32-bit expression is truncated to fit in 11-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1018: Result of 12-bit expression is truncated to fit in 11-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1032: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1057: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1087: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1137: Result of 5-bit expression is truncated to fit in 4-bit target.
+"/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1158. $display *** AssertionError ***
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1177: Result of 4-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1178: Result of 32-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1181: Result of 32-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1182: Result of 4-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1193: Assignment to uart_inst_fifo_tx_inst_fbus_count ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1197: Assignment to uart_inst_fifo_tx_inst_fbus_read_valid ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1218: Result of 32-bit expression is truncated to fit in 2-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1224: Result of 3-bit expression is truncated to fit in 2-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1278: Result of 4-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1279: Result of 32-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1282: Result of 32-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1283: Result of 4-bit expression is truncated to fit in 3-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1294: Assignment to uart_inst_fifo_rx_inst_fbus_count ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1319: Result of 32-bit expression is truncated to fit in 2-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1325: Result of 3-bit expression is truncated to fit in 2-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1301: Assignment to uart_inst_fifo_rx_inst_fbus_full ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1375: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1379: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1383: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1387: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1391: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1403: Result of 32-bit expression is truncated to fit in 8-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1410: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1421: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1424: Assignment to done8 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1460: Assignment to done12 ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1493: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1496: Assignment to done11 ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1521: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1528: Assignment to done10 ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1553: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1572: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1606: Result of 10-bit expression is truncated to fit in 9-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1609: Assignment to done13 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1654: Assignment to done1 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1678: Assignment to done15 ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v" Line 1702: Assignment to done14 ignored, since the identifier is never used
 
 =========================================================================
 *                           HDL Synthesis                               *
@@ -92,6 +92,7 @@ WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/
 
 Synthesizing Unit <xula2>.
     Related source file is "/home/vidal/wkg/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples/xilinx/xula2.v".
+    Found 1-bit register for signal <cmd_inst_fifobus_write>.
     Found 1-bit register for signal <memmap_read>.
     Found 1-bit register for signal <memmap_write>.
     Found 1-bit register for signal <cmd_inst_packet<0><7>>.
@@ -190,34 +191,33 @@ Synthesizing Unit <xula2>.
     Found 1-bit register for signal <cmd_inst_packet<11><2>>.
     Found 1-bit register for signal <cmd_inst_packet<11><1>>.
     Found 1-bit register for signal <cmd_inst_packet<11><0>>.
-    Found 1-bit register for signal <cmd_inst_fbtx_wr>.
     Found 1-bit register for signal <cmd_inst_ready>.
-    Found 1-bit register for signal <cmd_inst_fbtx_full>.
-    Found 1-bit register for signal <uart_inst_insttx_fbustx_rd>.
-    Found 1-bit register for signal <uart_inst_instrx_fbusrx_wr>.
     Found 1-bit register for signal <uart_inst_baudce16>.
     Found 1-bit register for signal <uart_inst_baudce>.
+    Found 1-bit register for signal <uart_inst_rx_inst_fbusrx_write>.
+    Found 1-bit register for signal <uart_inst_tx_inst_fbustx_read>.
+    Found 1-bit register for signal <uart_inst_fbustx_full>.
     Found 28-bit register for signal <memmap_mem_addr>.
     Found 32-bit register for signal <memmap_write_data>.
     Found 4-bit register for signal <cmd_inst_state>.
-    Found 4-bit register for signal <uart_inst_insttx_bitcnt>.
-    Found 4-bit register for signal <uart_inst_instrx_bitcnt>.
-    Found 4-bit register for signal <uart_inst_instbaud_cnt16>.
-    Found 8-bit register for signal <cmd_inst_fbtx_wdata>.
+    Found 4-bit register for signal <uart_inst_baud_inst_cnt16>.
+    Found 4-bit register for signal <uart_inst_rx_inst_bitcnt>.
+    Found 4-bit register for signal <uart_inst_tx_inst_bitcnt>.
+    Found 8-bit register for signal <cmd_inst_fifobus_write_data>.
     Found 8-bit register for signal <XULA2_CMD_INST_BEH_STATE_MACHINE.bytecnt>.
-    Found 8-bit register for signal <uart_inst_insttx_txbyte>.
-    Found 8-bit register for signal <uart_inst_instrx_fbusrx_wdata>.
-    Found 8-bit register for signal <uart_inst_instrx_rxbyte>.
+    Found 8-bit register for signal <uart_inst_rx_inst_fbusrx_write_data>.
+    Found 8-bit register for signal <uart_inst_rx_inst_rxbyte>.
+    Found 8-bit register for signal <uart_inst_tx_inst_txbyte>.
     Found 14-bit register for signal <tick_inst_mscnt>.
     Found 10-bit register for signal <tick_inst_seccnt>.
-    Found 2-bit register for signal <uart_inst_insttxfifo_addr>.
-    Found 2-bit register for signal <uart_inst_instrxfifo_addr>.
-    Found 2-bit register for signal <uart_inst_instrx_state>.
-    Found 3-bit register for signal <uart_inst_insttx_state>.
-    Found 11-bit register for signal <uart_inst_instbaud_cnt>.
+    Found 11-bit register for signal <uart_inst_baud_inst_cnt>.
+    Found 2-bit register for signal <uart_inst_rx_inst_state>.
+    Found 2-bit register for signal <uart_inst_fifo_tx_inst_addr>.
+    Found 2-bit register for signal <uart_inst_fifo_rx_inst_addr>.
+    Found 3-bit register for signal <uart_inst_tx_inst_state>.
+    Found 1-bit register for signal <uart_inst_tx_inst_fbustx_empty>.
+    Found 1-bit register for signal <uart_inst_fbusrx_empty>.
     Found 1-bit register for signal <uart_inst_tx>.
-    Found 1-bit register for signal <cmd_inst_fbrx_empty>.
-    Found 1-bit register for signal <uart_inst_insttx_fbustx_empty>.
     Found 10-bit register for signal <lift0>.
     Found 10-bit register for signal <lift4>.
     Found 32-bit register for signal <myregister0>.
@@ -262,14 +262,14 @@ Synthesizing Unit <xula2>.
     Found 10-bit register for signal <lift5>.
     Found 1-bit register for signal <tick_inst_g2_increment>.
     Found 1-bit register for signal <glbl_tick_sec>.
-    Found 32-bit register for signal <n1136[31:0]>.
-    Found 2-bit register for signal <uart_inst_instsynctx_staps>.
-    Found 32-bit register for signal <n1135[31:0]>.
-    Found 1-bit register for signal <uart_inst_instrx_rxd>.
-    Found 4-bit register for signal <uart_inst_instrx_mcnt>.
-    Found 1-bit register for signal <uart_inst_instrx_rxinprog>.
-    Found 1-bit register for signal <uart_inst_instrx_midbit>.
-    Found 2-bit register for signal <uart_inst_instsyncrx_staps>.
+    Found 3-bit register for signal <uart_inst_syncrx_inst_staps>.
+    Found 1-bit register for signal <uart_inst_rx_inst_rxd>.
+    Found 4-bit register for signal <uart_inst_rx_inst_mcnt>.
+    Found 1-bit register for signal <uart_inst_rx_inst_rxinprog>.
+    Found 1-bit register for signal <uart_inst_rx_inst_midbit>.
+    Found 32-bit register for signal <n1147[31:0]>.
+    Found 3-bit register for signal <uart_inst_synctx_inst_staps>.
+    Found 32-bit register for signal <n1146[31:0]>.
     Found 32-bit register for signal <reset_dly_cnt>.
     Found 1-bit register for signal <reset>.
     Found 8-bit register for signal <tone>.
@@ -296,7 +296,7 @@ Synthesizing Unit <xula2>.
     | Encoding           | auto                                           |
     | Implementation     | LUT                                            |
     -----------------------------------------------------------------------
-    Found finite state machine <FSM_1> for signal <uart_inst_instrx_state>.
+    Found finite state machine <FSM_1> for signal <uart_inst_rx_inst_state>.
     -----------------------------------------------------------------------
     | States             | 4                                              |
     | Transitions        | 9                                              |
@@ -309,7 +309,7 @@ Synthesizing Unit <xula2>.
     | Encoding           | auto                                           |
     | Implementation     | LUT                                            |
     -----------------------------------------------------------------------
-    Found finite state machine <FSM_2> for signal <uart_inst_insttx_state>.
+    Found finite state machine <FSM_2> for signal <uart_inst_tx_inst_state>.
     -----------------------------------------------------------------------
     | States             | 5                                              |
     | Transitions        | 12                                             |
@@ -322,160 +322,160 @@ Synthesizing Unit <xula2>.
     | Encoding           | auto                                           |
     | Implementation     | LUT                                            |
     -----------------------------------------------------------------------
-    Found 10-bit subtractor for signal <sam0[8]_lft0[8]_sub_12_OUT> created at line 280.
-    Found 10-bit subtractor for signal <sam0[8]_lft0[8]_sub_20_OUT> created at line 289.
-    Found 10-bit subtractor for signal <sam4[8]_lft4[8]_sub_127_OUT> created at line 570.
-    Found 10-bit subtractor for signal <sam4[8]_lft4[8]_sub_135_OUT> created at line 579.
-    Found 10-bit subtractor for signal <sam9[8]_lft9[8]_sub_282_OUT> created at line 741.
-    Found 10-bit subtractor for signal <sam9[8]_lft9[8]_sub_290_OUT> created at line 750.
-    Found 10-bit subtractor for signal <sam3[8]_lft3[8]_sub_318_OUT> created at line 793.
-    Found 10-bit subtractor for signal <sam3[8]_lft3[8]_sub_326_OUT> created at line 802.
-    Found 10-bit subtractor for signal <sam2[8]_lft2[8]_sub_338_OUT> created at line 817.
-    Found 10-bit subtractor for signal <sam2[8]_lft2[8]_sub_346_OUT> created at line 826.
-    Found 10-bit subtractor for signal <sam7[8]_lft7[8]_sub_366_OUT> created at line 855.
-    Found 10-bit subtractor for signal <sam7[8]_lft7[8]_sub_374_OUT> created at line 864.
-    Found 10-bit subtractor for signal <sam6[8]_lft6[8]_sub_386_OUT> created at line 879.
-    Found 10-bit subtractor for signal <sam6[8]_lft6[8]_sub_394_OUT> created at line 888.
-    Found 10-bit subtractor for signal <sam5[8]_lft5[8]_sub_406_OUT> created at line 903.
-    Found 10-bit subtractor for signal <sam5[8]_lft5[8]_sub_414_OUT> created at line 912.
-    Found 10-bit subtractor for signal <sam8[8]_lft8[8]_sub_604_OUT> created at line 1405.
-    Found 10-bit subtractor for signal <sam8[8]_lft8[8]_sub_612_OUT> created at line 1414.
-    Found 10-bit subtractor for signal <sam12[8]_lft12[8]_sub_627_OUT> created at line 1441.
-    Found 10-bit subtractor for signal <sam12[8]_lft12[8]_sub_635_OUT> created at line 1450.
-    Found 10-bit subtractor for signal <sam11[8]_lft11[8]_sub_650_OUT> created at line 1477.
-    Found 10-bit subtractor for signal <sam11[8]_lft11[8]_sub_658_OUT> created at line 1486.
-    Found 10-bit subtractor for signal <sam10[8]_lft10[8]_sub_672_OUT> created at line 1509.
-    Found 10-bit subtractor for signal <sam10[8]_lft10[8]_sub_680_OUT> created at line 1518.
-    Found 10-bit subtractor for signal <sam13[8]_lft13[8]_sub_720_OUT> created at line 1590.
-    Found 10-bit subtractor for signal <sam13[8]_lft13[8]_sub_728_OUT> created at line 1599.
-    Found 10-bit subtractor for signal <sam1[8]_lft1[8]_sub_752_OUT> created at line 1635.
-    Found 10-bit subtractor for signal <sam1[8]_lft1[8]_sub_760_OUT> created at line 1644.
-    Found 10-bit subtractor for signal <sam15[8]_lft15[8]_sub_772_OUT> created at line 1659.
-    Found 10-bit subtractor for signal <sam15[8]_lft15[8]_sub_780_OUT> created at line 1668.
-    Found 10-bit subtractor for signal <sam14[8]_lft14[8]_sub_792_OUT> created at line 1683.
-    Found 10-bit subtractor for signal <sam14[8]_lft14[8]_sub_800_OUT> created at line 1692.
-    Found 9-bit adder for signal <lft0[8]_rht0[8]_add_10_OUT> created at line 280.
-    Found 10-bit adder for signal <sam0[8]_lft0[8]_add_13_OUT> created at line 283.
-    Found 10-bit adder for signal <lft0[8]_rht0[8]_add_14_OUT> created at line 286.
-    Found 11-bit adder for signal <n1144> created at line 286.
-    Found 10-bit adder for signal <sam0[8]_lft0[8]_add_16_OUT> created at line 286.
-    Found 8-bit adder for signal <XULA2_CMD_INST_BEH_STATE_MACHINE.bytecnt[7]_GND_1_o_add_77_OUT> created at line 461.
-    Found 9-bit adder for signal <lft4[8]_rht4[8]_add_125_OUT> created at line 570.
-    Found 10-bit adder for signal <sam4[8]_lft4[8]_add_128_OUT> created at line 573.
-    Found 10-bit adder for signal <lft4[8]_rht4[8]_add_129_OUT> created at line 576.
-    Found 11-bit adder for signal <n1194> created at line 576.
-    Found 10-bit adder for signal <sam4[8]_lft4[8]_add_131_OUT> created at line 576.
-    Found 9-bit adder for signal <lft9[8]_rht9[8]_add_280_OUT> created at line 741.
-    Found 10-bit adder for signal <sam9[8]_lft9[8]_add_283_OUT> created at line 744.
-    Found 10-bit adder for signal <lft9[8]_rht9[8]_add_284_OUT> created at line 747.
-    Found 11-bit adder for signal <n1244> created at line 747.
-    Found 10-bit adder for signal <sam9[8]_lft9[8]_add_286_OUT> created at line 747.
-    Found 9-bit adder for signal <lft3[8]_rht3[8]_add_316_OUT> created at line 793.
-    Found 10-bit adder for signal <sam3[8]_lft3[8]_add_319_OUT> created at line 796.
-    Found 10-bit adder for signal <lft3[8]_rht3[8]_add_320_OUT> created at line 799.
-    Found 11-bit adder for signal <n1253> created at line 799.
-    Found 10-bit adder for signal <sam3[8]_lft3[8]_add_322_OUT> created at line 799.
-    Found 9-bit adder for signal <lft2[8]_rht2[8]_add_336_OUT> created at line 817.
-    Found 10-bit adder for signal <sam2[8]_lft2[8]_add_339_OUT> created at line 820.
-    Found 10-bit adder for signal <lft2[8]_rht2[8]_add_340_OUT> created at line 823.
-    Found 11-bit adder for signal <n1262> created at line 823.
-    Found 10-bit adder for signal <sam2[8]_lft2[8]_add_342_OUT> created at line 823.
-    Found 9-bit adder for signal <lft7[8]_rht7[8]_add_364_OUT> created at line 855.
-    Found 10-bit adder for signal <sam7[8]_lft7[8]_add_367_OUT> created at line 858.
-    Found 10-bit adder for signal <lft7[8]_rht7[8]_add_368_OUT> created at line 861.
-    Found 11-bit adder for signal <n1271> created at line 861.
-    Found 10-bit adder for signal <sam7[8]_lft7[8]_add_370_OUT> created at line 861.
-    Found 9-bit adder for signal <lft6[8]_rht6[8]_add_384_OUT> created at line 879.
-    Found 10-bit adder for signal <sam6[8]_lft6[8]_add_387_OUT> created at line 882.
-    Found 10-bit adder for signal <lft6[8]_rht6[8]_add_388_OUT> created at line 885.
-    Found 11-bit adder for signal <n1280> created at line 885.
-    Found 10-bit adder for signal <sam6[8]_lft6[8]_add_390_OUT> created at line 885.
-    Found 9-bit adder for signal <lft5[8]_rht5[8]_add_404_OUT> created at line 903.
-    Found 10-bit adder for signal <sam5[8]_lft5[8]_add_407_OUT> created at line 906.
-    Found 10-bit adder for signal <lft5[8]_rht5[8]_add_408_OUT> created at line 909.
-    Found 11-bit adder for signal <n1289> created at line 909.
-    Found 10-bit adder for signal <sam5[8]_lft5[8]_add_410_OUT> created at line 909.
-    Found 14-bit adder for signal <tick_inst_mscnt[13]_GND_1_o_add_429_OUT> created at line 943.
-    Found 10-bit adder for signal <tick_inst_seccnt[9]_GND_1_o_add_436_OUT> created at line 970.
-    Found 2-bit adder for signal <uart_inst_insttxfifo_addr[1]_GND_1_o_add_450_OUT> created at line 1030.
-    Found 4-bit adder for signal <uart_inst_insttx_bitcnt[3]_GND_1_o_add_479_OUT> created at line 1106.
-    Found 2-bit adder for signal <uart_inst_instrxfifo_addr[1]_GND_1_o_add_504_OUT> created at line 1178.
-    Found 4-bit adder for signal <uart_inst_instrx_mcnt[3]_GND_1_o_add_528_OUT> created at line 1224.
-    Found 4-bit adder for signal <uart_inst_instrx_bitcnt[3]_GND_1_o_add_538_OUT> created at line 1254.
-    Found 11-bit adder for signal <uart_inst_instbaud_cnt[10]_GND_1_o_add_562_OUT> created at line 1301.
-    Found 4-bit adder for signal <uart_inst_instbaud_cnt16[3]_GND_1_o_add_566_OUT> created at line 1315.
-    Found 32-bit adder for signal <reset_dly_cnt[31]_GND_1_o_add_573_OUT> created at line 1336.
-    Found 9-bit adder for signal <lft8[8]_rht8[8]_add_602_OUT> created at line 1405.
-    Found 10-bit adder for signal <sam8[8]_lft8[8]_add_605_OUT> created at line 1408.
-    Found 10-bit adder for signal <lft8[8]_rht8[8]_add_606_OUT> created at line 1411.
-    Found 11-bit adder for signal <n1362> created at line 1411.
-    Found 10-bit adder for signal <sam8[8]_lft8[8]_add_608_OUT> created at line 1411.
-    Found 9-bit adder for signal <lft12[8]_rht12[8]_add_625_OUT> created at line 1441.
-    Found 10-bit adder for signal <sam12[8]_lft12[8]_add_628_OUT> created at line 1444.
-    Found 10-bit adder for signal <lft12[8]_rht12[8]_add_629_OUT> created at line 1447.
-    Found 11-bit adder for signal <n1371> created at line 1447.
-    Found 10-bit adder for signal <sam12[8]_lft12[8]_add_631_OUT> created at line 1447.
-    Found 9-bit adder for signal <lft11[8]_rht11[8]_add_648_OUT> created at line 1477.
-    Found 10-bit adder for signal <sam11[8]_lft11[8]_add_651_OUT> created at line 1480.
-    Found 10-bit adder for signal <lft11[8]_rht11[8]_add_652_OUT> created at line 1483.
-    Found 11-bit adder for signal <n1380> created at line 1483.
-    Found 10-bit adder for signal <sam11[8]_lft11[8]_add_654_OUT> created at line 1483.
-    Found 9-bit adder for signal <lft10[8]_rht10[8]_add_670_OUT> created at line 1509.
-    Found 10-bit adder for signal <sam10[8]_lft10[8]_add_673_OUT> created at line 1512.
-    Found 10-bit adder for signal <lft10[8]_rht10[8]_add_674_OUT> created at line 1515.
-    Found 11-bit adder for signal <n1389> created at line 1515.
-    Found 10-bit adder for signal <sam10[8]_lft10[8]_add_676_OUT> created at line 1515.
-    Found 9-bit adder for signal <lft13[8]_rht13[8]_add_718_OUT> created at line 1590.
-    Found 10-bit adder for signal <sam13[8]_lft13[8]_add_721_OUT> created at line 1593.
-    Found 10-bit adder for signal <lft13[8]_rht13[8]_add_722_OUT> created at line 1596.
-    Found 11-bit adder for signal <n1407> created at line 1596.
-    Found 10-bit adder for signal <sam13[8]_lft13[8]_add_724_OUT> created at line 1596.
-    Found 9-bit adder for signal <lft1[8]_rht1[8]_add_750_OUT> created at line 1635.
-    Found 10-bit adder for signal <sam1[8]_lft1[8]_add_753_OUT> created at line 1638.
-    Found 10-bit adder for signal <lft1[8]_rht1[8]_add_754_OUT> created at line 1641.
-    Found 11-bit adder for signal <n1416> created at line 1641.
-    Found 10-bit adder for signal <sam1[8]_lft1[8]_add_756_OUT> created at line 1641.
-    Found 9-bit adder for signal <lft15[8]_rht15[8]_add_770_OUT> created at line 1659.
-    Found 10-bit adder for signal <sam15[8]_lft15[8]_add_773_OUT> created at line 1662.
-    Found 10-bit adder for signal <lft15[8]_rht15[8]_add_774_OUT> created at line 1665.
-    Found 11-bit adder for signal <n1425> created at line 1665.
-    Found 10-bit adder for signal <sam15[8]_lft15[8]_add_776_OUT> created at line 1665.
-    Found 9-bit adder for signal <lft14[8]_rht14[8]_add_790_OUT> created at line 1683.
-    Found 10-bit adder for signal <sam14[8]_lft14[8]_add_793_OUT> created at line 1686.
-    Found 10-bit adder for signal <lft14[8]_rht14[8]_add_794_OUT> created at line 1689.
-    Found 11-bit adder for signal <n1434> created at line 1689.
-    Found 10-bit adder for signal <sam14[8]_lft14[8]_add_796_OUT> created at line 1689.
-    Found 2-bit subtractor for signal <GND_1_o_GND_1_o_sub_449_OUT<1:0>> created at line 1024.
-    Found 2-bit subtractor for signal <GND_1_o_GND_1_o_sub_503_OUT<1:0>> created at line 1172.
-    Found 11-bit subtractor for signal <GND_1_o_GND_1_o_sub_562_OUT<10:0>> created at line 1297.
-    Found 8-bit 12-to-1 multiplexer for signal <XULA2_CMD_INST_BEH_STATE_MACHINE.bytecnt[3]_X_1_o_wide_mux_94_OUT> created at line 522.
-    Found 8-bit 4-to-1 multiplexer for signal <uart_inst_insttx_fbustx_rdata> created at line 999.
-    Found 1-bit 8-to-1 multiplexer for signal <uart_inst_insttx_bitcnt[2]_uart_inst_insttx_txbyte[7]_Mux_480_o> created at line 1107.
-    Found 8-bit 4-to-1 multiplexer for signal <cmd_inst_fbrx_rdata> created at line 1147.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4200> created at line 1439.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4217> created at line 901.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4234> created at line 278.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4252> created at line 568.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4269> created at line 1507.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4286> created at line 1681.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4305> created at line 1588.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4322> created at line 791.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4339> created at line 739.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4357> created at line 815.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4375> created at line 1633.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4392> created at line 853.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4410> created at line 877.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4447> created at line 1475.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4464> created at line 1657.
-    Found 10-bit 4-to-1 multiplexer for signal <_n4481> created at line 1403.
-    Found 8-bit comparator lessequal for signal <n0052> created at line 460
-    Found 8-bit comparator greater for signal <XULA2_CMD_INST_BEH_STATE_MACHINE.bytecnt[7]_GND_1_o_LessThan_94_o> created at line 519
-    Found 4-bit comparator lessequal for signal <n0698> created at line 1253
-    Found 11-bit comparator lessequal for signal <n0738> created at line 1296
-    Found 32-bit comparator greater for signal <reset_dly_cnt[31]_GND_1_o_LessThan_573_o> created at line 1335
+    Found 10-bit subtractor for signal <sam0[8]_lft0[8]_sub_12_OUT> created at line 287.
+    Found 10-bit subtractor for signal <sam0[8]_lft0[8]_sub_20_OUT> created at line 296.
+    Found 10-bit subtractor for signal <sam4[8]_lft4[8]_sub_127_OUT> created at line 577.
+    Found 10-bit subtractor for signal <sam4[8]_lft4[8]_sub_135_OUT> created at line 586.
+    Found 10-bit subtractor for signal <sam9[8]_lft9[8]_sub_282_OUT> created at line 748.
+    Found 10-bit subtractor for signal <sam9[8]_lft9[8]_sub_290_OUT> created at line 757.
+    Found 10-bit subtractor for signal <sam3[8]_lft3[8]_sub_318_OUT> created at line 800.
+    Found 10-bit subtractor for signal <sam3[8]_lft3[8]_sub_326_OUT> created at line 809.
+    Found 10-bit subtractor for signal <sam2[8]_lft2[8]_sub_338_OUT> created at line 824.
+    Found 10-bit subtractor for signal <sam2[8]_lft2[8]_sub_346_OUT> created at line 833.
+    Found 10-bit subtractor for signal <sam7[8]_lft7[8]_sub_366_OUT> created at line 862.
+    Found 10-bit subtractor for signal <sam7[8]_lft7[8]_sub_374_OUT> created at line 871.
+    Found 10-bit subtractor for signal <sam6[8]_lft6[8]_sub_386_OUT> created at line 886.
+    Found 10-bit subtractor for signal <sam6[8]_lft6[8]_sub_394_OUT> created at line 895.
+    Found 10-bit subtractor for signal <sam5[8]_lft5[8]_sub_406_OUT> created at line 910.
+    Found 10-bit subtractor for signal <sam5[8]_lft5[8]_sub_414_OUT> created at line 919.
+    Found 10-bit subtractor for signal <sam8[8]_lft8[8]_sub_606_OUT> created at line 1429.
+    Found 10-bit subtractor for signal <sam8[8]_lft8[8]_sub_614_OUT> created at line 1438.
+    Found 10-bit subtractor for signal <sam12[8]_lft12[8]_sub_629_OUT> created at line 1465.
+    Found 10-bit subtractor for signal <sam12[8]_lft12[8]_sub_637_OUT> created at line 1474.
+    Found 10-bit subtractor for signal <sam11[8]_lft11[8]_sub_652_OUT> created at line 1501.
+    Found 10-bit subtractor for signal <sam11[8]_lft11[8]_sub_660_OUT> created at line 1510.
+    Found 10-bit subtractor for signal <sam10[8]_lft10[8]_sub_674_OUT> created at line 1533.
+    Found 10-bit subtractor for signal <sam10[8]_lft10[8]_sub_682_OUT> created at line 1542.
+    Found 10-bit subtractor for signal <sam13[8]_lft13[8]_sub_722_OUT> created at line 1614.
+    Found 10-bit subtractor for signal <sam13[8]_lft13[8]_sub_730_OUT> created at line 1623.
+    Found 10-bit subtractor for signal <sam1[8]_lft1[8]_sub_754_OUT> created at line 1659.
+    Found 10-bit subtractor for signal <sam1[8]_lft1[8]_sub_762_OUT> created at line 1668.
+    Found 10-bit subtractor for signal <sam15[8]_lft15[8]_sub_774_OUT> created at line 1683.
+    Found 10-bit subtractor for signal <sam15[8]_lft15[8]_sub_782_OUT> created at line 1692.
+    Found 10-bit subtractor for signal <sam14[8]_lft14[8]_sub_794_OUT> created at line 1707.
+    Found 10-bit subtractor for signal <sam14[8]_lft14[8]_sub_802_OUT> created at line 1716.
+    Found 9-bit adder for signal <lft0[8]_rht0[8]_add_10_OUT> created at line 287.
+    Found 10-bit adder for signal <sam0[8]_lft0[8]_add_13_OUT> created at line 290.
+    Found 10-bit adder for signal <lft0[8]_rht0[8]_add_14_OUT> created at line 293.
+    Found 11-bit adder for signal <n1155> created at line 293.
+    Found 10-bit adder for signal <sam0[8]_lft0[8]_add_16_OUT> created at line 293.
+    Found 8-bit adder for signal <XULA2_CMD_INST_BEH_STATE_MACHINE.bytecnt[7]_GND_1_o_add_77_OUT> created at line 468.
+    Found 9-bit adder for signal <lft4[8]_rht4[8]_add_125_OUT> created at line 577.
+    Found 10-bit adder for signal <sam4[8]_lft4[8]_add_128_OUT> created at line 580.
+    Found 10-bit adder for signal <lft4[8]_rht4[8]_add_129_OUT> created at line 583.
+    Found 11-bit adder for signal <n1205> created at line 583.
+    Found 10-bit adder for signal <sam4[8]_lft4[8]_add_131_OUT> created at line 583.
+    Found 9-bit adder for signal <lft9[8]_rht9[8]_add_280_OUT> created at line 748.
+    Found 10-bit adder for signal <sam9[8]_lft9[8]_add_283_OUT> created at line 751.
+    Found 10-bit adder for signal <lft9[8]_rht9[8]_add_284_OUT> created at line 754.
+    Found 11-bit adder for signal <n1255> created at line 754.
+    Found 10-bit adder for signal <sam9[8]_lft9[8]_add_286_OUT> created at line 754.
+    Found 9-bit adder for signal <lft3[8]_rht3[8]_add_316_OUT> created at line 800.
+    Found 10-bit adder for signal <sam3[8]_lft3[8]_add_319_OUT> created at line 803.
+    Found 10-bit adder for signal <lft3[8]_rht3[8]_add_320_OUT> created at line 806.
+    Found 11-bit adder for signal <n1264> created at line 806.
+    Found 10-bit adder for signal <sam3[8]_lft3[8]_add_322_OUT> created at line 806.
+    Found 9-bit adder for signal <lft2[8]_rht2[8]_add_336_OUT> created at line 824.
+    Found 10-bit adder for signal <sam2[8]_lft2[8]_add_339_OUT> created at line 827.
+    Found 10-bit adder for signal <lft2[8]_rht2[8]_add_340_OUT> created at line 830.
+    Found 11-bit adder for signal <n1273> created at line 830.
+    Found 10-bit adder for signal <sam2[8]_lft2[8]_add_342_OUT> created at line 830.
+    Found 9-bit adder for signal <lft7[8]_rht7[8]_add_364_OUT> created at line 862.
+    Found 10-bit adder for signal <sam7[8]_lft7[8]_add_367_OUT> created at line 865.
+    Found 10-bit adder for signal <lft7[8]_rht7[8]_add_368_OUT> created at line 868.
+    Found 11-bit adder for signal <n1282> created at line 868.
+    Found 10-bit adder for signal <sam7[8]_lft7[8]_add_370_OUT> created at line 868.
+    Found 9-bit adder for signal <lft6[8]_rht6[8]_add_384_OUT> created at line 886.
+    Found 10-bit adder for signal <sam6[8]_lft6[8]_add_387_OUT> created at line 889.
+    Found 10-bit adder for signal <lft6[8]_rht6[8]_add_388_OUT> created at line 892.
+    Found 11-bit adder for signal <n1291> created at line 892.
+    Found 10-bit adder for signal <sam6[8]_lft6[8]_add_390_OUT> created at line 892.
+    Found 9-bit adder for signal <lft5[8]_rht5[8]_add_404_OUT> created at line 910.
+    Found 10-bit adder for signal <sam5[8]_lft5[8]_add_407_OUT> created at line 913.
+    Found 10-bit adder for signal <lft5[8]_rht5[8]_add_408_OUT> created at line 916.
+    Found 11-bit adder for signal <n1300> created at line 916.
+    Found 10-bit adder for signal <sam5[8]_lft5[8]_add_410_OUT> created at line 916.
+    Found 14-bit adder for signal <tick_inst_mscnt[13]_GND_1_o_add_429_OUT> created at line 950.
+    Found 10-bit adder for signal <tick_inst_seccnt[9]_GND_1_o_add_436_OUT> created at line 977.
+    Found 11-bit adder for signal <uart_inst_baud_inst_cnt[10]_GND_1_o_add_448_OUT> created at line 1018.
+    Found 4-bit adder for signal <uart_inst_baud_inst_cnt16[3]_GND_1_o_add_452_OUT> created at line 1032.
+    Found 4-bit adder for signal <uart_inst_rx_inst_mcnt[3]_GND_1_o_add_459_OUT> created at line 1057.
+    Found 4-bit adder for signal <uart_inst_rx_inst_bitcnt[3]_GND_1_o_add_469_OUT> created at line 1087.
+    Found 4-bit adder for signal <uart_inst_tx_inst_bitcnt[3]_GND_1_o_add_492_OUT> created at line 1137.
+    Found 2-bit adder for signal <uart_inst_fifo_tx_inst_addr[1]_GND_1_o_add_528_OUT> created at line 1224.
+    Found 2-bit adder for signal <uart_inst_fifo_rx_inst_addr[1]_GND_1_o_add_561_OUT> created at line 1325.
+    Found 32-bit adder for signal <reset_dly_cnt[31]_GND_1_o_add_575_OUT> created at line 1360.
+    Found 9-bit adder for signal <lft8[8]_rht8[8]_add_604_OUT> created at line 1429.
+    Found 10-bit adder for signal <sam8[8]_lft8[8]_add_607_OUT> created at line 1432.
+    Found 10-bit adder for signal <lft8[8]_rht8[8]_add_608_OUT> created at line 1435.
+    Found 11-bit adder for signal <n1373> created at line 1435.
+    Found 10-bit adder for signal <sam8[8]_lft8[8]_add_610_OUT> created at line 1435.
+    Found 9-bit adder for signal <lft12[8]_rht12[8]_add_627_OUT> created at line 1465.
+    Found 10-bit adder for signal <sam12[8]_lft12[8]_add_630_OUT> created at line 1468.
+    Found 10-bit adder for signal <lft12[8]_rht12[8]_add_631_OUT> created at line 1471.
+    Found 11-bit adder for signal <n1382> created at line 1471.
+    Found 10-bit adder for signal <sam12[8]_lft12[8]_add_633_OUT> created at line 1471.
+    Found 9-bit adder for signal <lft11[8]_rht11[8]_add_650_OUT> created at line 1501.
+    Found 10-bit adder for signal <sam11[8]_lft11[8]_add_653_OUT> created at line 1504.
+    Found 10-bit adder for signal <lft11[8]_rht11[8]_add_654_OUT> created at line 1507.
+    Found 11-bit adder for signal <n1391> created at line 1507.
+    Found 10-bit adder for signal <sam11[8]_lft11[8]_add_656_OUT> created at line 1507.
+    Found 9-bit adder for signal <lft10[8]_rht10[8]_add_672_OUT> created at line 1533.
+    Found 10-bit adder for signal <sam10[8]_lft10[8]_add_675_OUT> created at line 1536.
+    Found 10-bit adder for signal <lft10[8]_rht10[8]_add_676_OUT> created at line 1539.
+    Found 11-bit adder for signal <n1400> created at line 1539.
+    Found 10-bit adder for signal <sam10[8]_lft10[8]_add_678_OUT> created at line 1539.
+    Found 9-bit adder for signal <lft13[8]_rht13[8]_add_720_OUT> created at line 1614.
+    Found 10-bit adder for signal <sam13[8]_lft13[8]_add_723_OUT> created at line 1617.
+    Found 10-bit adder for signal <lft13[8]_rht13[8]_add_724_OUT> created at line 1620.
+    Found 11-bit adder for signal <n1418> created at line 1620.
+    Found 10-bit adder for signal <sam13[8]_lft13[8]_add_726_OUT> created at line 1620.
+    Found 9-bit adder for signal <lft1[8]_rht1[8]_add_752_OUT> created at line 1659.
+    Found 10-bit adder for signal <sam1[8]_lft1[8]_add_755_OUT> created at line 1662.
+    Found 10-bit adder for signal <lft1[8]_rht1[8]_add_756_OUT> created at line 1665.
+    Found 11-bit adder for signal <n1427> created at line 1665.
+    Found 10-bit adder for signal <sam1[8]_lft1[8]_add_758_OUT> created at line 1665.
+    Found 9-bit adder for signal <lft15[8]_rht15[8]_add_772_OUT> created at line 1683.
+    Found 10-bit adder for signal <sam15[8]_lft15[8]_add_775_OUT> created at line 1686.
+    Found 10-bit adder for signal <lft15[8]_rht15[8]_add_776_OUT> created at line 1689.
+    Found 11-bit adder for signal <n1436> created at line 1689.
+    Found 10-bit adder for signal <sam15[8]_lft15[8]_add_778_OUT> created at line 1689.
+    Found 9-bit adder for signal <lft14[8]_rht14[8]_add_792_OUT> created at line 1707.
+    Found 10-bit adder for signal <sam14[8]_lft14[8]_add_795_OUT> created at line 1710.
+    Found 10-bit adder for signal <lft14[8]_rht14[8]_add_796_OUT> created at line 1713.
+    Found 11-bit adder for signal <n1445> created at line 1713.
+    Found 10-bit adder for signal <sam14[8]_lft14[8]_add_798_OUT> created at line 1713.
+    Found 11-bit subtractor for signal <GND_1_o_GND_1_o_sub_448_OUT<10:0>> created at line 1014.
+    Found 2-bit subtractor for signal <GND_1_o_GND_1_o_sub_527_OUT<1:0>> created at line 1218.
+    Found 2-bit subtractor for signal <GND_1_o_GND_1_o_sub_560_OUT<1:0>> created at line 1319.
+    Found 8-bit 12-to-1 multiplexer for signal <XULA2_CMD_INST_BEH_STATE_MACHINE.bytecnt[3]_X_1_o_wide_mux_94_OUT> created at line 529.
+    Found 1-bit 8-to-1 multiplexer for signal <uart_inst_tx_inst_bitcnt[2]_uart_inst_tx_inst_txbyte[7]_Mux_493_o> created at line 1138.
+    Found 8-bit 4-to-1 multiplexer for signal <uart_inst_tx_inst_fbustx_read_data> created at line 1189.
+    Found 8-bit 4-to-1 multiplexer for signal <uart_inst_fbusrx_read_data> created at line 1290.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4212> created at line 908.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4229> created at line 1463.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4246> created at line 285.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4263> created at line 575.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4284> created at line 798.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4302> created at line 746.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4319> created at line 822.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4337> created at line 860.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4354> created at line 1531.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4372> created at line 1657.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4389> created at line 1427.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4406> created at line 1705.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4423> created at line 884.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4440> created at line 1499.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4471> created at line 1681.
+    Found 10-bit 4-to-1 multiplexer for signal <_n4493> created at line 1612.
+    Found 8-bit comparator lessequal for signal <n0052> created at line 467
+    Found 8-bit comparator greater for signal <XULA2_CMD_INST_BEH_STATE_MACHINE.bytecnt[7]_GND_1_o_LessThan_94_o> created at line 526
+    Found 11-bit comparator lessequal for signal <n0601> created at line 1013
+    Found 4-bit comparator lessequal for signal <n0635> created at line 1086
+    Found 32-bit comparator greater for signal <reset_dly_cnt[31]_GND_1_o_LessThan_575_o> created at line 1359
     Summary:
 	inferred  75 Adder/Subtractor(s).
-	inferred 1114 D-type flip-flop(s).
+	inferred 1116 D-type flip-flop(s).
 	inferred   5 Comparator(s).
 	inferred 133 Multiplexer(s).
 	inferred   3 Finite State Machine(s).
@@ -501,8 +501,9 @@ Macro Statistics
  10-bit register                                       : 17
  11-bit register                                       : 1
  14-bit register                                       : 1
- 2-bit register                                        : 4
+ 2-bit register                                        : 2
  28-bit register                                       : 1
+ 3-bit register                                        : 2
  32-bit register                                       : 21
  4-bit register                                        : 4
  8-bit register                                        : 8
@@ -592,33 +593,33 @@ WARNING:Xst:2677 - Node <lift14_9> of sequential type is unconnected in block <x
 WARNING:Xst:2404 -  FFs/Latches <tone<7:1>> (without init value) have a constant value of 0 in block <xula2>.
 
 Synthesizing (advanced) Unit <xula2>.
-The following registers are absorbed into accumulator <uart_inst_instbaud_cnt>: 1 register on signal <uart_inst_instbaud_cnt>.
+The following registers are absorbed into accumulator <uart_inst_baud_inst_cnt>: 1 register on signal <uart_inst_baud_inst_cnt>.
 The following registers are absorbed into counter <tick_inst_mscnt>: 1 register on signal <tick_inst_mscnt>.
-The following registers are absorbed into counter <uart_inst_instbaud_cnt16>: 1 register on signal <uart_inst_instbaud_cnt16>.
+The following registers are absorbed into counter <uart_inst_baud_inst_cnt16>: 1 register on signal <uart_inst_baud_inst_cnt16>.
 The following registers are absorbed into counter <tick_inst_seccnt>: 1 register on signal <tick_inst_seccnt>.
-The following registers are absorbed into counter <uart_inst_instrxfifo_addr>: 1 register on signal <uart_inst_instrxfifo_addr>.
-The following registers are absorbed into counter <uart_inst_insttxfifo_addr>: 1 register on signal <uart_inst_insttxfifo_addr>.
+The following registers are absorbed into counter <uart_inst_fifo_rx_inst_addr>: 1 register on signal <uart_inst_fifo_rx_inst_addr>.
+The following registers are absorbed into counter <uart_inst_fifo_tx_inst_addr>: 1 register on signal <uart_inst_fifo_tx_inst_addr>.
 The following registers are absorbed into counter <reset_dly_cnt>: 1 register on signal <reset_dly_cnt>.
-The following registers are absorbed into counter <uart_inst_instrx_mcnt>: 1 register on signal <uart_inst_instrx_mcnt>.
+The following registers are absorbed into counter <uart_inst_rx_inst_mcnt>: 1 register on signal <uart_inst_rx_inst_mcnt>.
 Unit <xula2> synthesized (advanced).
 
 Synthesizing (advanced) Unit <xula2>.
-	Found 4-bit dynamic shift register for signal <cmd_inst_fbrx_rdata<0>>.
-	Found 4-bit dynamic shift register for signal <cmd_inst_fbrx_rdata<1>>.
-	Found 4-bit dynamic shift register for signal <cmd_inst_fbrx_rdata<2>>.
-	Found 4-bit dynamic shift register for signal <cmd_inst_fbrx_rdata<3>>.
-	Found 4-bit dynamic shift register for signal <cmd_inst_fbrx_rdata<4>>.
-	Found 4-bit dynamic shift register for signal <cmd_inst_fbrx_rdata<5>>.
-	Found 4-bit dynamic shift register for signal <cmd_inst_fbrx_rdata<6>>.
-	Found 4-bit dynamic shift register for signal <cmd_inst_fbrx_rdata<7>>.
-	Found 4-bit dynamic shift register for signal <uart_inst_insttx_fbustx_rdata<0>>.
-	Found 4-bit dynamic shift register for signal <uart_inst_insttx_fbustx_rdata<1>>.
-	Found 4-bit dynamic shift register for signal <uart_inst_insttx_fbustx_rdata<2>>.
-	Found 4-bit dynamic shift register for signal <uart_inst_insttx_fbustx_rdata<3>>.
-	Found 4-bit dynamic shift register for signal <uart_inst_insttx_fbustx_rdata<4>>.
-	Found 4-bit dynamic shift register for signal <uart_inst_insttx_fbustx_rdata<5>>.
-	Found 4-bit dynamic shift register for signal <uart_inst_insttx_fbustx_rdata<6>>.
-	Found 4-bit dynamic shift register for signal <uart_inst_insttx_fbustx_rdata<7>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_fbusrx_read_data<0>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_fbusrx_read_data<1>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_fbusrx_read_data<2>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_fbusrx_read_data<3>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_fbusrx_read_data<4>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_fbusrx_read_data<5>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_fbusrx_read_data<6>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_fbusrx_read_data<7>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_tx_inst_fbustx_read_data<0>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_tx_inst_fbustx_read_data<1>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_tx_inst_fbustx_read_data<2>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_tx_inst_fbustx_read_data<3>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_tx_inst_fbustx_read_data<4>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_tx_inst_fbustx_read_data<5>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_tx_inst_fbustx_read_data<6>>.
+	Found 4-bit dynamic shift register for signal <uart_inst_tx_inst_fbustx_read_data<7>>.
 Unit <xula2> synthesized (advanced).
 WARNING:Xst:2677 - Node <memmap_write_data_30> of sequential type is unconnected in block <xula2>.
 WARNING:Xst:2677 - Node <memmap_write_data_31> of sequential type is unconnected in block <xula2>.
@@ -690,8 +691,8 @@ Macro Statistics
  4-bit up counter                                      : 2
 # Accumulators                                         : 1
  11-bit updown accumulator                             : 1
-# Registers                                            : 914
- Flip-Flops                                            : 914
+# Registers                                            : 916
+ Flip-Flops                                            : 916
 # Shift Registers                                      : 16
  4-bit dynamic shift register                          : 16
 # Comparators                                          : 5
@@ -717,7 +718,7 @@ Macro Statistics
 *                         Low Level Synthesis                           *
 =========================================================================
 Analyzing FSM <MFsm> for best encoding.
-Optimizing FSM <FSM_1> on signal <uart_inst_instrx_state[1:2]> with gray encoding.
+Optimizing FSM <FSM_1> on signal <uart_inst_rx_inst_state[1:2]> with gray encoding.
 -------------------
  State | Encoding
 -------------------
@@ -727,7 +728,7 @@ Optimizing FSM <FSM_1> on signal <uart_inst_instrx_state[1:2]> with gray encodin
  11    | 10
 -------------------
 Analyzing FSM <MFsm> for best encoding.
-Optimizing FSM <FSM_2> on signal <uart_inst_insttx_state[1:3]> with user encoding.
+Optimizing FSM <FSM_2> on signal <uart_inst_tx_inst_state[1:3]> with user encoding.
 -------------------
  State | Encoding
 -------------------
@@ -770,7 +771,7 @@ WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_read_data_30
 WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <memmap_read_data_31> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
 
 Optimizing unit <xula2> ...
-WARNING:Xst:1710 - FF/Latch <uart_inst_instbaud_cnt_10> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1710 - FF/Latch <uart_inst_baud_inst_cnt_10> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
 WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <reset_dly_cnt_31> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
 WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <reset_dly_cnt_30> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
 WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <reset_dly_cnt_29> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
@@ -797,35 +798,23 @@ INFO:Xst:2261 - The FF/Latch <upd2> in Unit <xula2> is equivalent to the followi
 
 Mapping all equations...
 Building and optimizing final netlist ...
-Found area constraint ratio of 100 (+ 5) on block xula2, actual ratio is 33.
-FlipFlop XULA2_CMD_INST_BEH_STATE_MACHINE.bytecnt_0 has been replicated 1 time(s)
-FlipFlop XULA2_CMD_INST_BEH_STATE_MACHINE.bytecnt_1 has been replicated 1 time(s)
-FlipFlop XULA2_CMD_INST_BEH_STATE_MACHINE.bytecnt_2 has been replicated 1 time(s)
-FlipFlop XULA2_CMD_INST_BEH_STATE_MACHINE.bytecnt_3 has been replicated 1 time(s)
-FlipFlop cmd_inst_ready has been replicated 1 time(s)
-FlipFlop cmd_inst_state_FSM_FFd2 has been replicated 1 time(s)
-FlipFlop cmd_inst_state_FSM_FFd3 has been replicated 1 time(s)
-FlipFlop cmd_inst_state_FSM_FFd4 has been replicated 1 time(s)
-FlipFlop memmap_mem_addr_2 has been replicated 2 time(s)
-FlipFlop memmap_mem_addr_3 has been replicated 3 time(s)
-FlipFlop memmap_mem_addr_4 has been replicated 2 time(s)
-FlipFlop memmap_write has been replicated 1 time(s)
+Found area constraint ratio of 100 (+ 5) on block xula2, actual ratio is 32.
 
 Final Macro Processing ...
 
 Processing Unit <xula2> :
-	Found 2-bit shift register for signal <uart_inst_instsyncrx_staps_1>.
-	Found 2-bit shift register for signal <uart_inst_instsynctx_staps_1>.
+	Found 3-bit shift register for signal <uart_inst_syncrx_inst_staps_2>.
+	Found 3-bit shift register for signal <uart_inst_synctx_inst_staps_2>.
 Unit <xula2> processed.
 
 =========================================================================
 Final Register Report
 
 Macro Statistics
-# Registers                                            : 962
- Flip-Flops                                            : 962
+# Registers                                            : 946
+ Flip-Flops                                            : 946
 # Shift Registers                                      : 2
- 2-bit shift register                                  : 2
+ 3-bit shift register                                  : 2
 
 =========================================================================
 
@@ -846,11 +835,10 @@ Partition Implementation Status
 
 Clock Information:
 ------------------
---------INFO:TclTasksC:1850 - process run : Synthesize - XST is done.
----------------------------+------------------------+-------+
+-----------------------------------+------------------------+-------+
 Clock Signal                       | Clock buffer(FF name)  | Load  |
 -----------------------------------+------------------------+-------+
-clock                              | BUFGP                  | 982   |
+clock                              | BUFGP                  | 966   |
 -----------------------------------+------------------------+-------+
 
 Asynchronous Control Signals Information:
@@ -860,8 +848,9 @@ No asynchronous control signals found in this design
 Timing Summary:
 ---------------
 Speed Grade: -2
+INFO:TclTasksC:1850 - process run : Synthesize - XST is done.
 
-   Minimum period: 6.790ns (Maximum Frequency: 147.284MHz)
+   Minimum period: 6.653ns (Maximum Frequency: 150.308MHz)
    Minimum input arrival time before clock: 2.009ns
    Maximum output required time after clock: 4.118ns
    Maximum combinational path delay: No path found
@@ -903,7 +892,7 @@ NGDBUILD Design Results Summary:
   Number of warnings:   0
 
 Writing NGD file "xula2.ngd" ...
-Total REAL time to NGDBUILD completion:  5 sec
+Total REAL time to NGDBUILD completion:  7 sec
 Total CPU time to NGDBUILD completion:   5 sec
 
 Writing NGDBUILD log file "xula2.bld"...
@@ -923,54 +912,54 @@ Updating timing models...
 INFO:Map:215 - The Interim Design Summary has been generated in the MAP Report
    (.mrp).
 Running timing-driven placement...
-Total REAL time at the beginning of Placer: 7 secs 
+Total REAL time at the beginning of Placer: 21 secs 
 Total CPU  time at the beginning of Placer: 7 secs 
 
 Phase 1.1  Initial Placement Analysis
-Phase 1.1  Initial Placement Analysis (Checksum:d024421f) REAL time: 8 secs 
+Phase 1.1  Initial Placement Analysis (Checksum:dba4fc7a) REAL time: 26 secs 
 
 Phase 2.7  Design Feasibility Check
-Phase 2.7  Design Feasibility Check (Checksum:d024421f) REAL time: 8 secs 
+Phase 2.7  Design Feasibility Check (Checksum:dba4fc7a) REAL time: 26 secs 
 
 Phase 3.31  Local Placement Optimization
-Phase 3.31  Local Placement Optimization (Checksum:d024421f) REAL time: 8 secs 
+Phase 3.31  Local Placement Optimization (Checksum:dba4fc7a) REAL time: 26 secs 
 
 Phase 4.2  Initial Placement for Architecture Specific Features
 
 Phase 4.2  Initial Placement for Architecture Specific Features
-(Checksum:a50c747f) REAL time: 12 secs 
+(Checksum:8ff48332) REAL time: 30 secs 
 
 Phase 5.36  Local Placement Optimization
-Phase 5.36  Local Placement Optimization (Checksum:a50c747f) REAL time: 12 secs 
+Phase 5.36  Local Placement Optimization (Checksum:8ff48332) REAL time: 30 secs 
 
 Phase 6.30  Global Clock Region Assignment
-Phase 6.30  Global Clock Region Assignment (Checksum:a50c747f) REAL time: 12 secs 
+Phase 6.30  Global Clock Region Assignment (Checksum:8ff48332) REAL time: 30 secs 
 
 Phase 7.3  Local Placement Optimization
-Phase 7.3  Local Placement Optimization (Checksum:a50c747f) REAL time: 12 secs 
+Phase 7.3  Local Placement Optimization (Checksum:8ff48332) REAL time: 30 secs 
 
 Phase 8.5  Local Placement Optimization
-Phase 8.5  Local Placement Optimization (Checksum:a50c747f) REAL time: 12 secs 
+Phase 8.5  Local Placement Optimization (Checksum:8ff48332) REAL time: 30 secs 
 
 Phase 9.8  Global Placement
-.............................................................................
-.................................
-Phase 9.8  Global Placement (Checksum:af44dff9) REAL time: 16 secs 
+...........................................................................
+................................................................
+Phase 9.8  Global Placement (Checksum:d6b41cdb) REAL time: 33 secs 
 
 Phase 10.5  Local Placement Optimization
-Phase 10.5  Local Placement Optimization (Checksum:af44dff9) REAL time: 16 secs 
+Phase 10.5  Local Placement Optimization (Checksum:d6b41cdb) REAL time: 33 secs 
 
 Phase 11.18  Placement Optimization
-Phase 11.18  Placement Optimization (Checksum:806fba41) REAL time: 18 secs 
+Phase 11.18  Placement Optimization (Checksum:8a12c49b) REAL time: 35 secs 
 
 Phase 12.5  Local Placement Optimization
-Phase 12.5  Local Placement Optimization (Checksum:806fba41) REAL time: 18 secs 
+Phase 12.5  Local Placement Optimization (Checksum:8a12c49b) REAL time: 35 secs 
 
 Phase 13.34  Placement Validation
-Phase 13.34  Placement Validation (Checksum:76ea053c) REAL time: 18 secs 
+Phase 13.34  Placement Validation (Checksum:631d9508) REAL time: 35 secs 
 
-Total REAL time to Placer completion: 18 secs 
-Total CPU  time to Placer completion: 18 secs 
+Total REAL time to Placer completion: 35 secs 
+Total CPU  time to Placer completion: 17 secs 
 Running post-placement packing...
 Writing output files...
 
@@ -978,16 +967,16 @@ Design Summary:
 Number of errors:      0
 Number of warnings:    0
 Slice Logic Utilization:
-  Number of Slice Registers:                   964 out of  11,440    8%
-    Number used as Flip Flops:                 964
+  Number of Slice Registers:                   948 out of  11,440    8%
+    Number used as Flip Flops:                 948
     Number used as Latches:                      0
     Number used as Latch-thrus:                  0
     Number used as AND/OR logics:                0
-  Number of Slice LUTs:                      1,415 out of   5,720   24%
-    Number used as logic:                    1,384 out of   5,720   24%
-      Number using O6 output only:           1,103
-      Number using O5 output only:              22
-      Number using O5 and O6:                  259
+  Number of Slice LUTs:                      1,302 out of   5,720   22%
+    Number used as logic:                    1,267 out of   5,720   22%
+      Number using O6 output only:           1,109
+      Number using O5 output only:              20
+      Number using O5 and O6:                  138
       Number used as ROM:                        0
     Number used as Memory:                      10 out of   1,440    1%
       Number used as Dual Port RAM:              0
@@ -996,22 +985,22 @@ Slice Logic Utilization:
         Number using O6 output only:             2
         Number using O5 output only:             0
         Number using O5 and O6:                  8
-    Number used exclusively as route-thrus:     21
-      Number with same-slice register load:      0
+    Number used exclusively as route-thrus:     25
+      Number with same-slice register load:      4
       Number with same-slice carry load:        21
       Number with other load:                    0
 
 Slice Logic Distribution:
-  Number of occupied Slices:                   471 out of   1,430   32%
+  Number of occupied Slices:                   472 out of   1,430   33%
   Number of MUXCYs used:                       636 out of   2,860   22%
-  Number of LUT Flip Flop pairs used:        1,482
-    Number with an unused Flip Flop:           656 out of   1,482   44%
-    Number with an unused LUT: INFO:TclTasksC:1850 - process run : Map is done.
-                 67 out of   1,482    4%
-    Number of fully used LUT-FF pairs:         759 out of   1,482   51%
-    Number of unique control sets:              53
+  Number of LUT Flip Flop pairs used:        1,465
+    Number with an unused Flip Flop:           545 out of   1,465   37INFO:TclTasksC:1850 - process run : Map is done.
+%
+    Number with an unused LUT:                 163 out of   1,465   11%
+    Number of fully used LUT-FF pairs:         757 out of   1,465   51%
+    Number of unique control sets:              57
     Number of slice register sites lost
-      to control set restrictions:             218 out of  11,440    1%
+      to control set restrictions:             194 out of  11,440    1%
 
   A LUT Flip Flop pair for this architecture represents one LUT paired with
   one Flip Flop within a slice.  A control set is a unique combination of
@@ -1048,11 +1037,11 @@ Specific Feature Utilization:
   Number of STARTUPs:                            0 out of       1    0%
   Number of SUSPEND_SYNCs:                       0 out of       1    0%
 
-Average Fanout of Non-Clock Nets:                4.18
+Average Fanout of Non-Clock Nets:                4.17
 
-Peak Memory Usage:  696 MB
-Total REAL time to MAP completion:  20 secs 
-Total CPU time to MAP completion:   20 secs 
+Peak Memory Usage:  694 MB
+Total REAL time to MAP completion:  37 secs 
+Total CPU time to MAP completion:   19 secs 
 
 Mapping completed.
 See MAP report file "xula2_map.mrp" for details.
@@ -1080,16 +1069,16 @@ Device speed data version:  "PRODUCTION 1.23 2013-06-08".
 Device Utilization Summary:
 
 Slice Logic Utilization:
-  Number of Slice Registers:                   964 out of  11,440    8%
-    Number used as Flip Flops:                 964
+  Number of Slice Registers:                   948 out of  11,440    8%
+    Number used as Flip Flops:                 948
     Number used as Latches:                      0
     Number used as Latch-thrus:                  0
     Number used as AND/OR logics:                0
-  Number of Slice LUTs:                      1,415 out of   5,720   24%
-    Number used as logic:                    1,384 out of   5,720   24%
-      Number using O6 output only:           1,103
-      Number using O5 output only:              22
-      Number using O5 and O6:                  259
+  Number of Slice LUTs:                      1,302 out of   5,720   22%
+    Number used as logic:                    1,267 out of   5,720   22%
+      Number using O6 output only:           1,109
+      Number using O5 output only:              20
+      Number using O5 and O6:                  138
       Number used as ROM:                        0
     Number used as Memory:                      10 out of   1,440    1%
       Number used as Dual Port RAM:              0
@@ -1098,18 +1087,18 @@ Slice Logic Utilization:
         Number using O6 output only:             2
         Number using O5 output only:             0
         Number using O5 and O6:                  8
-    Number used exclusively as route-thrus:     21
-      Number with same-slice register load:      0
+    Number used exclusively as route-thrus:     25
+      Number with same-slice register load:      4
       Number with same-slice carry load:        21
       Number with other load:                    0
 
 Slice Logic Distribution:
-  Number of occupied Slices:                   471 out of   1,430   32%
+  Number of occupied Slices:                   472 out of   1,430   33%
   Number of MUXCYs used:                       636 out of   2,860   22%
-  Number of LUT Flip Flop pairs used:        1,482
-    Number with an unused Flip Flop:           656 out of   1,482   44%
-    Number with an unused LUT:                  67 out of   1,482    4%
-    Number of fully used LUT-FF pairs:         759 out of   1,482   51%
+  Number of LUT Flip Flop pairs used:        1,465
+    Number with an unused Flip Flop:           545 out of   1,465   37%
+    Number with an unused LUT:                 163 out of   1,465   11%
+    Number of fully used LUT-FF pairs:         757 out of   1,465   51%
     Number of slice register sites lost
       to control set restrictions:               0 out of  11,440    0%
 
@@ -1152,35 +1141,35 @@ Specific Feature Utilization:
 Overall effort level (-ol):   High 
 Router effort level (-rl):    High 
 
-Starting initial Timing Analysis.  REAL time: 4 secs 
-Finished initial Timing Analysis.  REAL time: 4 secs 
+Starting initial Timing Analysis.  REAL time: 5 secs 
+Finished initial Timing Analysis.  REAL time: 5 secs 
 
 Starting Router
 
 
-Phase  1  : 7453 unrouted;      REAL time: 5 secs 
+Phase  1  : 7143 unrouted;      REAL time: 5 secs 
 
-Phase  2  : 6848 unrouted;      REAL time: 5 secs 
+Phase  2  : 6605 unrouted;      REAL time: 6 secs 
 
-Phase  3  : 2881 unrouted;      REAL time: 8 secs 
+Phase  3  : 2723 unrouted;      REAL time: 9 secs 
 
-Phase  4  : 2881 unrouted; (Setup:0, Hold:3, Component Switching Limit:0)     REAL time: 8 secs 
+Phase  4  : 2723 unrouted; (Setup:0, Hold:1053, Component Switching Limit:0)     REAL time: 9 secs 
 
 Updating file: xula2.ncd with current fully routed design.
 
-Phase  5  : 0 unrouted; (Setup:0, Hold:3, Component Switching Limit:0)     REAL time: 12 secs 
+Phase  5  : 0 unrouted; (Setup:0, Hold:1053, Component Switching Limit:0)     REAL time: 14 secs 
 
-Phase  6  : 0 unrouted; (Setup:0, Hold:3, Component Switching Limit:0)     REAL time: 12 secs 
+Phase  6  : 0 unrouted; (Setup:0, Hold:1053, Component Switching Limit:0)     REAL time: 14 secs 
 
-Phase  7  : 0 unrouted; (Setup:0, Hold:3, Component Switching Limit:0)     REAL time: 12 secs 
+Phase  7  : 0 unrouted; (Setup:0, Hold:1053, Component Switching Limit:0)     REAL time: 14 secs 
 
-Phase  8  : 0 unrouted; (Setup:0, Hold:3, Component Switching Limit:0)     REAL time: 12 secs 
+Phase  8  : 0 unrouted; (Setup:0, Hold:1053, Component Switching Limit:0)     REAL time: 14 secs 
 
-Phase  9  : 0 unrouted; (Setup:0, Hold:0, Component Switching Limit:0)     REAL time: 12 secs 
+Phase  9  : 0 unrouted; (Setup:0, Hold:0, Component Switching Limit:0)     REAL time: 14 secs 
 
-Phase 10  : 0 unrouted; (Setup:0, Hold:0, Component Switching Limit:0)     REAL time: 12 secs 
-Total REAL time to Router completion: 12 secs 
-Total CPU time to Router completion: 13 secs 
+Phase 10  : 0 unrouted; (Setup:0, Hold:0, Component Switching Limit:0)     REAL time: 14 secs 
+Total REAL time to Router completion: 14 secs 
+Total CPU time to Router completion: 14 secs 
 
 Partition Implementation Status
 -------------------------------
@@ -1198,7 +1187,7 @@ Generating Clock Report
 +---------------------+--------------+------+------+------------+-------------+
 |        Clock Net    |   Resource   |Locked|Fanout|Net Skew(ns)|Max Delay(ns)|
 +---------------------+--------------+------+------+------------+-------------+
-|         clock_BUFGP |  BUFGMUX_X2Y2| No   |  263 |  0.120     |  1.511      |
+|         clock_BUFGP |  BUFGMUX_X2Y2| No   |  276 |  0.121     |  1.512      |
 +---------------------+--------------+------+------+------------+-------------+
 
 * Net Skew is the difference between the minimum and maximum routing
@@ -1218,8 +1207,8 @@ Asterisk (*) preceding a constraint indicates it was not met.
   Constraint                                |    Check    | Worst Case |  Best Case | Timing |   Timing   
                                             |             |    Slack   | Achievable | Errors |    Score   
 ----------------------------------------------------------------------------------------------------------
-  TS_clock = PERIOD TIMEGRP "clock" 83.3333 | SETUP       |    76.579ns|     6.754ns|       0|           0
-  333 ns HIGH 50%                           | HOLD        |     0.403ns|            |       0|           0
+  TS_clock = PERIOD TIMEGRP "clock" 83.3333 | SETUP       |    75.590ns|     7.743ns|       0|           0
+  333 ns HIGH 50%                           | HOLD        |     0.328ns|            |       0|           0
 ----------------------------------------------------------------------------------------------------------
 
 
@@ -1230,8 +1219,8 @@ Generating Pad Report.
 
 All signals are completely routed.
 
-Total REAL time to PAR completion: 13 secs 
-Total CPU time to PAR completion: 13 secs 
+Total REAL time to PAR completion: 15 secs 
+Total CPU time to PAR completion: 15 secs 
 
 Peak Memory Usage:  644 MB
 
@@ -1249,8 +1238,8 @@ Writing design to file xula2.ncd
 
 PAR done!
 
-Process "Place & Route" completed succesINFO:TclTasksC:1850 - process run : Place & Route is done.
-sfully
+Process "Place & Route" cINFO:TclTasksC:1850 - process run : Place & Route is done.
+ompleted successfully
 
 Started : "Generate Post-Place & Route Static Timing".
 Running trce...
@@ -1259,7 +1248,7 @@ Loading device for application Rf_Device from file '6slx9.nph' in environment
 /opt/Xilinx/14.6/ISE_DS/ISE/.
    "xula2" is an NCD, version 3.2, device xc6slx9, package ftg256, speed -2
 
-Analysis completed Tue Mar  1 10:03:05 2016
+Analysis completed Sun Apr  3 05:08:12 2016
 --------------------------------------------------------------------------------
 
 Generating Report ...
