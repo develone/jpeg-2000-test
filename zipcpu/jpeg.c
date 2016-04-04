@@ -19,7 +19,7 @@ python rd_pass.py
 	 int img[w][h];
 	 int buf[w*h];
 	 int *buf_ptr;
-	 
+ 
 	 buf_ptr = &buf;
 	 int *img_ptr;	
     	 img_ptr = &img;
@@ -46,19 +46,36 @@ python rd_pass.py
 	for ( p =0; p < 2; p++) {
 	for ( col = 0; col<256;col++) { 
 		for (row = 2;row<256;row=row+2) {
-			img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col]) >> 1);
+			 
+				//img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col]) >> 1);
+			
+			 
+				 *(buf_ptr+col+row*256) = *(buf_ptr+col+row*256) - ((*(buf_ptr+col+(row-1)*256) + *(buf_ptr+col+(row+1)*256)) >> 1);
+			
 		}
 		for (row = 1;row<256-2;row=row+2) {
-			img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col] +2) >> 2);
+			 
+				//img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col] +2) >> 2);
+			 
+				 *(buf_ptr+col+row*256) = *(buf_ptr+col+row*256) - ((*(buf_ptr+col+(row-1)*256) + *(buf_ptr+col+(row+1)*256)+2) >> 2);
+				 
 		}
 	}
 	for ( row = 0 ; row < 256; row++) {
 		for (col = 0; col < 256;col++) {  
 			if (row % 2 == 0) {
-				tt[col][row/2] =  img[row][col];
+				 
+					//tt[col][row/2] =  img[row][col];
+				 
+					*(de_interleave+col*256+row/2) =  *(buf_ptr+col+row*256);
+				 
 			}	
 			else {
-				tt[col][row/2 + 256/2] =  img[row][col];
+				 
+					//tt[col][row/2 + 256/2] =  img[row][col];
+				 
+					*(de_interleave+col*256+row/2+256/2) =  *(buf_ptr+col+row*256);
+				
 			}	
 		}
 	}   
