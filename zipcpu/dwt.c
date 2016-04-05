@@ -45,27 +45,28 @@ void entry(void) {
 	// and one stop bit.
 	sys->io_uart_ctrl = 8333;
 
-	int *img_ptr = (int *)0x800000;
+	int *buf_ptr = (int *)0x800000;
 	int *img_ptr1 = (int *)0x810000;
-	int col,row;
+	int col,row,p;
 	int w,h;
 	w = 256;
 	h = 256;
 	
 	
     
-		
+	for ( p =0; p < 2; p++) {	
 	for (int col = 0; col<256;col++) { 
 		//even samples
 		for (int row = 2;row<256;row=row+2) { 
-			*(img_ptr+col+row*256) = *(img_ptr+col+row*256) - ((*(img_ptr+col+(row-1)*256) + *(img_ptr+col+(row+1)*256)) >> 1);
+			*(buf_ptr+col+row*256) = *(buf_ptr+col+row*256) - ((*(buf_ptr+col+(row-1)*256) + *(buf_ptr+col+(row+1)*256)) >> 1);
 		}
 		//odd samples
 		for (int row = 1; row < h -2 ; row = row + 2) {
-			*(img_ptr+col+row*256) = *(img_ptr+col+row*256) - ((*(img_ptr+col+(row-1)*256) + *(img_ptr+col+(row+1)*256)) >> 1);
+			*(buf_ptr+col+row*256) = *(buf_ptr+col+row*256) - ((*(buf_ptr+col+(row-1)*256) + *(buf_ptr+col+(row+1)*256)) >> 1);
 		}
 		 
 	}
+    }
 	while(1) {
 		const char	*ptr;
 
