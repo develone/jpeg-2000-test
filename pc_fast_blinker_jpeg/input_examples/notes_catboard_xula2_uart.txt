@@ -1,0 +1,73 @@
+commit 2bb6a35a7fe005d407f2d0a736ea8dd1b90520f9
+Author: Chris Felton <chris.felton@gmail.com>
+Date:   Fri Apr 1 17:08:59 2016 -0500
+
+    fixed build renamed some files
+    
+Latest build of catboard_bitmap.bin 04/03/16
+using iCECube2 on Windows 8
+
+python catboard_blinky_host.py --build
+Used to create iceriver/catboard.v & iceriver/catboard.pcf
+
+pi@mysshserver ~/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples $ 
+sudo config_cat iCECube2040316/catboard_bitmap.bin
+Test 1
+pi@mysshserver ~/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples $ python upload_on.py
+Requires led_on.bin
+Created with python wr_bin_on.py
+
+pi@mysshserver ~/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples $ od -x led_on.bin 
+0000000 02de 0000 8000 ca04 0000 ff00
+
+Test 2
+pi@mysshserver ~/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples $ 
+python upload_off.py
+Requires led_off.bin
+Created with python wr_bin_off.py
+
+pi@mysshserver ~/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples $ od -x led_off.bin 
+0000000 02de 0000 8000 ca04 0000 0000
+
+Test 3 
+pi@mysshserver ~/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples $ 
+python test_dwt_img.py
+
+Creates the file "data_to_fpga.bin" reading the image ../../lena_256.png
+Uploads the file to fpga.
+Captures the reply in the file "data_from_fpga.bin"
+
+/////////////////////////////////////////////////////////////////////////
+
+Latest build of xula2.bit 04/03/16
+For test 1 & test 2 requires externel Led on pm2 ch 15.
+python xula2_blinky_host.py --build
+Used to create "xilinx/xula2.v" & "xilinx/xula2.ucf" --> "xilinx/xula2.bit"
+
+pi@raspberrypi2-146 ~/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples $ 
+xsload --usb 0 --fpga xilinx/xula2.bit
+
+Test 1
+pi@raspberrypi2-146 ~/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples $ 
+python upload_on.py
+Requires led_on.bin
+Created with python wr_bin_on.py
+
+pi@raspberrypi2-146 ~/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples $ od -x led_on.bin 
+0000000 02de 0000 2000 ca04 0000 ff00
+
+Test 2
+pi@raspberrypi2-146 ~/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples $ 
+python upload_off.py
+Requires led_off.bin
+Created with python wr_bin_off.py
+
+pi@raspberrypi2-146 ~/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples $ od -x led_off.bin 
+0000000 02de 0000 2000 ca04 0000 0000
+
+Test 3
+pi@raspberrypi2-146 ~/jpeg-2000-test/pc_fast_blinker_jpeg/input_examples $ 
+python test_dwt_img.py
+Creates the file "data_to_fpga.bin" reading the image ../../lena_256.png
+Uploads the file to fpga.
+Captures the reply in the file "data_from_fpga.bin"
