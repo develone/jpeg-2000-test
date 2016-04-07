@@ -88,9 +88,9 @@ def convert():
 def build():
     brd = get_board('xula2_stickit_mb')
     brd.device = 'XC6SLX9'
-    #chan 24 BCM9_MISO -->  
+    #chan 24 BCM9_MISO -->  RPi2B
     brd.add_port('mosi', 'F1')
-    #chan 25 BCM10_MOSI <---
+    #chan 25 BCM10_MOSI <--- RPi2B
     brd.add_port('miso', 'F2')
     #chan 23 BCM10_SCLK
     brd.add_port('sck', 'H2')
