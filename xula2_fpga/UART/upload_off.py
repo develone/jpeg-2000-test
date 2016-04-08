@@ -1,6 +1,6 @@
 import serial
 file = open("led_off.bin","wb")
-file.write("\xde\x02\x00\x00\x00\x02\x04\xca\x00\x00\x00\x00")
+file.write("\xde\x02\x00\x00\x00\x20\x04\xca\x00\x00\x00\x00")
 file.close
 file = open("led_off.bin", "rb")
 data = file.read(12)
