@@ -1,0 +1,52 @@
+myhdl & rhea provides the software to create a Verilog top level file 
+and user constraints file and starts ISE Web Pack to create a bit file
+for the XulA2-LX + StickIt-MB
+
+rhea info
+
+commit 605348b2570f83da341bef8b8a13596e2b8eccd9
+Author: Christopher Felton <chris.felton@gmail.com>
+Date:   Sun Apr 3 16:35:02 2016 -0500
+
+    Update README.md
+    
+    Added additional comments on which myhdl version to use, the first minor rel
+
+Latest build of vidal@ws009:~/wkg/jpeg-2000-test/xula2_fpga/UART$ 
+xilinx/xula2_blinky_host.bit  04/08/16
+
+vidal@ws009:~/wkg/jpeg-2000-test/xula2_fpga/UART$
+python xula2_blinky_host.py --build
+    
+pi@raspberrypi2-146 ~/jpeg-2000-test/xula2_fpga/UART $    
+Latest build of xilinx/xula2_blinky_host.bit 04/08/16
+
+Program the XulA2-LX9 with the program to read & write 
+from data received & transmitted to & from RPi2B.  
+When a given set of bytes are transmitted from the RPi2B
+"\xde\x02\x00\x00\x00\x20\x04\xca\x00\x00\x00\xff".
+An externel led will be turn on steady.
+When a given set of bytes are transmitted from the RPi2B
+"\xde\x02\x00\x00\x00\x80\x04\xca\x00\x00\x00\x00".
+An externel led will blink at 1 per sec as when the
+XulA2-LX is first programmed.
+ 
+
+pi@raspberrypi2-146 ~/jpeg-2000-test/xula2_fpga/UART $ 
+xsload --usb 0 --fpga xilinx/xula2_blinky_host.bit
+
+pi@raspberrypi2-146 ~/jpeg-2000-test/xula2_fpga/UART $
+python upload_on.py
+
+Creates the file led_on.bin & uploads to FPGA using the RPi2B UART
+
+pi@raspberrypi2-146 ~/jpeg-2000-test/xula2_fpga/UART $ od -x led_on.bin 
+0000000 02de 0000 2000 ca04 0000 ff00
+
+pi@raspberrypi2-146 ~/jpeg-2000-test/xula2_fpga/UART $ 
+python upload_off.py
+
+Creates the file led_of.bin & uploads to FPGA using the RPi2B UART
+
+pi@raspberrypi2-146 ~/jpeg-2000-test/xula2_fpga/UART $ od -x led_off.bin 
+0000000 02de 0000 2000 ca04 0000 0000
