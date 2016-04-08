@@ -1,0 +1,476 @@
+INFO:HDLCompiler:1845 - Analyzing Verilog file
+   "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" into
+   library work
+INFO:ProjectMgmt - Parsing design hierarchy completed successfully.
+
+Started : "Synthesize - XST".
+Running xst...
+Command Line: xst -intstyle ise -ifn "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.xst" -ofn "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.syr"
+Reading design: xula2.prj
+
+=========================================================================
+*                          HDL Parsing                                  *
+=========================================================================
+Analyzing Verilog file "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" into library work
+Parsing module <xula2>.
+
+=========================================================================
+*                            HDL Elaboration                            *
+=========================================================================
+
+Elaborating module <xula2>.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 99: Result of 25-bit expression is truncated to fit in 24-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 152: Result of 32-bit expression is truncated to fit in 8-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 156: Result of 32-bit expression is truncated to fit in 8-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 159: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 144: Assignment to inst_spi_spibus_miso ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 183: Result of 6-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 184: Result of 32-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 187: Result of 32-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 188: Result of 6-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 199: Assignment to inst_spi_tx_fifo_inst_fbus_count ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 203: Assignment to inst_spi_tx_fifo_inst_fbus_read_valid ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 224: Result of 32-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 230: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 262: Result of 6-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 263: Result of 32-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 266: Result of 32-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 267: Result of 6-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 278: Assignment to inst_spi_rx_fifo_inst_fbus_count ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 303: Result of 32-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 309: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 285: Assignment to inst_spi_rx_fifo_inst_fbus_full ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 336: Assignment to inst_spi_mp_fifo_inst_self_read_valid ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 367: Result of 6-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 382: Assignment to data ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 383: Assignment to rd ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 384: Assignment to wr ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 385: Assignment to full ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 386: Assignment to empty ignored, since the identifier is never used
+WARNING:HDLCompiler:1499 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 8: Empty module <xula2> remains a black box.
+
+=========================================================================
+*                           HDL Synthesis                               *
+=========================================================================
+
+Synthesizing Unit <xula2>.
+    Related source file is "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v".
+WARNING:Xst:647 - Input <led> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+WARNING:Xst:647 - Input <clock> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+WARNING:Xst:647 - Input <mosi> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+WARNING:Xst:647 - Input <miso> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+WARNING:Xst:647 - Input <sck> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+    Summary:
+	no macro.
+Unit <xula2> synthesized.
+
+=========================================================================
+HDL Synthesis Report
+
+Found no macro
+=========================================================================
+
+=========================================================================
+*                       Advanced HDL Synthesis                          *
+=========================================================================
+
+
+=========================================================================
+Advanced HDL Synthesis Report
+
+Found no macro
+=========================================================================
+
+=========================================================================
+*                         Low Level Synthesis                           *
+=========================================================================
+
+OptimizINFO:TclTasksC:1850 - process run : Synthesize - XST is done.
+ing unit <xula2> ...
+
+Mapping all equations...
+Building and optimizing final netlist ...
+Found area constraint ratio of 100 (+ 5) on block xula2, actual ratio is 0.
+
+Final Macro Processing ...
+
+=========================================================================
+Final Register Report
+
+Found no macro
+=========================================================================
+
+=========================================================================
+*                           Partition Report                            *
+=========================================================================
+
+Partition Implementation Status
+-------------------------------
+
+  No Partitions were found in this design.
+
+-------------------------------
+
+=========================================================================
+*                            Design Summary                             *
+=========================================================================
+
+Clock Information:
+------------------
+No clock signals found in this design
+
+Asynchronous Control Signals Information:
+----------------------------------------
+No asynchronous control signals found in this design
+
+Timing Summary:
+---------------
+Speed Grade: -2
+
+   Minimum period: No path found
+   Minimum input arrival time before clock: No path found
+   Maximum output required time after clock: No path found
+   Maximum combinational path delay: No path found
+
+=========================================================================
+
+Process "Synthesize - XST" completed successfully
+INFO:TclTasksC:1850 - process run : Translate is done.
+
+Started : "Translate".
+Running ngdbuild...
+Command Line: ngdbuild -intstyle ise -dd _ngo -nt timestamp -uc xula2.ucf -p xc6slx9-ftg256-2 xula2.ngc xula2.ngd
+
+Command Line: /opt/Xilinx/14.6/ISE_DS/ISE/bin/lin64/unwrapped/ngdbuild -intstyle
+ise -dd _ngo -nt timestamp -uc xula2.ucf -p xc6slx9-ftg256-2 xula2.ngc xula2.ngd
+
+Reading NGO file
+"/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.ngc" ...
+Loading design module
+"/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.ngc"...
+WARNING:NgdBuild:578 - Design contains no instances.
+Gathering constraint information from source properties...
+Done.
+
+Annotating constraints to design from ucf file "xula2.ucf" ...
+Resolving constraint associations...
+Checking Constraint Associations...
+WARNING:ConstraintSystem:137 - Constraint <NET "clock" TNM_NET = "clock";>
+   [xula2.ucf(8)]: No appropriate instances for the TNM constraint are driven by
+   "clock".
+
+WARNING:ConstraintSystem:56 - Constraint <TIMESPEC "TS_clock" = PERIOD "clock"
+   83.3333333 ns HIGH 50%;> [xula2.ucf(9)]: Unable to find an active 'TNM' or
+   'TimeGrp' constraint named 'clock'.
+
+WARNING:ConstraintSystem:191 - The TNM 'clock', does not directly or indirectly
+   drive any flip-flops, latches and/or RAMS and cannot be actively used by the
+   referencing Period constraint 'TS_clock'. If clock manager blocks are
+   directly or indirectly driven, a new TNM constraint will not be derived even
+   though the referencing constraint is a PERIOD constraint unless an output of
+   the clock manager drives flip-flops, latches or RAMs. This TNM is used in the
+   following user PERIOD specification:
+   <TIMESPEC "TS_clock" = PERIOD "clock" 83.3333333 ns HIGH 50%;> [xula2.ucf(9)]
+
+WARNING:ConstraintSystem:197 - The following specification is invalid because
+   the referenced TNM constraint was removed:
+   <TIMESPEC "TS_clock" = PERIOD "clock" 83.3333333 ns HIGH 50%;> [xula2.ucf(9)]
+
+Done...
+
+Checking expanded design ...
+
+Partition Implementation Status
+-------------------------------
+
+  No Partitions were found in this design.
+
+-------------------------------
+
+NGDBUILD Design Results Summary:
+  Number of errors:     0
+  Number of warnings:   5
+
+Writing NGD file "xula2.ngd" ...
+Total REAL time to NGDBUILD completion:  4 sec
+Total CPU time to NGDBUILD completion:   4 sec
+
+Writing NGDBUILD log file "xula2.bld"...
+
+NGDBUILD done.
+
+Process "Translate" completed successfully
+
+Started : "Map".
+Running map...
+Command Line: map -intstyle ise -p xc6slx9-ftg256-2 -w -logic_opt off -ol high -t 1 -xt 0 -register_duplication off -r 4 -global_opt off -mt off -ir off -pr off -lc off -power off -o xula2_map.ncd xula2.ngd xula2.pcf
+Using target part "6slx9ftg256-2".
+Mapping design into LUTs...
+Running directed packing...
+Running delay-based LUT packing...
+Updating timing models...
+INFO:Map:215 - The Interim Design Summary has been generated in the MAP Report
+   (.mrp).
+Running timing-driven placement...
+Total REAL time at the beginning of Placer: 4 secs 
+Total CPU  time at the beginning of Placer: 4 secs 
+
+Phase 1.1  Initial Placement Analysis
+Phase 1.1  Initial Placement Analysis (Checksum:1b55ebc6) REAL time: 5 secs 
+
+Phase 2.7  Design Feasibility Check
+Phase 2.7  Design Feasibility Check (Checksum:1b55ebc6) REAL time: 5 secs 
+
+Phase 3.31  Local Placement Optimization
+Phase 3.31  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
+
+Phase 4.2  Initial Placement for Architecture Specific Features
+Phase 4.2  Initial Placement for Architecture Specific Features
+(Checksum:1b55ebc6) REAL time: 5 secs 
+
+Phase 5.36  Local Placement Optimization
+Phase 5.36  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
+
+Phase 6.30  Global Clock Region Assignment
+Phase 6.30  Global Clock Region Assignment (Checksum:1b55ebc6) REAL time: 5 secs 
+
+Phase 7.3  Local Placement Optimization
+Phase 7.3  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
+
+Phase 8.5  Local Placement Optimization
+Phase 8.5  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
+
+Phase 9.8  Global Placement
+Phase 9.8  Global Placement (Checksum:1b55ebc6) REAL time: 5 secs 
+
+Phase 10.5  Local Placement Optimization
+Phase 10.5  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
+
+Phase 11.18  Placement Optimization
+Phase 11.18  Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
+
+Phase 12.5  Local Placement Optimization
+Phase 12.5  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
+
+Phase 13.34  Placement Validation
+Phase 13.34  Placement Validation (Checksum:1b55ebc6) REAL time: 5 secs 
+
+Total REAL time to Placer completion: 5 secs 
+Total CPU  time to Placer completion: 5 secs 
+Running post-placement packing...
+Writing output files...
+
+Design Summary:
+Number of errors:      0
+Number of warnings:    0
+Slice Logic Utilization:
+  Number of Slice Registers:                     0 out of  11,440    0%
+  Number of Slice LUTs:                          0 out of   5,720    0%
+
+Slice Logic Distribution:
+  Number of occupied Slices:                     0 out of   1,430    0%
+  Number of MUXCYs used:                         0 out of   2,860    0%
+  Number of LUT Flip Flop pairs used:            0
+
+IO Utilization:
+  Number of bonded IOBs:                         5 out of     186    2%
+    Number of LOCed IOBs:                        5 out of       5  100%
+
+Specific Feature Utilization:
+  Number of RAMB16BWERs:                         0 out of      32    0%
+  Number of RAMB8BWERs:                          0 out of      64    0%
+  Number of BUFIO2/BUFIO2_2CLKs:                 0 out of      32    0%
+  Number of BUFIO2FB/BUFIO2FB_2CLKs:             0 out of      32    0%
+  Number of BUFG/BUFGMUXs:                       0 out of      16    0%
+  Number of DCM/DCM_CLKGENs:                     0 out of       4    0%
+  Number of ILOGIC2/ISERDES2s:                   0 out of     200    0%
+  Number of IODELAY2/IODRP2/IODRP2_MCBs:         0 out of     200    0%
+  Number of OLOGIC2/OSERDES2s:                   0 out of     200    0%
+  Number of BSCANs:                              0 out of       4    0%
+  Number of BUFHs:                               0 out of     128    0%
+  Number of BUFPLLs:                             0 out of       8    0%
+  Number of BUFPLL_MCBs:                         0 out of       4    0%
+  Number of DSP48A1s:                            0 out of      16    0%
+  Number of ICAPs:                               0 out of       1    0%
+  Number of MCBs: INFO:TclTasksC:1850 - process run : Map is done.
+                               0 out of       2    0%
+  Number of PCILOGICSEs:                         0 out of       2    0%
+  Number of PLL_ADVs:                            0 out of       2    0%
+  Number of PMVs:                                0 out of       1    0%
+  Number of STARTUPs:                            0 out of       1    0%
+  Number of SUSPEND_SYNCs:                       0 out of       1    0%
+
+Average Fanout of Non-Clock Nets:                0.00
+
+Peak Memory Usage:  658 MB
+Total REAL time to MAP completion:  5 secs 
+Total CPU time to MAP completion:   5 secs 
+
+Mapping completed.
+See MAP report file "xula2_map.mrp" for details.
+
+Process "Map" completed successfully
+
+Started : "Place & Route".
+Running par...
+Command Line: par -w -intstyle ise -ol high -mt off xula2_map.ncd xula2.ncd xula2.pcf
+
+
+
+Constraints file: xula2.pcf.
+Loading device for application Rf_Device from file '6slx9.nph' in environment /opt/Xilinx/14.6/ISE_DS/ISE/.
+   "xula2" is an NCD, version 3.2, device xc6slx9, package ftg256, speed -2
+
+Initializing temperature to 85.000 Celsius. (default - Range: 0.000 to 85.000 Celsius)
+Initializing voltage to 1.140 Volts. (default - Range: 1.140 to 1.260 Volts)
+
+INFO:Par:282 - No user timing constraints were detected or you have set the option to ignore timing constraints ("par
+   -x"). Place and Route will run in "Performance Evaluation Mode" to automatically improve the performance of all
+   internal clocks in this design. Because there are not defined timing requirements, a timing score will not be
+   reported in the PAR report in this mode. The PAR timing summary will list the performance achieved for each clock.
+   Note: For the fastest runtime, set the effort level to "std".  For best performance, set the effort level to "high".
+
+Device speed data version:  "PRODUCTION 1.23 2013-06-08".
+
+
+
+Device Utilization Summary:
+
+Slice Logic Utilization:
+  Number of Slice Registers:                     0 out of  11,440    0%
+  Number of Slice LUTs:                          0 out of   5,720    0%
+
+Slice Logic Distribution:
+  Number of occupied Slices:                     0 out of   1,430    0%
+  Number of MUXCYs used:                         0 out of   2,860    0%
+  Number of LUT Flip Flop pairs used:            0
+
+IO Utilization:
+  Number of bonded IOBs:                         5 out of     186    2%
+    Number of LOCed IOBs:                        5 out of       5  100%
+
+Specific Feature Utilization:
+  Number of RAMB16BWERs:                         0 out of      32    0%
+  Number of RAMB8BWERs:                          0 out of      64    0%
+  Number of BUFIO2/BUFIO2_2CLKs:                 0 out of      32    0%
+  Number of BUFIO2FB/BUFIO2FB_2CLKs:             0 out of      32    0%
+  Number of BUFG/BUFGMUXs:                       0 out of      16    0%
+  Number of DCM/DCM_CLKGENs:                     0 out of       4    0%
+  Number of ILOGIC2/ISERDES2s:                   0 out of     200    0%
+  Number of IODELAY2/IODRP2/IODRP2_MCBs:         0 out of     200    0%
+  Number of OLOGIC2/OSERDES2s:                   0 out of     200    0%
+  Number of BSCANs:                              0 out of       4    0%
+  Number of BUFHs:                               0 out of     128    0%
+  Number of BUFPLLs:                             0 out of       8    0%
+  Number of BUFPLL_MCBs:                         0 out of       4    0%
+  Number of DSP48A1s:                            0 out of      16    0%
+  Number of ICAPs:                               0 out of       1    0%
+  Number of MCBs:                                0 out of       2    0%
+  Number of PCILOGICSEs:                         0 out of       2    0%
+  Number of PLL_ADVs:                            0 out of       2    0%
+  Number of PMVs:                                0 out of       1    0%
+  Number of STARTUPs:                            0 out of       1    0%
+  Number of SUSPEND_SYNCs:                       0 out of       1    0%
+
+
+Overall effort level (-ol):   High 
+Router effort level (-rl):    High 
+
+Starting initial Timing Analysis.  REAL time: 3 secs 
+Finished initial Timing Analysis.  REAL time: 3 secs 
+
+WARNING:Par:288 - The signal miso_IBUF has no load.  PAR will not attempt to route this signal.
+WARNING:Par:288 - The signal led_IBUF has no load.  PAR will not attempt to route this signal.
+WARNING:Par:288 - The signal mosi_IBUF has no load.  PAR will not attempt to route this signal.
+WARNING:Par:288 - The signal sck_IBUF has no load.  PAR will not attempt to route this signal.
+WARNING:Par:288 - The signal clock_IBUF has no load.  PAR will not attempt to route this signal.
+Starting Router
+
+
+Phase  1  : 0 unrouted;      REAL time: 4 secs 
+
+Phase  2  : 0 unrouted;      REAL time: 4 secs 
+
+Phase  3  : 0 unrouted;      REAL tiINFO:TclTasksC:1850 - process run : Place & Route is done.
+me: 4 secs 
+
+Phase  4  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
+
+Updating file: xula2.ncd with current fully routed design.
+
+Phase  5  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
+
+Phase  6  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
+
+Phase  7  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
+
+Phase  8  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
+
+Phase  9  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
+
+Phase 10  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
+Total REAL time to Router completion: 4 secs 
+Total CPU time to Router completion: 4 secs 
+
+Partition Implementation Status
+-------------------------------
+
+  No Partitions were found in this design.
+
+-------------------------------
+
+Generating "PAR" statistics.
+INFO:Par:459 - The Clock Report is not displayed in the non timing-driven mode.
+Timing Score: 0 (Setup: 0, Hold: 0)
+
+
+
+Generating Pad Report.
+
+All signals are completely routed.
+
+WARNING:Par:283 - There are 5 loadless signals in this design. This design will cause Bitgen to issue DRC warnings.
+
+Total REAL time to PAR completion: 4 secs 
+Total CPU time to PAR completion: 4 secs 
+
+Peak Memory Usage:  610 MB
+
+Placer: Placement generated during map.
+Routing: Completed - No errors found.
+
+Number of error messages: 0
+Number of warning messages: 7
+Number of info messages: 2
+
+Writing design to file xula2.ncd
+
+
+
+PAR done!
+
+Process "Place & Route" completed successfully
+
+Started : "Generate Post-Place & Route Static Timing".
+Running trce...
+Command Line: trce -intstyle ise -v 3 -s 2 -n 3 -fastpaths -xml xula2.twx xula2.ncd -o xula2.twr xula2.pcf -ucf xula2.ucf
+Loading device for application Rf_Device from file '6slx9.nph' in environment
+/opt/Xilinx/14.6/ISE_DS/ISE/.
+   "xula2" is an NCD, version 3.2, device xc6slx9, package ftg256, speed -2
+
+Analysis completed Fri Apr  8 14:11:51 2016
+--------------------------------------------------------------------------------
+
+Generating Report ...
+
+Number of warnings: 0
+Total time: 2 secs 
+
+Process "Generate Post-Place & Route Static Timing" completed successfully
+INFO:TclTasksC:1850 - process run : Generate Programming File is done.
+
+Started : "Generate Programming File".
+Running bitgen...
+Command Line: bitgen -intstyle ise -f xula2.ut xula2.ncd
+
+Process "Generate Programming File" completed successfully
