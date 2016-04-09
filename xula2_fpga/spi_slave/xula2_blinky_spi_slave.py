@@ -9,7 +9,7 @@ from myhdl import (Signal, ResetSignal, intbv, always_seq, always,
 from rhea.build.boards import get_board
 from rhea.system import Global, Clock, Reset, FIFOBus, Signals
 from rhea.cores.spi import SPIBus, spi_slave_fifo                   
-
+from rhea.cores.spi import spi_controller
 led_port_pin_map = {
     'xula':  dict(name='led', pins=(32,)),
     'xula2': dict(name='led', pins=('T4',)),
@@ -24,12 +24,17 @@ def xula_blinky_spi_slave(led, clock, mosi, miso, sck, reset=None):
     maxcnt = int(clock.frequency)
     cnt = Signal(intbv(0, min=0, max=maxcnt))
     toggle = Signal(bool(0))
-    spibus, fifobus = SPIBus(), FIFOBus()
+    spibus, fifobus = SPIBus(sck, mosi, miso), FIFOBus()
     reset = Reset(0, active=1, async=False)
     glbl = Global(clock, reset)
-    inst_spi = spi_slave_fifo(glbl, spibus, fifobus)
+    #inst_spi = spi_slave_fifo(glbl, spibus, fifobus)
     data = Signal(intbv(0)[8:])
     rd, wr, full, empty = Signals(bool(0), 4)
+    cso = spi_controller.cso()
+    cso.isstatic = True
+    cfg_inst = cso.get_generators()
+    spi_controller.debug = False
+    spi_inst = spi_controller(glbl, spibus, fifobus, cso=cso)
     
     @always_seq(clock.posedge, reset=None)
     def rtl():
@@ -73,7 +78,7 @@ def xula_blinky_spi_slave(led, clock, mosi, miso, sck, reset=None):
         full.next = fifobus.full
         empty.next = fifobus.empty
    
-    return rtl,tb_fifo_loopback,inst_spi,reset_tst,mon
+    return myhdl.instances()
     
         
 def build(args):
@@ -94,7 +99,7 @@ def build(args):
     
 def cliparse():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--brd", default='xula')
+    parser.add_argument("--brd", default='xula2')
     parser.add_argument("--flow", default="ise")
     args = parser.parse_args()
     return args

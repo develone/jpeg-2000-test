@@ -19,34 +19,26 @@ Parsing module <xula2>.
 =========================================================================
 
 Elaborating module <xula2>.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 99: Result of 25-bit expression is truncated to fit in 24-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 152: Result of 32-bit expression is truncated to fit in 8-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 156: Result of 32-bit expression is truncated to fit in 8-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 159: Result of 5-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 144: Assignment to inst_spi_spibus_miso ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 183: Result of 6-bit expression is truncated to fit in 5-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 184: Result of 32-bit expression is truncated to fit in 5-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 187: Result of 32-bit expression is truncated to fit in 5-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 188: Result of 6-bit expression is truncated to fit in 5-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 199: Assignment to inst_spi_tx_fifo_inst_fbus_count ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 203: Assignment to inst_spi_tx_fifo_inst_fbus_read_valid ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 224: Result of 32-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 230: Result of 5-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 262: Result of 6-bit expression is truncated to fit in 5-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 263: Result of 32-bit expression is truncated to fit in 5-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 266: Result of 32-bit expression is truncated to fit in 5-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 267: Result of 6-bit expression is truncated to fit in 5-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 278: Assignment to inst_spi_rx_fifo_inst_fbus_count ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 303: Result of 32-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 309: Result of 5-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 285: Assignment to inst_spi_rx_fifo_inst_fbus_full ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 336: Assignment to inst_spi_mp_fifo_inst_self_read_valid ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 367: Result of 6-bit expression is truncated to fit in 5-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 382: Assignment to data ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 383: Assignment to rd ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 384: Assignment to wr ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 385: Assignment to full ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 386: Assignment to empty ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 127: Result of 25-bit expression is truncated to fit in 24-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 145: Result of 6-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 191: Result of 32-bit expression is truncated to fit in 12-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 213: Assignment to spi_inst_spibus_sck ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 233: Assignment to spi_inst_fifo_tx_inst_fbus_read_valid ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 254: Result of 32-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 260: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 281: Assignment to spi_inst_spibus_mosi ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 396: Result of 32-bit expression is truncated to fit in 3-bit target.
+"/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 411. $display *** AssertionError ***
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 421: Assignment to spi_inst_cso_tx_fifo_count ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 433: Assignment to spi_inst_spibus_ss ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 506: Result of 32-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 512: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 534: Assignment to data ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 535: Assignment to rd ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 536: Assignment to wr ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 537: Assignment to full ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 538: Assignment to empty ignored, since theINFO:TclTasksC:1850 - process run : Synthesize - XST is done.
+ identifier is never used
 WARNING:HDLCompiler:1499 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 8: Empty module <xula2> remains a black box.
 
 =========================================================================
@@ -85,8 +77,7 @@ Found no macro
 *                         Low Level Synthesis                           *
 =========================================================================
 
-OptimizINFO:TclTasksC:1850 - process run : Synthesize - XST is done.
-ing unit <xula2> ...
+Optimizing unit <xula2> ...
 
 Mapping all equations...
 Building and optimizing final netlist ...
@@ -216,23 +207,23 @@ Total REAL time at the beginning of Placer: 4 secs
 Total CPU  time at the beginning of Placer: 4 secs 
 
 Phase 1.1  Initial Placement Analysis
-Phase 1.1  Initial Placement Analysis (Checksum:1b55ebc6) REAL time: 5 secs 
+Phase 1.1  Initial Placement Analysis (Checksum:1b55ebc6) REAL time: 4 secs 
 
 Phase 2.7  Design Feasibility Check
-Phase 2.7  Design Feasibility Check (Checksum:1b55ebc6) REAL time: 5 secs 
+Phase 2.7  Design Feasibility Check (Checksum:1b55ebc6) REAL time: 4 secs 
 
 Phase 3.31  Local Placement Optimization
-Phase 3.31  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
+Phase 3.31  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 4 secs 
 
 Phase 4.2  Initial Placement for Architecture Specific Features
 Phase 4.2  Initial Placement for Architecture Specific Features
-(Checksum:1b55ebc6) REAL time: 5 secs 
+(Checksum:1b55ebc6) REAL time: 4 secs 
 
 Phase 5.36  Local Placement Optimization
-Phase 5.36  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
+Phase 5.36  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 4 secs 
 
 Phase 6.30  Global Clock Region Assignment
-Phase 6.30  Global Clock Region Assignment (Checksum:1b55ebc6) REAL time: 5 secs 
+Phase 6.30  Global Clock Region Assignment (Checksum:1b55ebc6) REAL time: 4 secs 
 
 Phase 7.3  Local Placement Optimization
 Phase 7.3  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
@@ -256,7 +247,7 @@ Phase 13.34  Placement Validation
 Phase 13.34  Placement Validation (Checksum:1b55ebc6) REAL time: 5 secs 
 
 Total REAL time to Placer completion: 5 secs 
-Total CPU  time to Placer completion: 5 secs 
+Total CPU  time to Placer completion: 4 secs 
 Running post-placement packing...
 Writing output files...
 
@@ -387,12 +378,12 @@ WARNING:Par:288 - The signal clock_IBUF has no load.  PAR will not attempt to ro
 Starting Router
 
 
-Phase  1  : 0 unrouted;      REAL time: 4 secs 
+Phase  1  : 0 unrouted;      REAL time: 3 secs 
 
-Phase  2  : 0 unrouted;      REAL time: 4 secs 
+Phase  2  : 0 unrouted;      REAL time: 3 secs 
 
 Phase  3  : 0 unrouted;      REAL tiINFO:TclTasksC:1850 - process run : Place & Route is done.
-me: 4 secs 
+me: 3 secs 
 
 Phase  4  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
 
@@ -434,7 +425,7 @@ WARNING:Par:283 - There are 5 loadless signals in this design. This design will 
 Total REAL time to PAR completion: 4 secs 
 Total CPU time to PAR completion: 4 secs 
 
-Peak Memory Usage:  610 MB
+Peak Memory Usage:  611 MB
 
 Placer: Placement generated during map.
 Routing: Completed - No errors found.
@@ -458,7 +449,7 @@ Loading device for application Rf_Device from file '6slx9.nph' in environment
 /opt/Xilinx/14.6/ISE_DS/ISE/.
    "xula2" is an NCD, version 3.2, device xc6slx9, package ftg256, speed -2
 
-Analysis completed Fri Apr  8 14:11:51 2016
+Analysis completed Sat Apr  9 06:41:12 2016
 --------------------------------------------------------------------------------
 
 Generating Report ...
