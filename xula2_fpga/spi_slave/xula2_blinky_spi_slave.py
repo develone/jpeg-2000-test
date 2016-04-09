@@ -16,7 +16,7 @@ led_port_pin_map = {
 }
 
                    
-def xula_blinky_spi_slave(led, clock, mosi, miso, sck, reset=None):
+def xula_blinky_spi_slave(led, clock, mosi, miso, sck, ss, reset=None):
     """ a simple LED blinks example.
     This is intended to be used with the Xula, Stickit motherboard
     and an LED / button pmod board.
@@ -91,6 +91,7 @@ def build(args):
     brd.add_port('mosi', 'F2')
     brd.add_port('miso', 'F1')
     brd.add_port('sck', 'H2')
+    brd.add_port('ss', 'H1')
     flow = brd.get_flow(xula_blinky_spi_slave)
     flow.run()
     info = flow.get_utilization()

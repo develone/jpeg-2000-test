@@ -19,26 +19,25 @@ Parsing module <xula2>.
 =========================================================================
 
 Elaborating module <xula2>.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 127: Result of 25-bit expression is truncated to fit in 24-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 145: Result of 6-bit expression is truncated to fit in 5-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 191: Result of 32-bit expression is truncated to fit in 12-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 213: Assignment to spi_inst_spibus_sck ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 233: Assignment to spi_inst_fifo_tx_inst_fbus_read_valid ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 254: Result of 32-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 260: Result of 5-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 281: Assignment to spi_inst_spibus_mosi ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 396: Result of 32-bit expression is truncated to fit in 3-bit target.
-"/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 411. $display *** AssertionError ***
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 421: Assignment to spi_inst_cso_tx_fifo_count ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 433: Assignment to spi_inst_spibus_ss ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 506: Result of 32-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 512: Result of 5-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 534: Assignment to data ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 535: Assignment to rd ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 536: Assignment to wr ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 537: Assignment to full ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 538: Assignment to empty ignored, since theINFO:TclTasksC:1850 - process run : Synthesize - XST is done.
- identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 129: Result of 25-bit expression is truncated to fit in 24-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 147: Result of 6-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 193: Result of 32-bit expression is truncated to fit in 12-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 215: Assignment to spi_inst_spibus_sck ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 235: Assignment to spi_inst_fifo_tx_inst_fbus_read_valid ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 256: Result of 32-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 262: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 283: Assignment to spi_inst_spibus_mosi ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 398: Result of 32-bit expression is truncated to fit in 3-bit target.
+"/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 413. $display *** AssertionError ***
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 423: Assignment to spi_inst_cso_tx_fifo_count ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 435: Assignment to spi_inst_spibus_ss ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 508: Result of 32-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 514: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 536: Assignment to data ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 537: Assignment to rd ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 538: Assignment to wr ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 539: Assignment to full ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 540: Assignment to empty ignored, since the identifier is never used
 WARNING:HDLCompiler:1499 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 8: Empty module <xula2> remains a black box.
 
 =========================================================================
@@ -52,6 +51,7 @@ WARNING:Xst:647 - Input <clock> is never used. This port will be preserved and l
 WARNING:Xst:647 - Input <mosi> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
 WARNING:Xst:647 - Input <miso> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
 WARNING:Xst:647 - Input <sck> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+WARNING:Xst:647 - Input <ss> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
     Summary:
 	no macro.
 Unit <xula2> synthesized.
@@ -123,7 +123,8 @@ Speed Grade: -2
    Maximum output required time after clock: No path found
    Maximum combinational path delay: No path found
 
-=========================================================================
+=====INFO:TclTasksC:1850 - process run : Synthesize - XST is done.
+====================================================================
 
 Process "Synthesize - XST" completed successfully
 INFO:TclTasksC:1850 - process run : Translate is done.
@@ -147,11 +148,11 @@ Annotating constraints to design from ucf file "xula2.ucf" ...
 Resolving constraint associations...
 Checking Constraint Associations...
 WARNING:ConstraintSystem:137 - Constraint <NET "clock" TNM_NET = "clock";>
-   [xula2.ucf(8)]: No appropriate instances for the TNM constraint are driven by
+   [xula2.ucf(9)]: No appropriate instances for the TNM constraint are driven by
    "clock".
 
 WARNING:ConstraintSystem:56 - Constraint <TIMESPEC "TS_clock" = PERIOD "clock"
-   83.3333333 ns HIGH 50%;> [xula2.ucf(9)]: Unable to find an active 'TNM' or
+   83.3333333 ns HIGH 50%;> [xula2.ucf(10)]: Unable to find an active 'TNM' or
    'TimeGrp' constraint named 'clock'.
 
 WARNING:ConstraintSystem:191 - The TNM 'clock', does not directly or indirectly
@@ -161,11 +162,13 @@ WARNING:ConstraintSystem:191 - The TNM 'clock', does not directly or indirectly
    though the referencing constraint is a PERIOD constraint unless an output of
    the clock manager drives flip-flops, latches or RAMs. This TNM is used in the
    following user PERIOD specification:
-   <TIMESPEC "TS_clock" = PERIOD "clock" 83.3333333 ns HIGH 50%;> [xula2.ucf(9)]
+   <TIMESPEC "TS_clock" = PERIOD "clock" 83.3333333 ns HIGH 50%;>
+   [xula2.ucf(10)]
 
 WARNING:ConstraintSystem:197 - The following specification is invalid because
    the referenced TNM constraint was removed:
-   <TIMESPEC "TS_clock" = PERIOD "clock" 83.3333333 ns HIGH 50%;> [xula2.ucf(9)]
+   <TIMESPEC "TS_clock" = PERIOD "clock" 83.3333333 ns HIGH 50%;>
+   [xula2.ucf(10)]
 
 Done...
 
@@ -207,44 +210,44 @@ Total REAL time at the beginning of Placer: 4 secs
 Total CPU  time at the beginning of Placer: 4 secs 
 
 Phase 1.1  Initial Placement Analysis
-Phase 1.1  Initial Placement Analysis (Checksum:1b55ebc6) REAL time: 4 secs 
+Phase 1.1  Initial Placement Analysis (Checksum:22160ff5) REAL time: 4 secs 
 
 Phase 2.7  Design Feasibility Check
-Phase 2.7  Design Feasibility Check (Checksum:1b55ebc6) REAL time: 4 secs 
+Phase 2.7  Design Feasibility Check (Checksum:22160ff5) REAL time: 4 secs 
 
 Phase 3.31  Local Placement Optimization
-Phase 3.31  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 4 secs 
+Phase 3.31  Local Placement Optimization (Checksum:22160ff5) REAL time: 4 secs 
 
 Phase 4.2  Initial Placement for Architecture Specific Features
 Phase 4.2  Initial Placement for Architecture Specific Features
-(Checksum:1b55ebc6) REAL time: 4 secs 
+(Checksum:22160ff5) REAL time: 5 secs 
 
 Phase 5.36  Local Placement Optimization
-Phase 5.36  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 4 secs 
+Phase 5.36  Local Placement Optimization (Checksum:22160ff5) REAL time: 5 secs 
 
 Phase 6.30  Global Clock Region Assignment
-Phase 6.30  Global Clock Region Assignment (Checksum:1b55ebc6) REAL time: 4 secs 
+Phase 6.30  Global Clock Region Assignment (Checksum:22160ff5) REAL time: 5 secs 
 
 Phase 7.3  Local Placement Optimization
-Phase 7.3  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
+Phase 7.3  Local Placement Optimization (Checksum:22160ff5) REAL time: 5 secs 
 
 Phase 8.5  Local Placement Optimization
-Phase 8.5  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
+Phase 8.5  Local Placement Optimization (Checksum:22160ff5) REAL time: 5 secs 
 
 Phase 9.8  Global Placement
-Phase 9.8  Global Placement (Checksum:1b55ebc6) REAL time: 5 secs 
+Phase 9.8  Global Placement (Checksum:22160ff5) REAL time: 5 secs 
 
 Phase 10.5  Local Placement Optimization
-Phase 10.5  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
+Phase 10.5  Local Placement Optimization (Checksum:22160ff5) REAL time: 5 secs 
 
 Phase 11.18  Placement Optimization
-Phase 11.18  Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
+Phase 11.18  Placement Optimization (Checksum:22160ff5) REAL time: 5 secs 
 
 Phase 12.5  Local Placement Optimization
-Phase 12.5  Local Placement Optimization (Checksum:1b55ebc6) REAL time: 5 secs 
+Phase 12.5  Local Placement Optimization (Checksum:22160ff5) REAL time: 5 secs 
 
 Phase 13.34  Placement Validation
-Phase 13.34  Placement Validation (Checksum:1b55ebc6) REAL time: 5 secs 
+Phase 13.34  Placement Validation (Checksum:22160ff5) REAL time: 5 secs 
 
 Total REAL time to Placer completion: 5 secs 
 Total CPU  time to Placer completion: 4 secs 
@@ -264,8 +267,8 @@ Slice Logic Distribution:
   Number of LUT Flip Flop pairs used:            0
 
 IO Utilization:
-  Number of bonded IOBs:                         5 out of     186    2%
-    Number of LOCed IOBs:                        5 out of       5  100%
+  Number of bonded IOBs:                         6 out of     186    3%
+    Number of LOCed IOBs:                        6 out of       6  100%
 
 Specific Feature Utilization:
   Number of RAMB16BWERs:                         0 out of      32    0%
@@ -337,8 +340,8 @@ Slice Logic Distribution:
   Number of LUT Flip Flop pairs used:            0
 
 IO Utilization:
-  Number of bonded IOBs:                         5 out of     186    2%
-    Number of LOCed IOBs:                        5 out of       5  100%
+  Number of bonded IOBs:                         6 out of     186    3%
+    Number of LOCed IOBs:                        6 out of       6  100%
 
 Specific Feature Utilization:
   Number of RAMB16BWERs:                         0 out of      32    0%
@@ -373,17 +376,18 @@ Finished initial Timing Analysis.  REAL time: 3 secs
 WARNING:Par:288 - The signal miso_IBUF has no load.  PAR will not attempt to route this signal.
 WARNING:Par:288 - The signal led_IBUF has no load.  PAR will not attempt to route this signal.
 WARNING:Par:288 - The signal mosi_IBUF has no load.  PAR will not attempt to route this signal.
+WARNING:Par:288 - The signal ss_IBUF has no load.  PAR will not attempt to route this signal.
 WARNING:Par:288 - The signal sck_IBUF has no load.  PAR will not attempt to route this signal.
 WARNING:Par:288 - The signal clock_IBUF has no load.  PAR will not attempt to route this signal.
 Starting Router
 
 
-Phase  1  : 0 unrouted;      REAL time: 3 secs 
+Phase  1  : 0 unrouted;      REAL time: INFO:TclTasksC:1850 - process run : Place & Route is done.
+4 secs 
 
-Phase  2  : 0 unrouted;      REAL time: 3 secs 
+Phase  2  : 0 unrouted;      REAL time: 4 secs 
 
-Phase  3  : 0 unrouted;      REAL tiINFO:TclTasksC:1850 - process run : Place & Route is done.
-me: 3 secs 
+Phase  3  : 0 unrouted;      REAL time: 4 secs 
 
 Phase  4  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
 
@@ -420,18 +424,18 @@ Generating Pad Report.
 
 All signals are completely routed.
 
-WARNING:Par:283 - There are 5 loadless signals in this design. This design will cause Bitgen to issue DRC warnings.
+WARNING:Par:283 - There are 6 loadless signals in this design. This design will cause Bitgen to issue DRC warnings.
 
 Total REAL time to PAR completion: 4 secs 
 Total CPU time to PAR completion: 4 secs 
 
-Peak Memory Usage:  611 MB
+Peak Memory Usage:  610 MB
 
 Placer: Placement generated during map.
 Routing: Completed - No errors found.
 
 Number of error messages: 0
-Number of warning messages: 7
+Number of warning messages: 8
 Number of info messages: 2
 
 Writing design to file xula2.ncd
@@ -449,7 +453,7 @@ Loading device for application Rf_Device from file '6slx9.nph' in environment
 /opt/Xilinx/14.6/ISE_DS/ISE/.
    "xula2" is an NCD, version 3.2, device xc6slx9, package ftg256, speed -2
 
-Analysis completed Sat Apr  9 06:41:12 2016
+Analysis completed Sat Apr  9 09:06:56 2016
 --------------------------------------------------------------------------------
 
 Generating Report ...
