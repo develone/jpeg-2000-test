@@ -1,10 +1,10 @@
 #
-NET "miso" LOC = "F1" ;
+NET "miso" LOC = "F2" ;
 NET "led" LOC = "T4" ;
 NET "sck" LOC = "H2" ;
 NET "clock" LOC = "A9" ;
 NET "ss" LOC = "H1" ;
-NET "mosi" LOC = "F2" ;
+NET "mosi" LOC = "F1" ;
 #
 NET "clock" TNM_NET = "clock"; 
 TIMESPEC "TS_clock" = PERIOD "clock" 83.3333333 ns HIGH 50%;

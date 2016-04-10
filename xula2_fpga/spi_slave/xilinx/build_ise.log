@@ -19,26 +19,49 @@ Parsing module <xula2>.
 =========================================================================
 
 Elaborating module <xula2>.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 129: Result of 25-bit expression is truncated to fit in 24-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 147: Result of 6-bit expression is truncated to fit in 5-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 193: Result of 32-bit expression is truncated to fit in 12-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 215: Assignment to spi_inst_spibus_sck ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 235: Assignment to spi_inst_fifo_tx_inst_fbus_read_valid ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 256: Result of 32-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 262: Result of 5-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 283: Assignment to spi_inst_spibus_mosi ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 398: Result of 32-bit expression is truncated to fit in 3-bit target.
-"/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 413. $display *** AssertionError ***
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 423: Assignment to spi_inst_cso_tx_fifo_count ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 435: Assignment to spi_inst_spibus_ss ignored, since the identifier is never used
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 508: Result of 32-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 514: Result of 5-bit expression is truncated to fit in 4-bit target.
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 536: Assignment to data ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 537: Assignment to rd ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 538: Assignment to wr ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 539: Assignment to full ignored, since the identifier is never used
-WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 540: Assignment to empty ignored, since the identifier is never used
-WARNING:HDLCompiler:1499 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 8: Empty module <xula2> remains a black box.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 184: Result of 25-bit expression is truncated to fit in 24-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 202: Result of 6-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 235: Assignment to inst_spi_sl_tx_fifo_inst_fbus_count ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 253: Result of 6-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 254: Result of 32-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 257: Result of 32-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 258: Result of 6-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 293: Result of 32-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 299: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 310: Assignment to inst_spi_sl_tx_fifo_inst_fbus_read_valid ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 321: Result of 32-bit expression is truncated to fit in 8-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 325: Result of 32-bit expression is truncated to fit in 8-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 328: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 313: Assignment to inst_spi_sl_spibus_miso ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 342: Assignment to inst_spi_sl_rx_fifo_inst_fbus_count ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 360: Result of 6-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 361: Result of 32-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 364: Result of 32-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 365: Result of 6-bit expression is truncated to fit in 5-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 400: Result of 32-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 406: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 382: Assignment to inst_spi_sl_rx_fifo_inst_fbus_full ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 423: Assignment to inst_spi_sl_mp_fifo_inst_self_full ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 425: Assignment to inst_spi_sl_mp_fifo_inst_self_read_data ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 426: Assignment to inst_spi_sl_mp_fifo_inst_self_read_valid ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 427: Assignment to inst_spi_sl_mp_fifo_inst_self_empty ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 498: Result of 32-bit expression is truncated to fit in 12-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 568: Result of 32-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 574: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 585: Assignment to spi_inst_fifo_tx_inst_fbus_read_valid ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 703: Result of 32-bit expression is truncated to fit in 3-bit target.
+"/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 718. $display *** AssertionError ***
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 728: Assignment to spi_inst_cso_tx_fifo_count ignored, since the identifier is never used
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 742: Result of 8-bit expression is truncated to fit in 1-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 745: Result of 8-bit expression is truncated to fit in 1-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 748: Result of 8-bit expression is truncated to fit in 1-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 820: Result of 32-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:413 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 826: Result of 5-bit expression is truncated to fit in 4-bit target.
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 841: Assignment to data ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 842: Assignment to rd ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 843: Assignment to wr ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 844: Assignment to full ignored, since the identifier is never used
+WARNING:HDLCompiler:1127 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v" Line 845: Assignment to empty ignored, since the identifier is never used
 
 =========================================================================
 *                           HDL Synthesis                               *
@@ -47,19 +70,106 @@ WARNING:HDLCompiler:1499 - "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/
 Synthesizing Unit <xula2>.
     Related source file is "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.v".
 WARNING:Xst:647 - Input <led> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
-WARNING:Xst:647 - Input <clock> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
-WARNING:Xst:647 - Input <mosi> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
-WARNING:Xst:647 - Input <miso> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
-WARNING:Xst:647 - Input <sck> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
-WARNING:Xst:647 - Input <ss> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+    Found 5-bit register for signal <reset_dly_cnt>.
+    Found 1-bit register for signal <reset>.
+    Found 12-bit register for signal <spi_inst_clkcnt>.
+    Found 128-bit register for signal <n0225[127:0]>.
+    Found 1-bit register for signal <fifobus_full>.
+    Found 1-bit register for signal <spi_inst_itx_empty>.
+    Found 4-bit register for signal <spi_inst_fifo_tx_inst_addr>.
+    Found 1-bit register for signal <spi_inst_itx_read>.
+    Found 1-bit register for signal <sck>.
+    Found 8-bit register for signal <spi_inst_treg>.
+    Found 3-bit register for signal <spi_inst_state>.
+    Found 3-bit register for signal <spi_inst_bcnt>.
+    Found 1-bit register for signal <spi_inst_irx_write>.
+    Found 8-bit register for signal <spi_inst_rreg>.
+    Found 128-bit register for signal <n0224[127:0]>.
+    Found 1-bit register for signal <spi_inst_irx_full>.
+    Found 1-bit register for signal <fifobus_empty>.
+    Found 4-bit register for signal <spi_inst_fifo_rx_inst_addr>.
+    Found finite state machine <FSM_0> for signal <spi_inst_state>.
+    -----------------------------------------------------------------------
+    | States             | 4                                              |
+    | Transitions        | 11                                             |
+    | Inputs             | 5                                              |
+    | Outputs            | 4                                              |
+    | Clock              | clock (rising_edge)                            |
+    | Reset              | reset (positive)                               |
+    | Reset type         | synchronous                                    |
+    | Reset State        | 000                                            |
+    | Encoding           | auto                                           |
+    | Implementation     | LUT                                            |
+    -----------------------------------------------------------------------
+    Found 5-bit adder for signal <reset_dly_cnt[4]_GND_1_o_add_12_OUT> created at line 202.
+    Found 4-bit adder for signal <spi_inst_fifo_tx_inst_addr[3]_GND_1_o_add_153_OUT> created at line 574.
+    Found 4-bit adder for signal <spi_inst_fifo_rx_inst_addr[3]_GND_1_o_add_223_OUT> created at line 826.
+    Found 12-bit subtractor for signal <GND_1_o_GND_1_o_sub_127_OUT<11:0>> created at line 498.
+    Found 4-bit subtractor for signal <GND_1_o_GND_1_o_sub_152_OUT<3:0>> created at line 568.
+    Found 3-bit subtractor for signal <GND_1_o_GND_1_o_sub_176_OUT<2:0>> created at line 703.
+    Found 4-bit subtractor for signal <GND_1_o_GND_1_o_sub_222_OUT<3:0>> created at line 820.
+    Found 8-bit 16-to-1 multiplexer for signal <spi_inst_itx_read_data> created at line 536.
+    Found 1-bit 16-to-1 multiplexer for signal <fifobus_read_data<7>> created at line 36.
+    Found 1-bit 16-to-1 multiplexer for signal <fifobus_read_data<6>> created at line 36.
+    Found 1-bit 16-to-1 multiplexer for signal <fifobus_read_data<5>> created at line 36.
+    Found 1-bit 16-to-1 multiplexer for signal <fifobus_read_data<4>> created at line 36.
+    Found 1-bit 16-to-1 multiplexer for signal <fifobus_read_data<3>> created at line 36.
+    Found 1-bit 16-to-1 multiplexer for signal <fifobus_read_data<2>> created at line 36.
+    Found 1-bit 16-to-1 multiplexer for signal <fifobus_read_data<1>> created at line 36.
+    Found 1-bit 16-to-1 multiplexer for signal <fifobus_read_data<0>> created at line 36.
+WARNING:Xst:737 - Found 1-bit latch for signal <spi_inst_itx_write>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <fifobus_write_data<7>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <fifobus_write_data<6>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <fifobus_write_data<5>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <fifobus_write_data<4>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <fifobus_write_data<3>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <fifobus_write_data<2>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <fifobus_write_data<1>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <fifobus_write_data<0>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+    Found 5-bit comparator greater for signal <reset_dly_cnt[4]_PWR_1_o_LessThan_12_o> created at line 201
+    Found 5-bit comparator greater for signal <n0015> created at line 203
+    Found 5-bit comparator greater for signal <n0018> created at line 206
+    Found 12-bit comparator greater for signal <_n0378> created at line 731
     Summary:
-	no macro.
+	inferred   5 Adder/Subtractor(s).
+	inferred 308 D-type flip-flop(s).
+	inferred   9 Latch(s).
+	inferred   4 Comparator(s).
+	inferred  44 Multiplexer(s).
+	inferred   1 Finite State Machine(s).
 Unit <xula2> synthesized.
 
 =========================================================================
 HDL Synthesis Report
 
-Found no macro
+Macro Statistics
+# Adders/Subtractors                                   : 5
+ 12-bit subtractor                                     : 1
+ 3-bit subtractor                                      : 1
+ 4-bit addsub                                          : 2
+ 5-bit adder                                           : 1
+# Registers                                            : 17
+ 1-bit register                                        : 8
+ 12-bit register                                       : 1
+ 128-bit register                                      : 2
+ 3-bit register                                        : 1
+ 4-bit register                                        : 2
+ 5-bit register                                        : 1
+ 8-bit register                                        : 2
+# Latches                                              : 9
+ 1-bit latch                                           : 9
+# Comparators                                          : 4
+ 12-bit comparator greater                             : 1
+ 5-bit comparator greater                              : 3
+# Multiplexers                                         : 44
+ 1-bit 16-to-1 multiplexer                             : 8
+ 1-bit 2-to-1 multiplexer                              : 20
+ 12-bit 2-to-1 multiplexer                             : 1
+ 3-bit 2-to-1 multiplexer                              : 7
+ 8-bit 16-to-1 multiplexer                             : 1
+ 8-bit 2-to-1 multiplexer                              : 7
+# FSMs                                                 : 1
+
 =========================================================================
 
 =========================================================================
@@ -67,28 +177,98 @@ Found no macro
 =========================================================================
 
 
+Synthesizing (advanced) Unit <xula2>.
+The following registers are absorbed into counter <spi_inst_clkcnt>: 1 register on signal <spi_inst_clkcnt>.
+The following registers are absorbed into counter <reset_dly_cnt>: 1 register on signal <reset_dly_cnt>.
+The following registers are absorbed into counter <spi_inst_fifo_tx_inst_addr>: 1 register on signal <spi_inst_fifo_tx_inst_addr>.
+The following registers are absorbed into counter <spi_inst_fifo_rx_inst_addr>: 1 register on signal <spi_inst_fifo_rx_inst_addr>.
+Unit <xula2> synthesized (advanced).
+
+Synthesizing (advanced) Unit <xula2>.
+	Found 16-bit dynamic shift register for signal <fifobus_read_data<0>>.
+	Found 16-bit dynamic shift register for signal <fifobus_read_data<1>>.
+	Found 16-bit dynamic shift register for signal <fifobus_read_data<2>>.
+	Found 16-bit dynamic shift register for signal <fifobus_read_data<3>>.
+	Found 16-bit dynamic shift register for signal <fifobus_read_data<4>>.
+	Found 16-bit dynamic shift register for signal <fifobus_read_data<5>>.
+	Found 16-bit dynamic shift register for signal <fifobus_read_data<6>>.
+	Found 16-bit dynamic shift register for signal <fifobus_read_data<7>>.
+	Found 16-bit dynamic shift register for signal <spi_inst_itx_read_data<0>>.
+	Found 16-bit dynamic shift register for signal <spi_inst_itx_read_data<1>>.
+	Found 16-bit dynamic shift register for signal <spi_inst_itx_read_data<2>>.
+	Found 16-bit dynamic shift register for signal <spi_inst_itx_read_data<3>>.
+	Found 16-bit dynamic shift register for signal <spi_inst_itx_read_data<4>>.
+	Found 16-bit dynamic shift register for signal <spi_inst_itx_read_data<5>>.
+	Found 16-bit dynamic shift register for signal <spi_inst_itx_read_data<6>>.
+	Found 16-bit dynamic shift register for signal <spi_inst_itx_read_data<7>>.
+Unit <xula2> synthesized (advanced).
+
 =========================================================================
 Advanced HDL Synthesis Report
 
-Found no macro
+Macro Statistics
+# Adders/Subtractors                                   : 1
+ 3-bit subtractor                                      : 1
+# Counters                                             : 4
+ 12-bit down counter                                   : 1
+ 4-bit updown counter                                  : 2
+ 5-bit up counter                                      : 1
+# Registers                                            : 27
+ Flip-Flops                                            : 27
+# Shift Registers                                      : 16
+ 16-bit dynamic shift register                         : 16
+# Comparators                                          : 4
+ 12-bit comparator greater                             : 1
+ 5-bit comparator greater                              : 3
+# Multiplexers                                         : 34
+ 1-bit 2-to-1 multiplexer                              : 20
+ 3-bit 2-to-1 multiplexer                              : 7
+ 8-bit 2-to-1 multiplexer                              : 7
+# FSMs                                                 : 1
+
 =========================================================================
 
 =========================================================================
 *                         Low Level Synthesis                           *
 =========================================================================
+Analyzing FSM <MFsm> for best encoding.
+Optimizing FSM <FSM_0> on signal <spi_inst_state[1:2]> with gray encoding.
+-------------------
+ State | Encoding
+-------------------
+ 000   | 00
+ 010   | 01
+ 011   | 11
+ 101   | 10
+-------------------
 
 Optimizing unit <xula2> ...
+WARNING:Xst:1710 - FF/Latch <spi_inst_clkcnt_0> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <spi_inst_clkcnt_1> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <spi_inst_clkcnt_2> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <spi_inst_clkcnt_3> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <spi_inst_clkcnt_4> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <spi_inst_clkcnt_5> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <spi_inst_clkcnt_6> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <spi_inst_clkcnt_7> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <spi_inst_clkcnt_8> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <spi_inst_clkcnt_9> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <spi_inst_clkcnt_10> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <spi_inst_clkcnt_11> (without init value) has a constant value of 0 in block <xula2>. This FF/Latch will be trimmed during the optimization process.
 
 Mapping all equations...
 Building and optimizing final netlist ...
-Found area constraint ratio of 100 (+ 5) on block xula2, actual ratio is 0.
+Found area constraint ratio of 100 (+ 5) on block xula2, actual ratio is 1.
 
 Final Macro Processing ...
 
 =========================================================================
 Final Register Report
 
-Found no macro
+Macro Statistics
+# Registers                                            : 42
+ Flip-Flops                                            : 42
+
 =========================================================================
 
 =========================================================================
@@ -108,7 +288,14 @@ Partition Implementation Status
 
 Clock Information:
 ------------------
-No clock signals found in this design
+-----------------------------------+-------------------------+-------+
+Clock Signal                       | Clock buffer(FF name)   | Load  |
+-----------------------------------+-------------------------+-------+
+clock                              | BUFGP                   | 58    |
+spi_inst_itx_full                  | NONE(spi_inst_itx_write)| 9     |
+----------------INFO:TclTasksC:1850 - process run : Synthesize - XST is done.
+-------------------+-------------------------+-------+
+INFO:Xst:2169 - HDL ADVISOR - Some clock signals were not automatically buffered by XST with BUFG/BUFR resources. Please use the buffer_type constraint in order to insert these buffers to the clock signals to help prevent skew problems.
 
 Asynchronous Control Signals Information:
 ----------------------------------------
@@ -118,13 +305,12 @@ Timing Summary:
 ---------------
 Speed Grade: -2
 
-   Minimum period: No path found
-   Minimum input arrival time before clock: No path found
-   Maximum output required time after clock: No path found
+   Minimum period: 4.335ns (Maximum Frequency: 230.681MHz)
+   Minimum input arrival time before clock: 2.083ns
+   Maximum output required time after clock: 4.162ns
    Maximum combinational path delay: No path found
 
-=====INFO:TclTasksC:1850 - process run : Synthesize - XST is done.
-====================================================================
+=========================================================================
 
 Process "Synthesize - XST" completed successfully
 INFO:TclTasksC:1850 - process run : Translate is done.
@@ -138,38 +324,12 @@ ise -dd _ngo -nt timestamp -uc xula2.ucf -p xc6slx9-ftg256-2 xula2.ngc xula2.ngd
 
 Reading NGO file
 "/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.ngc" ...
-Loading design module
-"/home/vidal/wkg/jpeg-2000-test/xula2_fpga/spi_slave/xilinx/xula2.ngc"...
-WARNING:NgdBuild:578 - Design contains no instances.
 Gathering constraint information from source properties...
 Done.
 
 Annotating constraints to design from ucf file "xula2.ucf" ...
 Resolving constraint associations...
 Checking Constraint Associations...
-WARNING:ConstraintSystem:137 - Constraint <NET "clock" TNM_NET = "clock";>
-   [xula2.ucf(9)]: No appropriate instances for the TNM constraint are driven by
-   "clock".
-
-WARNING:ConstraintSystem:56 - Constraint <TIMESPEC "TS_clock" = PERIOD "clock"
-   83.3333333 ns HIGH 50%;> [xula2.ucf(10)]: Unable to find an active 'TNM' or
-   'TimeGrp' constraint named 'clock'.
-
-WARNING:ConstraintSystem:191 - The TNM 'clock', does not directly or indirectly
-   drive any flip-flops, latches and/or RAMS and cannot be actively used by the
-   referencing Period constraint 'TS_clock'. If clock manager blocks are
-   directly or indirectly driven, a new TNM constraint will not be derived even
-   though the referencing constraint is a PERIOD constraint unless an output of
-   the clock manager drives flip-flops, latches or RAMs. This TNM is used in the
-   following user PERIOD specification:
-   <TIMESPEC "TS_clock" = PERIOD "clock" 83.3333333 ns HIGH 50%;>
-   [xula2.ucf(10)]
-
-WARNING:ConstraintSystem:197 - The following specification is invalid because
-   the referenced TNM constraint was removed:
-   <TIMESPEC "TS_clock" = PERIOD "clock" 83.3333333 ns HIGH 50%;>
-   [xula2.ucf(10)]
-
 Done...
 
 Checking expanded design ...
@@ -183,7 +343,7 @@ Partition Implementation Status
 
 NGDBUILD Design Results Summary:
   Number of errors:     0
-  Number of warnings:   5
+  Number of warnings:   0
 
 Writing NGD file "xula2.ngd" ...
 Total REAL time to NGDBUILD completion:  4 sec
@@ -210,47 +370,50 @@ Total REAL time at the beginning of Placer: 4 secs
 Total CPU  time at the beginning of Placer: 4 secs 
 
 Phase 1.1  Initial Placement Analysis
-Phase 1.1  Initial Placement Analysis (Checksum:22160ff5) REAL time: 4 secs 
+Phase 1.1  Initial Placement Analysis (Checksum:12f5f2ad) REAL time: 5 secs 
 
 Phase 2.7  Design Feasibility Check
-Phase 2.7  Design Feasibility Check (Checksum:22160ff5) REAL time: 4 secs 
+Phase 2.7  Design Feasibility Check (Checksum:12f5f2ad) REAL time: 5 secs 
 
 Phase 3.31  Local Placement Optimization
-Phase 3.31  Local Placement Optimization (Checksum:22160ff5) REAL time: 4 secs 
+Phase 3.31  Local Placement Optimization (Checksum:12f5f2ad) REAL time: 5 secs 
 
 Phase 4.2  Initial Placement for Architecture Specific Features
+
 Phase 4.2  Initial Placement for Architecture Specific Features
-(Checksum:22160ff5) REAL time: 5 secs 
+(Checksum:86896505) REAL time: 6 secs 
 
 Phase 5.36  Local Placement Optimization
-Phase 5.36  Local Placement Optimization (Checksum:22160ff5) REAL time: 5 secs 
+Phase 5.36  Local Placement Optimization (Checksum:86896505) REAL time: 6 secs 
 
 Phase 6.30  Global Clock Region Assignment
-Phase 6.30  Global Clock Region Assignment (Checksum:22160ff5) REAL time: 5 secs 
+Phase 6.30  Global Clock Region Assignment (Checksum:86896505) REAL time: 6 secs 
 
 Phase 7.3  Local Placement Optimization
-Phase 7.3  Local Placement Optimization (Checksum:22160ff5) REAL time: 5 secs 
+Phase 7.3  Local Placement Optimization (Checksum:86896505) REAL time: 6 secs 
 
 Phase 8.5  Local Placement Optimization
-Phase 8.5  Local Placement Optimization (Checksum:22160ff5) REAL time: 5 secs 
+Phase 8.5  Local Placement Optimization (Checksum:86896505) REAL time: 6 secs 
 
 Phase 9.8  Global Placement
-Phase 9.8  Global Placement (Checksum:22160ff5) REAL time: 5 secs 
+.................
+..............
+Phase 9.8  Global Placement (Checksum:c15d766) REAL time: 7 secs 
 
 Phase 10.5  Local Placement Optimization
-Phase 10.5  Local Placement Optimization (Checksum:22160ff5) REAL time: 5 secs 
+Phase 10.5  Local Placement Optimization (Checksum:c15d766) REAL time: 7 secs 
 
 Phase 11.18  Placement Optimization
-Phase 11.18  Placement Optimization (Checksum:22160ff5) REAL time: 5 secs 
+Phase 11.18  Placement Optimization (Checksum:878e5f0e) REAL time: 7 secs 
 
 Phase 12.5  Local Placement Optimization
-Phase 12.5  Local Placement Optimization (Checksum:22160ff5) REAL time: 5 secs 
+Phase 12.5  Local Placement Optimization (Checksum:878e5f0e) REAL time: 7 secs 
 
 Phase 13.34  Placement Validation
-Phase 13.34  Placement Validation (Checksum:22160ff5) REAL time: 5 secs 
+Phase 13.34  Placement Validation (Checksum:878e5f0e) REAL time: 7 secs 
 
-Total REAL time to Placer completion: 5 secs 
-Total CPU  time to Placer completion: 4 secs 
+Total REAL time to Placer completion: 7 secs 
+Total CPU  time to Placer completion: 7 secs 
 Running post-placement packing...
 Writing output files...
 
@@ -258,13 +421,42 @@ Design Summary:
 Number of errors:      0
 Number of warnings:    0
 Slice Logic Utilization:
-  Number of Slice Registers:                     0 out of  11,440    0%
-  Number of Slice LUTs:                          0 out of   5,720    0%
+  Number of Slice Registers:                    51 out of  11,440    1%
+    Number used as Flip Flops:                  42
+    Number used as Latches:                      9
+    Number used as Latch-thrus:                  0
+    Number used as AND/OR logics:                0
+  Number of Slice LUTs:                         50 out of   5,720    1%
+    Number used as logic:                       42 out of   5,720    1%
+      Number using O6 output only:              32
+      Number using O5 output only:               0
+      Number using O5 and O6:                   10
+      Number used as ROM:                        0
+    Number used as Memory:                       8 out of   1,440    1%
+      Number used as Dual Port RAM:              0
+      Number used as Single Port RAM:            0
+      Number used as Shift Register:             8
+        Number using O6 output only:             0
+        Number using O5 output only:             0
+        Number using O5 and O6:                  8
 
 Slice Logic Distribution:
-  Number of occupied Slices:                     0 out of   1,430    0%
+  Number of occupied Slices:                    22 out of   1,430    1%
   Number of MUXCYs used:                         0 out of   2,860    0%
-  Number of LUT Flip Flop pairs used:            0
+  Number of LUT Flip Flop pairs used:           66
+    Number with an unused Flip Flop:            19 out of      66   28%
+    Number with an unused LUT:                  16 out of      66   24%
+    Number of fully used LUT-FF pairs:          31 out of      66   46%
+    Number of unique control sets:               9
+    Number of slice register sites lost
+      to control set restrictions:              29 out of  11,440    1%
+
+  A LUT Flip Flop paINFO:TclTasksC:1850 - process run : Map is done.
+ir for this architecture represents one LUT paired with
+  one Flip Flop within a slice.  A control set is a unique combination of
+  clock, reset, set, and enable signals for a registered element.
+  The Slice Logic Distribution report is not meaningful if the design is
+  over-mapped for a non-slice resource or if Placement fails.
 
 IO Utilization:
   Number of bonded IOBs:                         6 out of     186    3%
@@ -275,7 +467,9 @@ Specific Feature Utilization:
   Number of RAMB8BWERs:                          0 out of      64    0%
   Number of BUFIO2/BUFIO2_2CLKs:                 0 out of      32    0%
   Number of BUFIO2FB/BUFIO2FB_2CLKs:             0 out of      32    0%
-  Number of BUFG/BUFGMUXs:                       0 out of      16    0%
+  Number of BUFG/BUFGMUXs:                       1 out of      16    6%
+    Number used as BUFGs:                        1
+    Number used as BUFGMUX:                      0
   Number of DCM/DCM_CLKGENs:                     0 out of       4    0%
   Number of ILOGIC2/ISERDES2s:                   0 out of     200    0%
   Number of IODELAY2/IODRP2/IODRP2_MCBs:         0 out of     200    0%
@@ -286,19 +480,18 @@ Specific Feature Utilization:
   Number of BUFPLL_MCBs:                         0 out of       4    0%
   Number of DSP48A1s:                            0 out of      16    0%
   Number of ICAPs:                               0 out of       1    0%
-  Number of MCBs: INFO:TclTasksC:1850 - process run : Map is done.
-                               0 out of       2    0%
+  Number of MCBs:                                0 out of       2    0%
   Number of PCILOGICSEs:                         0 out of       2    0%
   Number of PLL_ADVs:                            0 out of       2    0%
   Number of PMVs:                                0 out of       1    0%
   Number of STARTUPs:                            0 out of       1    0%
   Number of SUSPEND_SYNCs:                       0 out of       1    0%
 
-Average Fanout of Non-Clock Nets:                0.00
+Average Fanout of Non-Clock Nets:                3.68
 
-Peak Memory Usage:  658 MB
-Total REAL time to MAP completion:  5 secs 
-Total CPU time to MAP completion:   5 secs 
+Peak Memory Usage:  665 MB
+Total REAL time to MAP completion:  7 secs 
+Total CPU time to MAP completion:   7 secs 
 
 Mapping completed.
 See MAP report file "xula2_map.mrp" for details.
@@ -318,11 +511,6 @@ Loading device for application Rf_Device from file '6slx9.nph' in environment /o
 Initializing temperature to 85.000 Celsius. (default - Range: 0.000 to 85.000 Celsius)
 Initializing voltage to 1.140 Volts. (default - Range: 1.140 to 1.260 Volts)
 
-INFO:Par:282 - No user timing constraints were detected or you have set the option to ignore timing constraints ("par
-   -x"). Place and Route will run in "Performance Evaluation Mode" to automatically improve the performance of all
-   internal clocks in this design. Because there are not defined timing requirements, a timing score will not be
-   reported in the PAR report in this mode. The PAR timing summary will list the performance achieved for each clock.
-   Note: For the fastest runtime, set the effort level to "std".  For best performance, set the effort level to "high".
 
 Device speed data version:  "PRODUCTION 1.23 2013-06-08".
 
@@ -331,13 +519,40 @@ Device speed data version:  "PRODUCTION 1.23 2013-06-08".
 Device Utilization Summary:
 
 Slice Logic Utilization:
-  Number of Slice Registers:                     0 out of  11,440    0%
-  Number of Slice LUTs:                          0 out of   5,720    0%
+  Number of Slice Registers:                    51 out of  11,440    1%
+    Number used as Flip Flops:                  42
+    Number used as Latches:                      9
+    Number used as Latch-thrus:                  0
+    Number used as AND/OR logics:                0
+  Number of Slice LUTs:                         50 out of   5,720    1%
+    Number used as logic:                       42 out of   5,720    1%
+      Number using O6 output only:              32
+      Number using O5 output only:               0
+      Number using O5 and O6:                   10
+      Number used as ROM:                        0
+    Number used as Memory:                       8 out of   1,440    1%
+      Number used as Dual Port RAM:              0
+      Number used as Single Port RAM:            0
+      Number used as Shift Register:             8
+        Number using O6 output only:             0
+        Number using O5 output only:             0
+        Number using O5 and O6:                  8
 
 Slice Logic Distribution:
-  Number of occupied Slices:                     0 out of   1,430    0%
+  Number of occupied Slices:                    22 out of   1,430    1%
   Number of MUXCYs used:                         0 out of   2,860    0%
-  Number of LUT Flip Flop pairs used:            0
+  Number of LUT Flip Flop pairs used:           66
+    Number with an unused Flip Flop:            19 out of      66   28%
+    Number with an unused LUT:                  16 out of      66   24%
+    Number of fully used LUT-FF pairs:          31 out of      66   46%
+    Number of slice register sites lost
+      to control set restrictions:               0 out of  11,440    0%
+
+  A LUT Flip Flop pair for this architecture represents one LUT paired with
+  one Flip Flop within a slice.  A control set is a unique combination of
+  clock, reset, set, and enable signals for a registered element.
+  The Slice Logic Distribution report is not meaningful if the design is
+  over-mapped for a non-slice resource or if Placement fails.
 
 IO Utilization:
   Number of bonded IOBs:                         6 out of     186    3%
@@ -348,7 +563,9 @@ Specific Feature Utilization:
   Number of RAMB8BWERs:                          0 out of      64    0%
   Number of BUFIO2/BUFIO2_2CLKs:                 0 out of      32    0%
   Number of BUFIO2FB/BUFIO2FB_2CLKs:             0 out of      32    0%
-  Number of BUFG/BUFGMUXs:                       0 out of      16    0%
+  Number of BUFG/BUFGMUXs:                       1 out of      16    6%
+    Number used as BUFGs:                        1
+    Number used as BUFGMUX:                      0
   Number of DCM/DCM_CLKGENs:                     0 out of       4    0%
   Number of ILOGIC2/ISERDES2s:                   0 out of     200    0%
   Number of IODELAY2/IODRP2/IODRP2_MCBs:         0 out of     200    0%
@@ -373,39 +590,33 @@ Router effort level (-rl):    High
 Starting initial Timing Analysis.  REAL time: 3 secs 
 Finished initial Timing Analysis.  REAL time: 3 secs 
 
-WARNING:Par:288 - The signal miso_IBUF has no load.  PAR will not attempt to route this signal.
 WARNING:Par:288 - The signal led_IBUF has no load.  PAR will not attempt to route this signal.
-WARNING:Par:288 - The signal mosi_IBUF has no load.  PAR will not attempt to route this signal.
-WARNING:Par:288 - The signal ss_IBUF has no load.  PAR will not attempt to route this signal.
-WARNING:Par:288 - The signal sck_IBUF has no load.  PAR will not attempt to route this signal.
-WARNING:Par:288 - The signal clock_IBUF has no load.  PAR will not attempt to route this signal.
 Starting Router
 
 
-Phase  1  : 0 unrouted;      REAL time: INFO:TclTasksC:1850 - process run : Place & Route is done.
-4 secs 
+Phase  1  : 327 unrouted;      REAL time: 4 secs 
 
-Phase  2  : 0 unrouted;      REAL time: 4 secs 
+Phase  2  : 282 unrouted;      REAL time: 4 secs 
 
-Phase  3  : 0 unrouted;      REAL time: 4 secs 
+Phase  3  : 110 unrouted;      REAL time: 4 secs 
 
-Phase  4  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
+Phase  4  : 110 unrouted; (Setup:0, Hold:51, Component Switching Limit:0)     REAL time: 4 secs 
 
 Updating file: xula2.ncd with current fully routed design.
 
-Phase  5  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
+Phase  5  : 0 unrouted; (Setup:0, Hold:51, Component Switching Limit:0)     REAL time: 5 secs 
 
-Phase  6  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
+Phase  6  : 0 unrouted; (Setup:0, Hold:51, Component Switching Limit:0)     REAL time: 5 secs 
 
-Phase  7  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
+Phase  7  : 0 unrouted; (Setup:0, Hold:51, Component Switching Limit:0)     REAL time: 5 secs 
 
-Phase  8  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
+Phase  8  : 0 unrouted; (Setup:0, Hold:51, Component Switching Limit:0)     REAL time: 5 secs 
 
-Phase  9  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
+Phase  9  : 0 unrouted; (Setup:0, Hold:0, Component Switching Limit:0)     REAL time: 5 secs 
 
-Phase 10  : 0 unrouted; (Par is working to improve performance)     REAL time: 4 secs 
-Total REAL time to Router completion: 4 secs 
-Total CPU time to Router completion: 4 secs 
+Phase 10  : 0 unrouted; (Setup:0, Hold:0, Component Switching Limit:0)     REAL time: 5 secs 
+Total REAL time to Router completion: 5 secs 
+Total CPU time to Router completion: 5 secs 
 
 Partition Implementation Status
 -------------------------------
@@ -415,28 +626,63 @@ Partition Implementation Status
 -------------------------------
 
 Generating "PAR" statistics.
-INFO:Par:459 - The Clock Report is not displayed in the non timing-driven mode.
-Timing Score: 0 (Setup: 0, Hold: 0)
 
+**************************
+Generating Clock Report
+**************************
+
++---------------------+--------------+------+------+------------+-------------+
+|        Clock Net    |   Resource   |Locked|Fanout|Net Skew(ns)|Max Delay(ns)|
++---------------------+--------------+------+------+------------+-------------+
+|         clock_BUFGP |  BUFGMUX_X2Y2| No   |   18 |  0.016     |  1.445      |
++---------------------+--------------+------+------+------------+-------------+
+|   spi_inst_itx_full |         Local|      |    5 |  0.243     |  1.038      |
++---------------------+--------------+------+------+------------+-------------+
+
+* Net Skew is the difference between the minimum and maximum routing
+only delays for the net. Note this is different from Clock Skew which
+is reported in TRCE timing report. Clock Skew is the difference between
+the minimum and maximum path delays which includes logic delays.
+
+* The fanout is the number of component pins not the individual BEL loads,
+for example SLICE loads not FF loads.
+
+Timing Score: 0 (Setup: 0, Hold: 0, Component Switching Limit: 0)
+
+Asterisk (*) preceding a constraint indicates it was not met.
+   This may be due to a setup or hold violation.
+
+----------------------------------------------------------------------------------------------------------
+  Constraint                                |    Check    | Worst Case |  Best Case | Timing |   Timing   
+                                            |             |    Slack   | Achievable | Errors |    Score   
+----------------------------------------------------------------------------------------------------------
+  TS_clock = PERIOD TIMEGRP "clock" 83.3333 | SETUP       |    79.593ns|     3.740ns|       0|           0
+  333 ns HIGH 50%                           | HOLD        |     0.357ns|            |       0|           0
+----------------------------------------------------------------------------------------------------------
+
+
+All constraints were met.
 
 
 Generating Pad Report.
 
 All signals are completely routed.
 
-WARNING:Par:283 - There are 6 loadless signals in this design. This design will cause Bitgen to issue DRC warnings.
+WARNING:Par:283 - There are 1 loadless signals in this design. This design will cause Bitgen to issue DRC warnings.
 
-Total REAL time to PAR completion: 4 secs 
-Total CPU time to PAR completion: 4 secs 
+Total REAL time to PAR completion: 5 secs 
+Total CPU time to PAR completion: 5 secs 
 
-Peak Memory Usage:  610 MB
+Peak Memory Usage:  617 MB
 
 Placer: Placement generated during map.
 Routing: Completed - No errors found.
+Timing: Completed - No errors found.
 
-Number of error messages: 0
-Number of warning messages: 8
-Number of info messages: 2
+Number of erroINFO:TclTasksC:1850 - process run : Place & Route is done.
+r messages: 0
+Number of warning messages: 3
+Number of info messages: 0
 
 Writing design to file xula2.ncd
 
@@ -453,13 +699,13 @@ Loading device for application Rf_Device from file '6slx9.nph' in environment
 /opt/Xilinx/14.6/ISE_DS/ISE/.
    "xula2" is an NCD, version 3.2, device xc6slx9, package ftg256, speed -2
 
-Analysis completed Sat Apr  9 09:06:56 2016
+Analysis completed Sat Apr  9 20:22:58 2016
 --------------------------------------------------------------------------------
 
 Generating Report ...
 
 Number of warnings: 0
-Total time: 2 secs 
+Total time: 3 secs 
 
 Process "Generate Post-Place & Route Static Timing" completed successfully
 INFO:TclTasksC:1850 - process run : Generate Programming File is done.
