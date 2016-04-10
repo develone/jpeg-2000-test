@@ -25,17 +25,17 @@ def xula_blinky_spi_slave(led, clock, mosi, miso, sck, ss, reset=None):
     cnt = Signal(intbv(0, min=0, max=maxcnt))
     toggle = Signal(bool(0))
     spibus, fifobus = SPIBus(sck, mosi, miso, ss), FIFOBus()
-    spibus_sl, fifobus_sl = SPIBus(), FIFOBus()
+    #spibus_sl, fifobus_sl = SPIBus(), FIFOBus()
     reset = Reset(0, active=1, async=False)
     glbl = Global(clock, reset)
-    inst_spi_sl = spi_slave_fifo(glbl, spibus_sl, fifobus_sl)
+    inst_spi_sl = spi_slave_fifo(glbl, spibus, fifobus)
     data = Signal(intbv(0)[8:])
     rd, wr, full, empty = Signals(bool(0), 4)
-    cso = spi_controller.cso()
-    cso.isstatic = True
-    cfg_inst = cso.get_generators()
-    spi_controller.debug = False
-    spi_inst = spi_controller(glbl, spibus, fifobus, cso=cso)
+    #cso = spi_controller.cso()
+    #cso.isstatic = True
+    #cfg_inst = cso.get_generators()
+    #spi_controller.debug = False
+    #spi_inst = spi_controller(glbl, spibus, fifobus, cso=cso)
     
     @always_seq(clock.posedge, reset=None)
     def rtl():
@@ -89,9 +89,13 @@ def build(args):
     brd.add_port(**led_port_pin_map[args.brd])
     brd.device = 'XC6SLX9' 
     #brd.add_port(name='button', pins=(R2,))
-    brd.add_port('mosi', 'F1')
-    brd.add_port('miso', 'F2')
+    #xula2 chan25 BCM10_MOSI
+    brd.add_port('mosi', 'F2')
+    #xula2 chan24 BCM09_MISO
+    brd.add_port('miso', 'F1')
+    #xula2 chan23 BCM11_SCLK
     brd.add_port('sck', 'H2')
+    #xula2 chan22 BCM05
     brd.add_port('ss', 'H1')
     flow = brd.get_flow(xula_blinky_spi_slave)
     flow.run()
