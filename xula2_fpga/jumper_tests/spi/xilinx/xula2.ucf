@@ -1,0 +1,5 @@
+#
+NET "miso" LOC = "F1" ;
+NET "mosi" LOC = "F2" ;
+#
+#
