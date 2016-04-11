@@ -8,13 +8,15 @@ from myhdl import (Signal, ResetSignal, intbv, always_seq, always,
 
 from rhea.build.boards import get_board
 from rhea.system import Global, Clock, Reset, FIFOBus, Signals
-from rhea.cores.spi import SPIBus, spi_slave_fifo                   
-from rhea.cores.spi import spi_controller
+from rhea.cores.spi import SPIBus, spi_slave_fifo
+from rhea.cores.misc import glbl_timer_ticks                  
+ledreg = Signal(intbv(0)[8:])
+'''
 led_port_pin_map = {
     'xula':  dict(name='led', pins=(32,)),
     'xula2': dict(name='led', pins=('T4',)),
 }
-
+'''
                    
 def xula_blinky_spi_slave(led, clock, mosi, miso, sck, ss, reset=None):
     """ a simple LED blinks example.
@@ -31,6 +33,11 @@ def xula_blinky_spi_slave(led, clock, mosi, miso, sck, ss, reset=None):
     inst_spi_sl = spi_slave_fifo(glbl, spibus, fifobus)
     data = Signal(intbv(0)[8:])
     rd, wr, full, empty = Signals(bool(0), 4)
+    tone = Signal(intbv(0)[8:])
+    
+    # create the timer tick instance
+    tick_inst = glbl_timer_ticks(glbl, include_seconds=True)
+    
     #cso = spi_controller.cso()
     #cso.isstatic = True
     #cfg_inst = cso.get_generators()
@@ -38,12 +45,18 @@ def xula_blinky_spi_slave(led, clock, mosi, miso, sck, ss, reset=None):
     #spi_inst = spi_controller(glbl, spibus, fifobus, cso=cso)
     
     @always_seq(clock.posedge, reset=None)
-    def rtl():
-		if cnt == maxcnt-1:
-			toggle.next = not toggle
-			cnt.next = 0
-		else:
-			cnt.next = cnt + 1
+    def beh_assign():
+		if glbl.tick_sec:
+			tone.next = (~tone) & 0x1
+		led.next = ledreg | tone[5:]
+    '''
+    @always(clock.posedge)
+    def beh_led_control():
+        if (data == 0x23):
+            ledreg.next = 1
+    '''
+      
+
 
 
     @always_comb
@@ -117,21 +130,22 @@ def tb(led, clock, mosi, miso, sck, ss, reset=None):
     inst_spi_sl = spi_slave_fifo(glbl, spibus, fifobus)
     data = Signal(intbv(0)[8:])
     rd, wr, full, empty = Signals(bool(0), 4)
+    tone = Signal(intbv(0)[8:])
+    
+    # create the timer tick instance
+    tick_inst = glbl_timer_ticks(glbl, include_seconds=True)
     #cso = spi_controller.cso()
     #cso.isstatic = True
     #cfg_inst = cso.get_generators()
     #spi_controller.debug = False
     #spi_inst = spi_controller(glbl, spibus, fifobus, cso=cso)
-    
-    @always_seq(clock.posedge, reset=None)
-    def rtl():
-		if cnt == maxcnt-1:
-			toggle.next = not toggle
-			cnt.next = 0
-		else:
-			cnt.next = cnt + 1
 
-
+    @always(clock.posedge)
+    def beh_assign():
+		if glbl.tick_sec:
+			tone.next = (~tone) & 0x1
+		led.next = ledreg | tone[5:]    
+ 
     @always_comb
     def tb_fifo_loopback():
         if not fifobus.full:
@@ -170,17 +184,18 @@ def build(args):
     brd = get_board(args.brd)
     # the design port names don't match the board pin names,
     # add the ports here (all the IO are a generic "chan")
-    brd.add_port(**led_port_pin_map[args.brd])
+    #brd.add_port(**led_port_pin_map[args.brd])
+    brd.add_port_name('led', 'pm2', slice(0, 8))
     brd.device = 'XC6SLX9' 
     #brd.add_port(name='button', pins=(R2,))
-    #xula2 chan25 BCM10_MOSI
+    #xula2 chan25 BCM10_MOSI   ----> RPI_GPIO_P1_19 /* MOSI */
     brd.add_port('mosi', 'F2')
-    #xula2 chan24 BCM09_MISO
+    #xula2 chan24 BCM09_MISO  ---->  RPI_GPIO_P1_21 /* MISO */
     brd.add_port('miso', 'F1')
-    #xula2 chan23 BCM11_SCLK
-    brd.add_port('sck', 'H2')
-    #xula2 chan22 BCM05
-    brd.add_port('ss', 'H1')
+    #xula2 chan23 BCM11_SCLK  ----> RPI_ GPIO_P1_23  /* CLK */
+    brd.add_port('sck', 'H2')  
+    #xula2 chan08 BCM08_CE0   ----> RPI_GPIO_P1_24 /* CE0 */
+    brd.add_port('ss', 'J14')
     flow = brd.get_flow(xula_blinky_spi_slave)
     flow.run()
     info = flow.get_utilization()
@@ -189,7 +204,7 @@ def build(args):
     
 def cliparse():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--brd", default='xula2')
+    parser.add_argument("--brd", default='xula2_stickit_mb')
     parser.add_argument("--flow", default="ise")
     parser.add_argument("--trace", default=False, action='store_true')
     parser.add_argument("--build", default=False, action='store_true')
