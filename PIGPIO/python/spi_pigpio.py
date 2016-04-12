@@ -42,9 +42,9 @@ print  pi1
 flgs = intbv(0)[22:]
 flgs = 0
 
-clk = 
+clk_freq = 125000
 print "flgs",bin(flgs)
-h = pi1.spi_open(1,25000,flgs)
+h = pi1.spi_open(1,clk_freq,flgs)
 
 print "handle",h
 pi1.spi_write(h, b'\x02\xc0\x80\x01\x02\x03')
