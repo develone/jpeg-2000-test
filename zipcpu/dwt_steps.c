@@ -65,7 +65,7 @@ void entry(void) {
 			 
 			 dum5 = *(buf_ptr+col+row*256);
 			 dum6 = dum5 - dum4;
-			 dum7 = dum6;
+			 *(buf_ptr+col+row*256) = dum6;
 			 
 		}
         //odd samples
@@ -77,7 +77,7 @@ void entry(void) {
 			 
 			 dum5 = *(buf_ptr+col+row*256);
 			 dum6 = dum5 + dum4;
-			 dum7 = dum6;
+			 *(buf_ptr+col+row*256) = dum6;
 			 
 		} 
 	}
