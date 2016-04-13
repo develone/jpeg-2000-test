@@ -1,6 +1,8 @@
 // . setzipcpuPath.sh
 // xsload --usb 0 --fpga tmp_svn_bld_bitfiles/toplevel.bit
-// to compile zip-gcc -fno-builtin -nostdlib -O3 dwt_steps.c -o dwt_steps -T xulalink.x
+// to compile dwt_write.c zip-gcc -fno-builtin -c -O3 dwt_write.c -o dwt_write.o
+// to compile dwt_steps.c zip-gcc -fno-builtin -c -O3  dwt_steps.c -o dwt_steps.o
+// to link dwt_write.o dwt_steps.o zip-gcc -fno-builtin -nostdlib -O3 dwt_write.o dwt_steps.o -o dwt_steps -T xulalink.x
 // to disasmble
 // zipobj-dump -d dwt
 // ziprun test_zipcpu/dwt
@@ -38,6 +40,8 @@ typedef	struct	{
 const char msg[] = "Hello, world!\n";
 
 void entry(void) {
+	extern void dwt_write(int *, int col, int row, int dum6);
+
 	register IOSPACE	*sys = (IOSPACE *)0x0100;
 	int	counts = 0;
 
@@ -47,7 +51,7 @@ void entry(void) {
 
 	int *buf_ptr = (int *)0x800000;
 	int *img_ptr1 = (int *)0x810000;
-	int col,row,p,dum1,dum2,dum3,dum4,dum5,dum6,dum7;
+	int col,row,p,dum1,dum2,dum3,dum4,dum5,dum6,*dum7;
 	int w,h;
 	w = 256;
 	h = 256;
@@ -65,7 +69,9 @@ void entry(void) {
 			 
 			 dum5 = *(buf_ptr+col+row*256);
 			 dum6 = dum5 - dum4;
-			 *(buf_ptr+col+row*256) = dum6;
+			 dum7 = buf_ptr;
+			 dwt_write(dum7,col,row,dum6);
+			 //*(buf_ptr+col+row*256) = dum6;
 			 
 		}
         //odd samples
@@ -77,7 +83,9 @@ void entry(void) {
 			 
 			 dum5 = *(buf_ptr+col+row*256);
 			 dum6 = dum5 + dum4;
-			 *(buf_ptr+col+row*256) = dum6;
+			 dum7 = buf_ptr;
+			 dwt_write(dum7,col,row,dum6);
+			 //*(buf_ptr+col+row*256) = dum6;
 			 
 		} 
 	}

@@ -5,13 +5,14 @@
 /*	
 gcc jpeg.c -o jpeg
 python rd_wr_image.py 
-./jpeg img_to_fpga.bin pass.bin
+./jpeg dwt_write.c img_to_fpga.bin pass.bin
 python rd_pass.py
 */
 	
-	
+	extern void dwt_write(int *, int col, int row, int dum6);
+
 	int main(int argc, char **argv) {
-	int row,col,w,h,index,dum1,dum2,dum3,dum4,dum5,dum6,dum7;
+	int row,col,w,h,index,dum1,dum2,dum3,dum4,dum5,dum6,*dum7;
 	index = 0;
 	
    	 w = 256;
@@ -58,7 +59,11 @@ python rd_pass.py
 			 
 			 dum5 = *(buf_ptr+col+row*256);
 			 dum6 = dum5 - dum4;
-			 *(buf_ptr+col+row*256)= dum6;
+			 //dum7 = (&buf_ptr+col+row*256);
+			 dum7 = buf_ptr;
+			 dwt_write(dum7,col,row,dum6);
+			 //printf("even %x %d %d %d\n",dum7, col, row, row*col*256 );
+			 //*(buf_ptr+col+row*256)= dum6;
 		}
 		for (row = 1;row<256-2;row=row+2) {
 			 
@@ -72,7 +77,11 @@ python rd_pass.py
 			 
 			 dum5 = *(buf_ptr+col+row*256);
 			 dum6 = dum5 + dum4;
-			 *(buf_ptr+col+row*256) = dum6;
+			 //dum7 = (&buf_ptr+col+row*256);
+			 dum7 = buf_ptr;
+			 dwt_write(dum7,col,row,dum6);
+			 //printf("odd %x%d %d %d\n",dum7, col, row, row*col*256);
+			 //*(buf_ptr+col+row*256) = dum6;
 		}
 	}
 	for ( row = 0 ; row < 256; row++) {
