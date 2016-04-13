@@ -11,7 +11,7 @@ python rd_pass.py
 	
 	
 	int main(int argc, char **argv) {
-	int row,col,w,h,index;
+	int row,col,w,h,index,dum1,dum2,dum3,dum4,dum5,dum6,dum7;
 	index = 0;
 	
    	 w = 256;
@@ -50,15 +50,29 @@ python rd_pass.py
 				//img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col]) >> 1);
 			
 			 
-				 *(buf_ptr+col+row*256) = *(buf_ptr+col+row*256) - ((*(buf_ptr+col+(row-1)*256) + *(buf_ptr+col+(row+1)*256)) >> 1);
-			
+				 //*(buf_ptr+col+row*256) = *(buf_ptr+col+row*256) - ((*(buf_ptr+col+(row-1)*256) + *(buf_ptr+col+(row+1)*256)) >> 1);
+			 dum1 = *(buf_ptr+col+row*256);
+			 dum2 = *(buf_ptr+col+(row-1)*256);
+			 dum3 = *(buf_ptr+col+(row+1)*256);
+			 dum4 = ((dum2 + dum3) >> 1);
+			 
+			 dum5 = *(buf_ptr+col+row*256);
+			 dum6 = dum5 - dum4;
+			 *(buf_ptr+col+row*256)= dum6;
 		}
 		for (row = 1;row<256-2;row=row+2) {
 			 
 				//img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col] +2) >> 2);
 			 
-				 *(buf_ptr+col+row*256) = *(buf_ptr+col+row*256) - ((*(buf_ptr+col+(row-1)*256) + *(buf_ptr+col+(row+1)*256)+2) >> 2);
-				 
+				// *(buf_ptr+col+row*256) = *(buf_ptr+col+row*256) - ((*(buf_ptr+col+(row-1)*256) + *(buf_ptr+col+(row+1)*256)+2) >> 2);
+		     dum1 = *(buf_ptr+col+row*256);
+			 dum2 = *(buf_ptr+col+(row-1)*256);
+			 dum3 = *(buf_ptr+col+(row+1)*256);
+			 dum4 = ((dum2 + dum3) >> 2);
+			 
+			 dum5 = *(buf_ptr+col+row*256);
+			 dum6 = dum5 + dum4;
+			 *(buf_ptr+col+row*256) = dum6;
 		}
 	}
 	for ( row = 0 ; row < 256; row++) {
