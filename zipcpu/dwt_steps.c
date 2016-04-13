@@ -4,7 +4,9 @@
 // to compile dwt_steps.c zip-gcc -fno-builtin -c -O3  dwt_steps.c -o dwt_steps.o
 // to link dwt_write.o dwt_steps.o zip-gcc -fno-builtin -nostdlib -O3 dwt_write.o dwt_steps.o -o dwt_steps -T xulalink.x
 // to disasmble
-// zipobj-dump -d dwt
+// zipobj-dump -d dwt_steps.o
+// zipobj-dump -d dwt_write.o
+// zipobj-dump -d dwt_steps
 // ziprun test_zipcpu/dwt
 
 asm("\t.section\t.start\n"

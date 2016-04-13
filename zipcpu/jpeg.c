@@ -3,10 +3,20 @@
  
 	
 /*	
-gcc jpeg.c -o jpeg
-python rd_wr_image.py 
-./jpeg dwt_write.c img_to_fpga.bin pass.bin
+python rd_wr_image.py used to create the file
+img_to_fpga.bin
+Compile the files jpeg.c & dwt_write.c
+
+gcc jpeg.c dwt_write.c -o jpeg
+
+run 1 level of dwt decompoistion
+ 
+./jpeg jpeg img_to_fpga.bin pass.bin
+
+reads the img_to_fpga.bin and writes the file pass.bin
 python rd_pass.py
+Writes the file test1_256_fwt.png
+ 
 */
 	
 	extern void dwt_write(int *, int col, int row, int dum6);
