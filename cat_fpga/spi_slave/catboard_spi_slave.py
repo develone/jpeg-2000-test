@@ -185,7 +185,7 @@ def build(args):
     # the design port names don't match the board pin names,
     # add the ports here (all the IO are a generic "chan")
     #brd.add_port(**led_port_pin_map[args.brd])
-    brd.add_port_name('led', 'pm2', slice(0, 8))
+    #brd.add_port_name('led', 'pm2', slice(0, 8))
     #brd.device = 'XC6SLX9' 
     #brd.add_port(name='button', pins=(R2,))
     #xula2 chan25 BCM20_MOSI   ----> RPI_GPIO_P1_19 /* MOSI */
@@ -204,7 +204,7 @@ def build(args):
     
 def cliparse():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--brd", default='xula2_stickit_mb')
+    parser.add_argument("--brd", default='catboard')
     parser.add_argument("--flow", default="ise")
     parser.add_argument("--trace", default=False, action='store_true')
     parser.add_argument("--build", default=False, action='store_true')
