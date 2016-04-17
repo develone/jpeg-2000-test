@@ -198,14 +198,14 @@ def build(args):
     brd.add_port('ss', 'T8')
     flow = brd.get_flow(catboard_blinky_spi_slave)
     flow.run()
-    info = flow.get_utilization()
-    pprint(info)
+    #info = flow.get_utilization()
+    #pprint(info)
     
     
 def cliparse():
     parser = argparse.ArgumentParser()
     parser.add_argument("--brd", default='catboard')
-    parser.add_argument("--flow", default="ise")
+    parser.add_argument("--flow", default="iceriver")
     parser.add_argument("--trace", default=False, action='store_true')
     parser.add_argument("--build", default=False, action='store_true')
     args = parser.parse_args()
