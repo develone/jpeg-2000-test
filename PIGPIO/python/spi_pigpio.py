@@ -41,10 +41,16 @@ print  pi1
 
 flgs = intbv(0)[22:]
 flgs = 0
+''' 
+when ch is 0 the cs0 is enabled bcm8 Standard SPI
+when ch is 1 the cs1 is enabled bcm7 Standard SPI
 
-clk_freq = 125000
-print "flgs",bin(flgs)
-h = pi1.spi_open(1,clk_freq,flgs)
+flgs 0, 1, 2, or 3 no difference 
+'''
+ch = 0
+clk_freq = 1000000
+print "ch",ch,"flgs",bin(flgs)
+h = pi1.spi_open(ch,clk_freq,flgs)
 
 print "handle",h
 pi1.spi_write(h, b'\x02\xc0\x80\x01\x02\x03')
