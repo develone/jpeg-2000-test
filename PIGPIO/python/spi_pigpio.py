@@ -44,6 +44,7 @@ flgs = 0
 ''' 
 when ch is 0 the cs0 is enabled bcm8 Standard SPI
 when ch is 1 the cs1 is enabled bcm7 Standard SPI
+when ch is 0 & flgs is 256 the cs0 is enabled bcm18 Aux SPI
 
 flgs 0, 1, 2, or 3 no difference 
 '''
