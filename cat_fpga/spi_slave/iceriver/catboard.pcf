@@ -1,0 +1,11 @@
+ 
+# pin definitions 
+set_io miso T3 
+set_io sck T1 
+set_io clock C8 
+set_io led[0] A9 
+set_io led[1] B8 
+set_io led[2] A7 
+set_io led[3] B7 
+set_io mosi R3 
+set_io ss T11 
