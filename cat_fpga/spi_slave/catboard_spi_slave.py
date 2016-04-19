@@ -188,14 +188,14 @@ def build(args):
     #brd.add_port_name('led', 'pm2', slice(0, 8))
     #brd.device = 'XC6SLX9' 
     #brd.add_port(name='button', pins=(R2,))
-    #xula2 chan25 BCM20_MOSI   ----> RPI_GPIO_P1_19 /* MOSI */
+    #BCM20_MOSI   ----> RPI_GPIO_P1_38 /* MOSI */
     brd.add_port('mosi', 'R3')
-    #xula2 chan24 BCM19_MISO  ---->  RPI_GPIO_P1_21 /* MISO */
+    #BCM19_MISO  ---->  RPI_GPIO_P1_35 /* MISO */
     brd.add_port('miso', 'T3')
-    #xula2 chan23 BCM21_SCLK  ----> RPI_ GPIO_P1_23  /* CLK */
+    #BCM21_SCLK  ----> RPI_ GPIO_P1_40  /* CLK */
     brd.add_port('sck', 'T1')  
-    #xula2 chan08 BCM08_CE0   ----> RPI_GPIO_P1_24 /* CE0 */
-    brd.add_port('ss', 'T8')
+    #BCM18_PCM_C   ----> RPI_GPIO_P1_12 /* CE0 */
+    brd.add_port('ss', 'T11')
     flow = brd.get_flow(catboard_blinky_spi_slave)
     flow.run()
     #info = flow.get_utilization()
