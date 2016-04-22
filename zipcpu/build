@@ -1,0 +1,3 @@
+#!/bin/bash
+rm -f pass.bin test1_256_fwt.png jpeg
+gcc jpeg.c dwt_write.c -o jpeg

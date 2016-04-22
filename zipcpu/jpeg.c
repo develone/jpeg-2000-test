@@ -11,7 +11,7 @@ gcc jpeg.c dwt_write.c -o jpeg
 
 run 1 level of dwt decompoistion
  
-./jpeg jpeg img_to_fpga.bin pass.bin
+./jpeg jpeg img_to_fpga.bin pass.bin  num_passes 1 or 2
 
 reads the img_to_fpga.bin and writes the file pass.bin
 python rd_pass.py
@@ -22,7 +22,7 @@ Writes the file test1_256_fwt.png
 	extern void dwt_write(int *, int col, int row, int dum6);
 
 	int main(int argc, char **argv) {
-	int row,col,w,h,index,dum1,dum2,dum3,dum4,dum5,dum6,*dum7;
+	int row,col,w,h,index,dum1,dum2,dum3,dum4,dum5,dum6,*dum7,num_passes;
 	index = 0;
 	
    	 w = 256;
@@ -41,20 +41,28 @@ Writes the file test1_256_fwt.png
         FILE  *fpin, *fpout;
         printf("%s\n", argv[1]);
         printf("%s\n", argv[2]);
+        num_passes = atoi(argv[3]);
         fpin = fopen(argv[1], "rb");
-        
+           //printf("%x \n",buf_ptr);
            for(col = 0; col < w*h; col++) {
         	fread(buf_ptr, sizeof(int),1,fpin);
                 //printf("%d\n",buf[col]);
                 buf_ptr++;
            }
+           //printf("%x \n",buf_ptr);
+           /*the following is needed when pointers are used *(buf_ptr+col+row*256) 
+           this was not needed when img[row][col] are used
+           this was pointed out by Dr. Dan
+           */
+           buf_ptr = &buf[0];
+           //printf("%x \n",buf_ptr);
            for(row = 0; row < h; row++) {
 			   for (col = 0 ; col < w; col++) {
 				   img[row][col] = buf[index];
 				   index++;
         }
 	}
-	for ( p =0; p < 2; p++) {
+	for ( p =0; p < num_passes; p++) {
 	for ( col = 0; col<256;col++) { 
 		for (row = 2;row<256;row=row+2) {
 			 
@@ -79,7 +87,7 @@ Writes the file test1_256_fwt.png
 			 
 				//img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col] +2) >> 2);
 			 
-				// *(buf_ptr+col+row*256) = *(buf_ptr+col+row*256) - ((*(buf_ptr+col+(row-1)*256) + *(buf_ptr+col+(row+1)*256)+2) >> 2);
+				//*(buf_ptr+col+row*256) = *(buf_ptr+col+row*256) - ((*(buf_ptr+col+(row-1)*256) + *(buf_ptr+col+(row+1)*256)+2) >> 2);
 		     dum1 = *(buf_ptr+col+row*256);
 			 dum2 = *(buf_ptr+col+(row-1)*256);
 			 dum3 = *(buf_ptr+col+(row+1)*256);
@@ -94,20 +102,22 @@ Writes the file test1_256_fwt.png
 			 //*(buf_ptr+col+row*256) = dum6;
 		}
 	}
+        
+       
 	for ( row = 0 ; row < 256; row++) {
 		for (col = 0; col < 256;col++) {  
 			if (row % 2 == 0) {
 				 
-					//tt[col][row/2] =  img[row][col];
+					tt[col][row/2] =  img[row][col];
 				 
-					*(de_interleave+col*256+row/2) =  *(buf_ptr+col+row*256);
+					//*(de_interleave+col*256+row/2) =  *(buf_ptr+col+row*256);
 				 
 			}	
 			else {
 				 
-					//tt[col][row/2 + 256/2] =  img[row][col];
+					tt[col][row/2 + 256/2] =  img[row][col];
 				 
-					*(de_interleave+col*256+row/2+256/2) =  *(buf_ptr+col+row*256);
+					//*(de_interleave+col*256+row/2+256/2) =  *(buf_ptr+col+row*256);
 				
 			}	
 		}
