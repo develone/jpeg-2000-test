@@ -22,7 +22,7 @@ Writes the file test1_256_fwt.png
 	extern void dwt_write(int *, int col, int row, int dum6);
 
 	int main(int argc, char **argv) {
-	int row,col,w,h,index,dum1,dum2,dum3,dum4,dum5,dum6,*dum7,num_passes;
+	int row,col,w,h,index,dum1,dum2,dum3,dum4,dum5,dum6,*dum7,num_passes,interleave;
 	index = 0;
 	
    	 w = 256;
@@ -42,6 +42,7 @@ Writes the file test1_256_fwt.png
         printf("%s\n", argv[1]);
         printf("%s\n", argv[2]);
         num_passes = atoi(argv[3]);
+        interleave = atoi(argv[4]);
         fpin = fopen(argv[1], "rb");
            //printf("%x \n",buf_ptr);
            for(col = 0; col < w*h; col++) {
@@ -63,6 +64,8 @@ Writes the file test1_256_fwt.png
         }
 	}
 	for ( p =0; p < num_passes; p++) {
+		printf("%x ",buf_ptr);
+		printf("%d\n",p);
 	for ( col = 0; col<256;col++) { 
 		for (row = 2;row<256;row=row+2) {
 			 
@@ -83,6 +86,7 @@ Writes the file test1_256_fwt.png
 			 //printf("even %x %d %d %d\n",dum7, col, row, row*col*256 );
 			 //*(buf_ptr+col+row*256)= dum6;
 		}
+		//end of even samples
 		for (row = 1;row<256-2;row=row+2) {
 			 
 				//img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col] +2) >> 2);
@@ -101,9 +105,21 @@ Writes the file test1_256_fwt.png
 			 //printf("odd %x%d %d %d\n",dum7, col, row, row*col*256);
 			 //*(buf_ptr+col+row*256) = dum6;
 		}
+		//end of odd samples
+
+    }    
+    //de_interleave
+    /*
+    for(row = 0; row < h; row++) {
+			   for (col = 0 ; col < w; col++) {
+				   img[row][col] = buf[index];
+				   index++;
+        }
 	}
-        
-       
+	*/
+ 
+    //de_interleave = &tt; 
+    if ( interleave == 1) { 
 	for ( row = 0 ; row < 256; row++) {
 		for (col = 0; col < 256;col++) {  
 			if (row % 2 == 0) {
@@ -121,20 +137,31 @@ Writes the file test1_256_fwt.png
 				
 			}	
 		}
-	}   
+	}
+    }
+    else {
+	}
+ 
+    buf_ptr = &buf[0];
+   }
+	//end p loop
+	
 	for ( row = 0;row < 256-2;row++) {
 		for (col = 0;col < 256;col++) {
 			img[row][col] = tt[row][col];
 		}
 	}
-	img_ptr = &img[0][0];
-        fpout = fopen(argv[2], "wb");
+	
+    img_ptr = &img[0][0];
+    fpout = fopen(argv[2], "wb");
         for (row = 0; row < h; row++) {
            for(col = 0; col < w; col++) {
-        	fwrite(img_ptr,sizeof(int),1,fpout);
-                img_ptr++;
+        	//fwrite(img_ptr,sizeof(int),1,fpout);
+        	fwrite(&img[row][col],sizeof(int),1,fpout);
+                //img_ptr++;
            }
         }  
-        }
+        
 	//de_img[w][h] = jpeg_process(img_ptr, w, h);
-	}
+	
+}
