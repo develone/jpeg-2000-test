@@ -77,8 +77,16 @@ for ( p =0; p < num_passes; p++) {
 		//end of odd samples
 	}    
 
-    //de_interleave = &tt; 
-    if ( interleave == 1) { 
+    //de_interleave 
+    if ( interleave == 1) {
+	/*
+	zero the the tt array
+	*/
+	for ( row = 0;row < h-2;row++) {
+		for (col = 0;col < w;col++) {
+			tt[row][col] = 0;
+		}
+	}
 	for ( row = 0 ; row < h; row++) {
 		for (col = 0; col < w;col++) {  
 			if (row % 2 == 0) {
@@ -99,8 +107,35 @@ for ( p =0; p < num_passes; p++) {
     }
  
 }
-//end num_passe loop
-	
+//end num_passes loop
+/*
+zero the the tt array
+*/
+for ( row = 0;row < h-2;row++) {
+	for (col = 0;col < w;col++) {
+		tt[row][col] = 0;
+	}
+}
+/*
+lower right corner to upper left corner
+*/
+for ( col = w/2; col < w ;col++) {
+	for (row = h/2; row < h;row++) {
+		tt[col-w/2][row-h/2] = img[row][col];
+	}
+}
+/*
+transfer tt array to img for output
+*/
+for ( row = 0;row < h-2;row++) {
+	for (col = 0;col < w;col++) {
+		img[col][row] = tt[row][col];
+	}
+}
+
+/*
+write the img to file pass.bin
+*/
 img_ptr = &img[0][0];
 fpout = fopen(argv[2], "wb");
 for (row = 0; row < h; row++) {
