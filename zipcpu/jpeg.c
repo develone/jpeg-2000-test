@@ -11,7 +11,7 @@ gcc jpeg.c dwt_write.c -o jpeg
 
 run 1 level of dwt decompoistion
  
-./jpeg jpeg img_to_fpga.bin pass.bin  num_passes 1 or 2
+./jpeg jpeg img_to_fpga.bin pass.bin  num_passes 1 or 2 de-interleave
 
 reads the img_to_fpga.bin and writes the file pass.bin
 python rd_pass.py
@@ -63,105 +63,52 @@ Writes the file test1_256_fwt.png
 				   index++;
         }
 	}
-	for ( p =0; p < num_passes; p++) {
-		printf("%x ",buf_ptr);
-		printf("%d\n",p);
-	for ( col = 0; col<256;col++) { 
-		for (row = 2;row<256;row=row+2) {
-			 
-				//img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col]) >> 1);
-			
-			 
-				 //*(buf_ptr+col+row*256) = *(buf_ptr+col+row*256) - ((*(buf_ptr+col+(row-1)*256) + *(buf_ptr+col+(row+1)*256)) >> 1);
-			 dum1 = *(buf_ptr+col+row*256);
-			 dum2 = *(buf_ptr+col+(row-1)*256);
-			 dum3 = *(buf_ptr+col+(row+1)*256);
-			 dum4 = ((dum2 + dum3) >> 1);
-			 
-			 dum5 = *(buf_ptr+col+row*256);
-			 dum6 = dum5 - dum4;
-			 //dum7 = (&buf_ptr+col+row*256);
-			 dum7 = buf_ptr;
-			 dwt_write(dum7,col,row,dum6);
-			 //printf("even %x %d %d %d\n",dum7, col, row, row*col*256 );
-			 //*(buf_ptr+col+row*256)= dum6;
+for ( p =0; p < num_passes; p++) {
+	printf("%x ",buf_ptr);
+	printf("%d\n",p);
+	for ( col = 0; col<w;col++) { 
+		for (row = 2;row<h;row=row+2) {
+			 img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col]) >> 1);
 		}
 		//end of even samples
-		for (row = 1;row<256-2;row=row+2) {
-			 
-				//img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col] +2) >> 2);
-			 
-				//*(buf_ptr+col+row*256) = *(buf_ptr+col+row*256) - ((*(buf_ptr+col+(row-1)*256) + *(buf_ptr+col+(row+1)*256)+2) >> 2);
-		     dum1 = *(buf_ptr+col+row*256);
-			 dum2 = *(buf_ptr+col+(row-1)*256);
-			 dum3 = *(buf_ptr+col+(row+1)*256);
-			 dum4 = ((dum2 + dum3) >> 2);
-			 
-			 dum5 = *(buf_ptr+col+row*256);
-			 dum6 = dum5 + dum4;
-			 //dum7 = (&buf_ptr+col+row*256);
-			 dum7 = buf_ptr;
-			 dwt_write(dum7,col,row,dum6);
-			 //printf("odd %x%d %d %d\n",dum7, col, row, row*col*256);
-			 //*(buf_ptr+col+row*256) = dum6;
+		for (row = 1;row<h-2;row=row+2) {
+			 img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col] +2) >> 2);
 		}
 		//end of odd samples
+	}    
 
-    }    
-    //de_interleave
-    /*
-    for(row = 0; row < h; row++) {
-			   for (col = 0 ; col < w; col++) {
-				   img[row][col] = buf[index];
-				   index++;
-        }
-	}
-	*/
- 
     //de_interleave = &tt; 
     if ( interleave == 1) { 
-	for ( row = 0 ; row < 256; row++) {
-		for (col = 0; col < 256;col++) {  
+	for ( row = 0 ; row < h; row++) {
+		for (col = 0; col < w;col++) {  
 			if (row % 2 == 0) {
-				 
-					tt[col][row/2] =  img[row][col];
-				 
-					//*(de_interleave+col*256+row/2) =  *(buf_ptr+col+row*256);
-				 
+				 tt[col][row/2] =  img[row][col];
 			}	
 			else {
-				 
-					tt[col][row/2 + 256/2] =  img[row][col];
-				 
-					//*(de_interleave+col*256+row/2+256/2) =  *(buf_ptr+col+row*256);
-				
+				 tt[col][row/2 + 256/2] =  img[row][col];
 			}	
+		}
+	}
+	for ( row = 0;row < h-2;row++) {
+		for (col = 0;col < w;col++) {
+			img[row][col] = tt[row][col];
 		}
 	}
     }
     else {
-	}
+    }
  
-    buf_ptr = &buf[0];
-   }
-	//end p loop
-	
-	for ( row = 0;row < 256-2;row++) {
-		for (col = 0;col < 256;col++) {
-			img[row][col] = tt[row][col];
-		}
-	}
-	
-    img_ptr = &img[0][0];
-    fpout = fopen(argv[2], "wb");
-        for (row = 0; row < h; row++) {
-           for(col = 0; col < w; col++) {
-        	//fwrite(img_ptr,sizeof(int),1,fpout);
-        	fwrite(&img[row][col],sizeof(int),1,fpout);
-                //img_ptr++;
-           }
-        }  
-        
-	//de_img[w][h] = jpeg_process(img_ptr, w, h);
-	
 }
+//end num_passe loop
+	
+img_ptr = &img[0][0];
+fpout = fopen(argv[2], "wb");
+for (row = 0; row < h; row++) {
+	for(col = 0; col < w; col++) {
+		fwrite(&img[row][col],sizeof(int),1,fpout);
+	}
+}
+//end of write to file  	
+}
+//end of program
+
