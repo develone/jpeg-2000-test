@@ -52,8 +52,8 @@ void entry(void) {
 	sys->io_uart_ctrl = 8333;
 
 	int *buf_ptr = (int *)0x800000;
-	int *img_ptr1 = (int *)0x810000;
-	int col,row,p,dum1,dum2,dum3,dum4,dum5,dum6,*dum7;
+	//int *img_ptr1 = (int *)0x810000, p;
+	int col,row,dum1,dum2,dum3,dum4,dum5,dum6,*dum7;
 	int w,h;
 	w = 256;
 	h = 256;
@@ -61,7 +61,7 @@ void entry(void) {
 	
     
 	//for ( p =0; p < 2; p++) {	
-	for (int col = 0; col<256;col++) { 
+	for (col = 0; col< w;col++) { 
 		//even samples
 		for (int row = 2;row<256;row=row+2) { 
 			 dum1 = *(buf_ptr+col+row*256);
@@ -76,8 +76,8 @@ void entry(void) {
 			 //*(buf_ptr+col+row*256) = dum6;
 			 
 		}
-        /*odd samples
-		for (int row = 1;row<256-2;row=row+2) { 
+        //odd samples
+		for (row = 1;row<h-2;row=row+2) { 
 			 dum1 = *(buf_ptr+col+row*256);
 			 dum2 = *(buf_ptr+col+(row-1)*256);
 			 dum3 = *(buf_ptr+col+(row+1)*256);
@@ -89,7 +89,7 @@ void entry(void) {
 			 dwt_write(dum7,col,row,dum6);
 			 //*(buf_ptr+col+row*256) = dum6;
 			 
-		}*/ 
+		} 
 	}
     //}
 	while(1) {
