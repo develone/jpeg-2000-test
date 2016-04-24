@@ -29,6 +29,7 @@ Writes the file test1_256_fwt.png
    	 h = 256;
 	 int img[w][h];
 	 int buf[w*h];
+	 int buf1[w*h]
 	 int *buf_ptr;
  
 	 buf_ptr = &buf;
@@ -67,12 +68,15 @@ for ( p =0; p < num_passes; p++) {
 	printf("%x ",buf_ptr);
 	printf("%d\n",p);
 	for ( col = 0; col<w;col++) { 
-		for (row = 2;row<h;row=row+2) {
-			 img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col]) >> 1);
+		for (row = 2;row<h;row=row+2) { 
+			  
+             buf[(row*256)+col] = buf[(row*256)+col] - (( buf[((row-1)*256)+col] + buf[((row+1)*256)+col] ) >> 1); 
 		}
 		//end of even samples
 		for (row = 1;row<h-2;row=row+2) {
-			 img[row][col] = img[row][col] - ( (img[row-1][col] + img[row+1][col] +2) >> 2);
+			  
+             buf[(row*256)+col] = buf[(row*256)+col] + (( buf[((row-1)*256)+col] + buf[((row+1)*256)+col] + 2) >> 2);
+
 		}
 		//end of odd samples
 	}    
