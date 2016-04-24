@@ -29,7 +29,7 @@ Writes the file test1_256_fwt.png
    	 h = 256;
 	 int img[w][h];
 	 int buf[w*h];
-	 int buf1[w*h]
+	 int buf1[w*h];
 	 int *buf_ptr;
  
 	 buf_ptr = &buf;
