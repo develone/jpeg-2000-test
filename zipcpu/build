@@ -1,3 +1,11 @@
 #!/bin/bash
-rm -f pass.bin test1_256_fwt.png jpeg
-gcc jpeg.c dwt_write.c -o jpeg
+echo "removing files"
+rm -f pass.bin test1_256_fwt.png jpeg rd_wr_img.o
+echo "comping rd_wr_img.c"
+gcc -c rd_wr_img.c -o rd_wr_img.o
+echo "compile & link jpeg.c with rd_wr_img.o jpeg"
+gcc jpeg.c rd_wr_img.o -o jpeg
+
+echo "./jpeg img_to_fpga.bin pass.bin 2 1 0 0 or "
+echo "./jpeg img_to_fpga.bin pass.bin 2 1 1 1 for debug"
+echo "python rd_pass.py"

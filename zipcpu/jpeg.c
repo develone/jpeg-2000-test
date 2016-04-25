@@ -1,17 +1,19 @@
 #include<stdio.h>
 #include <stdlib.h> 
- 
+#include <string.h> 
 	
 /*	
 python rd_wr_image.py used to create the file
 img_to_fpga.bin
-Compile the files jpeg.c & dwt_write.c
+compile rd_wr_img.c 
+gcc -c rd_wr_img.c -o rd_wr_img.o
+Compile the files jpeg.c 
 
-gcc jpeg.c dwt_write.c -o jpeg
+gcc jpeg.c  rd_wr_img.o -o jpeg
 
 run 1 level of dwt decompoistion
  
-./jpeg jpeg img_to_fpga.bin pass.bin  num_passes 1 or 2 de-interleave
+./jpeg jpeg img_to_fpga.bin pass.bin  num_passes 1 or 2 de-interleave 0 or 1 to print input file 0 or 1 to print output file
 
 reads the img_to_fpga.bin and writes the file pass.bin
 python rd_pass.py
@@ -20,37 +22,42 @@ Writes the file test1_256_fwt.png
 */
 	
 	//extern void dwt_write(int *, int col, int row, int dum6);
-	extern rd_image(int *buf_ptr);
-	extern wr_image(int *buf_ptr);
+	extern rd_image(char *fn,int *buf_ptr);
+	extern wr_image(char *fn,int *buf_ptr);
 	int main(int argc, char **argv) {
 	 
-    int row,col,w,h,interleave,num_passes;
+    int row,col,w,h,interleave,num_passes,debug,debug1;
 	 
-	
+	  
    	 w = 256;
    	 h = 256;
-	  
+	 char *inpfn,*outfn; 
 	 int buf[w*h];
 	 int buf1[w*h];
 	 int *buf_ptr;
  
-	 buf_ptr = &buf;
+	 buf_ptr = buf;
 	  
          int p;
 	 
-        FILE  *fpin, *fpout;
-        printf("%s\n", argv[1]);
-        printf("%s\n", argv[2]);
+        //FILE  *fpin, *fpout;
+        inpfn = argv[1];
+        outfn = argv[2];
+        printf("in main %s\n", inpfn);
+        printf("in main %s\n", outfn);
+
         num_passes = atoi(argv[3]);
         interleave = atoi(argv[4]);
- 
-rd_image(buf_ptr);
+ 		debug = atoi(argv[5]);
+        debug1 = atoi(argv[6]); 
+rd_image(inpfn,buf_ptr);
+	if(debug == 1) { 
 	for(col = 0; col < w*h; col++) {
 		printf("%d\n",buf[col]);
 	}            
-
+ 	}
 for ( p =0; p < num_passes; p++) {
-	printf("%x ",buf_ptr);
+	
 	printf("%d\n",p);
 	for ( col = 0; col<w;col++) { 
 		for (row = 2;row<h;row=row+2) { 
@@ -120,7 +127,16 @@ for ( row = 0;row < h-2;row++) {
 		buf[256*col+row] = buf1[256*row+col];
 	}
 }
-wr_image(buf_ptr);
+
+if (debug1==1) {
+	printf("writing output file\n");
+	for(col = 0; col < w*h; col++) {
+		printf("%d\n",buf[col]);
+	}            
+ 	
+}
+//buf_ptr = buf;
+wr_image(outfn,buf_ptr);
  
 }
 //end of program
