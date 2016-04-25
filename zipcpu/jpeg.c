@@ -86,24 +86,33 @@ for ( p =0; p < num_passes; p++) {
 	/*
 	zero the the tt array
 	*/
+	/*
 	for ( row = 0;row < h-2;row++) {
 		for (col = 0;col < w;col++) {
 			tt[row][col] = 0;
 		}
 	}
+	*/
+	//zero the the buf1 array
+	for (col = 0; col<w*h;col++) {
+		buf1[col] = 0;
+	}
 	for ( row = 0 ; row < h; row++) {
 		for (col = 0; col < w;col++) {  
 			if (row % 2 == 0) {
-				 tt[col][row/2] =  img[row][col];
+				 //tt[col][row/2] =  img[row][col];
+				buf1[(row/2)+256*col] =  buf[(row*256)+col];
 			}	
 			else {
-				 tt[col][row/2 + 256/2] =  img[row][col];
+				 //tt[col][row/2 + 256/2] =  img[row][col];
+				 buf1[col*256+(row/2 + 256/2)] =  buf[(row)*256+col];
 			}	
 		}
 	}
 	for ( row = 0;row < h-2;row++) {
 		for (col = 0;col < w;col++) {
-			img[row][col] = tt[row][col];
+			//img[row][col] = tt[row][col];
+			buf[(row)*256+col] = buf1[(row)*256+col];
 		}
 	}
     }
@@ -115,17 +124,24 @@ for ( p =0; p < num_passes; p++) {
 /*
 zero the the tt array
 */
+/*
 for ( row = 0;row < h-2;row++) {
 	for (col = 0;col < w;col++) {
 		tt[row][col] = 0;
 	}
 }
+*/
+	//zero the the buf1 array
+	for (col = 0; col<w*h;col++) {
+		buf1[col] = 0;
+	}
 /*
 lower right corner to upper left corner
 */
 for ( col = w/2; col < w ;col++) {
 	for (row = h/2; row < h;row++) {
-		tt[col-w/2][row-h/2] = img[row][col];
+		//tt[col-w/2][row-h/2] = img[row][col];
+		buf1[256*(col-w/2)+ (row-h/2)] = buf[256*row+col];
 	}
 }
 /*
@@ -133,7 +149,9 @@ transfer tt array to img for output
 */
 for ( row = 0;row < h-2;row++) {
 	for (col = 0;col < w;col++) {
-		img[col][row] = tt[row][col];
+		//img[col][row] = tt[row][col];
+		//img[col][row] = buf1[256*row+col];
+		buf[256*col+row] = buf1[256*row+col];
 	}
 }
 
@@ -144,7 +162,8 @@ img_ptr = &img[0][0];
 fpout = fopen(argv[2], "wb");
 for (row = 0; row < h; row++) {
 	for(col = 0; col < w; col++) {
-		fwrite(&img[row][col],sizeof(int),1,fpout);
+		//fwrite(&img[row][col],sizeof(int),1,fpout);
+		fwrite(&buf[256*row+col],sizeof(int),1,fpout);
 	}
 }
 //end of write to file  	
