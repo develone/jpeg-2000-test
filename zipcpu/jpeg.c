@@ -19,8 +19,9 @@ Writes the file test1_256_fwt.png
  
 */
 	
-	extern void dwt_write(int *, int col, int row, int dum6);
-
+	//extern void dwt_write(int *, int col, int row, int dum6);
+	extern rd_image(int *buf_ptr);
+	extern wr_image(int *buf_ptr);
 	int main(int argc, char **argv) {
 	 
     int row,col,w,h,interleave,num_passes;
@@ -42,16 +43,11 @@ Writes the file test1_256_fwt.png
         printf("%s\n", argv[2]);
         num_passes = atoi(argv[3]);
         interleave = atoi(argv[4]);
-        fpin = fopen(argv[1], "rb");
-           //printf("%x \n",buf_ptr);
-           for(col = 0; col < w*h; col++) {
-        	fread(buf_ptr, sizeof(int),1,fpin);
-                //printf("%d\n",buf[col]);
-                buf_ptr++;
-           }
-            
-           buf_ptr = &buf[0];
-            
+ 
+rd_image(buf_ptr);
+	for(col = 0; col < w*h; col++) {
+		printf("%d\n",buf[col]);
+	}            
 
 for ( p =0; p < num_passes; p++) {
 	printf("%x ",buf_ptr);
@@ -124,19 +120,8 @@ for ( row = 0;row < h-2;row++) {
 		buf[256*col+row] = buf1[256*row+col];
 	}
 }
-
-/*
-write the buf to file pass.bin
-*/
+wr_image(buf_ptr);
  
-fpout = fopen(argv[2], "wb");
-for (row = 0; row < h; row++) {
-	for(col = 0; col < w; col++) {
-		 
-		fwrite(&buf[256*row+col],sizeof(int),1,fpout);
-	}
-}
-//end of write to file  	
 }
 //end of program
 
