@@ -23,8 +23,8 @@ Writes the file test1_256_fwt.png
 
 	int main(int argc, char **argv) {
 	 
-    int row,col,w,h;
-	index = 0;
+    int row,col,w,h,interleave,num_passes;
+	 
 	
    	 w = 256;
    	 h = 256;
