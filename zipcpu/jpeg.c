@@ -22,23 +22,21 @@ Writes the file test1_256_fwt.png
 	extern void dwt_write(int *, int col, int row, int dum6);
 
 	int main(int argc, char **argv) {
-	int row,col,w,h,index,dum1,dum2,dum3,dum4,dum5,dum6,*dum7,num_passes,interleave;
+	 
+    int row,col,w,h;
 	index = 0;
 	
    	 w = 256;
    	 h = 256;
-	 int img[w][h];
+	  
 	 int buf[w*h];
 	 int buf1[w*h];
 	 int *buf_ptr;
  
 	 buf_ptr = &buf;
-	 int *img_ptr;	
-    	 img_ptr = &img;
+	  
          int p;
-	int tt[w][h];
-	int *de_interleave;
-	de_interleave = &tt;
+	 
         FILE  *fpin, *fpout;
         printf("%s\n", argv[1]);
         printf("%s\n", argv[2]);
@@ -51,19 +49,10 @@ Writes the file test1_256_fwt.png
                 //printf("%d\n",buf[col]);
                 buf_ptr++;
            }
-           //printf("%x \n",buf_ptr);
-           /*the following is needed when pointers are used *(buf_ptr+col+row*256) 
-           this was not needed when img[row][col] are used
-           this was pointed out by Dr. Dan
-           */
+            
            buf_ptr = &buf[0];
-           //printf("%x \n",buf_ptr);
-           for(row = 0; row < h; row++) {
-			   for (col = 0 ; col < w; col++) {
-				   img[row][col] = buf[index];
-				   index++;
-        }
-	}
+            
+
 for ( p =0; p < num_passes; p++) {
 	printf("%x ",buf_ptr);
 	printf("%d\n",p);
@@ -83,16 +72,7 @@ for ( p =0; p < num_passes; p++) {
 
     //de_interleave 
     if ( interleave == 1) {
-	/*
-	zero the the tt array
-	*/
-	/*
-	for ( row = 0;row < h-2;row++) {
-		for (col = 0;col < w;col++) {
-			tt[row][col] = 0;
-		}
-	}
-	*/
+ 
 	//zero the the buf1 array
 	for (col = 0; col<w*h;col++) {
 		buf1[col] = 0;
@@ -100,18 +80,18 @@ for ( p =0; p < num_passes; p++) {
 	for ( row = 0 ; row < h; row++) {
 		for (col = 0; col < w;col++) {  
 			if (row % 2 == 0) {
-				 //tt[col][row/2] =  img[row][col];
+				  
 				buf1[(row/2)+256*col] =  buf[(row*256)+col];
 			}	
 			else {
-				 //tt[col][row/2 + 256/2] =  img[row][col];
+				 
 				 buf1[col*256+(row/2 + 256/2)] =  buf[(row)*256+col];
 			}	
 		}
 	}
 	for ( row = 0;row < h-2;row++) {
 		for (col = 0;col < w;col++) {
-			//img[row][col] = tt[row][col];
+			 
 			buf[(row)*256+col] = buf1[(row)*256+col];
 		}
 	}
@@ -121,16 +101,7 @@ for ( p =0; p < num_passes; p++) {
  
 }
 //end num_passes loop
-/*
-zero the the tt array
-*/
-/*
-for ( row = 0;row < h-2;row++) {
-	for (col = 0;col < w;col++) {
-		tt[row][col] = 0;
-	}
-}
-*/
+ 
 	//zero the the buf1 array
 	for (col = 0; col<w*h;col++) {
 		buf1[col] = 0;
@@ -140,7 +111,7 @@ lower right corner to upper left corner
 */
 for ( col = w/2; col < w ;col++) {
 	for (row = h/2; row < h;row++) {
-		//tt[col-w/2][row-h/2] = img[row][col];
+ 
 		buf1[256*(col-w/2)+ (row-h/2)] = buf[256*row+col];
 	}
 }
@@ -149,20 +120,19 @@ transfer tt array to img for output
 */
 for ( row = 0;row < h-2;row++) {
 	for (col = 0;col < w;col++) {
-		//img[col][row] = tt[row][col];
-		//img[col][row] = buf1[256*row+col];
+ 
 		buf[256*col+row] = buf1[256*row+col];
 	}
 }
 
 /*
-write the img to file pass.bin
+write the buf to file pass.bin
 */
-img_ptr = &img[0][0];
+ 
 fpout = fopen(argv[2], "wb");
 for (row = 0; row < h; row++) {
 	for(col = 0; col < w; col++) {
-		//fwrite(&img[row][col],sizeof(int),1,fpout);
+		 
 		fwrite(&buf[256*row+col],sizeof(int),1,fpout);
 	}
 }
