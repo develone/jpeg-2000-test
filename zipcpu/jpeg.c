@@ -24,7 +24,8 @@ Writes the file test1_256_fwt.png
 	//extern void dwt_write(int *, int col, int row, int dum6);
 	extern rd_image(char *fn,int *buf_ptr);
 	extern wr_image(char *fn,int *buf_ptr);
-    extern lift(int buf[],int num_passes, int interleave );
+	extern lift(int buf[],int num_passes, int interleave );
+        extern inv_lift(int buf[],int num_passes, int interleave );
 	int main(int argc, char **argv) {
 	 
     int row,col,w,h,interleave,num_passes,debug,debug1;
@@ -69,10 +70,12 @@ if (debug1==1) {
 //first level dwt 256 x 256 results in 128 x 128
 lift(buf,num_passes,interleave);
 //2nd level dwt 128 x 128 results in 64 x 64
-lift(buf,num_passes,interleave);
+//lift(buf,num_passes,interleave);
 //3rd level dwt 64 x 64 results in 32 x 32
-lift(buf,num_passes,interleave);
+//lift(buf,num_passes,interleave);
 wr_image(outfn,buf_ptr);
+inv_lift(buf,num_passes,interleave);
+
  
 }
 //end of program

@@ -5,8 +5,10 @@ echo "compiling rd_wr_img.c"
 gcc -c rd_wr_img.c -o rd_wr_img.o
 echo "compiling fwd.c"
 gcc -c fwd.c -o fwd.o
-echo "compile & link jpeg.c with rd_wr_img.o jpeg"
-gcc jpeg.c rd_wr_img.o fwd.o -o jpeg
+echo "compiling inv.c"
+gcc -c inv.c -o inv.o
+echo "compile & link jpeg.c with rd_wr_img.o fwd.o inv.o jpeg"
+gcc jpeg.c rd_wr_img.o fwd.o inv.o -o jpeg
 
 echo "./jpeg img_to_fpga.bin pass.bin 2 1 0 0 or "
 echo "./jpeg img_to_fpga.bin pass.bin 2 1 1 1 for debug"

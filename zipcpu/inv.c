@@ -2,7 +2,7 @@
 #include <stdlib.h> 
 #include <string.h> 
 	
-void lift(int buf[],int num_passes, int interleave ) {
+void inv_lift(int buf[],int num_passes, int interleave ) {
 int row,col,w,h;
 	 
 	  
@@ -18,17 +18,17 @@ for ( p =0; p < num_passes; p++) {
 	
 	printf("%d\n",p);
 	for ( col = 0; col<w;col++) { 
-		for (row = 2;row<h;row=row+2) { 
-			  
-             buf[(row*256)+col] = buf[(row*256)+col] - (( buf[((row-1)*256)+col] + buf[((row+1)*256)+col] ) >> 1); 
-		}
-		//end of even samples
 		for (row = 1;row<h-2;row=row+2) {
 			  
-             buf[(row*256)+col] = buf[(row*256)+col] + (( buf[((row-1)*256)+col] + buf[((row+1)*256)+col] + 2) >> 2);
+	             buf[(row*256)+col] = buf[(row*256)+col] - (( buf[((row-1)*256)+col] + buf[((row+1)*256)+col] + 2) >> 2);
 
 		}
 		//end of odd samples
+		for (row = 2;row<h;row=row+2) { 
+			  
+             buf[(row*256)+col] = buf[(row*256)+col] + (( buf[((row-1)*256)+col] + buf[((row+1)*256)+col] ) >> 1); 
+		}
+		//end of even samples
 	}    
 
     //de_interleave 
