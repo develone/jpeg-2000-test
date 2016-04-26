@@ -66,6 +66,11 @@ if (debug1==1) {
  	
 }
 //buf_ptr = buf;
+//first level dwt 256 x 256 results in 128 x 128
+lift(buf,num_passes,interleave);
+//2nd level dwt 128 x 128 results in 64 x 64
+lift(buf,num_passes,interleave);
+//3rd level dwt 64 x 64 results in 32 x 32
 lift(buf,num_passes,interleave);
 wr_image(outfn,buf_ptr);
  
