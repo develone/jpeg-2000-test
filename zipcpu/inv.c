@@ -4,7 +4,21 @@
 	
 void inv_lift(int buf[],int num_passes, int interleave ) {
 int row,col,w,h;
-	 
+/*
+def upper_lower(s, width, height):
+
+        temp_bank = [[0]*width for i in range(height)]
+        for col in range(width/2):
+
+                for row in range(height/2):
+
+                        temp_bank[col+width/2][row+height/2] = s[row][col]
+
+        for row in range(width):
+                for col in range(height):
+                        s[row][col] = temp_bank[col][row]
+        return s
+*/	 
 	  
    	 w = 256;
    	 h = 256;
@@ -14,6 +28,27 @@ int row,col,w,h;
 	 //int *buf_ptr;
 	 int p;
      //&buf = buf_ptr;
+    //zero the the buf1 array
+	for (col = 0; col<w*h;col++) {
+		buf1[col] = 0;
+	}
+/*
+upper left corner to lower right corner 
+*/
+for ( col = 0; col < w/2 ;col++) {
+	for (row = 0; row < h/2;row++) {
+ 
+		buf1[256*(col+w/2)+ (row+h/2)] = buf[256*row+col];
+	}
+}
+
+for ( row = 0;row < h-2;row++) {
+	for (col = 0;col < w;col++) {
+ 
+		buf[256*col+row] = buf1[256*row+col];
+	}
+}
+exit;
 for ( p =0; p < num_passes; p++) {
 	
 	printf("%d\n",p);
