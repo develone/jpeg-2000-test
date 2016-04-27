@@ -138,7 +138,7 @@ def _prep_cosim(args, **sigs):
     """
     print ("  *%s" %  (sigs))   
     print("compiling ...")
-    cmd = "iverilog -o ifdeppsimple tb/wbdeppsimple.v"
+    cmd = "iverilog -o ifdeppsimple tb/wbdeppsimple.v tb/tb_wbdeppsimple.v"
     print("  %s" %  (cmd))
     os.system(cmd)
     # get the handle to the
