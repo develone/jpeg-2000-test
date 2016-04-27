@@ -3,6 +3,8 @@ from myhdl import *
 import os
 import argparse
 from argparse import Namespace
+from rhea.build.boards import get_board
+from pprint import pprint
 '''
 tb_dut = _prep_cosimi_clk=i_clk,i_astb_n=i_astb_n,i_dstb_n=i_dstb_n,
 i_write_n=i_write_n,i_depp=i_depp,o_depp=o_depp,o_wait=o_wait,
@@ -95,6 +97,19 @@ def wbdepp(i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,o_wb_cyc, 
 		'''
         	
     return myhdl.instances()
+def build(args):
+	'''
+	GPIO FOR XULA2-LX9
+	16 GPIO FOR INPUT OR OUTPUT
+	CH0 R7  CH1 R15 CH2 R16 CH3 M15 CH4 M16 CH5 K15 CH6  K16 CH7 J16
+	CH8 J14 CH9 F15 CH10 F16 CH11 C16 CH12 C15 CH13 B16 CH14 B15 CH22 H1
+	CH23 H2 CH24 F1 CH25 F2 CH26 E1
+	CH27 E2 CH28 C1 CH29 B1 B30 B2 CH31 A2  
+	'''
+	brd = get_board(args.brd)
+	brd.device = 'XC6SLX9'
+	print(("%s %s") % (brd, brd.device))
+	
 def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
 	o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data,
 	i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int):
@@ -158,6 +173,8 @@ def tb(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
     return myhdl.instances()
 def cliparse():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--brd", default='xula2_stickit_mb')
+    parser.add_argument("--flow", default="ise")
     parser.add_argument("--build", default=False, action='store_true')
     parser.add_argument("--trace", default=False, action='store_true')
     parser.add_argument("--convert", default=False, action='store_true')
@@ -198,9 +215,11 @@ def main():
 		tb_fsm = traceSignals(tb,args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait, o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data, i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int)
 		sim = Simulation(tb_fsm)
 		sim.run()
+    if args.build:
+	build(args)
 
     if args.convert: 
-		convert()
+	convert()
     if args.cosim:
         test_prep = test_cosim_prep(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait, o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data, i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int)
     if  args.cosimtrace:
