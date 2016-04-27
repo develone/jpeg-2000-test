@@ -95,6 +95,37 @@ def wbdepp(i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,o_wb_cyc, 
 		'''
         	
     return myhdl.instances()
+def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
+	o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data,
+	i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int):
+    
+    tb_dut = _prep_cosim(args,i_clk=i_clk,i_astb_n=i_astb_n,i_dstb_n=i_dstb_n, \
+    i_write_n=i_write_n,i_depp=i_depp,o_depp=o_depp,o_wait=o_wait, \
+    o_wb_cyc=o_wb_cyc,o_wb_stb=o_wb_stb,o_wb_we=o_wb_we,o_wb_addr=o_wb_addr, \
+    o_wb_data=o_wb_data,i_wb_ack=i_wb_ack,i_wb_stall=i_wb_stall, \
+    i_wb_err=i_wb_err,i_wb_data=i_wb_data,i_int=i_int)
+    
+     
+    
+    @always(delay(10))
+    def clkgen():
+        i_clk.next = not i_clk
+    @instance
+    def tbstim():
+       for i in range(100):
+           yield i_clk.posedge
+       r_depp.next = 208
+       yield i_clk.posedge
+       w_write.next = 1
+       yield i_clk.posedge
+       yield i_clk.posedge
+       astb.next = 1
+       yield i_clk.posedge
+       yield i_clk.posedge
+       raise StopSimulation
+    print("back from prep cosim")
+    print("start (co)simulation ...")
+    Simulation((tb_dut, clkgen, tbstim)).run()    
 def tb(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
 	o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data,
 	i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int):
@@ -131,6 +162,7 @@ def cliparse():
     parser.add_argument("--trace", default=False, action='store_true')
     parser.add_argument("--convert", default=False, action='store_true')
     parser.add_argument("--cosim", default=False, action='store_true')
+    parser.add_argument("--cosimtrace", default=False, action='store_true')
     args = parser.parse_args()
     return args    
 def _prep_cosim(args, **sigs):
@@ -170,6 +202,8 @@ def main():
     if args.convert: 
 		convert()
     if args.cosim:
-        test_prep = test_cosim_prep(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait, o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data, i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int) 
+        test_prep = test_cosim_prep(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait, o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data, i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int)
+    if  args.cosimtrace:
+		tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data,i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int)        
 if __name__ == '__main__':
     main()
