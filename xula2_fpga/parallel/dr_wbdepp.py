@@ -68,7 +68,8 @@ astb = Signal(bool(0))
 dstb = Signal(bool(0))
 w_write = Signal(bool(0))
 addr = Signal(intbv(0)[8:])
-def wbdepp(i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data,i_wb_ack,i_wb_stall, i_wb_err, i_wb_data, i_int):
+def dr_wbdepp(i_clk,i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,i_depp,o_b0,o_b1,o_b2,o_b3,o_b4,o_b5,o_b6,o_b7,o_depp):
+ 
     @always(i_clk.posedge)
     def reset_tst():
         '''
@@ -82,6 +83,7 @@ def wbdepp(i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,o_wb_cyc, 
                 reset.next = 0
             if (reset_dly_cnt >= 5):
                 reset.next = 1
+                '''
                 x_dstb_n.next = 1
                 r_dstb_n.next = 1
                 l_dstb_n.next = 1
@@ -90,7 +92,7 @@ def wbdepp(i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,o_wb_cyc, 
                 l_astb_n.next = 1
                 o_wb_cyc.next = 1
                 o_wb_stb.next = 1
-                #addr.next = 0  				
+                #addr.next = 0 ''' 				
         else:
             reset.next = 0
 
@@ -115,14 +117,14 @@ def wbdepp(i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,o_wb_cyc, 
 		'''
     @always(i_clk.posedge)
     def rtl1():
-        i_depp[1:0].next = i_b0
-        i_depp[2:1].next = i_b1
-        i_depp[3:2].next = i_b2
-        i_depp[4:3].next = i_b3
-        i_depp[5:4].next = i_b4
-        i_depp[6:5].next = i_b5
-        i_depp[7:6].next = i_b6
-        i_depp[8:7].next = i_b7
+        i_depp[1:0].next = o_b0
+        i_depp[2:1].next = o_b1
+        i_depp[3:2].next = o_b2
+        i_depp[4:3].next = o_b3
+        i_depp[5:4].next = o_b4
+        i_depp[6:5].next = o_b5
+        i_depp[7:6].next = o_b6
+        i_depp[8:7].next = o_b7
     @always(i_clk.posedge)
     def rtl2():
         i_b0.next = o_depp[1:0]
@@ -152,12 +154,15 @@ def build(args):
 def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
 	o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data,
 	i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int):
+    tb_dut_dr = dr_wbdepp(i_clk,i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,i_depp,o_b0,o_b1,o_b2,o_b3,o_b4,o_b5,o_b6,o_b7,o_depp)
     
     tb_dut = _prep_cosim(args,i_clk=i_clk,i_astb_n=i_astb_n,i_dstb_n=i_dstb_n, \
     i_write_n=i_write_n,i_depp=i_depp,o_depp=o_depp,o_wait=o_wait, \
     o_wb_cyc=o_wb_cyc,o_wb_stb=o_wb_stb,o_wb_we=o_wb_we,o_wb_addr=o_wb_addr, \
     o_wb_data=o_wb_data,i_wb_ack=i_wb_ack,i_wb_stall=i_wb_stall, \
-    i_wb_err=i_wb_err,i_wb_data=i_wb_data,i_int=i_int)
+    i_wb_err=i_wb_err,i_wb_data=i_wb_data,i_int=i_int,i_b0=i_b0,i_b1=i_b1,i_b2=i_b2, \
+    i_b3=i_b3,i_b4=i_b4,i_b5=i_b5,i_b6=i_b6,i_b7=i_b7,o_b0=o_b0,o_b1=o_b1,o_b2=o_b2, \
+    o_b3=o_b3,o_b4=o_b4,o_b5=o_b5,o_b6=o_b6,o_b7=o_b7)
     
      
     
@@ -170,7 +175,10 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        yield i_clk.posedge		
        for i in range(100):
            yield i_clk.posedge
-       r_depp.next = 208
+       for i in range(256):
+           o_depp.next = i
+           yield i_clk.posedge           
+       o_b0.next = 1
        yield i_clk.posedge
        w_write.next = 1
        yield i_clk.posedge
@@ -183,7 +191,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        raise StopSimulation
     print("back from prep cosim")
     print("start (co)simulation ...")
-    Simulation((tb_dut, clkgen, tbstim)).run()    
+    Simulation((tb_dut, clkgen, tbstim,tb_dut_dr)).run()    
 def tb(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
 	o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data,
 	i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int):
@@ -239,7 +247,7 @@ def _prep_cosim(args, **sigs):
     """
     print ("  *%s" %  (sigs))   
     print("compiling ...")
-    cmd = "iverilog -o ifdeppsimple tb/wbdeppsimple.v tb/tb_wbdeppsimple.v"
+    cmd = "iverilog -o ifdeppsimple tb/wbdeppsimple.v tb/tb_wbdeppsimple.v dr_wbdepp.v"
     print("  %s" %  (cmd))
     os.system(cmd)
     # get the handle to the
@@ -250,7 +258,7 @@ def _prep_cosim(args, **sigs):
     print("  %s" %  (cosim))
     return cosim
 def convert():        
-    toVerilog(wbdepp,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait, o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data, i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int) 
+    toVerilog(dr_wbdepp,i_clk,i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,i_depp,o_b0,o_b1,o_b2,o_b3,o_b4,o_b5,o_b6,o_b7,o_depp) 
 
 def test_cosim_prep(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
 	o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data,
