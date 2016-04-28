@@ -12,6 +12,23 @@ o_wb_cyc=o_wb_cyc,o_wb_stb=o_wb_stb=o_wb_stb,o_wb_addr=o_wb_addr,
 o_wb_data=o_wb_data,i_wb_ack=i_wb_ack,i_wb_stall=i_wb_stall,
 i_wb_err=i_wb_err,i_wb_data=i_wb_data,i_int=i_int)
 '''
+i_b0 = Signal(bool(0))
+i_b1 = Signal(bool(0))
+i_b2 = Signal(bool(0))
+i_b3 = Signal(bool(0))
+i_b4 = Signal(bool(0))
+i_b5 = Signal(bool(0))
+i_b6 = Signal(bool(0))
+i_b7 = Signal(bool(0))
+
+o_b0 = Signal(bool(0))
+o_b1 = Signal(bool(0))
+o_b2 = Signal(bool(0))
+o_b3 = Signal(bool(0))
+o_b4 = Signal(bool(0))
+o_b5 = Signal(bool(0))
+o_b6 = Signal(bool(0))
+o_b7 = Signal(bool(0))
 i_clk  = Signal(bool(0))
 reset = Signal(bool(0))
 reset_dly_cnt = Signal(intbv(0)[5:]) 
@@ -77,6 +94,7 @@ def wbdepp(i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,o_wb_cyc, 
         else:
             reset.next = 0
 
+		
     @always(i_clk.posedge)
     def rtl():
         if ((w_write)and(astb)):
@@ -95,7 +113,28 @@ def wbdepp(i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,o_wb_cyc, 
 		x_write_n.next = i_write_n
 		x_depp.next =  i_depp                 
 		'''
-        	
+    @always(i_clk.posedge)
+    def rtl1():
+        i_depp[1:0].next = i_b0
+        i_depp[2:1].next = i_b1
+        i_depp[3:2].next = i_b2
+        i_depp[4:3].next = i_b3
+        i_depp[5:4].next = i_b4
+        i_depp[6:5].next = i_b5
+        i_depp[7:6].next = i_b6
+        i_depp[8:7].next = i_b7
+    @always(i_clk.posedge)
+    def rtl2():
+        o_b0.next = o_depp[1:0]
+        o_b1.next = o_depp[2:1]
+        o_b2.next = o_depp[3:2]
+        o_b3.next = o_depp[4:3]
+        o_b4.next = o_depp[5:4]
+        o_b5.next = o_depp[6:5]
+        o_b6.next = o_depp[7:6]
+        o_b7.next = o_depp[8:7]
+
+				        	
     return myhdl.instances()
 def build(args):
 	'''
@@ -127,6 +166,8 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
         i_clk.next = not i_clk
     @instance
     def tbstim():
+
+       yield i_clk.posedge		
        for i in range(100):
            yield i_clk.posedge
        r_depp.next = 208
@@ -137,6 +178,8 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        astb.next = 1
        yield i_clk.posedge
        yield i_clk.posedge
+
+       
        raise StopSimulation
     print("back from prep cosim")
     print("start (co)simulation ...")
@@ -160,6 +203,15 @@ def tb(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
     def tbstim():
        for i in range(100):
            yield i_clk.posedge
+       i_b0.next = 1
+       yield i_clk.posedge
+       i_b1.next = 1
+       yield i_clk.posedge
+       i_b2.next = 1
+       for i in range(256):
+	   o_depp.next = i
+           yield i_clk.posedge
+       i_b3.next = 1
        r_depp.next = 208
        yield i_clk.posedge
        w_write.next = 1
