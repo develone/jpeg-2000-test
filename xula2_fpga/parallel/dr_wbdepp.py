@@ -286,6 +286,8 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
            yield i_clk.posedge
            i_astb_n.next = 1
            yield i_clk.posedge                          
+           i_write_n.next = 1
+           yield i_clk.posedge
        raise StopSimulation
     print("back from prep cosim")
     print("start (co)simulation ...")
