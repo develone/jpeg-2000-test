@@ -63,7 +63,15 @@ initial begin
         i_b4,
         i_b5,
         i_b6,
-        i_b7
+        i_b7,
+        o_b0,
+        o_b1,
+        o_b2,
+        o_b3,
+        o_b4,
+        o_b5,
+        o_b6,
+        o_b7        
         
     );
     $to_myhdl(
@@ -73,15 +81,8 @@ initial begin
         o_wb_addr,
         o_wb_data,
         o_wb_cyc,
-        o_wb_stb,
-        o_b0,
-        o_b1,
-        o_b2,
-        o_b3,
-        o_b4,
-        o_b5,
-        o_b6,
-        o_b7
+        o_wb_stb
+
     );
     
 end

@@ -180,14 +180,112 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
            yield i_clk.posedge           
        o_b0.next = 1
        yield i_clk.posedge
-       w_write.next = 1
+       o_b0.next = 1
+       yield i_clk.posedge       
+       o_b1.next = 1
+       yield i_clk.posedge       
+              
+       i_int.next = 1
+       yield i_clk.posedge
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+       i_depp.next = 208
+       yield i_clk.posedge
+       i_write_n.next = 0
+       yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+       i_wb_ack.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 0 
+       yield i_clk.posedge
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1 
+       yield i_clk.posedge
+       i_depp.next = 164
+       yield i_clk.posedge
+       i_write_n.next = 0
+       yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+       i_dstb_n.next = 0 
+       yield i_clk.posedge
+       for i in range(5):
+		   yield i_clk.posedge
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1 
+       yield i_clk.posedge
+       i_depp.next = 200
+       yield i_clk.posedge
+       i_write_n.next = 0
+       yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+       i_dstb_n.next = 0 
+       yield i_clk.posedge
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1 
+       yield i_clk.posedge
+       i_depp.next = 164
+       yield i_clk.posedge
+       i_write_n.next = 0
+       yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+       i_dstb_n.next = 0 
+       yield i_clk.posedge
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1 
+       yield i_clk.posedge
+       i_depp.next = 164
+       yield i_clk.posedge
+       i_write_n.next = 0
+       yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+       i_dstb_n.next = 0 
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+       i_depp.next = 200
+       yield i_clk.posedge
+       i_write_n.next = 0
        yield i_clk.posedge
        yield i_clk.posedge
-       astb.next = 1
-       yield i_clk.posedge
-       yield i_clk.posedge
-
-       
+       i_astb_n.next = 0
+       for i in range(5):
+		   yield i_clk.posedge	   
+       for i in range(256):
+           i_depp.next = i
+           yield i_clk.posedge
+           i_write_n.next = 0
+           yield i_clk.posedge
+           i_astb_n.next = 0
+           yield i_clk.posedge
+           i_dstb_n.next = 0 
+           yield i_clk.posedge
+           i_dstb_n.next = 1
+           yield i_clk.posedge
+           i_astb_n.next = 1
+           yield i_clk.posedge                          
        raise StopSimulation
     print("back from prep cosim")
     print("start (co)simulation ...")
