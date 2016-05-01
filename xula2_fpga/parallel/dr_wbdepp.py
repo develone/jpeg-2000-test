@@ -38,6 +38,8 @@ i_dstb_n = Signal(bool(0))
 i_write_n = Signal(bool(0))
 o_depp = Signal(intbv(0)[8:])
 i_depp = Signal(intbv(0)[8:])
+o_para = Signal(intbv(0)[8:])
+t_depp = Signal(intbv(0)[8:])
 o_wait = Signal(bool(0))
 
 #Wishbone master interface
@@ -68,7 +70,7 @@ astb = Signal(bool(0))
 dstb = Signal(bool(0))
 w_write = Signal(bool(0))
 addr = Signal(intbv(0)[8:])
-def dr_wbdepp(i_clk,i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,i_depp,o_b0,o_b1,o_b2,o_b3,o_b4,o_b5,o_b6,o_b7,o_depp):
+def dr_wbdepp(i_clk,i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,o_para,o_b0,o_b1,o_b2,o_b3,o_b4,o_b5,o_b6,o_b7,t_depp):
  
     @always(i_clk.posedge)
     def reset_tst():
@@ -83,58 +85,32 @@ def dr_wbdepp(i_clk,i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,i_depp,o_b0,o_b1,o_b
                 reset.next = 0
             if (reset_dly_cnt >= 5):
                 reset.next = 1
-                '''
-                x_dstb_n.next = 1
-                r_dstb_n.next = 1
-                l_dstb_n.next = 1
-                x_astb_n.next = 1
-                r_astb_n.next = 1
-                l_astb_n.next = 1
-                o_wb_cyc.next = 1
-                o_wb_stb.next = 1
-                #addr.next = 0 ''' 				
+  				
         else:
             reset.next = 0
 
 		
-    @always(i_clk.posedge)
-    def rtl():
-        if ((w_write)and(astb)):
-			addr.next = r_depp
-        #if ((w_write)and(dstb)and(addr[7:3]==5'h00)):
-    @always(i_clk.posedge)
-    def rtl():
-		'''
-		{ x_dstb_n, x_astb_n, x_write_n, x_depp }
-			<= { i_dstb_n, i_astb_n, i_write_n, i_depp };
-		{ r_dstb_n, r_astb_n, r_write_n, r_depp }
-			<= { x_dstb_n, x_astb_n, x_write_n, x_depp };
-		{ l_dstb_n, l_astb_n } <= { r_dstb_n, r_astb_n };
-		x_dstb_n.next = i_dstb_n
-		x_astb_n.next = i_astb_n
-		x_write_n.next = i_write_n
-		x_depp.next =  i_depp                 
-		'''
+ 
     @always(i_clk.posedge)
     def rtl1():
-        i_depp[1:0].next = o_b0
-        i_depp[2:1].next = o_b1
-        i_depp[3:2].next = o_b2
-        i_depp[4:3].next = o_b3
-        i_depp[5:4].next = o_b4
-        i_depp[6:5].next = o_b5
-        i_depp[7:6].next = o_b6
-        i_depp[8:7].next = o_b7
+        t_depp[1:0].next = i_b0
+        t_depp[2:1].next = i_b1
+        t_depp[3:2].next = i_b2
+        t_depp[4:3].next = i_b3
+        t_depp[5:4].next = i_b4
+        t_depp[6:5].next = i_b5
+        t_depp[7:6].next = i_b6
+        t_depp[8:7].next = i_b7
     @always(i_clk.posedge)
     def rtl2():
-        i_b0.next = o_depp[1:0]
-        i_b1.next = o_depp[2:1]
-        i_b2.next = o_depp[3:2]
-        i_b3.next = o_depp[4:3]
-        i_b4.next = o_depp[5:4]
-        i_b5.next = o_depp[6:5]
-        i_b6.next = o_depp[7:6]
-        i_b7.next = o_depp[8:7]
+        o_b0.next = o_para[1:0]
+        o_b1.next = o_para[2:1]
+        o_b2.next = o_para[3:2]
+        o_b3.next = o_para[4:3]
+        o_b4.next = o_para[5:4]
+        o_b5.next = o_para[6:5]
+        o_b6.next = o_para[7:6]
+        o_b7.next = o_para[8:7]
 
 				        	
     return myhdl.instances()
@@ -154,15 +130,16 @@ def build(args):
 def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
 	o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data,
 	i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int):
-    tb_dut_dr = dr_wbdepp(i_clk,i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,i_depp,o_b0,o_b1,o_b2,o_b3,o_b4,o_b5,o_b6,o_b7,o_depp)
+    tb_dut_dr = dr_wbdepp(i_clk,i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,o_para,o_b0,o_b1,o_b2,o_b3,o_b4,o_b5,o_b6,o_b7,t_depp)
     
     tb_dut = _prep_cosim(args,i_clk=i_clk,i_astb_n=i_astb_n,i_dstb_n=i_dstb_n, \
     i_write_n=i_write_n,i_depp=i_depp,o_depp=o_depp,o_wait=o_wait, \
     o_wb_cyc=o_wb_cyc,o_wb_stb=o_wb_stb,o_wb_we=o_wb_we,o_wb_addr=o_wb_addr, \
     o_wb_data=o_wb_data,i_wb_ack=i_wb_ack,i_wb_stall=i_wb_stall, \
-    i_wb_err=i_wb_err,i_wb_data=i_wb_data,i_int=i_int,i_b0=i_b0,i_b1=i_b1,i_b2=i_b2, \
-    i_b3=i_b3,i_b4=i_b4,i_b5=i_b5,i_b6=i_b6,i_b7=i_b7,o_b0=o_b0,o_b1=o_b1,o_b2=o_b2, \
-    o_b3=o_b3,o_b4=o_b4,o_b5=o_b5,o_b6=o_b6,o_b7=o_b7)
+    i_wb_err=i_wb_err,i_wb_data=i_wb_data,i_int=i_int,t_depp=t_depp, \
+    o_para=o_para,o_b0=o_b0,o_b1=o_b1,o_b2=o_b2,o_b3=o_b3,o_b4=o_b4, \
+    o_b5=o_b5,o_b6=o_b6,o_b7=o_b7,i_b0=o_b0,i_b1=i_b1,i_b2=i_b2,i_b3=i_b3,i_b4=i_b4, \
+    i_b5=i_b5,i_b6=i_b6,i_b7=i_b7)
     
      
     
@@ -177,6 +154,8 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
            yield i_clk.posedge
        for i in range(256):
            o_depp.next = i
+           yield i_clk.posedge           
+           o_para.next = i
            yield i_clk.posedge           
        o_b0.next = 1
        yield i_clk.posedge
@@ -352,7 +331,7 @@ def _prep_cosim(args, **sigs):
     """
     print ("  *%s" %  (sigs))   
     print("compiling ...")
-    cmd = "iverilog -o ifdeppsimple tb/wbdeppsimple.v tb/tb_wbdeppsimple.v dr_wbdepp.v"
+    cmd = "iverilog -o ifdeppsimple tb/wbdeppsimple.v tb/tb_wbdeppsimple.v dr_wbdepp.v "
     print("  %s" %  (cmd))
     os.system(cmd)
     # get the handle to the
@@ -363,7 +342,7 @@ def _prep_cosim(args, **sigs):
     print("  %s" %  (cosim))
     return cosim
 def convert():        
-    toVerilog(dr_wbdepp,i_clk,i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,i_depp,o_b0,o_b1,o_b2,o_b3,o_b4,o_b5,o_b6,o_b7,o_depp) 
+    toVerilog(dr_wbdepp,i_clk,i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,o_para,o_b0,o_b1,o_b2,o_b3,o_b4,o_b5,o_b6,o_b7,t_depp) 
 
 def test_cosim_prep(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
 	o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data,
