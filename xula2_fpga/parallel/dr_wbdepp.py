@@ -70,6 +70,10 @@ astb = Signal(bool(0))
 dstb = Signal(bool(0))
 w_write = Signal(bool(0))
 addr = Signal(intbv(0)[8:])
+#memdev Signals 
+i_wb_cyc = Signal(bool(0))
+i_wb_stb = Signal(bool(0))
+i_wb_we = Signal(bool(0))
 def rpi2B_io(i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,fr_depp,o_b0,o_b1,o_b2,o_b3,o_b4,o_b5,o_b6,o_b7,to_depp):
  
 
@@ -124,7 +128,8 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
     i_wb_err=i_wb_err,i_wb_data=i_wb_data,i_int=i_int, \
     fr_depp=fr_depp,o_b0=o_b0,o_b1=o_b1,o_b2=o_b2,o_b3=o_b3,o_b4=o_b4, \
     o_b5=o_b5,o_b6=o_b6,o_b7=o_b7,i_b0=i_b0,i_b1=i_b1,i_b2=i_b2,i_b3=i_b3,i_b4=i_b4, \
-    i_b5=i_b5,i_b6=i_b6,i_b7=i_b7,to_depp=to_depp)
+    i_b5=i_b5,i_b6=i_b6,i_b7=i_b7,to_depp=to_depp,i_wb_cyc=i_wb_cyc,i_wb_stb=i_wb_stb, \
+    i_wb_we=i_wb_we)
     
      
     

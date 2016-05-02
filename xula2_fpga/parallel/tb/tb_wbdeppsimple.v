@@ -9,6 +9,9 @@ module tb_wbdeppsimple1;
 	reg i_wb_err;
 	reg [31:0] i_wb_data;
 	reg i_int;
+	reg i_wb_cyc;
+	reg i_wb_stb;
+	reg i_wb_we;
     reg [7:0] fr_depp;
     reg i_b0;
     reg i_b1;
@@ -50,7 +53,9 @@ initial begin
         i_dstb_n,
         i_write_n,
         i_depp,
- 
+        i_wb_cyc,
+        i_wb_stb,
+        i_wb_we,   
         i_wb_ack,
         i_wb_stall,
         i_wb_err,
