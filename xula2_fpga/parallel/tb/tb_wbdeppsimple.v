@@ -9,7 +9,7 @@ module tb_wbdeppsimple1;
 	reg i_wb_err;
 	reg [31:0] i_wb_data;
 	reg i_int;
-    reg [7:0] o_para;
+    reg [7:0] fr_depp;
     reg i_b0;
     reg i_b1;
     reg i_b2;
@@ -18,7 +18,7 @@ module tb_wbdeppsimple1;
     reg i_b5;
     reg i_b6;
     reg i_b7;
-    wire [7:0] t_depp;
+    wire [7:0] to_depp;
     wire o_b0;
     wire o_b1;
     wire o_b2;
@@ -56,15 +56,15 @@ initial begin
         i_wb_err,
         i_wb_data,
         i_int,
-        o_para
-        //i_b0,
-        //i_b1,
-        //i_b2,
-        //i_b3,
-        //i_b4,
-        //i_b5,
-        //i_b6,
-        //i_b7
+        fr_depp,
+        i_b0,
+        i_b1,
+        i_b2,
+        i_b3,
+        i_b4,
+        i_b5,
+        i_b6,
+        i_b7
     );
     $to_myhdl(
         o_depp,
@@ -74,7 +74,7 @@ initial begin
         o_wb_data,
         o_wb_cyc,
         o_wb_stb,
-        t_depp,
+        to_depp,
         o_b0,
         o_b1,
         o_b2,
@@ -104,8 +104,8 @@ wbdeppsimple dut_wbdeppsimple(i_clk,
 	i_wb_err,
 	i_wb_data,
 	i_int);
-dr_wbdepp tb_dr_wbdepp(
-    i_clk,
+rpi2B_io tb_rpi2B_io(
+    //i_clk,
     i_b0,
     i_b1,
     i_b2,
@@ -114,7 +114,7 @@ dr_wbdepp tb_dr_wbdepp(
     i_b5,
     i_b6,
     i_b7,
-    o_para,
+    fr_depp,
     o_b0,
     o_b1,
     o_b2,
@@ -123,6 +123,6 @@ dr_wbdepp tb_dr_wbdepp(
     o_b5,
     o_b6,
     o_b7,
-    t_depp
+    to_depp
 );
 endmodule
