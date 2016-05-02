@@ -125,4 +125,7 @@ rpi2B_io tb_rpi2B_io(
     o_b7,
     to_depp
 );
+
+memdev tb_memdev(i_clk, i_wb_cyc, i_wb_stb, i_wb_we, i_wb_addr, i_wb_data,
+		o_wb_ack, o_wb_stall, o_wb_data);
 endmodule
