@@ -146,7 +146,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        
        i_rpi2B.next = 0
        yield i_clk.posedge
-       i_depp.next = to_depp
+       #i_depp.next = to_depp
        yield i_clk.posedge
 
        i_write_n.next = 1
@@ -175,7 +175,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
            yield i_clk.posedge
        i_rpi2B.next = 0
        yield i_clk.posedge
-       i_depp.next = to_depp
+       #i_depp.next = to_depp
        yield i_clk.posedge
 
        i_write_n.next = 1
@@ -204,7 +204,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
            yield i_clk.posedge
        i_rpi2B.next = 0
        yield i_clk.posedge
-       i_depp.next = to_depp
+       #i_depp.next = to_depp
        yield i_clk.posedge
 
        i_write_n.next = 1
@@ -234,7 +234,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
 			   
        i_rpi2B.next = 1
        yield i_clk.posedge
-       i_depp.next = to_depp
+       #i_depp.next = to_depp
        yield i_clk.posedge
 
        i_write_n.next = 1
@@ -264,7 +264,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
 			    
        i_rpi2B.next = 0
        yield i_clk.posedge
-       i_depp.next = to_depp
+       #i_depp.next = to_depp
        yield i_clk.posedge
 
        i_write_n.next = 1
@@ -293,7 +293,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
            yield i_clk.posedge
        i_rpi2B.next = 0
        yield i_clk.posedge
-       i_depp.next = to_depp
+       #i_depp.next = to_depp
        yield i_clk.posedge
 
        i_write_n.next = 1
@@ -322,7 +322,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
            yield i_clk.posedge
        i_rpi2B.next = 0
        yield i_clk.posedge
-       i_depp.next = to_depp
+       #i_depp.next = to_depp
        yield i_clk.posedge
 
        i_write_n.next = 1
@@ -352,7 +352,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
 			   
        i_rpi2B.next = 2
        yield i_clk.posedge
-       i_depp.next = to_depp
+       #i_depp.next = to_depp
        yield i_clk.posedge
 
        i_write_n.next = 1
