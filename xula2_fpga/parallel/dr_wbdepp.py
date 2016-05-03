@@ -114,8 +114,8 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
     o_wb_cyc=o_wb_cyc,o_wb_stb=o_wb_stb,o_wb_we=o_wb_we,o_wb_addr=o_wb_addr, \
     o_wb_data=o_wb_data,i_wb_ack=i_wb_ack,i_wb_stall=i_wb_stall, \
     i_wb_err=i_wb_err,i_wb_data=i_wb_data,i_int=i_int, \
-    fr_depp=fr_depp,o_rpi2B=o_rpi2B,i_rpi2B=i_rpi2B,to_depp=to_depp,i_wb_cyc=i_wb_cyc,i_wb_stb=i_wb_stb, \
-    i_wb_we=i_wb_we)
+    fr_depp=fr_depp,o_rpi2B=o_rpi2B,i_rpi2B=i_rpi2B,to_depp=to_depp)
+
     
      
     
@@ -125,10 +125,11 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
     @instance
     def tbstim():
 
-       yield i_clk.posedge		
-       for i in range(100):
+       yield i_clk.posedge
+       '''		
+       for i in range(10):
            yield i_clk.posedge
-       '''
+       
        for i in range(256):
            
            fr_depp.next = i
@@ -137,84 +138,249 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
            yield i_clk.posedge
        
        for i in range(256):
-	   i_rpi2B.next = i
-	   yield i_clk.posedge
-       '''
+	       i_rpi2B.next = i
+	       yield i_clk.posedge
+	   '''    
+       
        '''writing addres 00000001 1st byte'''
        
        i_rpi2B.next = 0
        yield i_clk.posedge
-       #i_int.next = 1
-       #yield i_clk.posedge
-       i_write_n.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 1
-       yield i_clk.posedge
-       i_astb_n.next = 1
-       yield i_clk.posedge
-       i_write_n.next = 0
-       yield i_clk.posedge
-       i_astb_n.next = 0
-       yield i_clk.posedge
-       i_dstb_n.next = 0
-       yield i_clk.posedge
-       
-       '''writing addres 00000001 2nd byte'''
-       
-       i_rpi2B.next = 0
-       yield i_clk.posedge
-       #i_int.next = 1
-       #yield i_clk.posedge
-       i_write_n.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 1
-       yield i_clk.posedge
-       i_astb_n.next = 1
-       yield i_clk.posedge
-       i_write_n.next = 0
-       yield i_clk.posedge
-       i_astb_n.next = 0
-       yield i_clk.posedge
-       i_dstb_n.next = 0
+       i_depp.next = to_depp
        yield i_clk.posedge
 
-       '''writing addres 00000001 3rd byte'''
-       
-       i_rpi2B.next = 0
-       yield i_clk.posedge
-       #i_int.next = 1
-       #yield i_clk.posedge
        i_write_n.next = 1
        yield i_clk.posedge
        i_dstb_n.next = 1
        yield i_clk.posedge
        i_astb_n.next = 1
        yield i_clk.posedge
+
        i_write_n.next = 0
-       yield i_clk.posedge
-       i_astb_n.next = 0
        yield i_clk.posedge
        i_dstb_n.next = 0
        yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
 
-       '''writing addres 00000001 4th byte'''
-       
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+
+       while(o_wait):
+           print "wait for o_wait",o_wait
+           yield i_clk.posedge
+       i_rpi2B.next = 0
+       yield i_clk.posedge
+       i_depp.next = to_depp
+       yield i_clk.posedge
+
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+
+       i_write_n.next = 0
+       yield i_clk.posedge
+       i_dstb_n.next = 0
+       yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+
+       while(o_wait):
+           print "wait for o_wait",o_wait
+           yield i_clk.posedge
+       i_rpi2B.next = 0
+       yield i_clk.posedge
+       i_depp.next = to_depp
+       yield i_clk.posedge
+
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+
+       i_write_n.next = 0
+       yield i_clk.posedge
+       i_dstb_n.next = 0
+       yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+
+       while(o_wait):
+           print "wait for o_wait",o_wait
+           yield i_clk.posedge
+			   
        i_rpi2B.next = 1
        yield i_clk.posedge
-       #i_int.next = 1
-       #yield i_clk.posedge
+       i_depp.next = to_depp
+       yield i_clk.posedge
+
        i_write_n.next = 1
        yield i_clk.posedge
        i_dstb_n.next = 1
        yield i_clk.posedge
        i_astb_n.next = 1
        yield i_clk.posedge
+
        i_write_n.next = 0
-       yield i_clk.posedge
-       i_astb_n.next = 0
        yield i_clk.posedge
        i_dstb_n.next = 0
        yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+
+       while(o_wait):
+           print "wait for o_wait",o_wait
+           yield i_clk.posedge
+			    
+       i_rpi2B.next = 0
+       yield i_clk.posedge
+       i_depp.next = to_depp
+       yield i_clk.posedge
+
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+
+       i_write_n.next = 0
+       yield i_clk.posedge
+       i_dstb_n.next = 0
+       yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+
+       while(o_wait):
+           print "wait for o_wait",o_wait
+           yield i_clk.posedge
+       i_rpi2B.next = 0
+       yield i_clk.posedge
+       i_depp.next = to_depp
+       yield i_clk.posedge
+
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+
+       i_write_n.next = 0
+       yield i_clk.posedge
+       i_dstb_n.next = 0
+       yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+
+       while(o_wait):
+           print "wait for o_wait",o_wait
+           yield i_clk.posedge
+       i_rpi2B.next = 0
+       yield i_clk.posedge
+       i_depp.next = to_depp
+       yield i_clk.posedge
+
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+
+       i_write_n.next = 0
+       yield i_clk.posedge
+       i_dstb_n.next = 0
+       yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+
+       while(o_wait):
+           print "wait for o_wait",o_wait
+           yield i_clk.posedge
+			   
+       i_rpi2B.next = 2
+       yield i_clk.posedge
+       i_depp.next = to_depp
+       yield i_clk.posedge
+
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+
+       i_write_n.next = 0
+       yield i_clk.posedge
+       i_dstb_n.next = 0
+       yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+
+       while(o_wait):
+           print "wait for o_wait",o_wait
+           yield i_clk.posedge
+                  
+       
 
        for i in range(100):
            yield i_clk.posedge

@@ -9,9 +9,9 @@ module tb_wbdeppsimple1;
 	reg i_wb_err;
 	reg [31:0] i_wb_data;
 	reg i_int;
-	reg i_wb_cyc;
-	reg i_wb_stb;
-	reg i_wb_we;
+	//reg i_wb_cyc;
+	//reg i_wb_stb;
+	//reg i_wb_we;
     reg [7:0] fr_depp;
     reg [7:0] i_rpi2B;
     wire [7:0] to_depp;
@@ -39,9 +39,9 @@ initial begin
         i_dstb_n,
         i_write_n,
         i_depp,
-        i_wb_cyc,
-        i_wb_stb,
-        i_wb_we,   
+        //i_wb_cyc,
+        //i_wb_stb,
+        //i_wb_we,   
         i_wb_ack,
         i_wb_stall,
         i_wb_err,
@@ -89,6 +89,6 @@ rpi2B_io tb_rpi2B_io (
     to_depp
 );
 
-memdev tb_memdev(i_clk, i_wb_cyc, i_wb_stb, i_wb_we, i_wb_addr, i_wb_data,
-		o_wb_ack, o_wb_stall, o_wb_data);
+//memdev tb_memdev(i_clk, i_wb_cyc, i_wb_stb, i_wb_we, i_wb_addr, i_wb_data,
+//		o_wb_ack, o_wb_stall, o_wb_data);
 endmodule
