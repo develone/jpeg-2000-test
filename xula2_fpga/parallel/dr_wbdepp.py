@@ -12,26 +12,14 @@ o_wb_cyc=o_wb_cyc,o_wb_stb=o_wb_stb=o_wb_stb,o_wb_addr=o_wb_addr,
 o_wb_data=o_wb_data,i_wb_ack=i_wb_ack,i_wb_stall=i_wb_stall,
 i_wb_err=i_wb_err,i_wb_data=i_wb_data,i_int=i_int)
 '''
-i_b0 = Signal(bool(0))
-i_b1 = Signal(bool(0))
-i_b2 = Signal(bool(0))
-i_b3 = Signal(bool(0))
-i_b4 = Signal(bool(0))
-i_b5 = Signal(bool(0))
-i_b6 = Signal(bool(0))
-i_b7 = Signal(bool(0))
-
-o_b0 = Signal(bool(0))
-o_b1 = Signal(bool(0))
-o_b2 = Signal(bool(0))
-o_b3 = Signal(bool(0))
-o_b4 = Signal(bool(0))
-o_b5 = Signal(bool(0))
-o_b6 = Signal(bool(0))
-o_b7 = Signal(bool(0))
-i_clk  = Signal(bool(0))
+i_rpi2B = Signal(intbv(0)[8:])
+o_rpi2B = Signal(intbv(0)[8:])
+ 
+'''
 reset = Signal(bool(0))
-reset_dly_cnt = Signal(intbv(0)[5:]) 
+reset_dly_cnt = Signal(intbv(0)[5:])
+''' 
+i_clk  = Signal(bool(0))
 #DEPP interface
 i_astb_n = Signal(bool(0))
 i_dstb_n = Signal(bool(0))
@@ -74,7 +62,7 @@ addr = Signal(intbv(0)[8:])
 i_wb_cyc = Signal(bool(0))
 i_wb_stb = Signal(bool(0))
 i_wb_we = Signal(bool(0))
-def rpi2B_io(i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,fr_depp,o_b0,o_b1,o_b2,o_b3,o_b4,o_b5,o_b6,o_b7,to_depp):
+def rpi2B_io(i_rpi2B,fr_depp,o_rpi2B,to_depp):
  
 
 
@@ -82,24 +70,24 @@ def rpi2B_io(i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,fr_depp,o_b0,o_b1,o_b2,o_b3
  
     @always_comb
     def rtl1():
-        to_depp[1:0].next = i_b0
-        to_depp[2:1].next = i_b1
-        to_depp[3:2].next = i_b2
-        to_depp[4:3].next = i_b3
-        to_depp[5:4].next = i_b4
-        to_depp[6:5].next = i_b5
-        to_depp[7:6].next = i_b6
-        to_depp[8:7].next = i_b7
+        to_depp[1:0].next = i_rpi2B[1:0]
+        to_depp[2:1].next = i_rpi2B[2:1]
+        to_depp[3:2].next = i_rpi2B[3:2]
+        to_depp[4:3].next = i_rpi2B[4:3]
+        to_depp[5:4].next = i_rpi2B[5:4]
+        to_depp[6:5].next = i_rpi2B[6:5]
+        to_depp[7:6].next = i_rpi2B[7:6]
+        to_depp[8:7].next = i_rpi2B[8:7]
     @always_comb
     def rtl2():
-        o_b0.next = fr_depp[1:0]
-        o_b1.next = fr_depp[2:1]
-        o_b2.next = fr_depp[3:2]
-        o_b3.next = fr_depp[4:3]
-        o_b4.next = fr_depp[5:4]
-        o_b5.next = fr_depp[6:5]
-        o_b6.next = fr_depp[7:6]
-        o_b7.next = fr_depp[8:7]
+        o_rpi2B[1:0].next = fr_depp[1:0]
+        o_rpi2B[2:1].next = fr_depp[2:1]
+        o_rpi2B[3:2].next = fr_depp[3:2]
+        o_rpi2B[4:3].next = fr_depp[4:3]
+        o_rpi2B[5:4].next = fr_depp[5:4]
+        o_rpi2B[6:5].next = fr_depp[6:5]
+        o_rpi2B[7:6].next = fr_depp[7:6]
+        o_rpi2B[8:7].next = fr_depp[8:7]
 
 				        	
     return myhdl.instances()
@@ -118,17 +106,15 @@ def build(args):
 	
 def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
 	o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data,
-	i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int):
-    #tb_dut_dr = dr_wbdepp(i_clk,i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,fr_depp,o_b0,o_b1,o_b2,o_b3,o_b4,o_b5,o_b6,o_b7,to_depp)
+	i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int,fr_depp,o_rpi2B,i_rpi2B,to_depp):
+ 
     
     tb_dut = _prep_cosim(args,i_clk=i_clk,i_astb_n=i_astb_n,i_dstb_n=i_dstb_n, \
     i_write_n=i_write_n,i_depp=i_depp,o_depp=o_depp,o_wait=o_wait, \
     o_wb_cyc=o_wb_cyc,o_wb_stb=o_wb_stb,o_wb_we=o_wb_we,o_wb_addr=o_wb_addr, \
     o_wb_data=o_wb_data,i_wb_ack=i_wb_ack,i_wb_stall=i_wb_stall, \
     i_wb_err=i_wb_err,i_wb_data=i_wb_data,i_int=i_int, \
-    fr_depp=fr_depp,o_b0=o_b0,o_b1=o_b1,o_b2=o_b2,o_b3=o_b3,o_b4=o_b4, \
-    o_b5=o_b5,o_b6=o_b6,o_b7=o_b7,i_b0=i_b0,i_b1=i_b1,i_b2=i_b2,i_b3=i_b3,i_b4=i_b4, \
-    i_b5=i_b5,i_b6=i_b6,i_b7=i_b7,to_depp=to_depp,i_wb_cyc=i_wb_cyc,i_wb_stb=i_wb_stb, \
+    fr_depp=fr_depp,o_rpi2B=o_rpi2B,i_rpi2B=i_rpi2B,to_depp=to_depp,i_wb_cyc=i_wb_cyc,i_wb_stb=i_wb_stb, \
     i_wb_we=i_wb_we)
     
      
@@ -148,49 +134,39 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
            yield i_clk.posedge
        for i in range(100):
            yield i_clk.posedge
-       i_b1.next = 1
-       yield i_clk.posedge
-       i_b1.next = 0
-       yield i_clk.posedge
-       
-       i_b2.next = 1
-       yield i_clk.posedge
-       i_b2.next = 0
-       yield i_clk.posedge
-       i_b3.next = 1
-       yield i_clk.posedge                      
-       i_b0.next = 1
-       yield i_clk.posedge
-       i_b0.next = 0
-       yield i_clk.posedge
-       
-       i_b4.next = 1
-       yield i_clk.posedge
-       i_b4.next = 0
-       yield i_clk.posedge
-       
-       i_b5.next = 1
-       yield i_clk.posedge
-       i_b5.next = 0
-       yield i_clk.posedge
-       i_b6.next = 1
-       yield i_clk.posedge                      
-       i_b6.next = 0
-       yield i_clk.posedge
-       i_b0.next = 0
-       yield i_clk.posedge
-       i_b7.next = 1
-       yield i_clk.posedge
-       i_b7.next = 0
-       yield i_clk.posedge
-       i_b3.next = 0
-       yield i_clk.posedge
+       print "in first loop" 
+       for i in range(256):
+	   i_rpi2B.next = i
+	   yield i_clk.posedge
+	   i_depp.next = to_depp 
+	   yield i_clk.posedge
+           if(o_wait == 0):
+	       print "setting i_wb_ack hi",o_wait       
+               i_wb_ack.next = 1
+               yield i_clk.posedge
+           elif(o_wait == 0):
+               i_wb_ack.next = 0
+               yield i_clk.posedge
+	       print "setting i_wb_ack lo",o_wait       
+               i_wb_ack.next = 1
+               print "in 1st elif",o_wait       
        for i in range(100):
            yield i_clk.posedge                     
        '''writing addres 03000508'''
-       i_depp.next = 03
+       i_rpi2B.next = 3
        yield i_clk.posedge
-              
+       i_depp.next = to_depp
+       if(o_wait == 0):
+           print "setting i_wb_ack hi",o_wait       
+           i_wb_ack.next = 1
+           yield i_clk.posedge
+       elif(o_wait == 0):
+           i_wb_ack.next = 0
+           yield i_clk.posedge
+           print "setting i_wb_ack lo",o_wait       
+           i_wb_ack.next = 1
+           print "in 1st elif",o_wait       
+           yield i_clk.posedge
        i_int.next = 1
        yield i_clk.posedge
        i_write_n.next = 1
@@ -203,8 +179,9 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        yield i_clk.posedge
        i_astb_n.next = 0
        yield i_clk.posedge
-       i_depp.next = 0
-
+       i_rpi2B.next = 0
+       yield i_clk.posedge
+       i_depp.next = to_depp 
        yield i_clk.posedge
        i_wb_ack.next = 1
        yield i_clk.posedge
@@ -223,10 +200,16 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        i_dstb_n.next = 0 
        yield i_clk.posedge
        for i in range(5):
-		   yield i_clk.posedge
-       i_depp.next = 5
+	   yield i_clk.posedge
+       i_rpi2B.next = 3
        yield i_clk.posedge
-
+       i_depp.next = to_depp 
+       yield i_clk.posedge
+       if(o_wait == 0):
+	   print o_wait       
+       elif(o_wait == 0):
+           print "in 1st elif",o_wait       
+	
        i_write_n.next = 1
        yield i_clk.posedge
        i_dstb_n.next = 1
@@ -239,9 +222,15 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        yield i_clk.posedge
        i_dstb_n.next = 0 
        yield i_clk.posedge
-       i_depp.next = 8
+       i_rpi2B.next = 8 
+       yield i_clk.posedge
+       i_depp.next = to_depp
        yield i_clk.posedge
 
+       if(o_wait == 0):
+	   print o_wait       
+       elif(o_wait == 0):
+           print "in 1st elif",o_wait       
        i_write_n.next = 1
        yield i_clk.posedge
        i_dstb_n.next = 1
@@ -254,7 +243,13 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        yield i_clk.posedge
        i_dstb_n.next = 0 
        yield i_clk.posedge
-       i_depp.next = 164
+       i_rpi2B.next = 164 
+       yield i_clk.posedge
+       i_depp.next = to_depp
+       if(o_wait == 0):
+	   print o_wait       
+       elif(o_wait == 0):
+           print "in 1st elif",o_wait       
        yield i_clk.posedge
 
        i_write_n.next = 1
@@ -273,17 +268,27 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        yield i_clk.posedge
        i_astb_n.next = 1
        yield i_clk.posedge
-       i_depp.next = 200
+       i_rpi2B.next = 200 
        yield i_clk.posedge
+       i_depp.next = to_depp
+       yield i_clk.posedge
+       if(o_wait == 0):
+	   print o_wait       
        i_write_n.next = 0
        yield i_clk.posedge
        yield i_clk.posedge
        i_astb_n.next = 0
        for i in range(5):
-		   yield i_clk.posedge	   
+	   yield i_clk.posedge
        for i in range(256):
-           i_depp.next = i
+           i_rpi2B.next = i 
            yield i_clk.posedge
+           i_depp.next = to_depp
+           yield i_clk.posedge
+           if(o_wait == 0):
+	       print o_wait       
+           elif(o_wait == 0):
+	       print "in 1st elif",o_wait       
            i_write_n.next = 0
            yield i_clk.posedge
            i_astb_n.next = 0
@@ -320,12 +325,12 @@ def tb(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        for i in range(100):
            yield i_clk.posedge
 
-       i_b3.next = 0
+       i_rpi2B3.next = 0
        yield i_clk.posedge                
        for i in range(256):
 	   o_depp.next = i
            yield i_clk.posedge
-       i_b3.next = 1
+       i_rpi2B3.next = 1
        r_depp.next = 208
        yield i_clk.posedge
        w_write.next = 1
@@ -364,7 +369,7 @@ def _prep_cosim(args, **sigs):
     print("  %s" %  (cosim))
     return cosim
 def convert_rpi2B_io():        
-    toVerilog(rpi2B_io,i_b0,i_b1,i_b2,i_b3,i_b4,i_b5,i_b6,i_b7,fr_depp,o_b0,o_b1,o_b2,o_b3,o_b4,o_b5,o_b6,o_b7,to_depp) 
+    toVerilog(rpi2B_io,i_rpi2B,fr_depp,o_rpi2B,to_depp) 
 
 def test_cosim_prep(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
 	o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data,
@@ -389,6 +394,6 @@ def main():
     if args.cosim:
         test_prep = test_cosim_prep(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait, o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data, i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int)
     if  args.cosimtrace:
-		tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data,i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int)        
+		tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,o_wb_cyc, o_wb_stb, o_wb_we, o_wb_addr, o_wb_data,i_wb_ack, i_wb_stall, i_wb_err, i_wb_data, i_int,fr_depp,o_rpi2B,i_rpi2B,to_depp)        
 if __name__ == '__main__':
     main()

@@ -13,23 +13,9 @@ module tb_wbdeppsimple1;
 	reg i_wb_stb;
 	reg i_wb_we;
     reg [7:0] fr_depp;
-    reg i_b0;
-    reg i_b1;
-    reg i_b2;
-    reg i_b3;
-    reg i_b4;
-    reg i_b5;
-    reg i_b6;
-    reg i_b7;
+    reg [7:0] i_rpi2B;
     wire [7:0] to_depp;
-    wire o_b0;
-    wire o_b1;
-    wire o_b2;
-    wire o_b3;
-    wire o_b4;
-    wire o_b5;
-    wire o_b6;
-    wire o_b7; 
+    wire [7:0] o_rpi2B;
 	// Outputs
 	wire [7:0] o_depp;
 	wire o_wait;
@@ -62,14 +48,8 @@ initial begin
         i_wb_data,
         i_int,
         fr_depp,
-        i_b0,
-        i_b1,
-        i_b2,
-        i_b3,
-        i_b4,
-        i_b5,
-        i_b6,
-        i_b7
+        i_rpi2B
+ 
     );
     $to_myhdl(
         o_depp,
@@ -80,14 +60,7 @@ initial begin
         o_wb_cyc,
         o_wb_stb,
         to_depp,
-        o_b0,
-        o_b1,
-        o_b2,
-        o_b3,
-        o_b4,
-        o_b5,
-        o_b6,
-        o_b7
+        o_rpi2B 
     );
     
 end
@@ -109,25 +82,10 @@ wbdeppsimple dut_wbdeppsimple(i_clk,
 	i_wb_err,
 	i_wb_data,
 	i_int);
-rpi2B_io tb_rpi2B_io(
-    //i_clk,
-    i_b0,
-    i_b1,
-    i_b2,
-    i_b3,
-    i_b4,
-    i_b5,
-    i_b6,
-    i_b7,
+rpi2B_io tb_rpi2B_io (
+    i_rpi2B,
     fr_depp,
-    o_b0,
-    o_b1,
-    o_b2,
-    o_b3,
-    o_b4,
-    o_b5,
-    o_b6,
-    o_b7,
+    o_rpi2B,
     to_depp
 );
 
