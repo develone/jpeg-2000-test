@@ -19,7 +19,7 @@ o_rpi2B = Signal(intbv(0)[8:])
 reset = Signal(bool(0))
 reset_dly_cnt = Signal(intbv(0)[5:])
 ''' 
-i_clk  = Signal(bool(0))
+i_clk = Signal(bool(0))
 #DEPP interface
 i_astb_n = Signal(bool(0))
 i_dstb_n = Signal(bool(0))
@@ -110,7 +110,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
  
     
     tb_dut = _prep_cosim(args,i_clk=i_clk,i_astb_n=i_astb_n,i_dstb_n=i_dstb_n, \
-    i_write_n=i_write_n,i_depp=i_depp,o_depp=o_depp,o_wait=o_wait, \
+    i_write_n=i_write_n,i_depp=to_depp,o_depp=fr_depp,o_wait=o_wait, \
     o_wb_cyc=o_wb_cyc,o_wb_stb=o_wb_stb,o_wb_we=o_wb_we,o_wb_addr=o_wb_addr, \
     o_wb_data=o_wb_data,i_wb_ack=i_wb_ack,i_wb_stall=i_wb_stall, \
     i_wb_err=i_wb_err,i_wb_data=i_wb_data,i_int=i_int, \
@@ -128,178 +128,95 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        yield i_clk.posedge		
        for i in range(100):
            yield i_clk.posedge
+       '''
        for i in range(256):
            
            fr_depp.next = i
            yield i_clk.posedge
        for i in range(100):
            yield i_clk.posedge
-       print "in first loop" 
+       
        for i in range(256):
 	   i_rpi2B.next = i
 	   yield i_clk.posedge
-	   i_depp.next = to_depp 
-	   yield i_clk.posedge
-           if(o_wait == 0):
-	       print "setting i_wb_ack hi",o_wait       
-               i_wb_ack.next = 1
-               yield i_clk.posedge
-           elif(o_wait == 0):
-               i_wb_ack.next = 0
-               yield i_clk.posedge
-	       print "setting i_wb_ack lo",o_wait       
-               i_wb_ack.next = 1
-               print "in 1st elif",o_wait       
-       for i in range(100):
-           yield i_clk.posedge                     
-       '''writing addres 03000508'''
-       i_rpi2B.next = 3
-       yield i_clk.posedge
-       i_depp.next = to_depp
-       if(o_wait == 0):
-           print "setting i_wb_ack hi",o_wait       
-           i_wb_ack.next = 1
-           yield i_clk.posedge
-       elif(o_wait == 0):
-           i_wb_ack.next = 0
-           yield i_clk.posedge
-           print "setting i_wb_ack lo",o_wait       
-           i_wb_ack.next = 1
-           print "in 1st elif",o_wait       
-           yield i_clk.posedge
-       i_int.next = 1
-       yield i_clk.posedge
-       i_write_n.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 1
-       yield i_clk.posedge
-       i_astb_n.next = 1
-       yield i_clk.posedge
-       i_write_n.next = 0
-       yield i_clk.posedge
-       i_astb_n.next = 0
-       yield i_clk.posedge
+       '''
+       '''writing addres 00000001 1st byte'''
+       
        i_rpi2B.next = 0
        yield i_clk.posedge
-       i_depp.next = to_depp 
-       yield i_clk.posedge
-       i_wb_ack.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 0 
-       yield i_clk.posedge
+       #i_int.next = 1
+       #yield i_clk.posedge
        i_write_n.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 1
-       yield i_clk.posedge
-       i_astb_n.next = 1 
-       yield i_clk.posedge
-       i_write_n.next = 0
-       yield i_clk.posedge
-       i_astb_n.next = 0
-       yield i_clk.posedge
-       i_dstb_n.next = 0 
-       yield i_clk.posedge
-       for i in range(5):
-	   yield i_clk.posedge
-       i_rpi2B.next = 3
-       yield i_clk.posedge
-       i_depp.next = to_depp 
-       yield i_clk.posedge
-       if(o_wait == 0):
-	   print o_wait       
-       elif(o_wait == 0):
-           print "in 1st elif",o_wait       
-	
-       i_write_n.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 1
-       yield i_clk.posedge
-       i_astb_n.next = 1 
-       yield i_clk.posedge
-       i_write_n.next = 0
-       yield i_clk.posedge
-       i_astb_n.next = 0
-       yield i_clk.posedge
-       i_dstb_n.next = 0 
-       yield i_clk.posedge
-       i_rpi2B.next = 8 
-       yield i_clk.posedge
-       i_depp.next = to_depp
-       yield i_clk.posedge
-
-       if(o_wait == 0):
-	   print o_wait       
-       elif(o_wait == 0):
-           print "in 1st elif",o_wait       
-       i_write_n.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 1
-       yield i_clk.posedge
-       i_astb_n.next = 1 
-       yield i_clk.posedge
-       i_write_n.next = 0
-       yield i_clk.posedge
-       i_astb_n.next = 0
-       yield i_clk.posedge
-       i_dstb_n.next = 0 
-       yield i_clk.posedge
-       i_rpi2B.next = 164 
-       yield i_clk.posedge
-       i_depp.next = to_depp
-       if(o_wait == 0):
-	   print o_wait       
-       elif(o_wait == 0):
-           print "in 1st elif",o_wait       
-       yield i_clk.posedge
-
-       i_write_n.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 1
-       yield i_clk.posedge
-       i_astb_n.next = 1 
-       yield i_clk.posedge
-       i_write_n.next = 0
-       yield i_clk.posedge
-       i_astb_n.next = 0
-       yield i_clk.posedge
-       i_dstb_n.next = 0 
        yield i_clk.posedge
        i_dstb_n.next = 1
        yield i_clk.posedge
        i_astb_n.next = 1
        yield i_clk.posedge
-       i_rpi2B.next = 200 
-       yield i_clk.posedge
-       i_depp.next = to_depp
-       yield i_clk.posedge
-       if(o_wait == 0):
-	   print o_wait       
        i_write_n.next = 0
        yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+       i_dstb_n.next = 0
+       yield i_clk.posedge
+       
+       '''writing addres 00000001 2nd byte'''
+       
+       i_rpi2B.next = 0
+       yield i_clk.posedge
+       #i_int.next = 1
+       #yield i_clk.posedge
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+       i_write_n.next = 0
        yield i_clk.posedge
        i_astb_n.next = 0
-       for i in range(5):
-	   yield i_clk.posedge
-       for i in range(256):
-           i_rpi2B.next = i 
-           yield i_clk.posedge
-           i_depp.next = to_depp
-           yield i_clk.posedge
-           if(o_wait == 0):
-	       print o_wait       
-           elif(o_wait == 0):
-	       print "in 1st elif",o_wait       
-           i_write_n.next = 0
-           yield i_clk.posedge
-           i_astb_n.next = 0
-           yield i_clk.posedge
-           i_dstb_n.next = 0 
-           yield i_clk.posedge
-           i_dstb_n.next = 1
-           yield i_clk.posedge
-           i_astb_n.next = 1
-           yield i_clk.posedge                          
-           i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 0
+       yield i_clk.posedge
+
+       '''writing addres 00000001 3rd byte'''
+       
+       i_rpi2B.next = 0
+       yield i_clk.posedge
+       #i_int.next = 1
+       #yield i_clk.posedge
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+       i_write_n.next = 0
+       yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+       i_dstb_n.next = 0
+       yield i_clk.posedge
+
+       '''writing addres 00000001 4th byte'''
+       
+       i_rpi2B.next = 1
+       yield i_clk.posedge
+       #i_int.next = 1
+       #yield i_clk.posedge
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_dstb_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
+       yield i_clk.posedge
+       i_write_n.next = 0
+       yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+       i_dstb_n.next = 0
+       yield i_clk.posedge
+
+       for i in range(100):
            yield i_clk.posedge
        raise StopSimulation
     print("back from prep cosim")
