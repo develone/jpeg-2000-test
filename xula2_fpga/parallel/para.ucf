@@ -1,0 +1,49 @@
+#	'''
+#	GPIO FOR XULA2-LX9
+#	16 GPIO FOR INPUT OR OUTPUT
+#	CH0 R7  CH1 R15 CH2 R16 CH3 M15 CH4 M16 CH5 K15 CH6  K16 CH7 J16
+#	CH8 J14 CH9 F15 CH10 F16 CH11 C16 CH12 C15 CH13 B16 CH14 B15 CH22 H1
+#	CH23 H2 CH24 F1 CH25 F2 CH26 E1
+#	CH27 E2 CH28 C1 CH29 B1 B30 B2 CH31 A2
+#	
+#	 
+#	'''
+#	spi CH23 H2 CH24 F1 CH25 F2 CH8 J14
+#Data to FPGA
+#CH2 BCM19
+NET "i_rpi2B<0>" LOC = "R16";
+#CH3 BCM16
+NET "i_rpi2B<1>" LOC = "M15;
+#CH4 BCM13
+NET "i_rpi2B<2>" LOC = "M16";
+#CH5 BCM6
+NET "i_rpi2B<3>" LOC = "K15";
+#CH6 BCM12 
+NET "i_rpi2B<3>" LOC = "K16";
+#CH7 BCM7
+NET "i_rpi2B<4>" LOC = "J16";
+#CH9 BCM25 
+NET "i_rpi2B<6>" LOC = "F15" ;
+#CH10 BCM24
+NET "i_rpi2B<7>" LOC = "F16" ;
+
+#Data from FPGA
+#CH26 BCM22
+NET "o_rpi2B<0>" LOC = "E1" ;
+#CH27 BCM27
+NET "o_rpi2B<1>" LOC = "E2" ;
+#CH28 BCM17
+NET "o_rpi2B<2>" LOC = "C1" ;
+#CH29 BCM4
+NET "o_rpi2B<3>" LOC = "B1" ;
+#CH30 BCM2 ???????????
+NET "o_rpi2B<3>" LOC = "F2" ;
+#CH31 BCM2 ???????????
+NET "o_rpi2B<4>" LOC = "A2" ;
+#
+NET "o_rpi2B<6>" LOC = "" ;
+#
+NET "o_rpi2B<7>" LOC = "" ;
+
+#
+NET "clock" LOC = "A9" ;
