@@ -135,7 +135,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        
        '''writing address 01020304 1st byte'''
        
-       i_rpi2B.next = 0xde
+       i_rpi2B.next = 0 
        yield i_clk.posedge
        i_write_n.next = 0
        yield i_clk.posedge
@@ -153,7 +153,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        while(o_wait):
            print "wait for o_wait",o_wait
            yield i_clk.posedge
-       i_rpi2B.next = 0xad
+       i_rpi2B.next = 0
        yield i_clk.posedge
        i_write_n.next = 0
        yield i_clk.posedge
@@ -171,7 +171,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        while(o_wait):
            print "wait for o_wait",o_wait
            yield i_clk.posedge
-       i_rpi2B.next = 0xbe
+       i_rpi2B.next = 0
        yield i_clk.posedge
        i_write_n.next = 0
        yield i_clk.posedge
@@ -190,7 +190,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
            print "wait for o_wait",o_wait
            yield i_clk.posedge
 			   
-       i_rpi2B.next = 0xbf
+       i_rpi2B.next = 0
        yield i_clk.posedge
        i_write_n.next = 0
        yield i_clk.posedge
