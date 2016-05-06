@@ -101,32 +101,48 @@ o_wb_we,o_wb_addr,o_wb_data,i_wb_ack,i_wb_stall,i_wb_err,i_wb_data,i_int):
     def rtl1():        
         r_dstb_n.next = x_dstb_n
         r_astb_n.next = x_astb_n
-        r_write_n = x_write_n
+        r_write_n.next = x_write_n
         r_depp.next = x_depp
       
     @always(i_clk.posedge)
     def rtl2():        
         l_dstb_n.next = r_dstb_n
         l_astb_n.next = r_astb_n
- 
+    @always_comb
+    def rtl4():
+		astb.next = (not r_astb_n)and(l_astb_n)
+		
+    @always_comb
+    def rtl5():
+		dstb.next = (not r_dstb_n)and(l_dstb_n)
+
+    @always_comb
+    def rtl6():
+		w_write.next = (not r_write_n)
+				 
     @always(i_clk.posedge)
     def rtl3():
         if( w_write and  astb):
-			addr.next = r_depp
-        if( w_write and	dstb and addr[8:3]==5):
-            if(addr[3:0]):
+            addr.next = r_depp
+        if( w_write and	dstb and (addr[8:3]==5)):
+            if(addr[3:0]==0):
                 o_wb_addr[32:24].next = r_depp
+	    elif(addr[3:0]==1):	
                 o_wb_addr[24:16].next = r_depp
+            elif(addr[3:0]==2):	    
                 o_wb_addr[16:8].next = r_depp
+            elif(addr[3:0]==3):	
                 o_wb_addr[8:0].next = r_depp
-                
+            elif(addr[3:0]==4):	
                 o_wb_data[32:24].next = r_depp
+            elif(addr[3:0]==5):    
                 o_wb_data[24:16].next = r_depp
+            elif(addr[3:0]==6):    
                 o_wb_data[16:8].next = r_depp
+            else:    
                 o_wb_data[8:0].next = r_depp
-	'''		
  
-    '''    			    		       
+    			    		       
     return myhdl.instances()
 def toplevel(i_clk, i_rpi2B,fr_depp,o_rpi2B,to_depp):
     dut_rpi2B_io = rpi2B_io(i_clk,i_rpi2B,fr_depp,o_rpi2B,to_depp)
@@ -147,14 +163,8 @@ def toplevel(i_clk, i_rpi2B,fr_depp,o_rpi2B,to_depp):
                 #i_int.next = 1
         else:
             reset.next = 0
-            '''
-            x_dstb_n.next = 1
-            r_dstb_n.next = 1
-            l_dstb_n.next = 1
-            x_astb_n.next = 1
-            r_astb_n.next = 1
-            l_astb_n.next = 1
-            i_int.next = 0'''
+ 
+    
 
     dut_my_wbdepp = my_wbdepp(i_clk,i_astb_n,i_dstb_n,i_write_n,to_depp,\
     fr_depp,o_wait,o_wb_cyc,o_wb_stb, \
@@ -162,9 +172,10 @@ def toplevel(i_clk, i_rpi2B,fr_depp,o_rpi2B,to_depp):
     return myhdl.instances()
 
 def tb(i_clk, i_rpi2B,fr_depp,o_rpi2B,to_depp ):
-    dut_rpi2B_io = toplevel(i_clk,i_rpi2B,fr_depp,o_rpi2B,to_depp)
-    dut_my_wbdepp = my_wbdepp(i_clk,i_astb_n,i_dstb_n,i_write_n,to_depp,fr_depp,o_wait,o_wb_cyc,o_wb_stb, \
-o_wb_we,o_wb_addr,o_wb_data,i_wb_ack,i_wb_stall,i_wb_err,i_wb_data,i_int)
+    #dut_rpi2B_io = toplevel(i_clk,i_rpi2B,fr_depp,o_rpi2B,to_depp)
+    dut_my_wbdepp = my_wbdepp(i_clk,i_astb_n,i_dstb_n,i_write_n,i_depp, \
+    o_depp,o_wait,o_wb_cyc,o_wb_stb,o_wb_we,o_wb_addr,o_wb_data,i_wb_ack, \
+    i_wb_stall,i_wb_err,i_wb_data,i_int)
 
     @always(delay(10))
     def clkgen():
@@ -183,202 +194,69 @@ o_wb_we,o_wb_addr,o_wb_data,i_wb_ack,i_wb_stall,i_wb_err,i_wb_data,i_int)
        
        '''writing addres 01020304 1st byte'''
        
-       i_rpi2B.next = 1
-       yield i_clk.posedge
-       
-       yield i_clk.posedge
-       
-
-
-
-       i_write_n.next = 0
-       yield i_clk.posedge
-       i_dstb_n.next = 0
-       yield i_clk.posedge
-       i_astb_n.next = 0
-       yield i_clk.posedge
-
-       i_write_n.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 1
-       yield i_clk.posedge
-       i_astb_n.next = 1
-       yield i_clk.posedge
-
-       while(o_wait):
-           print "wait for o_wait",o_wait
-           yield i_clk.posedge
-       i_rpi2B.next = 2
-       yield i_clk.posedge
-       
-       yield i_clk.posedge
-
- 
-
-       i_write_n.next = 0
-       yield i_clk.posedge
-       i_dstb_n.next = 0
-       yield i_clk.posedge
-       i_astb_n.next = 0
-       yield i_clk.posedge
-
-       i_write_n.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 1
-       yield i_clk.posedge
-       i_astb_n.next = 1
-       yield i_clk.posedge
-
-       while(o_wait):
-           print "wait for o_wait",o_wait
-           yield i_clk.posedge
-       i_rpi2B.next = 3
-       yield i_clk.posedge
-       
-       yield i_clk.posedge
-
- 
-
-       i_write_n.next = 0
-       yield i_clk.posedge
-       i_dstb_n.next = 0
-       yield i_clk.posedge
-       i_astb_n.next = 0
-       yield i_clk.posedge
-
-       i_write_n.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 1
-       yield i_clk.posedge
-       i_astb_n.next = 1
-       yield i_clk.posedge
-
-       while(o_wait):
-           print "wait for o_wait",o_wait
-           yield i_clk.posedge
-			   
-       i_rpi2B.next = 4
-       yield i_clk.posedge
-       
-       yield i_clk.posedge
-
- 
-
-       i_write_n.next = 0
-       yield i_clk.posedge
-       i_dstb_n.next = 0
-       yield i_clk.posedge
-       i_astb_n.next = 0
-       yield i_clk.posedge
-
-       i_write_n.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 1
-       yield i_clk.posedge
-       i_astb_n.next = 1
-       yield i_clk.posedge
-
-       while(o_wait):
-           print "wait for o_wait",o_wait
-           yield i_clk.posedge
-			    
-       '''no i_astb_n 
        i_depp.next = 1
        yield i_clk.posedge
-       
-       yield i_clk.posedge
-
- 
        i_write_n.next = 0
        yield i_clk.posedge
-       #i_astb_n.next = 0
+       i_astb_n.next = 0
        yield i_clk.posedge
-       i_dstb_n.next = 0
-       yield i_clk.posedge
-
        i_write_n.next = 1
        yield i_clk.posedge
-       #i_astb_n.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 1
+       i_astb_n.next = 1
        yield i_clk.posedge
 
        while(o_wait):
            print "wait for o_wait",o_wait
            yield i_clk.posedge
        i_depp.next = 2
-       yield i_clk.posedge
-     
-       yield i_clk.posedge
-
- 
-
        i_write_n.next = 0
        yield i_clk.posedge
-       #i_astb_n.next = 0
+       i_astb_n.next = 0
        yield i_clk.posedge
-       i_dstb_n.next = 0
-       yield i_clk.posedge
-
        i_write_n.next = 1
        yield i_clk.posedge
        i_astb_n.next = 1
        yield i_clk.posedge
-       i_dstb_n.next = 1
+
+       while(o_wait):
+           print "wait for o_wait",o_wait
+           yield i_clk.posedge
+       i_depp.next = 2
+       i_write_n.next = 0
+       yield i_clk.posedge
+       i_astb_n.next = 0
+       yield i_clk.posedge
+       i_write_n.next = 1
+       yield i_clk.posedge
+       i_astb_n.next = 1
        yield i_clk.posedge
 
        while(o_wait):
            print "wait for o_wait",o_wait
            yield i_clk.posedge
        i_depp.next = 3
-       yield i_clk.posedge
-       
-       yield i_clk.posedge
-
- 
-
        i_write_n.next = 0
        yield i_clk.posedge
-       #i_astb_n.next = 0
+       i_astb_n.next = 0
        yield i_clk.posedge
-       i_dstb_n.next = 0
-       yield i_clk.posedge
-
        i_write_n.next = 1
        yield i_clk.posedge
-       #i_astb_n.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 1
+       i_astb_n.next = 1
        yield i_clk.posedge
 
        while(o_wait):
            print "wait for o_wait",o_wait
            yield i_clk.posedge
-			   
-       i_rpi2B.next = 4
-       yield i_clk.posedge
-       
-       yield i_clk.posedge
-
- 
-
+       i_depp.next = 4
        i_write_n.next = 0
        yield i_clk.posedge
-       #i_astb_n.next = 0
+       i_astb_n.next = 0
        yield i_clk.posedge
-       i_dstb_n.next = 0
-       yield i_clk.posedge
-
        i_write_n.next = 1
        yield i_clk.posedge
-       #i_astb_n.next = 1
-       yield i_clk.posedge
-       i_dstb_n.next = 1
+       i_astb_n.next = 1
        yield i_clk.posedge
 
-       while(o_wait):
-           print "wait for o_wait",o_wait
-           yield i_clk.posedge'''
        raise StopSimulation   		    
     return myhdl.instances()	    
 #toVerilog(my_wbdepp,i_clk,i_astb_n,i_dstb_n,i_write_n,i_depp,o_depp,o_wait,o_wb_cyc,o_wb_stb,o_wb_we,o_wb_addr,o_wb_data,i_wb_ack,i_wb_stall,i_wb_err,i_wb_data,i_int)
