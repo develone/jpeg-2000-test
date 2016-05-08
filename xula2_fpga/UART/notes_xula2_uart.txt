@@ -13,7 +13,7 @@ Date:   Sun Apr 3 16:35:02 2016 -0500
     Added additional comments on which myhdl version to use, the first minor rel
 
 Latest build of vidal@ws009:~/wkg/jpeg-2000-test/xula2_fpga/UART$ 
-xilinx/xula2_blinky_host.bit  04/08/16
+xilinx/xula2.bit  05/08/16
 
 vidal@ws009:~/wkg/jpeg-2000-test/xula2_fpga/UART$
 python xula2_blinky_host.py --build
