@@ -5,11 +5,12 @@ from argparse import Namespace
 from rhea.system import Reset
 reset = Reset(0, active=1, async=False)
 
-'''Include RPi2B interface'''
-from dr_wbdepp import rpi2B_io
+'''Include RPi2B interface
+This is used in dr_wbdepp.py
+also used in my_wbdepp.py
+also used in depp.py'''
+from rpi2B import *
 
-i_rpi2B = Signal(intbv(0)[8:])
-o_rpi2B = Signal(intbv(0)[8:])
 i_clk  = Signal(bool(0))
 #DEPP interface
 i_astb_n = Signal(bool(0))
