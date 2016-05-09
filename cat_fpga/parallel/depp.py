@@ -50,8 +50,8 @@ def build(args):
 	
 def cliparse():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--brd", default='xula2_stickit_mb')
-    parser.add_argument("--flow", default="ise")
+    parser.add_argument("--brd", default='catboard')
+    parser.add_argument("--flow", default="iceriver")
     parser.add_argument("--build", default=False, action='store_true')
     parser.add_argument("--trace", default=False, action='store_true')
     parser.add_argument("--convert", default=False, action='store_true')
