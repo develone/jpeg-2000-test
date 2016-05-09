@@ -45,8 +45,8 @@ def build(args):
     print(("%s %s") % (brd, brd.device))
     flow = brd.get_flow(para_rpi2B)
     flow.run()
-    info = flow.get_utilization()
-    pprint(info)	
+    #info = flow.get_utilization()
+    #pprint(info)	
 	
 def cliparse():
     parser = argparse.ArgumentParser()
