@@ -5,20 +5,12 @@ import argparse
 from argparse import Namespace
 from rhea.build.boards import get_board
 from pprint import pprint
-'''
-tb_dut = _prep_cosimi_clk=i_clk,i_astb_n=i_astb_n,i_dstb_n=i_dstb_n,
-i_write_n=i_write_n,i_depp=i_depp,o_depp=o_depp,o_wait=o_wait,
-o_wb_cyc=o_wb_cyc,o_wb_stb=o_wb_stb=o_wb_stb,o_wb_addr=o_wb_addr,
-o_wb_data=o_wb_data,i_wb_ack=i_wb_ack,i_wb_stall=i_wb_stall,
-i_wb_err=i_wb_err,i_wb_data=i_wb_data,i_int=i_int)
-'''
-i_rpi2B = Signal(intbv(0)[8:])
-o_rpi2B = Signal(intbv(0)[8:])
+'''Include RPi2B interface
+This is used in dr_wbdepp.py
+also used in my_wbdepp.py
+also used in depp.py'''
+from rpi2B import *
  
-'''
-reset = Signal(bool(0))
-reset_dly_cnt = Signal(intbv(0)[5:])
-''' 
 i_clk = Signal(bool(0))
 #DEPP interface
 i_astb_n = Signal(bool(0))
@@ -26,8 +18,7 @@ i_dstb_n = Signal(bool(0))
 i_write_n = Signal(bool(0))
 o_depp = Signal(intbv(0)[8:])
 i_depp = Signal(intbv(0)[8:])
-fr_depp = Signal(intbv(0)[8:])
-to_depp = Signal(intbv(0)[8:])
+ 
 o_wait = Signal(bool(0))
 
 #Wishbone master interface
@@ -62,6 +53,7 @@ addr = Signal(intbv(0)[8:])
 i_wb_cyc = Signal(bool(0))
 i_wb_stb = Signal(bool(0))
 i_wb_we = Signal(bool(0))
+'''
 def rpi2B_io(i_rpi2B,fr_depp,o_rpi2B,to_depp):
  
 
@@ -90,7 +82,7 @@ def rpi2B_io(i_rpi2B,fr_depp,o_rpi2B,to_depp):
         o_rpi2B[8:7].next = fr_depp[8:7]
 
 				        	
-    return myhdl.instances()
+    return myhdl.instances()'''
 def build(args):
 	'''
 	GPIO FOR XULA2-LX9
@@ -135,74 +127,78 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
        
        '''writing address 01020304 1st byte'''
        
-       i_rpi2B.next = 0xde
+       #i_rpi2B.next = 0xde
+       i_rpi2B.next = 0x00
        yield i_clk.posedge
-       i_write_n.next = 0
+       i_astb_n.next = 0
        yield i_clk.posedge
        #i_dstb_n.next = 0
        #yield i_clk.posedge
        #i_dstb_n.next = 1
        #yield i_clk.posedge       
-       i_astb_n.next = 0
-       yield i_clk.posedge
-       i_write_n.next = 1
+       i_write_n.next = 0
        yield i_clk.posedge
        i_astb_n.next = 1
+       yield i_clk.posedge
+       i_write_n.next = 1
        yield i_clk.posedge
 
        while(o_wait):
            print "wait for o_wait",o_wait
            yield i_clk.posedge
-       i_rpi2B.next = 0xad
+       #i_rpi2B.next = 0xad    
+       i_rpi2B.next = 0x00
        yield i_clk.posedge
-       i_write_n.next = 0
+       i_astb_n.next = 0
        yield i_clk.posedge
        #i_dstb_n.next = 0
        #yield i_clk.posedge
        #i_dstb_n.next = 1
        #yield i_clk.posedge       
-       i_astb_n.next = 0
-       yield i_clk.posedge
-       i_write_n.next = 1
+       i_write_n.next = 0
        yield i_clk.posedge
        i_astb_n.next = 1
+       yield i_clk.posedge
+       i_write_n.next = 1
        yield i_clk.posedge
 
        while(o_wait):
            print "wait for o_wait",o_wait
            yield i_clk.posedge
-       i_rpi2B.next = 0xbe
+       #i_rpi2B.next = 0xbe    
+       i_rpi2B.next = 0x00
        yield i_clk.posedge
-       i_write_n.next = 0
+       i_astb_n.next = 0
        yield i_clk.posedge
        #i_dstb_n.next = 0
        #yield i_clk.posedge
        #i_dstb_n.next = 1
        #yield i_clk.posedge       
-       i_astb_n.next = 0
-       yield i_clk.posedge
-       i_write_n.next = 1
+       i_write_n.next = 0
        yield i_clk.posedge
        i_astb_n.next = 1
+       yield i_clk.posedge
+       i_write_n.next = 1
        yield i_clk.posedge
 
        while(o_wait):
            print "wait for o_wait",o_wait
            yield i_clk.posedge
 			   
-       i_rpi2B.next = 0xbf
+       #i_rpi2B.next = 0xbf
+       i_rpi2B.next = 0x00
        yield i_clk.posedge
-       i_write_n.next = 0
+       i_astb_n.next = 0
        yield i_clk.posedge
        #i_dstb_n.next = 0
        #yield i_clk.posedge
        #i_dstb_n.next = 1
        #yield i_clk.posedge       
-       i_astb_n.next = 0
-       yield i_clk.posedge
-       i_write_n.next = 1
+       i_write_n.next = 0
        yield i_clk.posedge
        i_astb_n.next = 1
+       yield i_clk.posedge
+       i_write_n.next = 1
        yield i_clk.posedge
 
        while(o_wait):
@@ -211,6 +207,7 @@ def tb_cosim(args,i_clk,i_astb_n, i_dstb_n, i_write_n,i_depp, o_depp, o_wait,
 
        '''writing data 01020304 1st byte'''
        
+       i_rpi2B.next = 1
        i_rpi2B.next = 1
        yield i_clk.posedge
        i_write_n.next = 0
