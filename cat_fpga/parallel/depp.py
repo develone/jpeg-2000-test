@@ -35,13 +35,13 @@ def build(args):
 	CH27 E2 CH28 C1 CH29 B1 B30 B2 CH31 A2  
     '''
     brd = get_board(args.brd)
-    brd.device = 'XC6SLX9'
-    brd.add_port_name('fr_rpi2B', 'pm2', slice(0, 8))
-    brd.add_port_name('to_rpi2B', 'pm2', slice(0, 8))
-    brd.add_port('a_astb', 'A2')
-    brd.add_port('a_dstb', 'B2')
-    brd.add_port('a_write', 'B1')
-    brd.add_port('a_wait', 'C1')
+    #brd.device = 'XC6SLX9'
+    brd.add_port_name('fr_rpi2B', 'hdr1', slice(0, 8))
+    brd.add_port_name('to_rpi2B', 'hdr1', slice(9, 16))
+    brd.add_port('a_astb', 'R16')
+    brd.add_port('a_dstb', 'T16')
+    brd.add_port('a_write', 'T9')
+    brd.add_port('a_wait', 'P9')
     print(("%s %s") % (brd, brd.device))
     flow = brd.get_flow(para_rpi2B)
     flow.run()
@@ -51,7 +51,7 @@ def build(args):
 def cliparse():
     parser = argparse.ArgumentParser()
     parser.add_argument("--brd", default='catboard')
-    parser.add_argument("--flow", default="iceriver")
+    #parser.add_argument("--flow", default="iceriver")
     parser.add_argument("--build", default=False, action='store_true')
     parser.add_argument("--trace", default=False, action='store_true')
     parser.add_argument("--convert", default=False, action='store_true')
