@@ -1,6 +1,32 @@
 import pigpio
 
 pi = pigpio.pi()
+def to_rpi2B():
+    '''
+    to_rpi2B 
+    data from FPGA to rpi2B
+    output [7:0] to_rpi2B; 
+    '''
+    v = 0
+    b0 = 11
+    b1 = 10
+    b2 = 27
+    b3 = 4
+    b4 = 19
+    b5 = 22
+    b6 = 17
+    b7 = 3
+    v7 = pi.read(b7)*128
+    v6 = pi.read(b6)*64
+    v5 = pi.read(b5)*32
+    v4 = pi.read(b4)*16
+    v3 = pi.read(b3)*8
+    v2 = pi.read(b2)*4
+    v1 = pi.read(b1)*2
+    v0 = pi.read(b0)
+    v = v7 + v6 +v5 + v4 + v3 + v2 + v1 + v0
+    print 'to_rpi2B',v
+    
 def pullup_a_astb():
     #CH31 a_dstb
     GPIO=2
@@ -67,6 +93,7 @@ ck_a_wait()
 print 'testing making a_wait go hi' 
 pullup_a_astb()
 pullup_a_dstb()
+to_rpi2B()
 GPIO=15 
 v = pi.read(GPIO)
 print v
