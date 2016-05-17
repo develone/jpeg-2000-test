@@ -46,8 +46,24 @@ def fr_rpi2B(to_fpga):
     b4 = 18
     b5 = 20
     b6 = 16
-    b7 = 16  
-    print bin(to_fpga,*)
+    b7 = 7 
+    bits = [b0,b1,b2,b3,b4,b5,b6,b7]
+    ones = []
+    #print bin(to_fpga,8)
+    for i in range(8):
+		x = to_fpga & 2**i
+		if (x == 0):
+                   ones.append(0)
+                else:
+                   ones.append(1)
+		#print i, x, bits[i]
+    #print ones, bits
+    for i in range(8):
+       GPIO = bits[i]
+       #print GPIO, ones[i]
+       pi.write(GPIO,ones[i])
+       yy = pi.read(GPIO)
+       #print i, yy, GPIO 
 '''
 NET "fr_rpi2B<0>" LOC = "K16" ; BCM12
 NET "fr_rpi2B<1>" LOC = "R16" ; BCM19
@@ -146,16 +162,20 @@ to_rpi2B()
 GPIO=15 
 v = pi.read(GPIO)
 print v
-a_astb_lo_hi()
-a_write_lo_hi()
-GPIO=15 
-v = pi.read(GPIO)
-print v
-ck_a_wait()
-a_dstb_lo_hi()
-a_write_lo_hi()
-GPIO=15 
-v = pi.read(GPIO)
-print v
-ck_a_wait()
-to_rpi2B()
+for jj in range(128):
+    print 'fr_rpi2B',jj
+	fr_rpi2B(jj)
+	a_astb_lo_hi()
+	a_write_lo_hi()
+	GPIO = 15
+	v = pi.read(GPIO)
+	print 'a_wait', v
+for jj in range(128):
+    print 'fr_rpi2B',jj
+	fr_rpi2B(jj)
+	a_dstb_lo_hi()
+	a_write_lo_hi()
+	GPIO = 15
+	v = pi.read(GPIO)
+	print 'a_wait', v
+        to_rpi2B()
