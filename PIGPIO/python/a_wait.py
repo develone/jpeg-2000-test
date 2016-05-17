@@ -49,6 +49,23 @@ def a_astb_lo_hi():
     v = pi.read(GPIO)
     print 'CH31 A2','BCM2','a_astb',v   	
 
+def pullup_a_write():
+    #CH33 a_write
+    GPIO=5
+    pi.set_pull_up_down(GPIO, pigpio.PUD_UP)
+    v = pi.read(GPIO)
+    print 'CH22 H1','BCM5','a_write',v
+    
+def a_write_lo_hi():
+    GPIO=5
+    pi.write(GPIO,0)
+    v = pi.read(GPIO)
+    print 'CH22 H1','BCM5','a_write',v   	
+    pi.write(GPIO,1)
+    v = pi.read(GPIO)
+    print 'CH22 H1','BCM5','a_write',v   	
+
+
 def pullup_a_dstb():
     #CH14 a_dstb
     GPIO=14
@@ -93,12 +110,13 @@ ck_a_wait()
 print 'testing making a_wait go hi' 
 pullup_a_astb()
 pullup_a_dstb()
+pullup_a_write()
 to_rpi2B()
 GPIO=15 
 v = pi.read(GPIO)
 print v
 a_astb_lo_hi()
-a_dstb_lo_hi()
+a_write_lo_hi()
 GPIO=15 
 v = pi.read(GPIO)
 print v
