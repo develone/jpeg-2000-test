@@ -121,3 +121,10 @@ GPIO=15
 v = pi.read(GPIO)
 print v
 ck_a_wait()
+a_dstb_lo_hi()
+a_write_lo_hi()
+GPIO=15 
+v = pi.read(GPIO)
+print v
+ck_a_wait()
+to_rpi2B()
