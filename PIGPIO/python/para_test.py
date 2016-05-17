@@ -127,3 +127,41 @@ v = pi.read(GPIO)
 print 'CH30 B2','BCM3','to_rpi2B<7>',v
 
 
+
+def to_rpi2B():
+    '''
+    to_rpi2B 
+    data from FPGA to rpi2B
+    output [7:0] to_rpi2B; 
+    '''
+    v = 0
+    b0 = 11
+    b1 = 10
+    b2 = 27
+    b3 = 4
+    b4 = 19
+    b5 = 22
+    b6 = 17
+    b7 = 3
+    v7 = pi.read(b7)*128
+    v6 = pi.read(b6)*64
+    v5 = pi.read(b5)*32
+    v4 = pi.read(b4)*16
+    v3 = pi.read(b3)*8
+    v2 = pi.read(b2)*4
+    v1 = pi.read(b1)*2
+    v0 = pi.read(b0)
+    v = v7 + v6 +v5 + v4 + v3 + v2 + v1 + v0
+    print 'to_rpi2B',v
+
+def fr_rpi2B(to_fpga):
+    b0 = 12
+    b1 = 19
+    b2 = 13
+    b3 = 6
+    b4 = 18
+    b5 = 20
+    b6 = 16
+    b7 = 16
+to_rpi2B()
+
