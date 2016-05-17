@@ -1,4 +1,5 @@
 import pigpio
+from myhdl import bin
 
 pi = pigpio.pi()
 def to_rpi2B():
@@ -12,7 +13,7 @@ def to_rpi2B():
     b1 = 10
     b2 = 27
     b3 = 4
-    b4 = 19
+    b4 = 9
     b5 = 22
     b6 = 17
     b7 = 3
@@ -26,7 +27,37 @@ def to_rpi2B():
     v0 = pi.read(b0)
     v = v7 + v6 +v5 + v4 + v3 + v2 + v1 + v0
     print 'to_rpi2B',v
-    
+'''
+NET "to_rpi2B<0>" LOC = "H2" ; BCM11
+NET "to_rpi2B<1>" LOC = "F2" ; BCM10
+NET "to_rpi2B<2>" LOC = "E2" ; BCM27
+NET "to_rpi2B<3>" LOC = "B1" ; BCM4
+NET "to_rpi2B<4>" LOC = "F1" ; BCM9
+NET "to_rpi2B<5>" LOC = "E1" ; BCM22
+NET "to_rpi2B<6>" LOC = "C1" ; BCM17
+NET "to_rpi2B<7>" LOC = "B2" ; BCM3
+'''
+
+def fr_rpi2B(to_fpga):
+    b0 = 12
+    b1 = 19
+    b2 = 13
+    b3 = 6
+    b4 = 18
+    b5 = 20
+    b6 = 16
+    b7 = 16  
+    print bin(to_fpga,*)
+'''
+NET "fr_rpi2B<0>" LOC = "K16" ; BCM12
+NET "fr_rpi2B<1>" LOC = "R16" ; BCM19
+NET "fr_rpi2B<2>" LOC = "M16" ; BCM13
+NET "fr_rpi2B<3>" LOC = "K15" ; BCM6 
+NET "fr_rpi2B<4>" LOC = "C15" ; BCM18
+NET "fr_rpi2B<5>" LOC = "R15" ; BCM20
+NET "fr_rpi2B<6>" LOC = "M15" ; BCM16
+NET "fr_rpi2B<7>" LOC = "J16" ; BCM7
+'''      
 def pullup_a_astb():
     #CH31 a_dstb
     GPIO=2
