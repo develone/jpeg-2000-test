@@ -167,15 +167,11 @@ for jj in range(128):
     fr_rpi2B(jj)
     a_astb_lo_hi()
     a_write_lo_hi()
-    GPIO = 15
-    v = pi.read(GPIO)
-    print 'a_wait', v
+    ck_a_wait()
 for jj in range(128):
     print 'fr_rpi2B',jj
     fr_rpi2B(jj)
     a_dstb_lo_hi()
     a_write_lo_hi()
-    GPIO = 15
-    v = pi.read(GPIO)
-    print 'a_wait', v
+    ck_a_wait()
     to_rpi2B()
