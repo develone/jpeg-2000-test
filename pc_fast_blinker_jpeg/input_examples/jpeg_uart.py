@@ -16,31 +16,35 @@ im, m, pix = rd_img(imgfn)
 w, h = im.size
 '''set the baud rate to 115200 on RPi2B'''
 
-#ser = serial.Serial ("/dev/ttyAMA0")    
-#ser.baudrate = 115200
-#file_out = open("data_to_fpga.bin","wb")
+ser = serial.Serial ("/dev/ttyAMA0")    
+ser.baudrate = 115200
+file_out = open("data_to_fpga.bin","wb")
 #file_in = open("data_from_fpga.bin","wb") 
 def wr2file(pkt):
-	ml = []
-	for bb in pkt.rawbytes:
-		#file_out.write('bb')
-		#print bb
-		ml.append(bb)
-		#print ml
-        ba = bytearray(ml)
-        #file_out.write(ba) 
+    ml = []
+    for bb in pkt.rawbytes:
+	    ml.append(bb)
+    print ml
+    ba = bytearray(ml)
+    file_out.write(ba) 
 
 '''
 first 16 addresses are the sending to lifting steps
 next 2 address are you set upd on/off
 next 8 addres returns the 16 lift steps
 '''
-addr = [0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64,68,72,76,80,84,88,92,96,100,104,108]
+addr = [0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64,68,72,76,80,84,88,92,96,100]
 ez = [2,34,66,98,130,162,194,226]
 oz = [1,33,65,97,129,161,193,225]
-def get_results():
+last_set = 0
+def get_results(last_set):
+	print 'last_set in get results',last_set
+        if (last_set == 15):
+           end = 25
+        else:
+           end = 26
 	v = 0
-	for r in range(17,27,1):
+	for r in range(16,end,1):
 	    print 'results_addr',addr[r]
 	    pkt = CommandPacket(False, address=addr[r], vals=[v])
             wr2file(pkt)
@@ -75,8 +79,10 @@ def jpeg():
         		saved_row.append(row)
         		print row, v, hex(v),addr_index 
         	print saved_row
-        	get_results()
-        	
+        	last_set = len(saved_row)  
+                print 'last_set',last_set
+        	get_results(last_set)
+        
         for i in range(8):
         	addr_index=0
         	saved_row = []
@@ -94,6 +100,24 @@ def jpeg():
         		saved_row.append(row)
         		print row, v, hex(v),addr_index 
         	print saved_row
-        	get_results()
+        	last_set = len(saved_row)  
+                print 'last_set',last_set
+        	get_results(last_set)
+        
+reply = []
 jpeg()
- 
+file_out.close()
+'''
+file_out = open("data_to_fpga.bin","rb")
+file_in = open("data_from_fpga.bin","wb")
+
+for j in range(105060):
+	data = file_out.read(12)
+	for i in range(12):
+		
+		#print (data[i])
+		ser.write(data[i])
+	reply = ser.read(12)
+        #file_in.write(reply) 
+	print "this is the reply", reply
+'''
