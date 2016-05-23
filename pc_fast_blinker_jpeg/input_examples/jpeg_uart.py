@@ -18,20 +18,26 @@ w, h = im.size
 
 ser = serial.Serial ("/dev/ttyAMA0")    
 ser.baudrate = 115200
-file_out = open("data_to_fpga.bin","wb")
+file_out = open("samples.bin","wb")
+file_out1 = open("results.bin","wb")
 #file_in = open("data_from_fpga.bin","wb") 
-def wr2file(pkt):
+def wr2file(pkt,fout):
     ml = []
+    ml_hex = []
     for bb in pkt.rawbytes:
 	    ml.append(bb)
-    print ml
+	    ml_hex.append(hex(bb))
+    print ml_hex
     ba = bytearray(ml)
-    file_out.write(ba) 
+    if(fout == file_out):
+        file_out.write(ba)
+    else:
+	file_out1.write(ba)    
 
 '''
-first 16 addresses are the sending to lifting steps
+first 16 addresses are the sending samples to lifting steps
 next 2 address are you set upd on/off
-next 8 addres returns the 16 lift steps
+next 8 address returns the results 16 lift steps
 '''
 addr = [0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64,68,72,76,80,84,88,92,96,100]
 ez = [2,34,66,98,130,162,194,226]
@@ -47,14 +53,17 @@ def get_results(last_set):
 	for r in range(16,end,1):
 	    print 'results_addr',addr[r]
 	    pkt = CommandPacket(False, address=addr[r], vals=[v])
-            wr2file(pkt)
+            wr2file(pkt,file_out1)
 
 def lsr(row,col,m,flag):
     x0 = m[row-1][col] << 18
     x1 = m[row][col] << 9
     x2 = m[row+1][col]
     f = flag << 27
-    
+    if(flag==7):
+	print 'lift',m[row][col] - ( (m[row-1][col] + m[row+1][col])>>1 )
+    else:
+	print 'lift',m[row][col] + ( (m[row-1][col] + m[row+1][col] + 2)>>2 )
     print ("%d %s %s %s" % (row, hex(m[row-1][col]), hex(m[row][col]), hex(m[row+1][col])))
     return (f+x0+x1+x2) 
 def jpeg():
@@ -74,7 +83,7 @@ def jpeg():
         		v = lsr(row,col,m,flag)
         		print addr[addr_index]
         		pkt = CommandPacket(False, address=addr[addr_index], vals=[v])
-                        wr2file(pkt)
+                        wr2file(pkt,file_out)
         		addr_index+=1
         		saved_row.append(row)
         		print row, v, hex(v),addr_index 
@@ -95,7 +104,7 @@ def jpeg():
         		v = lsr(row,col,m,flag)
         		print addr[addr_index]
         		pkt = CommandPacket(False, address=addr[addr_index], vals=[v])
-                        wr2file(pkt)
+                        wr2file(pkt,file_out)
         		addr_index+=1
         		saved_row.append(row)
         		print row, v, hex(v),addr_index 
@@ -107,6 +116,7 @@ def jpeg():
 reply = []
 jpeg()
 file_out.close()
+file_out1.close()
 '''
 file_out = open("data_to_fpga.bin","rb")
 file_in = open("data_from_fpga.bin","wb")
