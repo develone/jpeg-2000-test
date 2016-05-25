@@ -34,7 +34,12 @@ reply = ser.read(12)
 x = binascii.b2a_hex(reply)
 print x
 start_time = time.ctime()
-
+def convert_9bit(xx):
+	y = int(xx,16)
+	if (y > 255):
+	   y = y - 512
+	return y
+	      
 '''sample 0'''
 '''***************************************************************'''
 print 'sample 0'
@@ -366,10 +371,10 @@ x = binascii.b2a_hex(reply)
 print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 #print 'reading results 2 & 3 01fc 01fc'
 file = open("wr.bin","wb")
 file.write("\xde\x02\x00\x00\x00\x4C\x04\xca\x00\x00\x00\x00")
@@ -404,10 +409,10 @@ x = binascii.b2a_hex(reply)
 print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 #print 'reading results 4 & 5 0000 0000'
 file = open("wr.bin","wb")
 file.write("\xde\x02\x00\x00\x00\x50\x04\xca\x00\x00\x00\x00")
@@ -449,10 +454,10 @@ x = binascii.b2a_hex(reply)
 print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x 
+print x,convert_9bit(x) 
  
 #print 'reading results 6 & 7 0000 0000 '
 file = open("wr.bin","wb")
@@ -489,10 +494,10 @@ x = binascii.b2a_hex(reply)
 print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 #print 'reading results 8 & 9 0004 0000'
 file = open("wr.bin","wb")
 file.write("\xde\x02\x00\x00\x00\x58\x04\xca\x00\x00\x00\x00")
@@ -528,10 +533,10 @@ x = binascii.b2a_hex(reply)
 print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 
 #print 'reading results 10 & 11 0000 0000 '
 file = open("wr.bin","wb")
@@ -568,10 +573,10 @@ x = binascii.b2a_hex(reply)
 print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 
 #print 'reading results 12 & 13 0004 0004'
 file = open("wr.bin","wb")
@@ -608,10 +613,10 @@ x = binascii.b2a_hex(reply)
 print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 
 #print 'reading results 14 & 15 0008 01F8'
 file = open("wr.bin","wb")
@@ -647,10 +652,10 @@ x = binascii.b2a_hex(reply)
 print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+print x,convert_9bit(x)
 '''***************************************************************'''
 
 
