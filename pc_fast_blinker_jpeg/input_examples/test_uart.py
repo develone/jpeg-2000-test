@@ -332,6 +332,25 @@ for i in range(12):
 reply = ser.read(12)
 x = binascii.b2a_hex(reply)
 print x
+#print 'reading results 0 & 1  01fc 0000 '
+file = open("wr.bin","wb")
+file.write("\xde\x02\x00\x00\x00\x48\x04\xca\x00\x00\x00\x00")
+file.close
+file = open("wr.bin","rb")
+data = file.read(12)
+x = binascii.b2a_hex(data)
+#print x
+for i in range(12):
+	ser.write(data[i])
+reply = ser.read(8)
+x = binascii.b2a_hex(reply)
+#print x
+reply = ser.read(2)
+x = binascii.b2a_hex(reply)
+#print x
+reply = ser.read(2)
+x = binascii.b2a_hex(reply)
+#print x
 print 'reading results 0 & 1  01fc 0000 '
 file = open("wr.bin","wb")
 file.write("\xde\x02\x00\x00\x00\x48\x04\xca\x00\x00\x00\x00")
@@ -351,25 +370,25 @@ print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
 print x
-print 'reading results 0 & 1  01fc 0000 '
+#print 'reading results 2 & 3 01fc 01fc'
 file = open("wr.bin","wb")
-file.write("\xde\x02\x00\x00\x00\x48\x04\xca\x00\x00\x00\x00")
+file.write("\xde\x02\x00\x00\x00\x4C\x04\xca\x00\x00\x00\x00")
 file.close
 file = open("wr.bin","rb")
 data = file.read(12)
 x = binascii.b2a_hex(data)
-print x
+#print x
 for i in range(12):
 	ser.write(data[i])
 reply = ser.read(8)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 print 'reading results 2 & 3 01fc 01fc'
 file = open("wr.bin","wb")
 file.write("\xde\x02\x00\x00\x00\x4C\x04\xca\x00\x00\x00\x00")
@@ -389,33 +408,14 @@ print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
 print x
-print 'reading results 2 & 3 01fc 01fc'
-file = open("wr.bin","wb")
-file.write("\xde\x02\x00\x00\x00\x4C\x04\xca\x00\x00\x00\x00")
-file.close
-file = open("wr.bin","rb")
-data = file.read(12)
-x = binascii.b2a_hex(data)
-print x
-for i in range(12):
-	ser.write(data[i])
-reply = ser.read(8)
-x = binascii.b2a_hex(reply)
-print x
-reply = ser.read(2)
-x = binascii.b2a_hex(reply)
-print x
-reply = ser.read(2)
-x = binascii.b2a_hex(reply)
-print x
-print 'reading results 4 & 5 0000 0000'
+#print 'reading results 4 & 5 0000 0000'
 file = open("wr.bin","wb")
 file.write("\xde\x02\x00\x00\x00\x50\x04\xca\x00\x00\x00\x00")
 file.close
 file = open("wr.bin","rb")
 data = file.read(12)
 x = binascii.b2a_hex(data)
-print x
+#print x
 
 file.close
 file = open("wr.bin","rb")
@@ -423,13 +423,13 @@ for i in range(12):
 	ser.write(data[i])
 reply = ser.read(8)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 
 print 'reading results 4 & 5 0000 0000'
 file = open("wr.bin","wb")
@@ -454,25 +454,25 @@ reply = ser.read(2)
 x = binascii.b2a_hex(reply)
 print x 
  
-print 'reading results 6 & 7 0000 0000 '
+#print 'reading results 6 & 7 0000 0000 '
 file = open("wr.bin","wb")
 file.write("\xde\x02\x00\x00\x00\x54\x04\xca\x00\x00\x00\x00")
 file.close
 file = open("wr.bin","rb")
 data = file.read(12)
 x = binascii.b2a_hex(data)
-print x
+#print x
 for i in range(12):
 	ser.write(data[i])
 reply = ser.read(8)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 
 print 'reading results 6 & 7 0000 0000 '
 file = open("wr.bin","wb")
@@ -493,25 +493,25 @@ print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
 print x
-print 'reading results 8 & 9 0004 0000'
+#print 'reading results 8 & 9 0004 0000'
 file = open("wr.bin","wb")
 file.write("\xde\x02\x00\x00\x00\x58\x04\xca\x00\x00\x00\x00")
 file.close
 file = open("wr.bin","rb")
 data = file.read(12)
 x = binascii.b2a_hex(data)
-print x
+#print x
 for i in range(12):
 	ser.write(data[i])
 reply = ser.read(8)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 
 print 'reading results 8 & 9 0004 0000'
 file = open("wr.bin","wb")
@@ -532,6 +532,26 @@ print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
 print x
+
+#print 'reading results 10 & 11 0000 0000 '
+file = open("wr.bin","wb")
+file.write("\xde\x02\x00\x00\x00\x5C\x04\xca\x00\x00\x00\x00")
+file.close
+file = open("wr.bin","rb")
+data = file.read(12)
+x = binascii.b2a_hex(data)
+#print x
+for i in range(12):
+	ser.write(data[i])
+reply = ser.read(8)
+x = binascii.b2a_hex(reply)
+#print x
+reply = ser.read(2)
+x = binascii.b2a_hex(reply)
+#print x
+reply = ser.read(2)
+x = binascii.b2a_hex(reply)
+#print x
 
 print 'reading results 10 & 11 0000 0000 '
 file = open("wr.bin","wb")
@@ -553,25 +573,25 @@ reply = ser.read(2)
 x = binascii.b2a_hex(reply)
 print x
 
-print 'reading results 10 & 11 0000 0000 '
+#print 'reading results 12 & 13 0004 0004'
 file = open("wr.bin","wb")
-file.write("\xde\x02\x00\x00\x00\x5C\x04\xca\x00\x00\x00\x00")
+file.write("\xde\x02\x00\x00\x00\x60\x04\xca\x00\x00\x00\x00")
 file.close
 file = open("wr.bin","rb")
 data = file.read(12)
 x = binascii.b2a_hex(data)
-print x
+#print x
 for i in range(12):
 	ser.write(data[i])
 reply = ser.read(8)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 
 print 'reading results 12 & 13 0004 0004'
 file = open("wr.bin","wb")
@@ -593,45 +613,25 @@ reply = ser.read(2)
 x = binascii.b2a_hex(reply)
 print x
 
-print 'reading results 12 & 13 0004 0004'
-file = open("wr.bin","wb")
-file.write("\xde\x02\x00\x00\x00\x60\x04\xca\x00\x00\x00\x00")
-file.close
-file = open("wr.bin","rb")
-data = file.read(12)
-x = binascii.b2a_hex(data)
-print x
-for i in range(12):
-	ser.write(data[i])
-reply = ser.read(8)
-x = binascii.b2a_hex(reply)
-print x
-reply = ser.read(2)
-x = binascii.b2a_hex(reply)
-print x
-reply = ser.read(2)
-x = binascii.b2a_hex(reply)
-print x
-
-print 'reading results 14 & 15 0008 01F8'
+#print 'reading results 14 & 15 0008 01F8'
 file = open("wr.bin","wb")
 file.write("\xde\x02\x00\x00\x00\x64\x04\xca\x00\x00\x00\x00")
 file.close
 file = open("wr.bin","rb")
 data = file.read(12)
 x = binascii.b2a_hex(data)
-print x
+#print x
 for i in range(12):
 	ser.write(data[i])
 reply = ser.read(8)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 reply = ser.read(2)
 x = binascii.b2a_hex(reply)
-print x
+#print x
 print 'reading results 14 & 15 0008 01F8'
 file = open("wr.bin","wb")
 file.write("\xde\x02\x00\x00\x00\x64\x04\xca\x00\x00\x00\x00")
