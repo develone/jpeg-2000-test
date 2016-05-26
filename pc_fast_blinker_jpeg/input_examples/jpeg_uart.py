@@ -3,7 +3,7 @@ from rhea.utils.command_packet import PACKET_LENGTH
 import binascii
 import serial
 from PIL import Image
-
+'''reads image [row][col]'''
 def rd_img(imgfn): 
     im = Image.open(imgfn)
     pix = im.load()
@@ -11,38 +11,13 @@ def rd_img(imgfn):
     #print m.__sizeof__()
     m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
     return im, m, pix
-imgfn = "../../lena_256.png"
-im, m, pix = rd_img(imgfn)
-w, h = im.size
-'''set the baud rate to 115200 on RPi2B'''
-
-ser = serial.Serial ("/dev/ttyAMA0")    
-ser.baudrate = 115200
-file_out = open("samples.bin","wb")
-file_out1 = open("results.bin","wb")
-#file_in = open("data_from_fpga.bin","wb") 
-def wr2file(pkt,fout):
-    ml = []
-    ml_hex = []
-    for bb in pkt.rawbytes:
-	    ml.append(bb)
-	    ml_hex.append(hex(bb))
-    print ml_hex
-    ba = bytearray(ml)
-    if(fout == file_out):
-        file_out.write(ba)
-    else:
-	file_out1.write(ba)    
-
-'''
-first 16 addresses are the sending samples to lifting steps
-next 2 address are you set upd on/off
-next 8 address returns the results 16 lift steps
-'''
-addr = [0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64,68,72,76,80,84,88,92,96,100]
-ez = [2,34,66,98,130,162,194,226]
-oz = [1,33,65,97,129,161,193,225]
-last_set = 0
+'''converts string '01fc' to -4'''
+def convert_9bit(xx):
+	y = int(xx,16)
+	if (y > 255):
+	   y = y - 512
+	return y
+''' '''
 def get_results(last_set):
 	print 'last_set in get results',last_set
         if (last_set == 15):
@@ -55,6 +30,23 @@ def get_results(last_set):
 	    pkt = CommandPacket(False, address=addr[r], vals=[v])
             wr2file(pkt,file_out1)
 
+def wr2file(pkt,fout):
+	
+    ml = []
+    ml_hex = []
+    for bb in pkt.rawbytes:
+	    ml.append(bb)
+	    ml_hex.append(hex(bb))
+    print ml_hex
+    ba = bytearray(ml)
+    if(fout == file_out):
+        file_out.write(ba)
+    else:
+	file_out1.write(ba)
+'''row col m flag
+['0xde', '0x2', '0x0', '0x0', '0x0', '0x2c', '0x4', '0xca', '0x38', '0xf0', '0x68', '0x3c']
+0x38f0683c
+'''	    
 def lsr(row,col,m,flag):
     x0 = m[row-1][col] << 18
     x1 = m[row][col] << 9
@@ -65,12 +57,13 @@ def lsr(row,col,m,flag):
     else:
 	print 'lift',m[row][col] + ( (m[row-1][col] + m[row+1][col] + 2)>>2 )
     print ("%d %s %s %s" % (row, hex(m[row-1][col]), hex(m[row][col]), hex(m[row+1][col])))
-    return (f+x0+x1+x2) 
+    return (f+x0+x1+x2)
+     
 def jpeg():
     for cc in range(255):
         col = cc
         print 'col ',cc
-        #file_out = open("data_to_fpga.bin","wb")
+         
         for i in range(8):
         	addr_index=0
         	saved_row = []
@@ -112,22 +105,23 @@ def jpeg():
         	last_set = len(saved_row)  
                 print 'last_set',last_set
         	get_results(last_set)
-        
+ 
+
+addr = [0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64,68,72,76,80,84,88,92,96,100]
+ez = [2,34,66,98,130,162,194,226]
+oz = [1,33,65,97,129,161,193,225]
+
+imgfn = "../../lena_256.png"
+im, m, pix = rd_img(imgfn)
+w, h = im.size
+ 
+file_out = open("samples.bin","wb")
+file_out1 = open("results.bin","wb")
+
+
+last_set = 0        
 reply = []
 jpeg()
 file_out.close()
 file_out1.close()
-'''
-file_out = open("data_to_fpga.bin","rb")
-file_in = open("data_from_fpga.bin","wb")
-
-for j in range(105060):
-	data = file_out.read(12)
-	for i in range(12):
-		
-		#print (data[i])
-		ser.write(data[i])
-	reply = ser.read(12)
-        #file_in.write(reply) 
-	print "this is the reply", reply
-'''
+ 
