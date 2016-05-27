@@ -3,6 +3,31 @@ from rhea.utils.command_packet import PACKET_LENGTH
 import binascii
 import serial
 from PIL import Image
+def seq_to_img(m, pix):
+    ''' Copy matrix m to pixel buffer pix.
+    Assumes m has the same number of rows and cols as pix. '''
+    for row in range(len(m)):
+        for col in range(len(m[row])):
+            pix[col,row] = m[row][col]
+
+def de_interleave(m,h,w):
+	# de-interleave
+	temp_bank = [[0]*w for i in range(h)]
+	for row in range(w):
+		for col in range(h):
+            # k1 and k2 scale the vals
+            # simultaneously transpose the matrix when deinterleaving
+			if row % 2 == 0:
+
+				temp_bank[col][row//2] =  m[row][col]
+			else:
+
+				temp_bank[col][row//2 + h//2] =  m[row][col]
+    # write temp_bank to s:
+	for row in range(w):
+		for col in range(h):
+			m[row][col] = temp_bank[row][col]
+	return m
 '''reads image [row][col]'''
 def rd_img(imgfn): 
     im = Image.open(imgfn)
@@ -324,4 +349,6 @@ reply = []
 jpeg()
 file_out.close()
 file_out1.close()
- 
+de_interleave(m,h,w)
+seq_to_img(m, pix) 
+im.save("test1_256_fwt.png") 
