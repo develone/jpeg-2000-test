@@ -37,6 +37,13 @@ def get_results(last_set,row,col,sam):
             ba = bytearray(ml)
             x = binascii.b2a_hex(ba)
             print x
+            if (r == 16 or r==17):
+		ser.write(ba)
+		reply = ser.read(12)
+		ser.write(ba)
+		reply = ser.read(12)
+		x = binascii.b2a_hex(reply)
+		print x
             if (r == 18):
                 print sam[0],sam[1]
                 ser.write(ba)
