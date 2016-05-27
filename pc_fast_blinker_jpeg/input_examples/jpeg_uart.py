@@ -18,26 +18,181 @@ def convert_9bit(xx):
 	   y = y - 512
 	return y
 ''' '''
-def get_results(last_set):
+def get_results(last_set,row,col,sam):
 	#print 'last_set in get results',last_set
+	#print row,col
         if (last_set == 15):
            end = 25
         else:
            end = 26
 	v = 0
-	for r in range(16,end,1):
-	    #print 'results_addr',addr[r]
-	    pkt = CommandPacket(False, address=addr[r], vals=[v])
-            wr2file(pkt,file_out1)
-
-def wr2file(pkt,fout):
 	
+	for r in range(16,end,1):
+	    print 'results_addr',addr[r],row,col,sam
+	    pkt = CommandPacket(False, address=addr[r], vals=[v])
+            #wr2file(pkt,file_out1,row,col,r)
+            ml = []
+            for bb in pkt.rawbytes:
+	            ml.append(bb)
+            ba = bytearray(ml)
+            x = binascii.b2a_hex(ba)
+            print x
+            if (r == 18):
+                print sam[0],sam[1]
+                ser.write(ba)
+                reply = ser.read(12)
+                ser.write(ba)
+                reply = ser.read(8)
+                x = binascii.b2a_hex(reply)
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[0]][col]=convert_9bit(x)
+                print sam[0],m[sam[0]][col]
+                print 'reply',x,convert_9bit(x) 
+                #print 'reply',x
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[1]][col]=convert_9bit(x)
+                print sam[1],m[sam[1]][col]
+                print 'reply',x,convert_9bit(x)
+            elif (r == 19):
+                print sam[2],sam[3]
+                ser.write(ba)
+                reply = ser.read(12)
+                ser.write(ba)
+                reply = ser.read(8)
+                x = binascii.b2a_hex(reply)
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[2]][col]=convert_9bit(x)
+                print sam[2],m[sam[2]][col]                
+                print 'reply',x,convert_9bit(x) 
+                #print 'reply',x
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[3]][col]=convert_9bit(x)
+                print sam[3],m[sam[3]][col]                
+                print 'reply',x,convert_9bit(x)
+            elif (r == 20):
+                print sam[4],sam[5]
+                ser.write(ba)
+                reply = ser.read(12)
+                ser.write(ba)
+                reply = ser.read(8)
+                x = binascii.b2a_hex(reply)
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[4]][col]=convert_9bit(x)
+                print sam[4],m[sam[4]][col]                
+                print 'reply',x,convert_9bit(x) 
+                #print 'reply',x
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[5]][col]=convert_9bit(x)
+                print sam[5],m[sam[5]][col]                
+                print 'reply',x,convert_9bit(x)
+            elif (r == 21):
+                print sam[6],sam[7]
+                ser.write(ba)
+                reply = ser.read(12)
+                ser.write(ba)
+                reply = ser.read(8)
+                x = binascii.b2a_hex(reply)
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[6]][col]=convert_9bit(x)
+                print sam[6],m[sam[6]][col]                
+                print 'reply',x,convert_9bit(x) 
+                #print 'reply',x
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[7]][col]=convert_9bit(x)
+                print sam[7],m[sam[7]][col]                
+                print 'reply',x,convert_9bit(x)
+            elif (r == 22):
+                print sam[8],sam[9]
+                ser.write(ba)
+                reply = ser.read(12)
+                ser.write(ba)
+                reply = ser.read(8)
+                x = binascii.b2a_hex(reply)
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[8]][col]=convert_9bit(x)
+                print sam[8],m[sam[8]][col]                
+                print 'reply',x,convert_9bit(x) 
+                #print 'reply',x
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[9]][col]=convert_9bit(x)
+                print sam[9],m[sam[9]][col]                
+                print 'reply',x,convert_9bit(x)
+            elif (r == 23):
+                print sam[10],sam[11]
+                ser.write(ba)
+                reply = ser.read(12)
+                ser.write(ba)
+                reply = ser.read(8)
+                x = binascii.b2a_hex(reply)
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[10]][col]=convert_9bit(x)
+                print sam[10],m[sam[10]][col]                
+                print 'reply',x,convert_9bit(x) 
+                #print 'reply',x
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[11]][col]=convert_9bit(x)
+                print sam[11],m[sam[11]][col]                
+                print 'reply',x,convert_9bit(x)
+            elif (r == 24):
+                print sam[12],sam[13]
+                ser.write(ba)
+                reply = ser.read(12)
+                ser.write(ba)
+                reply = ser.read(8)
+                x = binascii.b2a_hex(reply)
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[12]][col]=convert_9bit(x)
+                print sam[12],m[sam[12]][col]                
+                print 'reply',x,convert_9bit(x) 
+                #print 'reply',x
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[13]][col]=convert_9bit(x)
+                print sam[13],m[sam[13]][col]                
+                print 'reply',x,convert_9bit(x)
+            elif (r == 25):
+                print sam[14],sam[15]
+                ser.write(ba)
+                reply = ser.read(12)
+                ser.write(ba)
+                reply = ser.read(8)
+                x = binascii.b2a_hex(reply)
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[14]][col]=convert_9bit(x)
+                print sam[14],m[sam[14]][col]                
+                print 'reply',x,convert_9bit(x) 
+                #print 'reply',x
+                reply = ser.read(2)
+                x = binascii.b2a_hex(reply)
+                m[sam[15]][col]=convert_9bit(x)
+                print sam[15],m[sam[15]][col]                
+                print 'reply',x,convert_9bit(x)
+        
+	
+       
+            
+
+def wr2file(pkt,fout,row,col):
     ml = []
     ml_hex = []
     for bb in pkt.rawbytes:
 	    ml.append(bb)
 	    ml_hex.append(hex(bb))
-    #print ml_hex
+    print ml_hex
     ba = bytearray(ml)
     if(fout == file_out):
         file_out.write(ba)
@@ -45,8 +200,10 @@ def wr2file(pkt,fout):
         ser.write(ba)
         reply = ser.read(12)
         x = binascii.b2a_hex(reply)
-        #print 'reply',x
+        print 'reply',x
     else:
+        print row,col
+        
         file_out1.write(ba)
         ser.write(ba)
         reply = ser.read(12)
@@ -54,13 +211,20 @@ def wr2file(pkt,fout):
         ser.write(ba)
         reply = ser.read(8)
         x = binascii.b2a_hex(reply)
+      
+        reply = ser.read(2)
+        x = binascii.b2a_hex(reply)
+        print 'reply',convert_9bit(x) 
         #print 'reply',x
         reply = ser.read(2)
         x = binascii.b2a_hex(reply)
-        print 'reply',x
-        reply = ser.read(2)
-        x = binascii.b2a_hex(reply)
-        print 'reply',x
+        print 'reply',convert_9bit(x)
+        #print 'reply',x
+        
+        
+	
+       
+			
 '''row col m flag
 ['0xde', '0x2', '0x0', '0x0', '0x0', '0x2c', '0x4', '0xca', '0x38', '0xf0', '0x68', '0x3c']
 0x38f0683c
@@ -90,20 +254,24 @@ def jpeg():
         	if (i<7):
         		zzz = ez[i] + 32
         	else:
-        		zzz = ez[i] + 30	
+        		zzz = ez[i] + 30
+        	sam = []		
         	for row in range(ez[i],zzz,2):
+			sam.append(row)
         		flag = 7
         		v = lsr(row,col,m,flag)
         		#print addr[addr_index]
+        		
         		pkt = CommandPacket(False, address=addr[addr_index], vals=[v])
-                        wr2file(pkt,file_out)
+                        wr2file(pkt,file_out,row,col)
         		addr_index+=1
         		saved_row.append(row)
-        		#print row, v, hex(v),addr_index 
+        		#print row,col, v, hex(v),addr_index 
         	#print saved_row
         	last_set = len(saved_row)  
                 #print 'last_set',last_set
-        	get_results(last_set)
+                print sam    
+        	get_results(last_set,row,col,sam)
         
         for i in range(8):
         	addr_index=0
@@ -111,20 +279,24 @@ def jpeg():
         	if (i<7):
         		zzz = oz[i] + 32
         	else:
-        		zzz = oz[i] + 30	
+        		zzz = oz[i] + 30
+        	sam = []		
         	for row in range(oz[i],zzz,2):
-        		flag = 7
+			sam.append(row)
+        		flag = 6
         		v = lsr(row,col,m,flag)
         		#print addr[addr_index]
+        		
         		pkt = CommandPacket(False, address=addr[addr_index], vals=[v])
-                        wr2file(pkt,file_out)
+                        wr2file(pkt,file_out,row,col)
         		addr_index+=1
         		saved_row.append(row)
         		#print row, v, hex(v),addr_index 
         	#print saved_row
         	last_set = len(saved_row)  
                 #print 'last_set',last_set
-        	get_results(last_set)
+                print sam    
+        	get_results(last_set,row,col,sam)
  
 
 addr = [0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64,68,72,76,80,84,88,92,96,100]
