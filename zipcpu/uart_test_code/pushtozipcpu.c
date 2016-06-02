@@ -16,7 +16,7 @@ for(i=0; i<256*256; i++) {
 // Read red
 do {
 // Read a character from the UART port
-//ch = sys->io_uart_rx;
+ch = sys->io_uart_rx;
 
 // Repeat while ...
 //   bit 0x0100 is set, indicating we read from an
