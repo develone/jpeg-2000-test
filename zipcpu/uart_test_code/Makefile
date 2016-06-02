@@ -10,9 +10,9 @@ HEADERS := $(wildcard *.h)
 # CFLAGS  := -O3 -fdump-tree-all -fdump-rtl-all -Wall -Wextra -nostdlib -fno-builtin
 CFLAGS  := -O3 -Wall -Wextra -nostdlib -fno-builtin
 # CFLAGS  := -Wall -Wextra -nostdlib -fno-builtin
-LDFLAGS := -T xula.ld -Wl,-Map,$(OBJDIR)/dwt_steps.map
+LDFLAGS := -T xula.ld -Wl,-Map,$(OBJDIR)/h2.map
 
-all: $(OBJDIR)/ dwt_steps
+all: $(OBJDIR)/ h2
 $(OBJDIR)/:
 	@bash -c "if [ ! -e $(OBJDIR) ]; then mkdir -p $(OBJDIR); fi"
 
@@ -51,6 +51,6 @@ tags: $(SOURCES) $(HEADERS)
 
 .PHONY: clean
 clean:
-	rm -rf $(OBJDIR)/ dwt_steps
+	rm -rf $(OBJDIR)/ h2
 
 -include $(OBJDIR)/depends.txt
