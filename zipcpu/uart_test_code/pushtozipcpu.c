@@ -1,18 +1,20 @@
 #include "board.h"
 
-void entry(void) {
+int entry(void) {
 // Set us up for 4MBaud, one stop bit, no parity, 8-bit characters
 //   -- based upon an 80MHz system clock
+    int ch;
     register IOSPACE	*sys = (IOSPACE *)0x0100;
     sys->io_uart_ctrl = 20;
     sys->io_bustimer = 60000000;
     sys->io_pic = INT_TIMER;
     ch = sys->io_uart_rx;
+    return ch;
 }
 
 void zip_read_image(char *imbuf) {
 int i, ch, val;
-
+ch = entry();
 // Set a timer to abort in case things go bad
 // We'll set our abort for about 750 ms into the future ... that should
 //   be plenty of time to transfer the image
