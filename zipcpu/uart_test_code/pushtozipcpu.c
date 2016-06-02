@@ -1,9 +1,13 @@
 #include "board.h"
 
-void zip_setup_serial_port(void) {
+void entry(void) {
 // Set us up for 4MBaud, one stop bit, no parity, 8-bit characters
 //   -- based upon an 80MHz system clock
+    register IOSPACE	*sys = (IOSPACE *)0x0100;
     sys->io_uart_ctrl = 20;
+    sys->io_bustimer = 60000000;
+    sys->io_pic = INT_TIMER;
+    ch = sys->io_uart_rx;
 }
 
 void zip_read_image(char *imbuf) {
@@ -12,17 +16,17 @@ int i, ch, val;
 // Set a timer to abort in case things go bad
 // We'll set our abort for about 750 ms into the future ... that should
 //   be plenty of time to transfer the image
-sys->io_bustimer = 60000000;
+//sys->io_bustimer = 60000000;
 // Let's also shut down all interrupts, and clear the timer interrupt
 // That way we can poll the interrupt timer later, to see if things
 // have gone poorly.
-sys->io_pic = INT_TIMER;
+//sys->io_pic = INT_TIMER;
  
 for(i=0; i<256*256; i++) {
 // Read red
 do {
 // Read a character from the UART port
-ch = sys->io_uart_rx;
+//ch = sys->io_uart_rx;
 
 // Repeat while ...
 //   bit 0x0100 is set, indicating we read from an

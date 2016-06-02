@@ -14,8 +14,10 @@ asm("\t.section\t.start\n"
 #define	INT_UARTRX	0x040
 #define	INT_UARTTX	0x080
 
+int INT_TIMER;
+int ch;
 typedef	struct	{
-	volatile int		io_reserved, io_version, io_pic;
+	volatile int		io_reserved, io_version, io_pic,ch;
 	volatile unsigned	*io_buserr;
 	volatile unsigned	io_bustimer;
 	volatile unsigned	io_rtcdate;
