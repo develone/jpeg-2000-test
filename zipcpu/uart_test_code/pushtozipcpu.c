@@ -4,7 +4,7 @@ int entry(void) {
 // Set us up for 4MBaud, one stop bit, no parity, 8-bit characters
 //   -- based upon an 80MHz system clock
     int ch;
-    register IOSPACE	*sys = (IOSPACE *)0x0100;
+    //register IOSPACE	*sys = (IOSPACE *)0x0100;
     sys->io_uart_ctrl = 20;
     sys->io_bustimer = 60000000;
     sys->io_pic = INT_TIMER;
