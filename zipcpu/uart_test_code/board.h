@@ -1,10 +1,6 @@
-asm("\t.section\t.start\n"
-	"\t.global\t_start\n"
-	"\t.type\t_start,@function\n"
-	"_start:\n"
-	"LDI\t_top_of_stack,SP\n"
-	"\tBRA\tentry\n"
-	"\t.section\t.text");
+#ifndef	BOARD_H
+#define	BOARD_H
+
 
 #define	INT_RTC		0x002
 #define	INT_FLASH	0x004
@@ -13,11 +9,10 @@ asm("\t.section\t.start\n"
 #define	INT_PWM		0x020
 #define	INT_UARTRX	0x040
 #define	INT_UARTTX	0x080
+#define	INT_TIMER	0x100
 
-int INT_TIMER;
-int ch;
 typedef	struct	{
-	volatile int		io_reserved, io_version, io_pic,ch;
+	volatile int		io_reserved, io_version, io_pic;
 	volatile unsigned	*io_buserr;
 	volatile unsigned	io_bustimer;
 	volatile unsigned	io_rtcdate;
@@ -29,4 +24,19 @@ typedef	struct	{
 				io_flash_status, io_flash_devid;
 	volatile unsigned	io_rtc_clock, io_rtc_timer, io_rtc_stopwatch,
 				io_rtc_alarm;
+	volatile unsigned	io_scope, io_scopd;
 } IOSPACE;
+
+static IOSPACE	* const sys = (IOSPACE *)0x0100;
+
+typedef	struct	{
+	volatile unsigned	sd_ctrl, sd_data, sd_fifo[2];
+} SDCARD;
+
+static SDCARD	* const sd = (SDCARD *)0x0120;
+
+#define	SDRAM	(void *)0x800000
+#define	FLASH	(void *)0x040000
+#define	CLOCKFREQHZ	80000000
+
+#endif
