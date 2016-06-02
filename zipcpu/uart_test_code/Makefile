@@ -1,4 +1,4 @@
-all:
+:
 
 CROSS   := zip-
 CC      := $(CROSS)gcc
@@ -28,10 +28,10 @@ $(OBJDIR)/%.txt: $(OBJDIR)/%.o
 $(OBJDIR)/%.s: %.c
 	$(CC) -S $(CFLAGS) -c $< -o $@
 
-dwt_steps: $(OBJECTS) xula.ld
+h2: $(OBJECTS) xula.ld
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
-$(OBJDIR)/dwt_steps.txt: dwt_steps
+$(OBJDIR)/h2.txt: h2
 	$(OBJDUMP) -d $^ > $@
 
 define	build-depends
