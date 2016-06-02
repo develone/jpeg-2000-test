@@ -14,11 +14,11 @@ const char msg[] = "Hello, world! testing 1000000 Baud RPi2B with zipcpu & xulal
 void entry(void) {
 	//register IOSPACE	*sys = (IOSPACE *)0x0100;
 	int	counts = 0;
-
+    char *buf_ptr = (char *)0x800000;
 	// Let's set ourselves up for 1000000 baud, 8-bit characters, no parity,
 	// and one stop bit.
 	sys->io_uart_ctrl = 79;
-
+    zip_read_image(buf_ptr); 
 	while(1) {
 		const char	*ptr;
 

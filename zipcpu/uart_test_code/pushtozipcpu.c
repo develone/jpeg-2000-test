@@ -6,11 +6,11 @@ int i, ch, val;
 // Set a timer to abort in case things go bad
 // We'll set our abort for about 750 ms into the future ... that should
 //   be plenty of time to transfer the image
-//sys->io_bustimer = 60000000;
+sys->io_bustimer = 60000000;
 // Let's also shut down all interrupts, and clear the timer interrupt
 // That way we can poll the interrupt timer later, to see if things
 // have gone poorly.
-//sys->io_pic = INT_TIMER;
+sys->io_pic = INT_TIMER;
  
 for(i=0; i<256*256; i++) {
 // Read red
