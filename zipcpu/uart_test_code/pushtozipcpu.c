@@ -3,7 +3,6 @@
 
 void zip_read_image(char *imbuf) {
 int i, ch, val;
-ch = entry();
 // Set a timer to abort in case things go bad
 // We'll set our abort for about 750 ms into the future ... that should
 //   be plenty of time to transfer the image
