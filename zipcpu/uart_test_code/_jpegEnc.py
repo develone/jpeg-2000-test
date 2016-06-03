@@ -150,9 +150,10 @@ class JPEGEnc2k(object):
                print "waiting for hello, world!"
                while (reply == ""):
                    reply = ser.readline()
-               if (len(reply) == 14):
-		   print reply
-               print "sending data"              
+                   if (len(reply) == 14):
+		               print reply
+               print "sending data"
+               file_out = open("rgb.bin","wb")              
                for n in range(len(self.r_subband)):
                    #r,g,b = rgb[n]
                    c = chr(self.r_subband[n])
@@ -161,10 +162,13 @@ class JPEGEnc2k(object):
                    ser.write(c)
                    ser.write(d)
                    ser.write(e)
-
-                   reply=[]
-                   reply = ser.readline()
-                   print reply
+                   file_out.write(c)
+                   file_out.write(d)
+                   file_out.write(e)
+               file_out.close()
+               reply=[]
+               reply = ser.readline()
+               print reply
                    
                for n in range(len(rgb)):
                    r,g,b = rgb[n]
