@@ -1,0 +1,56 @@
+
+Modify xulalx25soc to send data to RPi2B UART at higher than 9600 Baud done
+06/01/16 pi@raspberrypi2-146:~/jpeg-2000-test/zipcpu $Uart_chgs.odt provides
+details.
+
+Create a Makefile for h2.c &  pushtozipcpu.c done
+
+modify h2.c to send data to RPi2B at 1MBaud done
+
+modify to h2.c include zip_read_image(buf_ptr) done 06/02/16
+
+modify _jpegEnc.py to send rgb data to zipcpu done 06/03/16
+
+modify _jpegEnc.py to write  rgb data to file rpg.bin done
+	zipcpu h2 sends Hello, world! at 1MBaud to RPi2B
+	RPi2B sends rgb 256 x 256
+	
+Hand shake between zipcpu h2 and test_jpegEnc.py
+
+ssh to RPi2B 
+
+pi@raspberrypi2-146:~ $ cd jpeg-2000-test/zipcpu/uart_test_code/
+
+pi@raspberrypi2-146:~/jpeg-2000-test/zipcpu/uart_test_code $ . setzipcpuPath.sh PATH,/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games:/home/pi/zipcpu/trunk/sw/install/cross-tools/bin:/home/pi/xulalx25soc/trunk/sw:/home/pi/zipcpu/trunk/sw/install/cross-tools/bin:/home/pi/xulalx25soc/trunk/sw
+
+pi@raspberrypi2-146:~/jpeg-2000-test/zipcpu/uart_test_code $ make clean
+rm -rf obj-zip/ h2
+
+pi@raspberrypi2-146:~/jpeg-2000-test/zipcpu/uart_test_code $ make
+zip-gcc -O3 -Wall -Wextra -nostdlib -fno-builtin -c h2.c -o obj-zip/h2.o
+h2.c: In function 'entry':
+h2.c:32:14: warning: implicit declaration of function 'zip_read_image' [-Wimplicit-function-declaration]
+    recdflg = zip_read_image(buf_ptr);
+              ^
+zip-gcc -O3 -Wall -Wextra -nostdlib -fno-builtin -c pushtozipcpu.c -o obj-zip/pushtozipcpu.o
+zip-gcc -T xula.ld -Wl,-Map,obj-zip/h2.map obj-zip/h2.o obj-zip/pushtozipcpu.o -o h2
+
+pi@raspberrypi2-146:~/jpeg-2000-test/zipcpu/uart_test_code $ ./ldfpga 
+Success: Bitstream in /home/pi/toplevel_B15_i_rx_uartB16_o_tx_uart.bit downloaded to FPGA on XuLA2-LX9!
+
+pi@raspberrypi2-146:~/jpeg-2000-test/zipcpu/uart_test_code $ ./stzipcpu 
+Halting the CPU
+Clearing the cache
+The CPU should be fully loaded, you may now start
+it.  To start the CPU, type wbregs cpu 0
+01000000 ( ZIPCTRL)-> 00000000
+../../jpeg2k/parallel_jpeg/lena_rgb_256.png
+RGB 256 256
+65536 65536
+waiting for hello, world!
+sending data
+ello, world!
+
+forward dwt using file  ../../jpeg2k/parallel_jpeg/lena_rgb_256.png dwt_level 3 dwt_filter [5, 3]
+(256, 256)
+65536
