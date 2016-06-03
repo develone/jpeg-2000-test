@@ -33,6 +33,9 @@ void entry(void) {
 			if (recdflg == 65536) {
 				ptr = msg1;  // data has been received
 			}
+			else {
+				recdflg = zip_read_image(buf_ptr);
+			}
 		}
 
 		// Now, wait for the top of the second

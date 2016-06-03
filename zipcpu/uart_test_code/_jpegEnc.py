@@ -169,13 +169,9 @@ class JPEGEnc2k(object):
                reply=[]
                reply = ser.readline()
                print reply
+               print "data sent to zipcpu"
                    
-               for n in range(len(rgb)):
-                   r,g,b = rgb[n]
-                   #print g
-               for n in range(len(rgb)):
-                   r,g,b = rgb[n]
-                   #print b
+ 
                self.r_subband = [self.r_subband[i:i+self.img.size[0]] for i in range(0, len(self.r_subband), self.img.size[0])]
                self.g_subband = [self.g_subband[i:i+self.img.size[0]] for i in range(0, len(self.g_subband), self.img.size[0])]
                self.b_subband = [self.b_subband[i:i+self.img.size[0]] for i in range(0, len(self.b_subband), self.img.size[0])]
@@ -247,7 +243,10 @@ class JPEGEnc2k(object):
             self.fwd_gr = dwt.fwt97_2d(self.fwd_gr, self.dwt_level)
             '''
             dwt.seq_to_img(self.fwd_gr, self.pix)
-           
+        reply=[]
+        print "testing if rdy"
+        reply = ser.readline()
+        print reply           
 
     def fwd_f_dwt(self):
         print "forward dwt using file ", self.img_fn, "dwt_level", self.dwt_level, "dwt_filter", self.filter
@@ -265,7 +264,8 @@ class JPEGEnc2k(object):
             for row in range(len(self.fwd_r)):
                 for col in range(len(self.fwd_r)):
                     #pix[row,col] = rgb[col + row*128]
-                    self.pix[col,row] = rgb[col + row*len(self.fwd_r)] 
+                    self.pix[col,row] = rgb[col + row*len(self.fwd_r)]
+ 
         else:
             self.fwd_gr = self.gr_subband
 
