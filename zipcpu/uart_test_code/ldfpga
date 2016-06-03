@@ -1,0 +1,2 @@
+#!/bin/bash
+xsload --usb 0 --fpga  ~/toplevel_B15_i_rx_uartB16_o_tx_uart.bit
