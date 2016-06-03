@@ -122,7 +122,7 @@ class JPEGEnc2k(object):
         self.omega2 = val2
         self.origin  = (self.omega1,self.omega2,) 
         #print self.omega1, self.omega2, self.origin, type(self.origin)
-
+ 
     def read_image_file(self):
         if (self.img_fn == ""):
             print "img_fn is not set:"
@@ -143,6 +143,16 @@ class JPEGEnc2k(object):
                   self.r_subband.append(rr)
                   self.g_subband.append(gg)
                   self.b_subband.append(bb)
+               #print rgb,len(rgb)
+               for n in range(len(rgb)):
+                   r,g,b = rgb[n]
+                   print r
+               for n in range(len(rgb)):
+                   r,g,b = rgb[n]
+                   print g
+               for n in range(len(rgb)):
+                   r,g,b = rgb[n]
+                   print b
                self.r_subband = [self.r_subband[i:i+self.img.size[0]] for i in range(0, len(self.r_subband), self.img.size[0])]
                self.g_subband = [self.g_subband[i:i+self.img.size[0]] for i in range(0, len(self.g_subband), self.img.size[0])]
                self.b_subband = [self.b_subband[i:i+self.img.size[0]] for i in range(0, len(self.b_subband), self.img.size[0])]
