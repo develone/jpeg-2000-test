@@ -1,8 +1,13 @@
 #include "board.h"
 
 
-void zip_read_image(char *imbuf) {
-int i, ch, val;
+int zip_read_image(char *imbuf) {
+int i, ch, val,recd;
+i = 0;
+ch = 0;
+val = 0;
+recd = 0;
+
 // Set a timer to abort in case things go bad
 // We'll set our abort for about 750 ms into the future ... that should
 //   be plenty of time to transfer the image
@@ -48,9 +53,10 @@ ch = sys->io_uart_rx;
 // Pack our final pixel value into this word, and write it to
 // memory.
 val |= ch;
-
+recd = recd + 1;
 *imbuf++ = val;
 if (sys->io_pic & INT_TIMER)
 break;
 }
+return recd;
 }
