@@ -3,6 +3,7 @@ from PIL import Image # Part of the standard Python Library
 import serial
 import waveletsim_53 as dwt
 import waveletsim as f_dwt
+import time
 ser = serial.Serial ("/dev/ttyAMA0")
 ser.baudrate = 1000000
 class JPEGEnc2k(object):
@@ -150,21 +151,41 @@ class JPEGEnc2k(object):
                print "waiting for hello, world!"
                while (reply == ""):
                    reply = ser.readline()
-                   if (len(reply) == 14):
-		               print reply
+                   if (reply == "Hello, world!"):
+	               print reply
+               start_time = time.time()        
                print "sending data"
-               file_out = open("rgb.bin","wb")              
+             
                for n in range(len(self.r_subband)):
                    #r,g,b = rgb[n]
                    c = chr(self.r_subband[n])
                    d = chr(self.g_subband[n])
                    e = chr(self.b_subband[n])
-                   ser.write(c)
-                   ser.write(d)
-                   ser.write(e)
+                   ser.write(c+d+e)
+                   #ser.write(d)
+                   #ser.write(e)
+                   '''
                    file_out.write(c)
                    file_out.write(d)
                    file_out.write(e)
+                   '''
+               end_time = time.time()
+               print "transfer time", end_time-start_time, "sec"
+               file_out = open("rgb.bin","wb")                
+               for n in range(len(self.r_subband)):
+                   #r,g,b = rgb[n]
+                   c = chr(self.r_subband[n])
+                   d = chr(self.g_subband[n])
+                   e = chr(self.b_subband[n])
+                   '''
+                   ser.write(c)
+                   ser.write(d)
+                   ser.write(e)
+                   '''
+                   file_out.write(c+d+e)
+                   #file_out.write(d)
+                   #file_out.write(e)
+                                 
                file_out.close()
                reply=[]
                reply = ser.readline()
