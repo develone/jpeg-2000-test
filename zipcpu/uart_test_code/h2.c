@@ -9,8 +9,8 @@ asm("\t.section\t.start\n"
 
 #include "board.h" 
 
-const char msg[] = "Hello, world!\r\n";
-const char msg1[] = "Data rdy\r\n";
+const char msg[] =  "Hello, world!\r\n";
+const char msg1[] = "Data rdy     \r\n";
 void entry(void) {
 	//register IOSPACE	*sys = (IOSPACE *)0x0100;
 	int	counts = 0;
@@ -29,13 +29,11 @@ void entry(void) {
 			while(sys->io_uart_tx)
 				;
 			sys->io_uart_tx = *ptr++; // Transmit our character
-			recdflg = zip_read_image(buf_ptr);
-			if (recdflg == 65536) {
-				ptr = msg1;  // data has been received
-			}
-			else {
-				recdflg = zip_read_image(buf_ptr);
-			}
+			zip_read_image(buf_ptr);
+			
+			//ptr = msg1;  // data has been received
+			
+ 
 		}
 
 		// Now, wait for the top of the second

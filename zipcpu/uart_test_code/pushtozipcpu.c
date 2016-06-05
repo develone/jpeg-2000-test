@@ -1,17 +1,19 @@
 #include "board.h"
 
 
-int zip_read_image(char *imbuf) {
+void zip_read_image(char *imbuf) {
 int i, ch, val,recd;
 i = 0;
 ch = 0;
 val = 0;
 recd = 0;
-
+int *ptr;
+ptr = 0x830000;
+*ptr = 0x55aaaa55;
 // Set a timer to abort in case things go bad
 // We'll set our abort for about 750 ms into the future ... that should
 //   be plenty of time to transfer the image
-sys->io_bustimer = 60000000;
+sys->io_bustimer = 220000000;
 // Let's also shut down all interrupts, and clear the timer interrupt
 // That way we can poll the interrupt timer later, to see if things
 // have gone poorly.
@@ -55,8 +57,10 @@ ch = sys->io_uart_rx;
 val |= ch;
 recd = recd + 1;
 *imbuf++ = val;
-if (sys->io_pic & INT_TIMER)
-break;
+*ptr = recd;
+if (sys->io_pic & INT_TIMER) {
+	*ptr=0xaa5555aa;
+    break;
+    }
 }
-return recd;
 }
