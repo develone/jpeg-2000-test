@@ -16,6 +16,7 @@ void entry(void) {
 	int	counts = 0;
 	 
     char *buf_ptr = (char *)0x800000;
+    zip_clear_sdram(buf_ptr);
 	// Let's set ourselves up for 1000000 baud, 8-bit characters, no parity,
 	// and one stop bit.
 	sys->io_uart_ctrl = 79;
