@@ -7,9 +7,9 @@ i = 0;
 ch = 0;
 val = 0;
 recd = 0;
-int *ptr;
-ptr = 0x830000;
-*ptr = 0x55aaaa55;
+//int *ptr;
+//ptr = 0x830000;
+//*ptr = 0x55aaaa55;
 // Set a timer to abort in case things go bad
 // We'll set our abort for about 750 ms into the future ... that should
 //   be plenty of time to transfer the image
@@ -57,9 +57,9 @@ ch = sys->io_uart_rx;
 val |= ch;
 recd = recd + 1;
 *imbuf++ = val;
-*ptr = recd;
+//*ptr = recd;
 if (sys->io_pic & INT_TIMER) {
-	*ptr=0xaa5555aa;
+	//*ptr=0xaa5555aa;
     break;
     }
 }
