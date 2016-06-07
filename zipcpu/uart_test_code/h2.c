@@ -19,7 +19,7 @@ void entry(void) {
     zip_clear_sdram(buf_ptr);
 	// Let's set ourselves up for 1000000 baud, 8-bit characters, no parity,
 	// and one stop bit.
-	sys->io_uart_ctrl = 79;
+	sys->io_uart_ctrl = 8333;
      
 	while(counts==0) {
 		const char	*ptr;
