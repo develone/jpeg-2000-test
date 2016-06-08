@@ -218,6 +218,7 @@ module rxuart(i_clk, i_reset, i_setup, i_uart, o_wr, o_data, o_break,
 			r_setup <= i_setup;
 		end else if (state == `RXU_IDLE)
 		begin // Idle state, independent of baud counter
+			r_setup <= i_setup;
 			data_reg <= 8'h00; o_data <= 8'h00; o_wr <= 1'b0;
 			baud_counter <= clocks_per_baud - 28'h01;
 			if ((ck_uart == 1'b0)&&(chg_counter > half_baud))
