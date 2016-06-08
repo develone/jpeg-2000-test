@@ -8,7 +8,10 @@ asm("\t.section\t.start\n"
 	"\t.section\t.text");
 
 #include "board.h" 
-
+const int LED_ON = 0x20002;
+const int LED_OFF = 0x20000;
+const int READY_FOR_XMIT = 0x40004000;
+const int XULA_BUSY = 0x40000000;
 const char msg[] =  "Hello, world!\r\n";
 const char msg1[] = "Data rdy     \r\n";
 void entry(void) {
@@ -36,10 +39,11 @@ void entry(void) {
 			
  
 		}
-		sys -> io_gpio = 0xffff4002;
+		
+		sys -> io_gpio = LED_ON|READY_FOR_XMIT ;
         zip_read_image(buf_ptr);
-        sys -> io_gpio = 0xffff0000;
- 
+        
+        sys->io_gpio = LED_OFF|XULA_BUSY;
 		// Now, wait for the top of the second
 		unsigned secv = sys->io_rtc_clock;
 		while(secv == sys->io_rtc_clock)
