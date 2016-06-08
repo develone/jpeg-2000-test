@@ -16,7 +16,82 @@ modify _jpegEnc.py to write  rgb data to file rpg.bin done
 	RPi2B sends rgb 256 x 256
 	
 Hand shake between zipcpu h2 and test_jpegEnc.py
+06/08/16
+Hand shake resulted between the zipcpu h2 and rd_rgb.py
+Now the zipcpu sets a bits on GPIO to provide a visual and
+signal that rd_rgb.py can detect.  The visual is provided by 
+NET o_gpio<1>    LOC = M2; which is connected to a blue led.
 
+LED_ON = 0x20002;  --> 0b100000000000000010
+LED_OFF = 0x20000; --> 0b100000000000000000
+
+and the signal for rd_rgb.py is provided by NET o_gpio<14>    LOC = A2;
+READY_FOR_XMIT = 0x40004000; --> 0b1000000000000000100000000000000
+pi@raspberrypi2-146:~/jpeg-2000-test/zipcpu/uart_test_code $ ./stzipcpu.sh 
+Halting the CPU
+Clearing the cache
+The CPU should be fully loaded, you may now start
+it.  To start the CPU, type wbregs cpu 0
+signal from zipcpu 0
+waiting for hello, world!
+signal from zipcpu 1
+sending data
+transfer time 1.93457794189 sec
+waiting for Data rdy     !
+Hello, world!
+
+Data is sent to zipcpu as rgb
+0x0 e2 89 7c
+0x1 de 88 83
+0x2 e2 85 75
+0x3 e3 88 7b
+0x4 e1 8a 7a
+0x5 e2 86 7c
+0x6 e0 86 70
+0x7 dd 83 75
+0x8 dc 84 6d
+0x9 de 8b 76
+0xa df 80 6a
+pi@raspberrypi2-146:~/jpeg-2000-test/zipcpu/uart_test_code $ wbregs 0x80000a
+0080000a ( no name) : [...j] 0df2006a 0x80 the green pixel is 200 when packed 
+at sdram 0x80000a
+.
+.
+.
+0x681e d6 5f 53
+0x681f bf 4a 52
+0x6820 a0 36 46
+0x6821 8c 29 45
+0x6822 88 28 42
+0x6823 92 2b 43
+0x6824 98 2f 43
+0x6825 9a 34 46
+0x6826 9f 37 4a
+0x6827 a4 3d 4c
+0x6828 a7 39 4b
+pi@raspberrypi2-146:~/jpeg-2000-test/zipcpu/uart_test_code $ wbregs 0x806828
+00806828 ( no name) : [.p.K] 0a70e44b 0x39 the green pixel is 0e4 when packed
+at sdram 0x806828
+.
+.
+.
+0xb28c df 4a 56
+0xb28d e1 4c 5a
+0xb28e e6 4e 59
+0xb28f e5 5a 6e
+0xb290 e7 65 73
+0xb291 ea 79 83
+0xb292 e9 8e 8d
+0xb293 ed 9f 98
+0xb294 ed 9c 98
+0xb295 ea 9c 99
+0xb296 f0 a0 96
+0xb297 ef aa a6
+0xb298 ef b4 ac
+0xb299 ed a2 9f
+pi@raspberrypi2-146:~/jpeg-2000-test/zipcpu/uart_test_code $ wbregs 0x80b299
+0080b299 ( no name) : [....] 0ed2889f 0xa2 the green pixel is 288 when packed
+at sdram 0x80b299
 ssh to RPi2B 
 
 pi@raspberrypi2-146:~ $ cd jpeg-2000-test/zipcpu/uart_test_code/
