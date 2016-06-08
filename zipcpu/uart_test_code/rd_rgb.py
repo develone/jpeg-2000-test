@@ -7,7 +7,7 @@ pi = pigpio.pi()
 zipcpu14 = 2
 print "signal from zipcpu",pi.read(zipcpu14)
 ser = serial.Serial ("/dev/ttyAMA0")    
-ser.baudrate = 9600
+ser.baudrate = 1000000
      
 file = open("rgb.bin", "rb")
 reply=[]
