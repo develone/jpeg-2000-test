@@ -22,7 +22,7 @@ if (!ptr_myfile)
 	return 1;
 }
 
-for (i= 0;i<65535;i++) {
+for (i= 0;i<65536;i++) {
 fread(&my_record,sizeof(struct rec),1,ptr_myfile);
 ii0 = (int)my_record.raw_buf[0];
 ii1 = (int)my_record.raw_buf[1];
