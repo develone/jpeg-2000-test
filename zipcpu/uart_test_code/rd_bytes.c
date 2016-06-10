@@ -7,6 +7,9 @@ struct rec
 	{
 	char raw_buf[3];
 };
+const int bb = 0x2ff;
+const int gg = 0xffc00;
+const int rr = 0xff00000;
 char str_buf[1];
 int i,val;
 int ii0,ii1,ii2;
@@ -45,6 +48,19 @@ for (i= 0;i<65536;i++) {
 	blue = val&0x2ff;
 	printf("%d %x packed %x r %x g %x b %x  %x\n",i,i+0x800000,val,red,gr,blue,gr_sh);
 
+}
+printf("----------------------------------------\n");
+for (i = 2; i<65536;i=i+2) {
+	printf("i %d l %x s %x r %x sum_sh %x \n",i,xx[i-1]&bb,xx[i]&bb,xx[i+1]&bb,(((xx[i-1] + xx[i+1]))>>1)&bb);
+	printf("i %d l %x s %x r %x sum_sh %x \n",i,xx[i-1]&gg,xx[i]&gg,xx[i+1]&gg,(((xx[i-1] + xx[i+1]))>>1)&gg);
+	printf("i %d l %x s %x r %x sum_sh %x \n",i,xx[i-1]&rr,xx[i]&rr,xx[i+1]&rr,(((xx[i-1] + xx[i+1]))>>1)&rr);
+	
+}
+printf("########################################\n");
+for (i = 1; i<65536;i=i+2) {
+    printf("i %d l %x s %x r %x sum_sh %x \n",i,xx[i-1]&bb,xx[i]&bb,xx[i+1]&bb,(((xx[i-1] + xx[i+1])&bb)+2)>>2);
+    printf("i %d l %x s %x r %x sum sh %x \n",i,xx[i-1]&gg,xx[i]&gg,xx[i+1]&gg,(((xx[i-1] + xx[i+1])&gg)+2)>>2);
+    printf("i %d l %x s %x r %x sun_sh %x \n",i,xx[i-1]&rr,xx[i]&rr,xx[i+1]&rr,(((xx[i-1] + xx[i+1])&rr)+2)>>2);
 }
 return 0;   
 }
