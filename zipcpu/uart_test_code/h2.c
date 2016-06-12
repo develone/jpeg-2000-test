@@ -15,6 +15,7 @@ const int XULA_BUSY = 0x40000000;
 const char msg[] =  "Hello, world!\r\n";
 const char msg1[] = "Data rdy     \r\n";
 void entry(void) {
+	struct results my_results;
 	//register IOSPACE	*sys = (IOSPACE *)0x0100;
 	int	counts = 0;
 	 
@@ -44,6 +45,8 @@ void entry(void) {
         zip_read_image(buf_ptr);
         
         sys->io_gpio = LED_OFF|XULA_BUSY;
+        dwt_process(buf_ptr);
+        dwt_steps();
 		// Now, wait for the top of the second
 		unsigned secv = sys->io_rtc_clock;
 		while(secv == sys->io_rtc_clock)
