@@ -1,19 +1,7 @@
 #ifndef	BOARD_H
 #define	BOARD_H
 
-struct results {
-	int r_l;
-	int g_l;
-	int b_l;
-	int s_sh_r;
-	int s_sh_g;
-	int s_sh_b;
-	int l;
-	int s;
-	int r;
-	int dwt;
-	
-};
+ 
 
 #define	INT_RTC		0x002
 #define	INT_FLASH	0x004
@@ -49,7 +37,8 @@ typedef	struct	{
 static SDCARD	* const sd = (SDCARD *)0x0120;
 void zip_read_image(char *imbuf);
 void zip_clear_sdram(char *imbuf);
-void dwt_steps(void);
+ 
+
 #define	SDRAM	(void *)0x800000
 #define	FLASH	(void *)0x040000
 #define	CLOCKFREQHZ	80000000
