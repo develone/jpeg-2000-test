@@ -1,7 +1,7 @@
 #include "board.h"
 
 
-void zip_read_image(char *imbuf) {
+void zip_read_image(int *imbuf) {
 const int LED_SW_ON = 0x10001;
 const int LED_SW_OFF = 0x10000;	
 int i, ch, val,recd;

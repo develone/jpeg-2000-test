@@ -1,7 +1,7 @@
 #include "board.h"
 
 
-void zip_clear_sdram(char *imbuf) {
+void zip_clear_sdram(int *imbuf) {
 int val,i;
 
 val = 0;

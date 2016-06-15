@@ -19,7 +19,7 @@ void entry(void) {
 	//register IOSPACE	*sys = (IOSPACE *)0x0100;
 	int	counts = 0;
 	  
-    char *buf_ptr = (char *)0x800000;
+    int *buf_ptr = (char *)0x800000;
     zip_clear_sdram(buf_ptr);
 	// Let's set ourselves up for 1000000 baud, 8-bit characters, no parity,
 	// and one stop bit.
