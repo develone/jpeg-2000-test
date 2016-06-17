@@ -1,4 +1,10 @@
 #include "board.h"
+/*
+     const int LED_ON_DWT = 0x10001;
+     const int LED_OFF_DWT = 0x10000;	
+     sys -> io_gpio = LED_ON_DWT;
+     sys -> io_gpio = LED_OFF_DWT;
+*/
 int twos_comp(int lsr) {
 	if (lsr > 256) {
 		return lsr - 512;
