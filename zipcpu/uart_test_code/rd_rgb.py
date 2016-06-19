@@ -16,7 +16,7 @@ print "waiting for hello, world!"
 while(not pi.read(zipcpu14)):
 	pi.read(zipcpu14)
 print "signal from zipcpu",pi.read(zipcpu14)
-#reply = ser.read(14)
+reply = ser.read(15)
 #print reply
 
 start_time = time.time()        

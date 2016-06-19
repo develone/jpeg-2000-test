@@ -23,49 +23,38 @@ sys->io_bustimer = 0;
 //sys->io_pic = INT_TIMER;
 sys->io_gpio = LED_SW_ON; 
 for(i=0; i<256*256; i++) {
-// Write red
+     // Write red
+     while(sys->io_uart_tx)
+		; 
+     ch = (*imbuf&rr)>>20;
+	 // Wait while our transmitter is busy
+	 while(sys->io_uart_tx)
+		; 
+	 sys->io_uart_tx = ch;	
  
-ch = *imbuf&rr>>20; 
-do {
-// Read a character from the UART port
-sys->io_uart_tx = ch;
-
-// Repeat while ...
-//   bit 0x0100 is set, indicating we read from an
-//      empty port, AND
-//   the TIMER interrupt hasn't taken place
-} while(((ch&0x0100)!=0));
-
-// We'll pack our colored pixels into memory, three pixels per
-// address.  This packing will allow us to do vector operations
-// on the pixels later, so that we can do all three colors at
-// once.
 
 
-// Write green
-ch = *imbuf&gg>>10;
-do {
-// This is the same as before.  Only we never reset
-// the timer interrupt, so if it triggered we'll exit
-// here after only one time through.
-ch = sys->io_uart_tx;
-} while(((ch&0x0100)!=0) );
-
-// Write blue
-ch = *imbuf&bb;
-do {
-// Same as with green.
-sys->io_uart_tx = ch;
-} while(((ch&0x0100)!=0) );
-
-// Pack our final pixel value into this word, and write it to
-// memory.
+     // Write green
+     ch = (*imbuf&gg)>>10;
+     // Wait while our transmitter is busy
+	 while(sys->io_uart_tx)
+		; 
+	 sys->io_uart_tx = ch;
  
+
+     // Write blue
+     ch = *imbuf&bb;
+     // Wait while our transmitter is busy
+	 while(sys->io_uart_tx)
+		; 
+	 sys-> io_uart_tx = ch;
+     while(sys->io_uart_tx)
+		;
 *imbuf++ ;
-sys->io_gpio = LED_SW_OFF;
-if (sys->io_pic & INT_TIMER) {
+//sys->io_gpio = LED_SW_OFF;
+//if (sys->io_pic & INT_TIMER) {
 	//*ptr=0xaa5555aa;
-    break;
-    }
+    //break;
+    //}
 }
 }
