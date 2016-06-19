@@ -29,8 +29,14 @@ for i in range(65536):
     ser.write(data) 
 end_time = time.time()
 print "transfer time", end_time-start_time, "sec"
+file.close()
+start_time = time.time()
 reply=[]
 print "waiting for Data rdy     !"
-reply = ser.read(14)
-print reply
- 
+reply = ser.read(65536)
+end_time = time.time()
+print "transfer time", end_time-start_time, "sec"
+print len(reply) 
+file = open("rgb_dwt_zip.bin", "wb")
+file.write(reply)
+file.close()
