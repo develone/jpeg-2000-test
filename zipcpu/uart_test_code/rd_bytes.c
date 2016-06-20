@@ -26,10 +26,11 @@ void dwt_process(int *imgbuf) {
 	int dwt_b;
 	int dwt_g;
 	int dwt_r;
-    const int bb = 0x3ff;
-    const int gg = 0xffc00;
-    const int rr = 0x3ff00000;
-    int i,v;
+    const int bb = 0x1ff;
+    const int gg = 0x7fc00;
+    const int rr = 0x1ff00000;
+    int i,v,ctn;
+    ctn = 0;
     //struct results 
     int *buf_l;
     int *buf_r;
@@ -130,6 +131,12 @@ void dwt_process(int *imgbuf) {
 	    s = twos_comp(s);
 	    r = twos_comp(r);	    
 	    dwt_r = s + ((l+r+2)>>2);
+	    if (dwt_r > 255) {
+			ctn++;
+			printf("*******%d\n",ctn);
+			dwt_r = 255;
+		}	
+			
 	    dwt_r = dwt_r&0x1ff;
 	    v |=(dwt_r<<20);
 	    printf("%d l %x s %x r %x dwt %x %x %x\n",i,l,s,r,dwt_r,dwt_r&0x1ff,v);
@@ -143,6 +150,11 @@ void dwt_process(int *imgbuf) {
 	    s = twos_comp(s);
 	    r = twos_comp(r);	    
 	    dwt_g = s + ((l+r+2)>>2);
+	    if (dwt_g > 255) {
+			ctn++;
+			printf("*******%d\n",ctn);
+			dwt_g = 255;
+		}	
 	    dwt_g = dwt_g&0x1ff;
 	    v |= (dwt_g<<10);
 	    printf("%d l %x s %x r %x dwt %x %x %x\n",i, l,s,r,dwt_g,dwt_g&0x1ff,v);
@@ -156,6 +168,11 @@ void dwt_process(int *imgbuf) {
 	    s = twos_comp(s);
 	    r = twos_comp(r);
 	    dwt_b = s + ((l+r+2)>>2);
+	    if (dwt_b > 255) {
+			ctn++;
+			printf("*******%d\n",ctn);
+			dwt_b = 255;
+		}	
 	    dwt_b = dwt_b&0x1ff;
 	    v |= (dwt_b&0x1ff); 
 	    printf("%d l %x s %x r %x dwt %x %x %x\n",i, l,s,r,dwt_b,dwt_b&0x1ff,v);
@@ -232,6 +249,14 @@ for (i= 0;i<65536;i++) {
 }
 buf = (int *)&data.xx;
 dwt_process(buf); 
- 
+ptr_myfile=fopen("rgb_dwt.bin","wb");
+for (i= 0;i<65536;i++) {
+	my_record.raw_buf[0]=(data.xx[i]&rr)>>20;
+	my_record.raw_buf[1]=(data.xx[i]&gg)>>10;
+	my_record.raw_buf[1]=data.xx[i]&bb;
+	printf("xxxxxx%d %x %x %x %x\n",i,my_record.raw_buf[0],my_record.raw_buf[1],my_record.raw_buf[2],data.xx[i]);
+	fwrite(&my_record,sizeof(struct rec),1,ptr_myfile); 
+}
+fclose(ptr_myfile);
 return 0;   
 }

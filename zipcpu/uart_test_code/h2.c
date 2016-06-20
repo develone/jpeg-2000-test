@@ -20,6 +20,7 @@ void entry(void) {
 	int	counts = 0;
 	  
     int *buf_ptr = (char *)0x800000;
+    int *clocks_used = (char *)0x810000;
     zip_clear_sdram(buf_ptr);
 	// Let's set ourselves up for 1000000 baud, 8-bit characters, no parity,
 	// and one stop bit.
@@ -45,8 +46,10 @@ void entry(void) {
         zip_read_image(buf_ptr);
         
         sys->io_gpio = LED_OFF|XULA_BUSY;
+        sys->io_bustimer = 0x7fffffff;
         dwt_process(buf_ptr);
-        
+        *clocks_used = 0x7fffffff-sys->io_bustimer;
+        zip_write_image(buf_ptr);
 		// Now, wait for the top of the second
 		unsigned secv = sys->io_rtc_clock;
 		while(secv == sys->io_rtc_clock)
