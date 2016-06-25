@@ -1,3 +1,4 @@
+#include "board.h"
 /*
  * 
 The Heap
@@ -21,15 +22,15 @@ The heap is a region of your computer's memory that is not managed automatically
 *  Creator:	Dan Gisselquist, Ph.D.
 *		Gisselquist Technology, LLC
 */
-void	*sys_malloc(int sz) {
- 
+//void free (void *) {}
 
-	void	*res = heap;
-	heap += sz;
-	if ((int)heap > ((int)&res)-32) {
-		IOSPACE	*sys = (IOSPACE *)IOADDR;
-		sys->io_spio = 0xf3;
-		asm("break 0");
-	}
-	return res;
+void * heap = (void *)(SDRAM+0x50000);
+
+
+void *malloc(int sz) {
+    void *result = heap;
+    heap = heap + sz;
+    return result;
 }
+
+

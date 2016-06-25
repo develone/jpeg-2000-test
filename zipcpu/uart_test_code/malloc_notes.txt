@@ -1,0 +1,40 @@
+./stzipcpu.sh 
+Halting the CPU
+Loading memory
+00002000 - 00002212
+00002212 - 00002213
+Clearing the cache
+The CPU should be fully loaded, you may now start
+it.  To start the CPU, type wbregs cpu 0
+signal from zipcpu 0
+waiting for hello, world!
+signal from zipcpu 1
+sending data
+1+0 records in
+1+0 records out
+196608 bytes (197 kB) copied, 1.96177 s, 100 kB/s
+transfer time 1.97154903412 sec
+waiting for Data rdy     !
+transfer time 2.25007295609 sec
+196608
+
+
+wbregs cpu 0
+Testing timing of dwt_process
+wbregs 0x87fffe 
+0087fffe ( no name) : [.}..] 007d098f
+
+x = 0x7d098f
+y = x/80000000.
+print y
+0.1024305875
+
+Testing malloc with code in test_malloc
+which sets two pointers of 4 x 4.
+
+wbregs 0x87fffa
+0087fffa ( no name) : [....] 00850000
+
+The function free in line 25 in my_malloc.c
+Also lines 20 & 21 in test_malloc.c need to 
+be committed out.
