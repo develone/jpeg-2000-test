@@ -1,8 +1,7 @@
-./stzipcpu.sh 
 Halting the CPU
 Loading memory
-00002000 - 00002212
-00002212 - 00002213
+00002000 - 00002226
+00002226 - 00002227
 Clearing the cache
 The CPU should be fully loaded, you may now start
 it.  To start the CPU, type wbregs cpu 0
@@ -12,11 +11,12 @@ signal from zipcpu 1
 sending data
 1+0 records in
 1+0 records out
-196608 bytes (197 kB) copied, 1.96177 s, 100 kB/s
-transfer time 1.97154903412 sec
+196608 bytes (197 kB) copied, 1.96217 s, 100 kB/s
+transfer time 1.97558307648 sec
 waiting for Data rdy     !
-transfer time 2.25007295609 sec
+transfer time 2.24944496155 sec
 196608
+
 
 
 wbregs cpu 0
@@ -32,9 +32,18 @@ print y
 Testing malloc with code in test_malloc
 which sets two pointers of 4 x 4.
 
+Addresses of the 2 pointers were set in the heap.
+
 wbregs 0x87fffa
 0087fffa ( no name) : [....] 00850000
+wbregs 0x87fffb
+0087fffb ( no name) : [....] 00850010
 
-The function free in line 25 in my_malloc.c
-Also lines 20 & 21 in test_malloc.c need to 
-be committed out.
+Testing zipcpu now supports 2 dim arrays.
+An array ar[4][4] is located at address 
+below and has a size of 0x00000010.
+
+wbregs 0x87fff8
+0087fff8 ( no name) : [..?.] 00003ff6
+wbregs 0x87fff9
+0087fff9 ( no name) : [....] 00000010
