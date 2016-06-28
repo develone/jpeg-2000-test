@@ -1,5 +1,10 @@
 #include <stdio.h>
+#ifdef __ZIPCPU__
+void free(void *);
+#else
 #include <stdlib.h>
+#endif
+
 /*
 generated data
 0  1  2  3  4  5  6  7  
@@ -40,8 +45,8 @@ lower to upper
 void de_interleave(int *ptr) 
 {
 int row,col,w,h,r2,r2h;	
-w = 8;
-h = 8;
+w = 16;
+h = 16;
 int tar[w][h];
 //save ptr to initial value passed into subroutine
 //so it can be restored 
@@ -90,8 +95,8 @@ for(row=0;row<h;row++)
 void lower_upper(int *ptr) 
 {
 int row,col,w,h,r2,r2h;	
-w = 8;
-h = 8;
+w = 16;
+h = 16;
 int tar[w][h];
 //save ptr to initial value passed into subroutine
 //so it can be restored 
@@ -139,16 +144,148 @@ for(row=0;row<h;row++)
 	}
 }
 }
+
+void lift_step(int *ptr) 
+{
+int row,col,w,h,r2,r2h;	
+w = 16;
+h = 16;
+int tar[w][h];
+//save ptr to initial value passed into subroutine
+//so it can be restored 
+int *init_ptr;
+init_ptr = ptr;
+int sar[w][h];
+//transfer ptr to sar
+//printf("\n");
+printf("in lift step\n");
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{
+       sar[row][col] = *ptr++;
+       printf(" %d ", sar[row][col]);
+    }
+    printf("\n");
+}
+for(col=0;col<w;col++)
+{
+	for(row=2;row<h-1;row=row+2)
+	{
+		sar[row][col] = sar[row][col] - ((sar[row-1][col] + sar[row+1][col])>>1);
+		printf(" %d ", sar[row][col]); 
+    }
+    
+    for(row=1;row<h-1;row=row+2)
+	{
+		sar[row][col] = sar[row][col] + ((sar[row-1][col] + sar[row+1][col] + 2)>>2);
+		printf(" %d ", sar[row][col]);
+    }
+    printf("\n");
+} 
+ptr = init_ptr;
+//transfer the tmp array to the src arrray
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{
+		*ptr++ = sar[row][col];
+		 
+    }
+}  
+}
+void inv_lift_step(int *ptr) 
+{
+int row,col,w,h,r2,r2h;	
+w = 16;
+h = 16;
+int tar[w][h];
+//save ptr to initial value passed into subroutine
+//so it can be restored 
+int *init_ptr;
+init_ptr = ptr;
+int sar[w][h];
+//transfer ptr to sar
+//printf("\n");
+printf("in inv_lift step\n");
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{
+       sar[row][col] = *ptr++;
+       printf(" %d ", sar[row][col]);
+    }
+    printf("\n");
+}
+for(col=0;col<w;col++)
+{
+	for(row=1;row<h-1;row=row+2)
+	{
+		sar[row][col] = sar[row][col] + ((sar[row-1][col] + sar[row+1][col])>>1);
+		printf(" %d ", sar[row][col]); 
+    }
+    
+    for(row=2;row<h;row=row+2)
+	{
+		sar[row][col] = sar[row][col] - ((sar[row-1][col] + sar[row+1][col] + 2)>>2);
+		printf(" %d ", sar[row][col]);
+    }
+    printf("\n");
+} 
+ptr = init_ptr;
+//transfer the tmp array to the src arrray
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{
+		*ptr++ = sar[row][col];
+		 
+    }
+}  
+}
 int main()
 {
+	const int bb = 0x1ff;
+    const int gg = 0x7fc00;
+    const int rr = 0x1ff00000;
+//read RGB data from file 
+ 	
+int i,ii0,ii1,ii2,val;
+int *buf;
+int xx[65536];
+buf = (int *)&xx[0];	
+struct rec
+	{
+	char raw_buf[3];
+};
+struct rec my_record;
+//struct results my_results;
+FILE *ptr_myfile;
+ptr_myfile=fopen("rgb.bin","rb");
+if (!ptr_myfile)
+{
+ 	printf("Unle to open file!");
+	return 1;
+} 
 
- 
+for (i= 0;i<65536;i++) {
+fread(&my_record,sizeof(struct rec),1,ptr_myfile);
+ii0 = (int)my_record.raw_buf[0];
+ii1 = (int)my_record.raw_buf[1];
+ii2 = (int)my_record.raw_buf[2];
+val = ii0<<20|ii1<<10|ii2;
+*buf++=val;
+//printf("%d %x %x %x %x \n",i,ii0,ii1,ii2,val);
+
+}
+fclose(ptr_myfile);
+
 int *sptr, *sptr1, *dptr;
 
 int row,col,cc;
-int w,h,r2,r2h;
-w = 8;
-h = 8;
+int w,h,r2,r2h,red,green,blue;
+w = 16;
+h = 16;
 int sar[w][h];
 int tar[w][h];
 
@@ -157,18 +294,34 @@ sptr1 = &sar[0][0];
 dptr = malloc(sizeof(int)*(w*h));
 //printf("%x %x %x\n",sptr,sptr1,dptr);
 cc = 0;
-printf("generated data\n");
+
+buf = (int *)&xx[0];
+//printf("buf %x \n",buf);
 for(row=0;row<h;row++)
 {
 	for(col=0;col<w;col++)
 	{
-	   sar[row][col] = cc;
-	   printf("%d  ",sar[row][col]);
-       cc++;
-    }
-    printf("\n");
+	    //blue = *buf&bb;
+	    //sar[row][col] = blue;
+	    //red = (*buf&rr)>>20;
+		//sar[row][col] = red;
+	    green = (*buf&gg)>>10;
+		sar[row][col] = green;		
+		//*buf = blue;
+		//printf("%d ",sar[row][col]);
+		//starts at 0 to 15
+		buf++;
+	}
+	buf = buf + 240;
+	//printf(" %x \n",buf);
 }
+buf = (int *)&xx[0];
+printf("\n");
+lift_step(sptr1);
+//inv_lift_step(sptr1);
+
 de_interleave(sptr1);
+
  	
 printf("deinterleaved data\n");
 for(row=0;row<h;row++)
@@ -179,9 +332,12 @@ for(row=0;row<h;row++)
 	}
 	printf("\n");
 }
+printf("\n");
+lift_step(sptr1);
 de_interleave(sptr1);
 
 printf("\n");
+printf("deinterleaved data\n");
 for(row=0;row<h;row++)
 {
 	for(col=0;col<w;col++)
@@ -209,3 +365,16 @@ free ((int*)*sptr);
 
 free ((int*)*dptr);
 }
+/*
+printf("generated data\n");
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{
+	   sar[row][col] = cc;
+	   printf("%d  ",sar[row][col]);
+       cc++;
+    }
+    printf("\n");
+}
+*/ 
