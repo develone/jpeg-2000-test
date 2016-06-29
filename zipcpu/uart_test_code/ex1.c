@@ -42,11 +42,10 @@ lower to upper
 15 31 47 63
 */
 
-void de_interleave(int *ptr) 
+void de_interleave(int *ptr, int w, int h) 
 {
-int row,col,w,h,r2,r2h;	
-w = 16;
-h = 16;
+int row,col,r2,r2h;	
+ 
 int tar[w][h];
 //save ptr to initial value passed into subroutine
 //so it can be restored 
@@ -92,11 +91,10 @@ for(row=0;row<h;row++)
 } 
 
 
-void lower_upper(int *ptr) 
+void lower_upper(int *ptr, int w, int h) 
 {
-int row,col,w,h,r2,r2h;	
-w = 16;
-h = 16;
+int row,col,r2,r2h;	
+ 
 int tar[w][h];
 //save ptr to initial value passed into subroutine
 //so it can be restored 
@@ -105,6 +103,7 @@ init_ptr = ptr;
 int sar[w][h];
 //transfer ptr to sar
 //printf("\n");
+
 for(row=0;row<h;row++)
 {
 	for(col=0;col<w;col++)
@@ -124,32 +123,38 @@ for(row=0;row<h;row++)
 
 //col row
 //temp_bank[col-width/2][row-height/2] = s[row][col]
-printf("\n");
-printf("lower to upper \n");
-printf("\n");
+//printf("\n");
+//printf("lower to upper \n");
+//printf("\n");
 for(col=w/2;col<w;col++)
 {
 	for(row=h/2;row< h;row++)
 	{
 		tar[col-w/2][row-h/2] = sar[row][col];
-		printf("%d ",tar[col-w/2][row-h/2]); 
+		//printf("%d ",tar[col-w/2][row-h/2]); 
 	}
-	printf("\n");
+	//printf("\n");
 }
+//printf("\n");
+//restore ptr to initial value passed into subroutine
+ptr = init_ptr;
+//transfer the tmp array to the src arrray
 for(row=0;row<h;row++)
 {
 	for(col=0;col<w;col++)
 	{
-		sar[row][col] = tar[col][row];
+		*ptr++ = tar[row][col];
+		//sar[row][col] = tar[col][row];
+		//printf("%d ",sar[row][col]);
 	}
+	//printf("\n");
 }
 }
 
-void lift_step(int *ptr) 
+void lift_step(int *ptr, int w, int h) 
 {
-int row,col,w,h,r2,r2h;	
-w = 16;
-h = 16;
+int row,col,r2,r2h;	
+ 
 int tar[w][h];
 //save ptr to initial value passed into subroutine
 //so it can be restored 
@@ -194,11 +199,10 @@ for(row=0;row<h;row++)
     }
 }  
 }
-void inv_lift_step(int *ptr) 
+void inv_lift_step(int *ptr, int w, int h) 
 {
-int row,col,w,h,r2,r2h;	
-w = 16;
-h = 16;
+int row,col,r2,r2h;	
+ 
 int tar[w][h];
 //save ptr to initial value passed into subroutine
 //so it can be restored 
@@ -243,6 +247,78 @@ for(row=0;row<h;row++)
     }
 }  
 }
+/*
+def upper_lower(s, width, height):
+
+	temp_bank = [[0]*width for i in range(height)]
+	for col in range(width/2):
+
+		for row in range(height/2):
+
+			temp_bank[col+width/2][row+height/2] = s[row][col]
+
+	for row in range(width):
+		for col in range(height):
+			s[row][col] = temp_bank[col][row]
+	return s
+*/
+void upper_lower(int *ptr, int w, int h) 
+{
+int row,col,r2,r2h;	
+ 
+ 
+int tar[w][h];
+//save ptr to initial value passed into subroutine
+//so it can be restored 
+int *init_ptr;
+init_ptr = ptr;
+int sar[w][h];
+//transfer ptr to sar
+//printf("\n");
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{
+       sar[row][col] = *ptr++;
+       //printf(" %d ",sar[row][col]); 
+    }
+    //printf("\n");
+}
+//create an empty array the size of the src array
+
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{
+		tar[row][col] = 0;
+	}
+}
+//col row
+//temp_bank[col-width/2][row-height/2] = s[row][col]
+
+printf("\n");
+printf("upper to lower \n");
+printf("\n");
+for(col=0;col<w/2;col++)
+{
+	for(row=0;row< h/2;row++)
+	{
+		tar[col+w/2][row+h/2] = sar[row][col];
+		//printf("%d ",tar[col+w/2][row+h/2]); 
+	}
+	//printf("\n");
+}
+ptr = init_ptr;
+//transfer the tmp array to the src arrray
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{
+		*ptr++ = tar[row][col];
+		 
+    }
+}
+}
 int main()
 {
 	const int bb = 0x1ff;
@@ -284,8 +360,8 @@ int *sptr, *sptr1, *dptr;
 
 int row,col,cc;
 int w,h,r2,r2h,red,green,blue;
-w = 16;
-h = 16;
+w = 64;
+h = 64;
 int sar[w][h];
 int tar[w][h];
 
@@ -303,24 +379,24 @@ for(row=0;row<h;row++)
 	{
 	    //blue = *buf&bb;
 	    //sar[row][col] = blue;
-	    //red = (*buf&rr)>>20;
-		//sar[row][col] = red;
-	    green = (*buf&gg)>>10;
-		sar[row][col] = green;		
+	    red = (*buf&rr)>>20;
+		sar[row][col] = red;
+	    //green = (*buf&gg)>>10;
+		//sar[row][col] = green;		
 		//*buf = blue;
 		//printf("%d ",sar[row][col]);
 		//starts at 0 to 15
 		buf++;
 	}
-	buf = buf + 240;
+	buf = buf + 192;
 	//printf(" %x \n",buf);
 }
 buf = (int *)&xx[0];
 printf("\n");
-lift_step(sptr1);
+lift_step(sptr1,w, h);
 //inv_lift_step(sptr1);
 
-de_interleave(sptr1);
+de_interleave(sptr1,w,h);
 
  	
 printf("deinterleaved data\n");
@@ -333,8 +409,8 @@ for(row=0;row<h;row++)
 	printf("\n");
 }
 printf("\n");
-lift_step(sptr1);
-de_interleave(sptr1);
+lift_step(sptr1,w,h);
+de_interleave(sptr1,w,h);
 
 printf("\n");
 printf("deinterleaved data\n");
@@ -347,7 +423,26 @@ for(row=0;row<h;row++)
 	printf("\n");
 }
 
-lower_upper(sptr1);
+lower_upper(sptr1,w,h);
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{ 
+	   printf("%d  ",sar[row][col]);
+	}
+	printf("\n");
+}
+upper_lower(sptr1,w,h);
+printf("\n");
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{ 
+	   printf("%d  ",sar[row][col]);
+	}
+	printf("\n");
+}
+
 /*
 w = w/2;
 h = h/2;	
@@ -365,16 +460,4 @@ free ((int*)*sptr);
 
 free ((int*)*dptr);
 }
-/*
-printf("generated data\n");
-for(row=0;row<h;row++)
-{
-	for(col=0;col<w;col++)
-	{
-	   sar[row][col] = cc;
-	   printf("%d  ",sar[row][col]);
-       cc++;
-    }
-    printf("\n");
-}
-*/ 
+ 
