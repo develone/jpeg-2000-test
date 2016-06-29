@@ -18,7 +18,7 @@ void entry(void) {
 	
 	//register IOSPACE	*sys = (IOSPACE *)0x0100;
 	int	counts = 0;
-	  
+	int w,h;  
     int *buf_ptr = (char *)0x800000;
     int *clocks_used = (char *)0x87fffe;
     int *tmp_ptr = (char *)0x820000;
@@ -48,12 +48,17 @@ void entry(void) {
         
         sys->io_gpio = LED_OFF|XULA_BUSY;
         sys->io_bustimer = 0x7fffffff;
-        dwt_process(buf_ptr);
+         
         *clocks_used = 0x7fffffff-sys->io_bustimer;
         
         //pp(buf_ptr,tmp_ptr);
-        dwt_process(buf_ptr);
-        
+        w = 64;
+        h = 64;
+        lift_step(buf_ptr,w,h);
+        de_interleave(buf_ptr,w,h);
+        lift_step(buf_ptr,w,h);
+        de_interleave(buf_ptr,w,h);
+        lower_upper(buf_ptr,w,h);
         //pp(buf_ptr,tmp_ptr);
         zip_write_image(buf_ptr);
          

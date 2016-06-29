@@ -16,550 +16,979 @@ Disassembly of section .rocode:
     2006:	2c c7 40 01 	STO        R5,$1(SP)
     2007:	0b 00 01 00 	BREV       $256,R1
     2008:	03 c3 c0 02 	MOV        $2+PC,R0
-    2009:	7c 87 c0 00 	LJMP       @0x00002074	// 2074 <zip_clear_sdram>
-    200a:	00 00 20 74 
+    2009:	7c 87 c0 00 	LJMP       @0x0000208a	// 208a <zip_clear_sdram>
+    200a:	00 00 20 8a 
     200b:	0d 80 00 4f 	LDI        $79,R1
     200c:	0c c0 01 07 	STO        R1,($263)
-    200d:	13 00 00 00 	LDI        0x00002212,R2	// 2212 <msg>
-    200e:	12 40 22 12 
+    200d:	13 00 00 00 	LDI        0x000023bb,R2	// 23bb <msg>
+    200e:	12 40 23 bb 
     200f:	1c 84 80 00 	LOD        (R2),R3
     2010:	1c 00 00 00 	CMP        $0,R3
-    2011:	78 98 00 21 	BNZ        @0x00002033	// 2033 <entry+0x2f>
+    2011:	78 98 00 37 	BNZ        @0x00002049	// 2049 <entry+0x45>
     2012:	03 c3 c0 02 	MOV        $2+PC,R0
-    2013:	7c 87 c0 00 	LJMP       @0x000021d9	// 21d9 <test_malloc>
-    2014:	00 00 21 d9 
+    2013:	7c 87 c0 00 	LJMP       @0x00002382	// 2382 <test_malloc>
+    2014:	00 00 23 82 
     2015:	2b 00 40 02 	LDI        0x40024002,R5	// 40024002 <_top_of_heap+0x3f124002>
     2016:	2a 40 40 02 
     2017:	2c c0 01 06 	STO        R5,($262)
     2018:	0b 00 01 00 	BREV       $256,R1
     2019:	03 c3 c0 02 	MOV        $2+PC,R0
-    201a:	7c 87 c0 00 	LJMP       @0x00002043	// 2043 <zip_read_image>
-    201b:	00 00 20 43 
+    201a:	7c 87 c0 00 	LJMP       @0x00002059	// 2059 <zip_read_image>
+    201b:	00 00 20 59 
     201c:	28 83 bf fe 	ADD        $-16386,R5
     201d:	2c c0 01 06 	STO        R5,($262)
-    201e:	2b 03 ff fe 	BREV       $-2,R5
-    201f:	2c c0 01 04 	STO        R5,($260)
-    2020:	0b 00 01 00 	BREV       $256,R1
-    2021:	03 c3 c0 02 	MOV        $2+PC,R0
-    2022:	7c 87 c0 00 	LJMP       @0x00002082	// 2082 <dwt_process>
-    2023:	00 00 20 82 
-    2024:	0c 80 01 04 	LOD        ($260),R1
-    2025:	28 04 40 00 	SUB        R1,R5
-    2026:	0b 01 e1 00 	LDI        0x0087fffe,R1	// 87fffe <_top_of_stack+0x87bfff>
-    2027:	0a 40 ff fe 
-    2028:	2c c4 40 00 	STO        R5,(R1)
-    2029:	0b 00 01 00 	BREV       $256,R1
-    202a:	03 c3 c0 02 	MOV        $2+PC,R0
-    202b:	7c 87 c0 00 	LJMP       @0x00002082	// 2082 <dwt_process>
-    202c:	00 00 20 82 
+    201e:	0b 03 ff fe 	BREV       $-2,R1
+    201f:	0c c0 01 04 	STO        R1,($260)
+    2020:	14 80 01 04 	LOD        ($260),R2
+    2021:	08 04 80 00 	SUB        R2,R1
+    2022:	13 01 e1 00 	LDI        0x0087fffe,R2	// 87fffe <_top_of_stack+0x87bfff>
+    2023:	12 40 ff fe 
+    2024:	0c c4 80 00 	STO        R1,(R2)
+    2025:	1d 80 00 40 	LDI        $64,R3
+    2026:	13 c0 c0 00 	MOV        R3,R2
+    2027:	0b 00 01 00 	BREV       $256,R1
+    2028:	03 c3 c0 02 	MOV        $2+PC,R0
+    2029:	7c 87 c0 00 	LJMP       @0x0000219e	// 219e <lift_step>
+    202a:	00 00 21 9e 
+    202b:	1d 80 00 40 	LDI        $64,R3
+    202c:	13 c0 c0 00 	MOV        R3,R2
     202d:	0b 00 01 00 	BREV       $256,R1
     202e:	03 c3 c0 02 	MOV        $2+PC,R0
-    202f:	7c 87 c0 00 	LJMP       @0x0000213e	// 213e <zip_write_image>
-    2030:	00 00 21 3e 
-    2031:	14 80 01 10 	LOD        ($272),R2
-    2032:	78 80 00 09 	BRA        @0x0000203c	// 203c <entry+0x38>
-    2033:	0c 80 01 0b 	LOD        ($267),R1
-    2034:	0c 00 00 00 	CMP        $0,R1
-    2035:	78 9b ff fd 	BNZ        @0x00002033	// 2033 <entry+0x2f>
-    2036:	10 80 00 01 	ADD        $1,R2
-    2037:	1c c0 01 0b 	STO        R3,($267)
-    2038:	1c 84 80 00 	LOD        (R2),R3
-    2039:	1c 00 00 00 	CMP        $0,R3
-    203a:	78 9b ff f8 	BNZ        @0x00002033	// 2033 <entry+0x2f>
-    203b:	78 83 ff d6 	BRA        @0x00002012	// 2012 <entry+0xe>
-    203c:	0c 80 01 10 	LOD        ($272),R1
-    203d:	14 04 40 00 	CMP        R1,R2
-    203e:	78 93 ff fd 	BZ         @0x0000203c	// 203c <entry+0x38>
-    203f:	04 87 40 00 	LOD        (SP),R0
-    2040:	2c 87 40 01 	LOD        1(SP),R5
-    2041:	68 80 00 02 	ADD        $2,SP
-    2042:	7b c0 00 00 	JMP        R0
+    202f:	7c 87 c0 00 	LJMP       @0x00002093	// 2093 <de_interleave>
+    2030:	00 00 20 93 
+    2031:	1d 80 00 40 	LDI        $64,R3
+    2032:	13 c0 c0 00 	MOV        R3,R2
+    2033:	0b 00 01 00 	BREV       $256,R1
+    2034:	03 c3 c0 02 	MOV        $2+PC,R0
+    2035:	7c 87 c0 00 	LJMP       @0x0000219e	// 219e <lift_step>
+    2036:	00 00 21 9e 
+    2037:	1d 80 00 40 	LDI        $64,R3
+    2038:	13 c0 c0 00 	MOV        R3,R2
+    2039:	0b 00 01 00 	BREV       $256,R1
+    203a:	03 c3 c0 02 	MOV        $2+PC,R0
+    203b:	7c 87 c0 00 	LJMP       @0x00002093	// 2093 <de_interleave>
+    203c:	00 00 20 93 
+    203d:	1d 80 00 40 	LDI        $64,R3
+    203e:	13 c0 c0 00 	MOV        R3,R2
+    203f:	0b 00 01 00 	BREV       $256,R1
+    2040:	03 c3 c0 02 	MOV        $2+PC,R0
+    2041:	7c 87 c0 00 	LJMP       @0x00002112	// 2112 <lower_upper>
+    2042:	00 00 21 12 
+    2043:	0b 00 01 00 	BREV       $256,R1
+    2044:	03 c3 c0 02 	MOV        $2+PC,R0
+    2045:	7c 87 c0 00 	LJMP       @0x0000234d	// 234d <zip_write_image>
+    2046:	00 00 23 4d 
+    2047:	14 80 01 10 	LOD        ($272),R2
+    2048:	78 80 00 09 	BRA        @0x00002052	// 2052 <entry+0x4e>
+    2049:	0c 80 01 0b 	LOD        ($267),R1
+    204a:	0c 00 00 00 	CMP        $0,R1
+    204b:	78 9b ff fd 	BNZ        @0x00002049	// 2049 <entry+0x45>
+    204c:	10 80 00 01 	ADD        $1,R2
+    204d:	1c c0 01 0b 	STO        R3,($267)
+    204e:	1c 84 80 00 	LOD        (R2),R3
+    204f:	1c 00 00 00 	CMP        $0,R3
+    2050:	78 9b ff f8 	BNZ        @0x00002049	// 2049 <entry+0x45>
+    2051:	78 83 ff c0 	BRA        @0x00002012	// 2012 <entry+0xe>
+    2052:	0c 80 01 10 	LOD        ($272),R1
+    2053:	14 04 40 00 	CMP        R1,R2
+    2054:	78 93 ff fd 	BZ         @0x00002052	// 2052 <entry+0x4e>
+    2055:	04 87 40 00 	LOD        (SP),R0
+    2056:	2c 87 40 01 	LOD        1(SP),R5
+    2057:	68 80 00 02 	ADD        $2,SP
+    2058:	7b c0 00 00 	JMP        R0
 
-00002043 <zip_read_image>:
-    2043:	68 00 00 05 	SUB        $5,SP
-    2044:	2c c7 40 00 	STO        R5,(SP)
-    2045:	34 c7 40 01 	STO        R6,$1(SP)
-    2046:	3c c7 40 02 	STO        R7,$2(SP)
-    2047:	44 c7 40 03 	STO        R8,$3(SP)
-    2048:	4c c7 40 04 	STO        R9,$4(SP)
-    2049:	25 80 00 00 	CLR        R4
-    204a:	24 c0 01 04 	STO        R4,($260)
-    204b:	15 81 00 01 	LDI        $65537,R2
-    204c:	14 c0 01 06 	STO        R2,($262)
-    204d:	2b c0 40 00 	MOV        R1,R5
-    204e:	45 ff ff ff 	LDI        $-1,R8
-    204f:	3b 00 c1 00 	BREV       $49408,R7
-    2050:	35 81 00 00 	LDI        $65536,R6
-    2051:	44 c4 40 00 	STO        R8,(R1)
-    2052:	14 80 01 0a 	LOD        ($266),R2
-    2053:	1b c0 80 00 	MOV        R2,R3
-    2054:	18 40 01 00 	AND        $256,R3
-    2055:	78 9b ff fc 	BNZ        @0x00002052	// 2052 <zip_read_image+0xf>
-    2056:	11 80 00 14 	LSL        $20,R2
-    2057:	1c 80 01 0a 	LOD        ($266),R3
-    2058:	4b c0 c0 00 	MOV        R3,R9
-    2059:	48 40 01 00 	AND        $256,R9
-    205a:	78 9b ff fc 	BNZ        @0x00002057	// 2057 <zip_read_image+0x14>
-    205b:	19 80 00 0a 	LSL        $10,R3
-    205c:	10 c4 c0 00 	OR         R3,R2
-    205d:	1c 80 01 0a 	LOD        ($266),R3
-    205e:	4b c0 c0 00 	MOV        R3,R9
-    205f:	48 40 01 00 	AND        $256,R9
-    2060:	78 9b ff fc 	BNZ        @0x0000205d	// 205d <zip_read_image+0x1a>
-    2061:	10 c4 c0 00 	OR         R3,R2
-    2062:	14 c5 40 00 	STO        R2,(R5)
-    2063:	24 c5 c0 00 	STO        R4,(R7)
-    2064:	34 c0 01 06 	STO        R6,($262)
-    2065:	14 80 01 02 	LOD        ($258),R2
-    2066:	10 40 01 00 	AND        $256,R2
-    2067:	78 98 00 05 	BNZ        @0x0000206d	// 206d <zip_read_image+0x2a>
-    2068:	20 80 00 01 	ADD        $1,R4
-    2069:	28 80 00 01 	ADD        $1,R5
-    206a:	08 80 00 02 	ADD        $2,R1
-    206b:	24 01 00 00 	CMP        $65536,R4
-    206c:	78 9b ff e4 	BNZ        @0x00002051	// 2051 <zip_read_image+0xe>
-    206d:	2c 87 40 00 	LOD        (SP),R5
-    206e:	34 87 40 01 	LOD        1(SP),R6
-    206f:	3c 87 40 02 	LOD        2(SP),R7
-    2070:	44 87 40 03 	LOD        3(SP),R8
-    2071:	4c 87 40 04 	LOD        4(SP),R9
-    2072:	68 80 00 05 	ADD        $5,SP
-    2073:	7b c0 00 00 	JMP        R0
+00002059 <zip_read_image>:
+    2059:	68 00 00 05 	SUB        $5,SP
+    205a:	2c c7 40 00 	STO        R5,(SP)
+    205b:	34 c7 40 01 	STO        R6,$1(SP)
+    205c:	3c c7 40 02 	STO        R7,$2(SP)
+    205d:	44 c7 40 03 	STO        R8,$3(SP)
+    205e:	4c c7 40 04 	STO        R9,$4(SP)
+    205f:	25 80 00 00 	CLR        R4
+    2060:	24 c0 01 04 	STO        R4,($260)
+    2061:	15 81 00 01 	LDI        $65537,R2
+    2062:	14 c0 01 06 	STO        R2,($262)
+    2063:	2b c0 40 00 	MOV        R1,R5
+    2064:	45 ff ff ff 	LDI        $-1,R8
+    2065:	3b 00 c1 00 	BREV       $49408,R7
+    2066:	35 81 00 00 	LDI        $65536,R6
+    2067:	44 c4 40 00 	STO        R8,(R1)
+    2068:	14 80 01 0a 	LOD        ($266),R2
+    2069:	1b c0 80 00 	MOV        R2,R3
+    206a:	18 40 01 00 	AND        $256,R3
+    206b:	78 9b ff fc 	BNZ        @0x00002068	// 2068 <zip_read_image+0xf>
+    206c:	11 80 00 14 	LSL        $20,R2
+    206d:	1c 80 01 0a 	LOD        ($266),R3
+    206e:	4b c0 c0 00 	MOV        R3,R9
+    206f:	48 40 01 00 	AND        $256,R9
+    2070:	78 9b ff fc 	BNZ        @0x0000206d	// 206d <zip_read_image+0x14>
+    2071:	19 80 00 0a 	LSL        $10,R3
+    2072:	10 c4 c0 00 	OR         R3,R2
+    2073:	1c 80 01 0a 	LOD        ($266),R3
+    2074:	4b c0 c0 00 	MOV        R3,R9
+    2075:	48 40 01 00 	AND        $256,R9
+    2076:	78 9b ff fc 	BNZ        @0x00002073	// 2073 <zip_read_image+0x1a>
+    2077:	10 c4 c0 00 	OR         R3,R2
+    2078:	14 c5 40 00 	STO        R2,(R5)
+    2079:	24 c5 c0 00 	STO        R4,(R7)
+    207a:	34 c0 01 06 	STO        R6,($262)
+    207b:	14 80 01 02 	LOD        ($258),R2
+    207c:	10 40 01 00 	AND        $256,R2
+    207d:	78 98 00 05 	BNZ        @0x00002083	// 2083 <zip_read_image+0x2a>
+    207e:	20 80 00 01 	ADD        $1,R4
+    207f:	28 80 00 01 	ADD        $1,R5
+    2080:	08 80 00 02 	ADD        $2,R1
+    2081:	24 01 00 00 	CMP        $65536,R4
+    2082:	78 9b ff e4 	BNZ        @0x00002067	// 2067 <zip_read_image+0xe>
+    2083:	2c 87 40 00 	LOD        (SP),R5
+    2084:	34 87 40 01 	LOD        1(SP),R6
+    2085:	3c 87 40 02 	LOD        2(SP),R7
+    2086:	44 87 40 03 	LOD        3(SP),R8
+    2087:	4c 87 40 04 	LOD        4(SP),R9
+    2088:	68 80 00 05 	ADD        $5,SP
+    2089:	7b c0 00 00 	JMP        R0
 
-00002074 <zip_clear_sdram>:
-    2074:	15 83 00 00 	LDI        $196608,R2
-    2075:	1b c0 40 00 	MOV        R1,R3
-    2076:	18 84 80 00 	ADD        R2,R3
-    2077:	15 80 00 00 	CLR        R2
-    2078:	08 80 00 01 	ADD        $1,R1
-    2079:	14 c4 7f ff 	STO        R2,$-1(R1)
-    207a:	0c 04 c0 00 	CMP        R3,R1
-    207b:	78 9b ff fc 	BNZ        @0x00002078	// 2078 <zip_clear_sdram+0x4>
-    207c:	7b c0 00 00 	JMP        R0
+0000208a <zip_clear_sdram>:
+    208a:	15 83 00 00 	LDI        $196608,R2
+    208b:	1b c0 40 00 	MOV        R1,R3
+    208c:	18 84 80 00 	ADD        R2,R3
+    208d:	15 80 00 00 	CLR        R2
+    208e:	08 80 00 01 	ADD        $1,R1
+    208f:	14 c4 7f ff 	STO        R2,$-1(R1)
+    2090:	0c 04 c0 00 	CMP        R3,R1
+    2091:	78 9b ff fc 	BNZ        @0x0000208e	// 208e <zip_clear_sdram+0x4>
+    2092:	7b c0 00 00 	JMP        R0
 
-0000207d <twos_comp>:
-    207d:	0c 00 01 01 	CMP        $257,R1
-    207e:	78 88 00 02 	BLT        @0x00002081	// 2081 <twos_comp+0x4>
-    207f:	08 83 fe 00 	ADD        $-512,R1
-    2080:	7b c0 00 00 	JMP        R0
-    2081:	7b c0 00 00 	JMP        R0
+00002093 <de_interleave>:
+    2093:	68 00 00 09 	SUB        $9,SP
+    2094:	2c c7 40 01 	STO        R5,$1(SP)
+    2095:	34 c7 40 02 	STO        R6,$2(SP)
+    2096:	3c c7 40 03 	STO        R7,$3(SP)
+    2097:	44 c7 40 04 	STO        R8,$4(SP)
+    2098:	4c c7 40 05 	STO        R9,$5(SP)
+    2099:	54 c7 40 06 	STO        R10,$6(SP)
+    209a:	5c c7 40 07 	STO        R11,$7(SP)
+    209b:	64 c7 40 08 	STO        R12,$8(SP)
+    209c:	63 c3 40 01 	MOV        $1+SP,R12
+    209d:	23 c0 c0 00 	MOV        R3,R4
+    209e:	22 04 80 00 	MPY        R2,R4
+    209f:	68 05 00 00 	SUB        R4,SP
+    20a0:	53 c3 40 00 	MOV        SP,R10
+    20a1:	3b c3 40 00 	MOV        SP,R7
+    20a2:	45 80 00 00 	CLR        R8
+    20a3:	33 c2 00 00 	MOV        R8,R6
+    20a4:	1c 00 00 00 	CMP        $0,R3
+    20a5:	78 a0 00 0a 	BGT        @0x000020b0	// 20b0 <de_interleave+0x1d>
+    20a6:	78 80 00 60 	BRA        @0x00002107	// 2107 <de_interleave+0x74>
+    20a7:	34 c5 00 00 	STO        R6,(R4)
+    20a8:	20 80 00 01 	ADD        $1,R4
+    20a9:	24 05 40 00 	CMP        R5,R4
+    20aa:	78 9b ff fc 	BNZ        @0x000020a7	// 20a7 <de_interleave+0x14>
+    20ab:	40 80 00 01 	ADD        $1,R8
+    20ac:	38 84 c0 00 	ADD        R3,R7
+    20ad:	1c 06 00 00 	CMP        R8,R3
+    20ae:	78 98 00 01 	BNZ        @0x000020b0	// 20b0 <de_interleave+0x1d>
+    20af:	78 80 00 18 	BRA        @0x000020c8	// 20c8 <de_interleave+0x35>
+    20b0:	2b c0 80 00 	MOV        R2,R5
+    20b1:	28 85 c0 00 	ADD        R7,R5
+    20b2:	23 c1 c0 00 	MOV        R7,R4
+    20b3:	14 00 00 00 	CMP        $0,R2
+    20b4:	78 a3 ff f2 	BGT        @0x000020a7	// 20a7 <de_interleave+0x14>
+    20b5:	78 83 ff f5 	BRA        @0x000020ab	// 20ab <de_interleave+0x18>
+    20b6:	3b c1 00 00 	MOV        R4,R7
+    20b7:	38 05 40 00 	SUB        R5,R7
+    20b8:	20 80 00 01 	ADD        $1,R4
+    20b9:	5b c0 c0 00 	MOV        R3,R11
+    20ba:	5a 05 c0 00 	MPY        R7,R11
+    20bb:	3b c2 c0 00 	MOV        R11,R7
+    20bc:	5b c2 40 00 	MOV        R9,R11
+    20bd:	58 85 c0 00 	ADD        R7,R11
+    20be:	3b c2 c0 00 	MOV        R11,R7
+    20bf:	5c 85 3f ff 	LOD        -1(R4),R11
+    20c0:	5c c5 c0 00 	STO        R11,(R7)
+    20c1:	34 05 00 00 	CMP        R4,R6
+    20c2:	78 9b ff f3 	BNZ        @0x000020b6	// 20b6 <de_interleave+0x23>
+    20c3:	2b c1 80 00 	MOV        R6,R5
+    20c4:	40 80 00 01 	ADD        $1,R8
+    20c5:	1c 06 00 00 	CMP        R8,R3
+    20c6:	78 98 00 08 	BNZ        @0x000020cf	// 20cf <de_interleave+0x3c>
+    20c7:	78 80 00 38 	BRA        @0x00002100	// 2100 <de_interleave+0x6d>
+    20c8:	5b c0 c0 00 	MOV        R3,R11
+    20c9:	59 40 00 1f 	LSR        $31,R11
+    20ca:	58 84 c0 00 	ADD        R3,R11
+    20cb:	59 c0 00 01 	ASR        $1,R11
+    20cc:	5c c7 3f ff 	STO        R11,$-1(R12)
+    20cd:	2b c0 40 00 	MOV        R1,R5
+    20ce:	45 80 00 00 	CLR        R8
+    20cf:	14 00 00 01 	CMP        $1,R2
+    20d0:	78 8b ff f3 	BLT        @0x000020c4	// 20c4 <de_interleave+0x31>
+    20d1:	3b c2 00 00 	MOV        R8,R7
+    20d2:	39 40 00 1f 	LSR        $31,R7
+    20d3:	38 86 00 00 	ADD        R8,R7
+    20d4:	39 c0 00 01 	ASR        $1,R7
+    20d5:	4b c1 c0 00 	MOV        R7,R9
+    20d6:	24 87 3f ff 	LOD        -1(R12),R4
+    20d7:	48 85 00 00 	ADD        R4,R9
+    20d8:	23 c2 00 00 	MOV        R8,R4
+    20d9:	20 40 00 01 	AND        $1,R4
+    20da:	78 98 00 06 	BNZ        @0x000020e1	// 20e1 <de_interleave+0x4e>
+    20db:	33 c1 40 00 	MOV        R5,R6
+    20dc:	30 84 80 00 	ADD        R2,R6
+    20dd:	23 c1 40 00 	MOV        R5,R4
+    20de:	4b c2 80 00 	MOV        R10,R9
+    20df:	48 85 c0 00 	ADD        R7,R9
+    20e0:	78 83 ff d5 	BRA        @0x000020b6	// 20b6 <de_interleave+0x23>
+    20e1:	33 c1 40 00 	MOV        R5,R6
+    20e2:	30 84 80 00 	ADD        R2,R6
+    20e3:	23 c1 40 00 	MOV        R5,R4
+    20e4:	3b c2 80 00 	MOV        R10,R7
+    20e5:	38 86 40 00 	ADD        R9,R7
+    20e6:	4b c1 c0 00 	MOV        R7,R9
+    20e7:	3b c1 00 00 	MOV        R4,R7
+    20e8:	38 05 40 00 	SUB        R5,R7
+    20e9:	20 80 00 01 	ADD        $1,R4
+    20ea:	5b c0 c0 00 	MOV        R3,R11
+    20eb:	5a 05 c0 00 	MPY        R7,R11
+    20ec:	3b c2 c0 00 	MOV        R11,R7
+    20ed:	5b c2 40 00 	MOV        R9,R11
+    20ee:	58 85 c0 00 	ADD        R7,R11
+    20ef:	3b c2 c0 00 	MOV        R11,R7
+    20f0:	5c 85 3f ff 	LOD        -1(R4),R11
+    20f1:	5c c5 c0 00 	STO        R11,(R7)
+    20f2:	34 05 00 00 	CMP        R4,R6
+    20f3:	78 9b ff f3 	BNZ        @0x000020e7	// 20e7 <de_interleave+0x54>
+    20f4:	78 83 ff ce 	BRA        @0x000020c3	// 20c3 <de_interleave+0x30>
+    20f5:	08 80 00 01 	ADD        $1,R1
+    20f6:	2c 85 00 00 	LOD        (R4),R5
+    20f7:	2c c4 7f ff 	STO        R5,$-1(R1)
+    20f8:	20 80 00 01 	ADD        $1,R4
+    20f9:	34 04 40 00 	CMP        R1,R6
+    20fa:	78 9b ff fa 	BNZ        @0x000020f5	// 20f5 <de_interleave+0x62>
+    20fb:	38 80 00 01 	ADD        $1,R7
+    20fc:	50 84 c0 00 	ADD        R3,R10
+    20fd:	1c 05 c0 00 	CMP        R7,R3
+    20fe:	78 a0 00 02 	BGT        @0x00002101	// 2101 <de_interleave+0x6e>
+    20ff:	78 80 00 07 	BRA        @0x00002107	// 2107 <de_interleave+0x74>
+    2100:	3d 80 00 00 	CLR        R7
+    2101:	33 c0 40 00 	MOV        R1,R6
+    2102:	30 84 80 00 	ADD        R2,R6
+    2103:	23 c2 80 00 	MOV        R10,R4
+    2104:	14 00 00 00 	CMP        $0,R2
+    2105:	78 a3 ff ef 	BGT        @0x000020f5	// 20f5 <de_interleave+0x62>
+    2106:	78 83 ff f4 	BRA        @0x000020fb	// 20fb <de_interleave+0x68>
+    2107:	6b c3 00 00 	MOV        R12,SP
+    2108:	2c 87 40 00 	LOD        (SP),R5
+    2109:	34 87 40 01 	LOD        1(SP),R6
+    210a:	3c 87 40 02 	LOD        2(SP),R7
+    210b:	44 87 40 03 	LOD        3(SP),R8
+    210c:	4c 87 40 04 	LOD        4(SP),R9
+    210d:	54 87 40 05 	LOD        5(SP),R10
+    210e:	5c 87 40 06 	LOD        6(SP),R11
+    210f:	64 87 40 07 	LOD        7(SP),R12
+    2110:	68 80 00 08 	ADD        $8,SP
+    2111:	7b c0 00 00 	JMP        R0
 
-00002082 <dwt_process>:
-    2082:	68 00 00 0d 	SUB        $13,SP
-    2083:	2c c7 40 05 	STO        R5,$5(SP)
-    2084:	34 c7 40 06 	STO        R6,$6(SP)
-    2085:	3c c7 40 07 	STO        R7,$7(SP)
-    2086:	44 c7 40 08 	STO        R8,$8(SP)
-    2087:	4c c7 40 09 	STO        R9,$9(SP)
-    2088:	54 c7 40 0a 	STO        R10,$10(SP)
-    2089:	5c c7 40 0b 	STO        R11,$11(SP)
-    208a:	64 c7 40 0c 	STO        R12,$12(SP)
-    208b:	0c c7 40 03 	STO        R1,$3(SP)
-    208c:	08 80 00 01 	ADD        $1,R1
-    208d:	0c c7 40 04 	STO        R1,$4(SP)
-    208e:	0c 87 40 03 	LOD        3(SP),R1
-    208f:	43 c0 40 02 	MOV        $2+R1,R8
-    2090:	08 80 00 03 	ADD        $3,R1
-    2091:	0c c7 40 01 	STO        R1,$1(SP)
-    2092:	0c 87 40 03 	LOD        3(SP),R1
-    2093:	08 81 00 01 	ADD        $65537,R1
-    2094:	0c c7 40 00 	STO        R1,(SP)
-    2095:	0c 87 40 01 	LOD        1(SP),R1
-    2096:	53 c2 00 00 	MOV        R8,R10
-    2097:	4b c0 40 00 	MOV        R1,R9
-    2098:	64 87 40 04 	LOD        4(SP),R12
-    2099:	5d 87 fc 00 	LDI        $523264,R11
-    209a:	44 c7 40 02 	STO        R8,$2(SP)
-    209b:	43 c0 40 00 	MOV        R1,R8
-    209c:	1c 87 00 00 	LOD        (R12),R3
-    209d:	0b c0 c0 00 	MOV        R3,R1
-    209e:	09 c0 00 14 	ASR        $20,R1
-    209f:	14 86 80 00 	LOD        (R10),R2
-    20a0:	23 c0 80 00 	MOV        R2,R4
-    20a1:	21 c0 00 14 	ASR        $20,R4
-    20a2:	34 86 40 00 	LOD        (R9),R6
-    20a3:	2b c1 80 00 	MOV        R6,R5
-    20a4:	29 c0 00 14 	ASR        $20,R5
-    20a5:	0c 00 01 01 	CMP        $257,R1
-    20a6:	08 ab fe 00 	ADD.GE     $-512,R1
-    20a7:	24 00 01 01 	CMP        $257,R4
-    20a8:	20 ab fe 00 	ADD.GE     $-512,R4
-    20a9:	2c 00 01 01 	CMP        $257,R5
-    20aa:	28 ab fe 00 	ADD.GE     $-512,R5
-    20ab:	08 85 40 00 	ADD        R5,R1
-    20ac:	09 c0 00 01 	ASR        $1,R1
-    20ad:	20 04 40 00 	SUB        R1,R4
-    20ae:	20 40 01 ff 	AND        $511,R4
-    20af:	21 80 00 14 	LSL        $20,R4
-    20b0:	2b c0 c0 00 	MOV        R3,R5
-    20b1:	28 46 c0 00 	AND        R11,R5
-    20b2:	29 c0 00 0a 	ASR        $10,R5
-    20b3:	0b c0 80 00 	MOV        R2,R1
-    20b4:	08 46 c0 00 	AND        R11,R1
-    20b5:	09 c0 00 0a 	ASR        $10,R1
-    20b6:	3b c1 80 00 	MOV        R6,R7
-    20b7:	38 46 c0 00 	AND        R11,R7
-    20b8:	39 c0 00 0a 	ASR        $10,R7
-    20b9:	2c 00 01 01 	CMP        $257,R5
-    20ba:	28 ab fe 00 	ADD.GE     $-512,R5
-    20bb:	0c 00 01 01 	CMP        $257,R1
-    20bc:	08 ab fe 00 	ADD.GE     $-512,R1
-    20bd:	3c 00 01 01 	CMP        $257,R7
-    20be:	38 ab fe 00 	ADD.GE     $-512,R7
-    20bf:	28 85 c0 00 	ADD        R7,R5
-    20c0:	29 c0 00 01 	ASR        $1,R5
-    20c1:	08 05 40 00 	SUB        R5,R1
-    20c2:	08 40 01 ff 	AND        $511,R1
-    20c3:	09 80 00 0a 	LSL        $10,R1
-    20c4:	20 c4 40 00 	OR         R1,R4
-    20c5:	18 40 01 ff 	AND        $511,R3
-    20c6:	10 40 01 ff 	AND        $511,R2
-    20c7:	30 40 01 ff 	AND        $511,R6
-    20c8:	1c 00 01 01 	CMP        $257,R3
-    20c9:	18 ab fe 00 	ADD.GE     $-512,R3
-    20ca:	14 00 01 01 	CMP        $257,R2
-    20cb:	10 ab fe 00 	ADD.GE     $-512,R2
-    20cc:	34 00 01 01 	CMP        $257,R6
-    20cd:	30 ab fe 00 	ADD.GE     $-512,R6
-    20ce:	18 85 80 00 	ADD        R6,R3
-    20cf:	19 c0 00 01 	ASR        $1,R3
-    20d0:	10 04 c0 00 	SUB        R3,R2
-    20d1:	10 40 01 ff 	AND        $511,R2
-    20d2:	20 c4 80 00 	OR         R2,R4
-    20d3:	24 c6 80 00 	STO        R4,(R10)
-    20d4:	50 80 00 02 	ADD        $2,R10
-    20d5:	48 80 00 02 	ADD        $2,R9
-    20d6:	0c 87 40 00 	LOD        (SP),R1
-    20d7:	4c 04 40 00 	CMP        R1,R9
-    20d8:	78 98 00 0a 	BNZ        @0x000020e3	// 20e3 <dwt_process+0x61>
-    20d9:	44 87 40 02 	LOD        2(SP),R8
-    20da:	64 87 40 03 	LOD        3(SP),R12
-    20db:	60 81 00 00 	ADD        $65536,R12
-    20dc:	55 80 00 ff 	LDI        $255,R10
-    20dd:	4d 87 fc 00 	LDI        $523264,R9
-    20de:	64 c7 40 02 	STO        R12,$2(SP)
-    20df:	44 c7 40 00 	STO        R8,(SP)
-    20e0:	5c 87 40 04 	LOD        4(SP),R11
-    20e1:	64 87 40 03 	LOD        3(SP),R12
-    20e2:	78 80 00 04 	BRA        @0x000020e7	// 20e7 <dwt_process+0x65>
-    20e3:	0b c3 00 04 	MOV        $4+R12,R1
-    20e4:	63 c2 00 00 	MOV        R8,R12
-    20e5:	43 c0 40 00 	MOV        R1,R8
-    20e6:	78 83 ff b5 	BRA        @0x0000209c	// 209c <dwt_process+0x1a>
-    20e7:	2c 87 00 00 	LOD        (R12),R5
-    20e8:	1b c1 40 00 	MOV        R5,R3
-    20e9:	19 c0 00 14 	ASR        $20,R3
-    20ea:	24 86 c0 00 	LOD        (R11),R4
-    20eb:	33 c1 00 00 	MOV        R4,R6
-    20ec:	31 c0 00 14 	ASR        $20,R6
-    20ed:	14 86 00 00 	LOD        (R8),R2
-    20ee:	0b c0 80 00 	MOV        R2,R1
-    20ef:	09 c0 00 14 	ASR        $20,R1
-    20f0:	1c 00 01 01 	CMP        $257,R3
-    20f1:	18 ab fe 00 	ADD.GE     $-512,R3
-    20f2:	34 00 01 01 	CMP        $257,R6
-    20f3:	30 ab fe 00 	ADD.GE     $-512,R6
-    20f4:	0c 00 01 01 	CMP        $257,R1
-    20f5:	08 ab fe 00 	ADD.GE     $-512,R1
-    20f6:	08 84 c0 00 	ADD        R3,R1
-    20f7:	08 80 00 02 	ADD        $2,R1
-    20f8:	09 c0 00 02 	ASR        $2,R1
-    20f9:	1b c0 40 00 	MOV        R1,R3
-    20fa:	18 85 80 00 	ADD        R6,R3
-    20fb:	1c 06 80 00 	CMP        R10,R3
-    20fc:	1b e2 80 00 	MOV.GT     R10,R3
-    20fd:	18 40 01 ff 	AND        $511,R3
-    20fe:	19 80 00 14 	LSL        $20,R3
-    20ff:	3b c1 40 00 	MOV        R5,R7
-    2100:	38 46 40 00 	AND        R9,R7
-    2101:	39 c0 00 0a 	ASR        $10,R7
-    2102:	33 c1 00 00 	MOV        R4,R6
-    2103:	30 46 40 00 	AND        R9,R6
-    2104:	31 c0 00 0a 	ASR        $10,R6
-    2105:	0b c0 80 00 	MOV        R2,R1
-    2106:	08 46 40 00 	AND        R9,R1
-    2107:	09 c0 00 0a 	ASR        $10,R1
-    2108:	3c 00 01 01 	CMP        $257,R7
-    2109:	38 ab fe 00 	ADD.GE     $-512,R7
-    210a:	34 00 01 01 	CMP        $257,R6
-    210b:	30 ab fe 00 	ADD.GE     $-512,R6
-    210c:	0c 00 01 01 	CMP        $257,R1
-    210d:	08 ab fe 00 	ADD.GE     $-512,R1
-    210e:	08 85 c0 00 	ADD        R7,R1
-    210f:	08 80 00 02 	ADD        $2,R1
-    2110:	09 c0 00 02 	ASR        $2,R1
-    2111:	08 85 80 00 	ADD        R6,R1
-    2112:	0c 06 80 00 	CMP        R10,R1
-    2113:	0b e2 80 00 	MOV.GT     R10,R1
-    2114:	08 40 01 ff 	AND        $511,R1
-    2115:	09 80 00 0a 	LSL        $10,R1
-    2116:	18 c4 40 00 	OR         R1,R3
-    2117:	28 40 01 ff 	AND        $511,R5
-    2118:	20 40 01 ff 	AND        $511,R4
-    2119:	10 40 01 ff 	AND        $511,R2
-    211a:	2c 00 01 01 	CMP        $257,R5
-    211b:	28 ab fe 00 	ADD.GE     $-512,R5
-    211c:	24 00 01 01 	CMP        $257,R4
-    211d:	20 ab fe 00 	ADD.GE     $-512,R4
-    211e:	14 00 01 01 	CMP        $257,R2
-    211f:	10 ab fe 00 	ADD.GE     $-512,R2
-    2120:	10 85 40 00 	ADD        R5,R2
-    2121:	0b c0 80 02 	MOV        $2+R2,R1
-    2122:	09 c0 00 02 	ASR        $2,R1
-    2123:	08 85 00 00 	ADD        R4,R1
-    2124:	0c 06 80 00 	CMP        R10,R1
-    2125:	0b e2 80 00 	MOV.GT     R10,R1
-    2126:	08 40 01 ff 	AND        $511,R1
-    2127:	18 c4 40 00 	OR         R1,R3
-    2128:	1c c6 c0 00 	STO        R3,(R11)
-    2129:	40 80 00 02 	ADD        $2,R8
-    212a:	0c 87 40 02 	LOD        2(SP),R1
-    212b:	44 04 40 00 	CMP        R1,R8
-    212c:	78 90 00 07 	BZ         @0x00002134	// 2134 <dwt_process+0xb2>
-    212d:	13 c3 00 04 	MOV        $4+R12,R2
-    212e:	0b c2 c0 04 	MOV        $4+R11,R1
-    212f:	64 87 40 00 	LOD        (SP),R12
-    2130:	5c 87 40 01 	LOD        1(SP),R11
-    2131:	14 c7 40 00 	STO        R2,(SP)
-    2132:	0c c7 40 01 	STO        R1,$1(SP)
-    2133:	78 83 ff b3 	BRA        @0x000020e7	// 20e7 <dwt_process+0x65>
-    2134:	2c 87 40 05 	LOD        5(SP),R5
-    2135:	34 87 40 06 	LOD        6(SP),R6
-    2136:	3c 87 40 07 	LOD        7(SP),R7
-    2137:	44 87 40 08 	LOD        8(SP),R8
-    2138:	4c 87 40 09 	LOD        9(SP),R9
-    2139:	54 87 40 0a 	LOD        10(SP),R10
-    213a:	5c 87 40 0b 	LOD        11(SP),R11
-    213b:	64 87 40 0c 	LOD        12(SP),R12
-    213c:	68 80 00 0d 	ADD        $13,SP
-    213d:	7b c0 00 00 	JMP        R0
+00002112 <lower_upper>:
+    2112:	68 00 00 0a 	SUB        $10,SP
+    2113:	2c c7 40 02 	STO        R5,$2(SP)
+    2114:	34 c7 40 03 	STO        R6,$3(SP)
+    2115:	3c c7 40 04 	STO        R7,$4(SP)
+    2116:	44 c7 40 05 	STO        R8,$5(SP)
+    2117:	4c c7 40 06 	STO        R9,$6(SP)
+    2118:	54 c7 40 07 	STO        R10,$7(SP)
+    2119:	5c c7 40 08 	STO        R11,$8(SP)
+    211a:	64 c7 40 09 	STO        R12,$9(SP)
+    211b:	63 c3 40 02 	MOV        $2+SP,R12
+    211c:	23 c0 c0 00 	MOV        R3,R4
+    211d:	22 04 80 00 	MPY        R2,R4
+    211e:	68 05 00 00 	SUB        R4,SP
+    211f:	6c c7 3f ff 	STO        SP,$-1(R12)
+    2120:	68 05 00 00 	SUB        R4,SP
+    2121:	6c c7 3f fe 	STO        SP,$-2(R12)
+    2122:	4b c3 40 00 	MOV        SP,R9
+    2123:	23 c0 40 00 	MOV        R1,R4
+    2124:	45 80 00 00 	CLR        R8
+    2125:	1c 00 00 00 	CMP        $0,R3
+    2126:	78 a0 00 0c 	BGT        @0x00002133	// 2133 <lower_upper+0x21>
+    2127:	78 80 00 23 	BRA        @0x0000214b	// 214b <lower_upper+0x39>
+    2128:	34 85 00 00 	LOD        (R4),R6
+    2129:	20 80 00 01 	ADD        $1,R4
+    212a:	34 c5 40 00 	STO        R6,(R5)
+    212b:	28 80 00 01 	ADD        $1,R5
+    212c:	24 05 c0 00 	CMP        R7,R4
+    212d:	78 9b ff fa 	BNZ        @0x00002128	// 2128 <lower_upper+0x16>
+    212e:	40 80 00 01 	ADD        $1,R8
+    212f:	48 84 c0 00 	ADD        R3,R9
+    2130:	1c 06 00 00 	CMP        R8,R3
+    2131:	78 98 00 01 	BNZ        @0x00002133	// 2133 <lower_upper+0x21>
+    2132:	78 80 00 0f 	BRA        @0x00002142	// 2142 <lower_upper+0x30>
+    2133:	3b c1 00 00 	MOV        R4,R7
+    2134:	38 84 80 00 	ADD        R2,R7
+    2135:	2b c2 40 00 	MOV        R9,R5
+    2136:	14 00 00 00 	CMP        $0,R2
+    2137:	78 a3 ff f0 	BGT        @0x00002128	// 2128 <lower_upper+0x16>
+    2138:	78 83 ff f5 	BRA        @0x0000212e	// 212e <lower_upper+0x1c>
+    2139:	34 c5 00 00 	STO        R6,(R4)
+    213a:	20 80 00 01 	ADD        $1,R4
+    213b:	24 05 40 00 	CMP        R5,R4
+    213c:	78 9b ff fc 	BNZ        @0x00002139	// 2139 <lower_upper+0x27>
+    213d:	40 80 00 01 	ADD        $1,R8
+    213e:	38 84 c0 00 	ADD        R3,R7
+    213f:	1c 06 00 00 	CMP        R8,R3
+    2140:	78 98 00 04 	BNZ        @0x00002145	// 2145 <lower_upper+0x33>
+    2141:	78 80 00 49 	BRA        @0x0000218b	// 218b <lower_upper+0x79>
+    2142:	3c 87 3f ff 	LOD        -1(R12),R7
+    2143:	45 80 00 00 	CLR        R8
+    2144:	33 c2 00 00 	MOV        R8,R6
+    2145:	2b c0 80 00 	MOV        R2,R5
+    2146:	28 85 c0 00 	ADD        R7,R5
+    2147:	23 c1 c0 00 	MOV        R7,R4
+    2148:	14 00 00 00 	CMP        $0,R2
+    2149:	78 a3 ff ef 	BGT        @0x00002139	// 2139 <lower_upper+0x27>
+    214a:	78 83 ff f2 	BRA        @0x0000213d	// 213d <lower_upper+0x2b>
+    214b:	23 c0 80 00 	MOV        R2,R4
+    214c:	21 40 00 1f 	LSR        $31,R4
+    214d:	43 c1 00 00 	MOV        R4,R8
+    214e:	40 84 80 00 	ADD        R2,R8
+    214f:	41 c0 00 01 	ASR        $1,R8
+    2150:	14 06 00 00 	CMP        R8,R2
+    2151:	78 a0 00 04 	BGT        @0x00002156	// 2156 <lower_upper+0x44>
+    2152:	78 80 00 40 	BRA        @0x00002193	// 2193 <lower_upper+0x81>
+    2153:	1c 00 00 00 	CMP        $0,R3
+    2154:	78 a0 00 2e 	BGT        @0x00002183	// 2183 <lower_upper+0x71>
+    2155:	78 80 00 3d 	BRA        @0x00002193	// 2193 <lower_upper+0x81>
+    2156:	53 c0 c0 00 	MOV        R3,R10
+    2157:	51 40 00 1f 	LSR        $31,R10
+    2158:	50 84 c0 00 	ADD        R3,R10
+    2159:	51 c0 00 01 	ASR        $1,R10
+    215a:	20 84 80 00 	ADD        R2,R4
+    215b:	21 c0 00 01 	ASR        $1,R4
+    215c:	2b c2 00 00 	MOV        R8,R5
+    215d:	28 05 00 00 	SUB        R4,R5
+    215e:	23 c1 40 00 	MOV        R5,R4
+    215f:	22 04 c0 00 	MPY        R3,R4
+    2160:	4c 87 3f ff 	LOD        -1(R12),R9
+    2161:	48 85 00 00 	ADD        R4,R9
+    2162:	54 04 c0 00 	CMP        R3,R10
+    2163:	78 88 00 05 	BLT        @0x00002169	// 2169 <lower_upper+0x57>
+    2164:	40 80 00 01 	ADD        $1,R8
+    2165:	48 84 c0 00 	ADD        R3,R9
+    2166:	14 06 00 00 	CMP        R8,R2
+    2167:	78 a3 ff fa 	BGT        @0x00002162	// 2162 <lower_upper+0x50>
+    2168:	78 83 ff ea 	BRA        @0x00002153	// 2153 <lower_upper+0x41>
+    2169:	2b c2 40 00 	MOV        R9,R5
+    216a:	23 c2 80 00 	MOV        R10,R4
+    216b:	3c 87 3f fe 	LOD        -2(R12),R7
+    216c:	38 86 00 00 	ADD        R8,R7
+    216d:	33 c0 c0 00 	MOV        R3,R6
+    216e:	32 05 00 00 	MPY        R4,R6
+    216f:	5b c1 c0 00 	MOV        R7,R11
+    2170:	58 85 80 00 	ADD        R6,R11
+    2171:	34 86 c0 00 	LOD        (R11),R6
+    2172:	34 c5 40 00 	STO        R6,(R5)
+    2173:	20 80 00 01 	ADD        $1,R4
+    2174:	28 80 00 01 	ADD        $1,R5
+    2175:	1c 05 00 00 	CMP        R4,R3
+    2176:	78 9b ff f6 	BNZ        @0x0000216d	// 216d <lower_upper+0x5b>
+    2177:	78 83 ff ec 	BRA        @0x00002164	// 2164 <lower_upper+0x52>
+    2178:	08 80 00 01 	ADD        $1,R1
+    2179:	2c 85 00 00 	LOD        (R4),R5
+    217a:	2c c4 7f ff 	STO        R5,$-1(R1)
+    217b:	20 80 00 01 	ADD        $1,R4
+    217c:	0c 05 80 00 	CMP        R6,R1
+    217d:	78 9b ff fa 	BNZ        @0x00002178	// 2178 <lower_upper+0x66>
+    217e:	38 80 00 01 	ADD        $1,R7
+    217f:	40 84 c0 00 	ADD        R3,R8
+    2180:	1c 05 c0 00 	CMP        R7,R3
+    2181:	78 a0 00 03 	BGT        @0x00002185	// 2185 <lower_upper+0x73>
+    2182:	78 80 00 10 	BRA        @0x00002193	// 2193 <lower_upper+0x81>
+    2183:	44 87 3f ff 	LOD        -1(R12),R8
+    2184:	3d 80 00 00 	CLR        R7
+    2185:	33 c0 40 00 	MOV        R1,R6
+    2186:	30 84 80 00 	ADD        R2,R6
+    2187:	23 c2 00 00 	MOV        R8,R4
+    2188:	14 00 00 00 	CMP        $0,R2
+    2189:	78 a3 ff ee 	BGT        @0x00002178	// 2178 <lower_upper+0x66>
+    218a:	78 83 ff f3 	BRA        @0x0000217e	// 217e <lower_upper+0x6c>
+    218b:	23 c0 80 00 	MOV        R2,R4
+    218c:	21 40 00 1f 	LSR        $31,R4
+    218d:	43 c1 00 00 	MOV        R4,R8
+    218e:	40 84 80 00 	ADD        R2,R8
+    218f:	41 c0 00 01 	ASR        $1,R8
+    2190:	44 04 80 00 	CMP        R2,R8
+    2191:	78 8b ff c4 	BLT        @0x00002156	// 2156 <lower_upper+0x44>
+    2192:	78 83 ff f0 	BRA        @0x00002183	// 2183 <lower_upper+0x71>
+    2193:	6b c3 00 00 	MOV        R12,SP
+    2194:	2c 87 40 00 	LOD        (SP),R5
+    2195:	34 87 40 01 	LOD        1(SP),R6
+    2196:	3c 87 40 02 	LOD        2(SP),R7
+    2197:	44 87 40 03 	LOD        3(SP),R8
+    2198:	4c 87 40 04 	LOD        4(SP),R9
+    2199:	54 87 40 05 	LOD        5(SP),R10
+    219a:	5c 87 40 06 	LOD        6(SP),R11
+    219b:	64 87 40 07 	LOD        7(SP),R12
+    219c:	68 80 00 08 	ADD        $8,SP
+    219d:	7b c0 00 00 	JMP        R0
 
-0000213e <zip_write_image>:
-    213e:	68 00 00 02 	SUB        $2,SP
-    213f:	2c c7 40 00 	STO        R5,(SP)
-    2140:	34 c7 40 01 	STO        R6,$1(SP)
-    2141:	15 80 00 00 	CLR        R2
-    2142:	14 c0 01 04 	STO        R2,($260)
-    2143:	15 81 00 01 	LDI        $65537,R2
-    2144:	14 c0 01 06 	STO        R2,($262)
-    2145:	33 c0 40 00 	MOV        R1,R6
-    2146:	30 81 00 00 	ADD        $65536,R6
-    2147:	2b 00 0f f8 	BREV       $4088,R5
-    2148:	25 87 fc 00 	LDI        $523264,R4
-    2149:	14 80 01 0b 	LOD        ($267),R2
-    214a:	14 00 00 00 	CMP        $0,R2
-    214b:	78 9b ff fd 	BNZ        @0x00002149	// 2149 <zip_write_image+0xb>
-    214c:	1c 84 40 00 	LOD        (R1),R3
-    214d:	18 45 40 00 	AND        R5,R3
-    214e:	19 c0 00 14 	ASR        $20,R3
-    214f:	14 80 01 0b 	LOD        ($267),R2
-    2150:	14 00 00 00 	CMP        $0,R2
-    2151:	78 9b ff fd 	BNZ        @0x0000214f	// 214f <zip_write_image+0x11>
-    2152:	1c c0 01 0b 	STO        R3,($267)
-    2153:	1c 84 40 00 	LOD        (R1),R3
-    2154:	18 45 00 00 	AND        R4,R3
-    2155:	19 c0 00 0a 	ASR        $10,R3
-    2156:	14 80 01 0b 	LOD        ($267),R2
-    2157:	14 00 00 00 	CMP        $0,R2
-    2158:	78 9b ff fd 	BNZ        @0x00002156	// 2156 <zip_write_image+0x18>
-    2159:	1c c0 01 0b 	STO        R3,($267)
-    215a:	1c 84 40 00 	LOD        (R1),R3
-    215b:	18 40 01 ff 	AND        $511,R3
-    215c:	14 80 01 0b 	LOD        ($267),R2
-    215d:	14 00 00 00 	CMP        $0,R2
-    215e:	78 9b ff fd 	BNZ        @0x0000215c	// 215c <zip_write_image+0x1e>
-    215f:	1c c0 01 0b 	STO        R3,($267)
-    2160:	14 80 01 0b 	LOD        ($267),R2
-    2161:	14 00 00 00 	CMP        $0,R2
-    2162:	78 9b ff fd 	BNZ        @0x00002160	// 2160 <zip_write_image+0x22>
-    2163:	08 80 00 01 	ADD        $1,R1
-    2164:	0c 05 80 00 	CMP        R6,R1
-    2165:	78 9b ff e3 	BNZ        @0x00002149	// 2149 <zip_write_image+0xb>
-    2166:	2c 87 40 00 	LOD        (SP),R5
-    2167:	34 87 40 01 	LOD        1(SP),R6
-    2168:	68 80 00 02 	ADD        $2,SP
-    2169:	7b c0 00 00 	JMP        R0
+0000219e <lift_step>:
+    219e:	68 00 00 09 	SUB        $9,SP
+    219f:	2c c7 40 01 	STO        R5,$1(SP)
+    21a0:	34 c7 40 02 	STO        R6,$2(SP)
+    21a1:	3c c7 40 03 	STO        R7,$3(SP)
+    21a2:	44 c7 40 04 	STO        R8,$4(SP)
+    21a3:	4c c7 40 05 	STO        R9,$5(SP)
+    21a4:	54 c7 40 06 	STO        R10,$6(SP)
+    21a5:	5c c7 40 07 	STO        R11,$7(SP)
+    21a6:	64 c7 40 08 	STO        R12,$8(SP)
+    21a7:	63 c3 40 01 	MOV        $1+SP,R12
+    21a8:	43 c0 df ff 	MOV        $-1+R3,R8
+    21a9:	23 c0 c0 00 	MOV        R3,R4
+    21aa:	22 04 80 00 	MPY        R2,R4
+    21ab:	68 05 00 00 	SUB        R4,SP
+    21ac:	6c c7 3f ff 	STO        SP,$-1(R12)
+    21ad:	1c 00 00 01 	CMP        $1,R3
+    21ae:	78 88 00 75 	BLT        @0x00002224	// 2224 <lift_step+0x86>
+    21af:	5b c3 40 00 	MOV        SP,R11
+    21b0:	23 c0 40 00 	MOV        R1,R4
+    21b1:	55 80 00 00 	CLR        R10
+    21b2:	78 80 00 0a 	BRA        @0x000021bd	// 21bd <lift_step+0x1f>
+    21b3:	34 85 00 00 	LOD        (R4),R6
+    21b4:	20 80 00 01 	ADD        $1,R4
+    21b5:	34 c5 40 00 	STO        R6,(R5)
+    21b6:	28 80 00 01 	ADD        $1,R5
+    21b7:	3c 05 00 00 	CMP        R4,R7
+    21b8:	78 9b ff fa 	BNZ        @0x000021b3	// 21b3 <lift_step+0x15>
+    21b9:	50 80 00 01 	ADD        $1,R10
+    21ba:	58 84 c0 00 	ADD        R3,R11
+    21bb:	1c 06 80 00 	CMP        R10,R3
+    21bc:	78 90 00 64 	BZ         @0x00002221	// 2221 <lift_step+0x83>
+    21bd:	14 00 00 01 	CMP        $1,R2
+    21be:	78 8b ff fa 	BLT        @0x000021b9	// 21b9 <lift_step+0x1b>
+    21bf:	3b c1 00 00 	MOV        R4,R7
+    21c0:	38 84 80 00 	ADD        R2,R7
+    21c1:	2b c2 c0 00 	MOV        R11,R5
+    21c2:	78 83 ff f0 	BRA        @0x000021b3	// 21b3 <lift_step+0x15>
+    21c3:	33 c0 c0 00 	MOV        R3,R6
+    21c4:	32 05 00 00 	MPY        R4,R6
+    21c5:	3b c1 40 00 	MOV        R5,R7
+    21c6:	38 85 80 00 	ADD        R6,R7
+    21c7:	33 c1 1f ff 	MOV        $-1+R4,R6
+    21c8:	4b c0 c0 00 	MOV        R3,R9
+    21c9:	4a 05 80 00 	MPY        R6,R9
+    21ca:	5b c1 40 00 	MOV        R5,R11
+    21cb:	58 86 40 00 	ADD        R9,R11
+    21cc:	33 c2 c0 00 	MOV        R11,R6
+    21cd:	5b c1 00 01 	MOV        $1+R4,R11
+    21ce:	4b c0 c0 00 	MOV        R3,R9
+    21cf:	4a 06 c0 00 	MPY        R11,R9
+    21d0:	5b c2 40 00 	MOV        R9,R11
+    21d1:	4b c1 40 00 	MOV        R5,R9
+    21d2:	48 86 c0 00 	ADD        R11,R9
+    21d3:	34 85 80 00 	LOD        (R6),R6
+    21d4:	5c 86 40 00 	LOD        (R9),R11
+    21d5:	30 86 c0 00 	ADD        R11,R6
+    21d6:	31 c0 00 01 	ASR        $1,R6
+    21d7:	5c 85 c0 00 	LOD        (R7),R11
+    21d8:	58 05 80 00 	SUB        R6,R11
+    21d9:	5c c5 c0 00 	STO        R11,(R7)
+    21da:	20 80 00 02 	ADD        $2,R4
+    21db:	44 05 00 00 	CMP        R4,R8
+    21dc:	78 a3 ff e6 	BGT        @0x000021c3	// 21c3 <lift_step+0x25>
+    21dd:	78 80 00 09 	BRA        @0x000021e7	// 21e7 <lift_step+0x49>
+    21de:	44 00 00 02 	CMP        $2,R8
+    21df:	78 88 00 03 	BLT        @0x000021e3	// 21e3 <lift_step+0x45>
+    21e0:	2c 87 3f ff 	LOD        -1(R12),R5
+    21e1:	28 86 80 00 	ADD        R10,R5
+    21e2:	78 80 00 04 	BRA        @0x000021e7	// 21e7 <lift_step+0x49>
+    21e3:	50 80 00 01 	ADD        $1,R10
+    21e4:	14 06 80 00 	CMP        R10,R2
+    21e5:	78 a0 00 22 	BGT        @0x00002208	// 2208 <lift_step+0x6a>
+    21e6:	78 80 00 1d 	BRA        @0x00002204	// 2204 <lift_step+0x66>
+    21e7:	35 80 00 01 	LDI        $1,R6
+    21e8:	23 c0 c0 00 	MOV        R3,R4
+    21e9:	22 05 80 00 	MPY        R6,R4
+    21ea:	3b c1 40 00 	MOV        R5,R7
+    21eb:	38 85 00 00 	ADD        R4,R7
+    21ec:	23 c1 9f ff 	MOV        $-1+R6,R4
+    21ed:	5b c0 c0 00 	MOV        R3,R11
+    21ee:	5a 05 00 00 	MPY        R4,R11
+    21ef:	4b c1 40 00 	MOV        R5,R9
+    21f0:	48 86 c0 00 	ADD        R11,R9
+    21f1:	23 c2 40 00 	MOV        R9,R4
+    21f2:	5b c1 80 01 	MOV        $1+R6,R11
+    21f3:	4b c0 c0 00 	MOV        R3,R9
+    21f4:	4a 06 c0 00 	MPY        R11,R9
+    21f5:	5b c2 40 00 	MOV        R9,R11
+    21f6:	4b c1 40 00 	MOV        R5,R9
+    21f7:	48 86 c0 00 	ADD        R11,R9
+    21f8:	24 85 00 00 	LOD        (R4),R4
+    21f9:	5c 86 40 00 	LOD        (R9),R11
+    21fa:	20 86 c0 00 	ADD        R11,R4
+    21fb:	20 80 00 02 	ADD        $2,R4
+    21fc:	21 c0 00 02 	ASR        $2,R4
+    21fd:	5c 85 c0 00 	LOD        (R7),R11
+    21fe:	20 86 c0 00 	ADD        R11,R4
+    21ff:	24 c5 c0 00 	STO        R4,(R7)
+    2200:	30 80 00 02 	ADD        $2,R6
+    2201:	44 05 80 00 	CMP        R6,R8
+    2202:	78 a3 ff e5 	BGT        @0x000021e8	// 21e8 <lift_step+0x4a>
+    2203:	78 83 ff df 	BRA        @0x000021e3	// 21e3 <lift_step+0x45>
+    2204:	1c 00 00 00 	CMP        $0,R3
+    2205:	78 a0 00 13 	BGT        @0x00002219	// 2219 <lift_step+0x7b>
+    2206:	78 80 00 1f 	BRA        @0x00002226	// 2226 <lift_step+0x88>
+    2207:	55 80 00 00 	CLR        R10
+    2208:	25 80 00 02 	LDI        $2,R4
+    2209:	2c 87 3f ff 	LOD        -1(R12),R5
+    220a:	28 86 80 00 	ADD        R10,R5
+    220b:	44 00 00 02 	CMP        $2,R8
+    220c:	78 a3 ff b6 	BGT        @0x000021c3	// 21c3 <lift_step+0x25>
+    220d:	78 83 ff d0 	BRA        @0x000021de	// 21de <lift_step+0x40>
+    220e:	08 80 00 01 	ADD        $1,R1
+    220f:	2c 85 00 00 	LOD        (R4),R5
+    2210:	2c c4 7f ff 	STO        R5,$-1(R1)
+    2211:	20 80 00 01 	ADD        $1,R4
+    2212:	0c 05 80 00 	CMP        R6,R1
+    2213:	78 9b ff fa 	BNZ        @0x0000220e	// 220e <lift_step+0x70>
+    2214:	38 80 00 01 	ADD        $1,R7
+    2215:	48 84 c0 00 	ADD        R3,R9
+    2216:	1c 05 c0 00 	CMP        R7,R3
+    2217:	78 a0 00 03 	BGT        @0x0000221b	// 221b <lift_step+0x7d>
+    2218:	78 80 00 0d 	BRA        @0x00002226	// 2226 <lift_step+0x88>
+    2219:	4c 87 3f ff 	LOD        -1(R12),R9
+    221a:	3d 80 00 00 	CLR        R7
+    221b:	14 00 00 01 	CMP        $1,R2
+    221c:	78 8b ff f7 	BLT        @0x00002214	// 2214 <lift_step+0x76>
+    221d:	33 c0 40 00 	MOV        R1,R6
+    221e:	30 84 80 00 	ADD        R2,R6
+    221f:	23 c2 40 00 	MOV        R9,R4
+    2220:	78 83 ff ed 	BRA        @0x0000220e	// 220e <lift_step+0x70>
+    2221:	14 00 00 00 	CMP        $0,R2
+    2222:	78 a3 ff e4 	BGT        @0x00002207	// 2207 <lift_step+0x69>
+    2223:	78 83 ff f5 	BRA        @0x00002219	// 2219 <lift_step+0x7b>
+    2224:	14 00 00 00 	CMP        $0,R2
+    2225:	78 a3 ff e1 	BGT        @0x00002207	// 2207 <lift_step+0x69>
+    2226:	6b c3 00 00 	MOV        R12,SP
+    2227:	2c 87 40 00 	LOD        (SP),R5
+    2228:	34 87 40 01 	LOD        1(SP),R6
+    2229:	3c 87 40 02 	LOD        2(SP),R7
+    222a:	44 87 40 03 	LOD        3(SP),R8
+    222b:	4c 87 40 04 	LOD        4(SP),R9
+    222c:	54 87 40 05 	LOD        5(SP),R10
+    222d:	5c 87 40 06 	LOD        6(SP),R11
+    222e:	64 87 40 07 	LOD        7(SP),R12
+    222f:	68 80 00 08 	ADD        $8,SP
+    2230:	7b c0 00 00 	JMP        R0
 
-0000216a <pp>:
-    216a:	68 00 00 05 	SUB        $5,SP
-    216b:	2c c7 40 00 	STO        R5,(SP)
-    216c:	34 c7 40 01 	STO        R6,$1(SP)
-    216d:	3c c7 40 02 	STO        R7,$2(SP)
-    216e:	44 c7 40 03 	STO        R8,$3(SP)
-    216f:	4c c7 40 04 	STO        R9,$4(SP)
-    2170:	2b c0 40 00 	MOV        R1,R5
-    2171:	33 c0 80 00 	MOV        R2,R6
-    2172:	1b c0 80 00 	MOV        R2,R3
-    2173:	0b 00 41 00 	BREV       $16640,R1
-    2174:	23 00 c1 00 	BREV       $49408,R4
-    2175:	0c c4 c0 00 	STO        R1,(R3)
-    2176:	08 80 01 00 	ADD        $256,R1
-    2177:	18 80 00 01 	ADD        $1,R3
-    2178:	0c 05 00 00 	CMP        R4,R1
-    2179:	78 9b ff fb 	BNZ        @0x00002175	// 2175 <pp+0xb>
-    217a:	78 80 00 0a 	BRA        @0x00002185	// 2185 <pp+0x1b>
-    217b:	0c c4 c0 00 	STO        R1,(R3)
-    217c:	18 80 00 01 	ADD        $1,R3
-    217d:	1c 05 00 00 	CMP        R4,R3
-    217e:	78 9b ff fc 	BNZ        @0x0000217b	// 217b <pp+0x11>
-    217f:	30 80 00 01 	ADD        $1,R6
-    2180:	3c 05 80 00 	CMP        R6,R7
-    2181:	78 98 00 05 	BNZ        @0x00002187	// 2187 <pp+0x1d>
-    2182:	3b c1 41 00 	MOV        $256+R5,R7
-    2183:	35 80 00 00 	CLR        R6
-    2184:	78 80 00 13 	BRA        @0x00002198	// 2198 <pp+0x2e>
-    2185:	3b c0 81 00 	MOV        $256+R2,R7
-    2186:	0d 80 00 00 	CLR        R1
-    2187:	1c 85 80 00 	LOD        (R6),R3
-    2188:	23 c0 c1 00 	MOV        $256+R3,R4
-    2189:	78 83 ff f1 	BRA        @0x0000217b	// 217b <pp+0x11>
-    218a:	0b c2 00 00 	MOV        R8,R1
-    218b:	08 85 00 00 	ADD        R4,R1
-    218c:	4c 84 c0 00 	LOD        (R3),R9
-    218d:	4c c4 40 00 	STO        R9,(R1)
-    218e:	18 80 00 01 	ADD        $1,R3
-    218f:	20 80 00 01 	ADD        $1,R4
-    2190:	24 00 01 00 	CMP        $256,R4
-    2191:	78 9b ff f8 	BNZ        @0x0000218a	// 218a <pp+0x20>
-    2192:	0c 85 c1 00 	LOD        256(R7),R1
-    2193:	0c c5 c0 00 	STO        R1,(R7)
-    2194:	30 80 00 01 	ADD        $1,R6
-    2195:	38 80 01 00 	ADD        $256,R7
-    2196:	34 00 01 00 	CMP        $256,R6
-    2197:	78 90 00 17 	BZ         @0x000021af	// 21af <pp+0x45>
-    2198:	1b c1 df 00 	MOV        $-256+R7,R3
-    2199:	0b c1 80 00 	MOV        R6,R1
-    219a:	09 c0 00 01 	ASR        $1,R1
-    219b:	23 c1 80 00 	MOV        R6,R4
-    219c:	20 40 00 01 	AND        $1,R4
-    219d:	78 98 00 04 	BNZ        @0x000021a2	// 21a2 <pp+0x38>
-    219e:	43 c0 80 00 	MOV        R2,R8
-    219f:	40 84 40 00 	ADD        R1,R8
-    21a0:	44 86 00 00 	LOD        (R8),R8
-    21a1:	78 83 ff e8 	BRA        @0x0000218a	// 218a <pp+0x20>
-    21a2:	4b c0 80 00 	MOV        R2,R9
-    21a3:	48 84 40 00 	ADD        R1,R9
-    21a4:	44 86 40 80 	LOD        128(R9),R8
-    21a5:	25 80 00 00 	CLR        R4
-    21a6:	0b c2 00 00 	MOV        R8,R1
-    21a7:	08 85 00 00 	ADD        R4,R1
-    21a8:	4c 84 c0 00 	LOD        (R3),R9
-    21a9:	4c c4 40 00 	STO        R9,(R1)
-    21aa:	18 80 00 01 	ADD        $1,R3
-    21ab:	20 80 00 01 	ADD        $1,R4
-    21ac:	24 00 01 00 	CMP        $256,R4
-    21ad:	78 9b ff f8 	BNZ        @0x000021a6	// 21a6 <pp+0x3c>
-    21ae:	78 83 ff e3 	BRA        @0x00002192	// 2192 <pp+0x28>
-    21af:	13 c1 40 00 	MOV        R5,R2
-    21b0:	0b 00 01 00 	BREV       $256,R1
-    21b1:	1b 00 81 00 	BREV       $33024,R3
-    21b2:	0c c4 80 00 	STO        R1,(R2)
-    21b3:	08 80 01 00 	ADD        $256,R1
-    21b4:	10 80 00 01 	ADD        $1,R2
-    21b5:	0c 04 c0 00 	CMP        R3,R1
-    21b6:	78 9b ff fb 	BNZ        @0x000021b2	// 21b2 <pp+0x48>
-    21b7:	0b 00 41 00 	BREV       $16640,R1
-    21b8:	33 00 c1 00 	BREV       $49408,R6
-    21b9:	78 80 00 0c 	BRA        @0x000021c6	// 21c6 <pp+0x5c>
-    21ba:	1c 84 40 00 	LOD        (R1),R3
-    21bb:	1c c4 80 00 	STO        R3,(R2)
-    21bc:	08 80 00 01 	ADD        $1,R1
-    21bd:	10 80 00 01 	ADD        $1,R2
-    21be:	24 04 40 00 	CMP        R1,R4
-    21bf:	78 9b ff fa 	BNZ        @0x000021ba	// 21ba <pp+0x50>
-    21c0:	0c 85 01 00 	LOD        256(R4),R1
-    21c1:	0c c5 00 00 	STO        R1,(R4)
-    21c2:	28 80 00 01 	ADD        $1,R5
-    21c3:	0b c1 00 00 	MOV        R4,R1
-    21c4:	24 05 80 00 	CMP        R6,R4
-    21c5:	78 90 00 03 	BZ         @0x000021c9	// 21c9 <pp+0x5f>
-    21c6:	14 85 40 00 	LOD        (R5),R2
-    21c7:	23 c0 41 00 	MOV        $256+R1,R4
-    21c8:	78 83 ff f1 	BRA        @0x000021ba	// 21ba <pp+0x50>
-    21c9:	2c 87 40 00 	LOD        (SP),R5
-    21ca:	34 87 40 01 	LOD        1(SP),R6
-    21cb:	3c 87 40 02 	LOD        2(SP),R7
-    21cc:	44 87 40 03 	LOD        3(SP),R8
-    21cd:	4c 87 40 04 	LOD        4(SP),R9
-    21ce:	68 80 00 05 	ADD        $5,SP
-    21cf:	7b c0 00 00 	JMP        R0
+00002231 <inv_lift_step>:
+    2231:	68 00 00 09 	SUB        $9,SP
+    2232:	2c c7 40 01 	STO        R5,$1(SP)
+    2233:	34 c7 40 02 	STO        R6,$2(SP)
+    2234:	3c c7 40 03 	STO        R7,$3(SP)
+    2235:	44 c7 40 04 	STO        R8,$4(SP)
+    2236:	4c c7 40 05 	STO        R9,$5(SP)
+    2237:	54 c7 40 06 	STO        R10,$6(SP)
+    2238:	5c c7 40 07 	STO        R11,$7(SP)
+    2239:	64 c7 40 08 	STO        R12,$8(SP)
+    223a:	63 c3 40 01 	MOV        $1+SP,R12
+    223b:	43 c0 df ff 	MOV        $-1+R3,R8
+    223c:	23 c0 c0 00 	MOV        R3,R4
+    223d:	22 04 80 00 	MPY        R2,R4
+    223e:	68 05 00 00 	SUB        R4,SP
+    223f:	6c c7 3f ff 	STO        SP,$-1(R12)
+    2240:	1c 00 00 01 	CMP        $1,R3
+    2241:	78 88 00 73 	BLT        @0x000022b5	// 22b5 <inv_lift_step+0x84>
+    2242:	5b c3 40 00 	MOV        SP,R11
+    2243:	23 c0 40 00 	MOV        R1,R4
+    2244:	55 80 00 00 	CLR        R10
+    2245:	78 80 00 0a 	BRA        @0x00002250	// 2250 <inv_lift_step+0x1f>
+    2246:	34 85 00 00 	LOD        (R4),R6
+    2247:	20 80 00 01 	ADD        $1,R4
+    2248:	34 c5 40 00 	STO        R6,(R5)
+    2249:	28 80 00 01 	ADD        $1,R5
+    224a:	3c 05 00 00 	CMP        R4,R7
+    224b:	78 9b ff fa 	BNZ        @0x00002246	// 2246 <inv_lift_step+0x15>
+    224c:	50 80 00 01 	ADD        $1,R10
+    224d:	58 84 c0 00 	ADD        R3,R11
+    224e:	1c 06 80 00 	CMP        R10,R3
+    224f:	78 90 00 62 	BZ         @0x000022b2	// 22b2 <inv_lift_step+0x81>
+    2250:	14 00 00 01 	CMP        $1,R2
+    2251:	78 8b ff fa 	BLT        @0x0000224c	// 224c <inv_lift_step+0x1b>
+    2252:	3b c1 00 00 	MOV        R4,R7
+    2253:	38 84 80 00 	ADD        R2,R7
+    2254:	2b c2 c0 00 	MOV        R11,R5
+    2255:	78 83 ff f0 	BRA        @0x00002246	// 2246 <inv_lift_step+0x15>
+    2256:	23 c0 c0 00 	MOV        R3,R4
+    2257:	22 05 80 00 	MPY        R6,R4
+    2258:	3b c1 40 00 	MOV        R5,R7
+    2259:	38 85 00 00 	ADD        R4,R7
+    225a:	23 c1 9f ff 	MOV        $-1+R6,R4
+    225b:	4b c0 c0 00 	MOV        R3,R9
+    225c:	4a 05 00 00 	MPY        R4,R9
+    225d:	5b c1 40 00 	MOV        R5,R11
+    225e:	58 86 40 00 	ADD        R9,R11
+    225f:	23 c2 c0 00 	MOV        R11,R4
+    2260:	5b c1 80 01 	MOV        $1+R6,R11
+    2261:	4b c0 c0 00 	MOV        R3,R9
+    2262:	4a 06 c0 00 	MPY        R11,R9
+    2263:	5b c2 40 00 	MOV        R9,R11
+    2264:	4b c1 40 00 	MOV        R5,R9
+    2265:	48 86 c0 00 	ADD        R11,R9
+    2266:	24 85 00 00 	LOD        (R4),R4
+    2267:	5c 86 40 00 	LOD        (R9),R11
+    2268:	20 86 c0 00 	ADD        R11,R4
+    2269:	21 c0 00 01 	ASR        $1,R4
+    226a:	5c 85 c0 00 	LOD        (R7),R11
+    226b:	20 86 c0 00 	ADD        R11,R4
+    226c:	24 c5 c0 00 	STO        R4,(R7)
+    226d:	30 80 00 02 	ADD        $2,R6
+    226e:	44 05 80 00 	CMP        R6,R8
+    226f:	78 a3 ff e6 	BGT        @0x00002256	// 2256 <inv_lift_step+0x25>
+    2270:	35 80 00 02 	LDI        $2,R6
+    2271:	2c 87 3f ff 	LOD        -1(R12),R5
+    2272:	28 86 80 00 	ADD        R10,R5
+    2273:	1c 00 00 02 	CMP        $2,R3
+    2274:	78 a0 00 04 	BGT        @0x00002279	// 2279 <inv_lift_step+0x48>
+    2275:	50 80 00 01 	ADD        $1,R10
+    2276:	14 06 80 00 	CMP        R10,R2
+    2277:	78 a0 00 21 	BGT        @0x00002299	// 2299 <inv_lift_step+0x68>
+    2278:	78 80 00 1c 	BRA        @0x00002295	// 2295 <inv_lift_step+0x64>
+    2279:	23 c0 c0 00 	MOV        R3,R4
+    227a:	22 05 80 00 	MPY        R6,R4
+    227b:	3b c1 40 00 	MOV        R5,R7
+    227c:	38 85 00 00 	ADD        R4,R7
+    227d:	23 c1 9f ff 	MOV        $-1+R6,R4
+    227e:	5b c0 c0 00 	MOV        R3,R11
+    227f:	5a 05 00 00 	MPY        R4,R11
+    2280:	4b c1 40 00 	MOV        R5,R9
+    2281:	48 86 c0 00 	ADD        R11,R9
+    2282:	23 c2 40 00 	MOV        R9,R4
+    2283:	5b c1 80 01 	MOV        $1+R6,R11
+    2284:	4b c0 c0 00 	MOV        R3,R9
+    2285:	4a 06 c0 00 	MPY        R11,R9
+    2286:	5b c2 40 00 	MOV        R9,R11
+    2287:	4b c1 40 00 	MOV        R5,R9
+    2288:	48 86 c0 00 	ADD        R11,R9
+    2289:	24 85 00 00 	LOD        (R4),R4
+    228a:	5c 86 40 00 	LOD        (R9),R11
+    228b:	20 86 c0 00 	ADD        R11,R4
+    228c:	20 80 00 02 	ADD        $2,R4
+    228d:	21 c0 00 02 	ASR        $2,R4
+    228e:	5c 85 c0 00 	LOD        (R7),R11
+    228f:	58 05 00 00 	SUB        R4,R11
+    2290:	5c c5 c0 00 	STO        R11,(R7)
+    2291:	30 80 00 02 	ADD        $2,R6
+    2292:	1c 05 80 00 	CMP        R6,R3
+    2293:	78 a3 ff e5 	BGT        @0x00002279	// 2279 <inv_lift_step+0x48>
+    2294:	78 83 ff e0 	BRA        @0x00002275	// 2275 <inv_lift_step+0x44>
+    2295:	1c 00 00 00 	CMP        $0,R3
+    2296:	78 a0 00 13 	BGT        @0x000022aa	// 22aa <inv_lift_step+0x79>
+    2297:	78 80 00 1f 	BRA        @0x000022b7	// 22b7 <inv_lift_step+0x86>
+    2298:	55 80 00 00 	CLR        R10
+    2299:	35 80 00 01 	LDI        $1,R6
+    229a:	2c 87 3f ff 	LOD        -1(R12),R5
+    229b:	28 86 80 00 	ADD        R10,R5
+    229c:	44 00 00 01 	CMP        $1,R8
+    229d:	78 a3 ff b8 	BGT        @0x00002256	// 2256 <inv_lift_step+0x25>
+    229e:	78 83 ff d1 	BRA        @0x00002270	// 2270 <inv_lift_step+0x3f>
+    229f:	08 80 00 01 	ADD        $1,R1
+    22a0:	2c 85 00 00 	LOD        (R4),R5
+    22a1:	2c c4 7f ff 	STO        R5,$-1(R1)
+    22a2:	20 80 00 01 	ADD        $1,R4
+    22a3:	0c 05 80 00 	CMP        R6,R1
+    22a4:	78 9b ff fa 	BNZ        @0x0000229f	// 229f <inv_lift_step+0x6e>
+    22a5:	38 80 00 01 	ADD        $1,R7
+    22a6:	48 84 c0 00 	ADD        R3,R9
+    22a7:	1c 05 c0 00 	CMP        R7,R3
+    22a8:	78 a0 00 03 	BGT        @0x000022ac	// 22ac <inv_lift_step+0x7b>
+    22a9:	78 80 00 0d 	BRA        @0x000022b7	// 22b7 <inv_lift_step+0x86>
+    22aa:	4c 87 3f ff 	LOD        -1(R12),R9
+    22ab:	3d 80 00 00 	CLR        R7
+    22ac:	14 00 00 01 	CMP        $1,R2
+    22ad:	78 8b ff f7 	BLT        @0x000022a5	// 22a5 <inv_lift_step+0x74>
+    22ae:	33 c0 40 00 	MOV        R1,R6
+    22af:	30 84 80 00 	ADD        R2,R6
+    22b0:	23 c2 40 00 	MOV        R9,R4
+    22b1:	78 83 ff ed 	BRA        @0x0000229f	// 229f <inv_lift_step+0x6e>
+    22b2:	14 00 00 00 	CMP        $0,R2
+    22b3:	78 a3 ff e4 	BGT        @0x00002298	// 2298 <inv_lift_step+0x67>
+    22b4:	78 83 ff f5 	BRA        @0x000022aa	// 22aa <inv_lift_step+0x79>
+    22b5:	14 00 00 00 	CMP        $0,R2
+    22b6:	78 a3 ff e1 	BGT        @0x00002298	// 2298 <inv_lift_step+0x67>
+    22b7:	6b c3 00 00 	MOV        R12,SP
+    22b8:	2c 87 40 00 	LOD        (SP),R5
+    22b9:	34 87 40 01 	LOD        1(SP),R6
+    22ba:	3c 87 40 02 	LOD        2(SP),R7
+    22bb:	44 87 40 03 	LOD        3(SP),R8
+    22bc:	4c 87 40 04 	LOD        4(SP),R9
+    22bd:	54 87 40 05 	LOD        5(SP),R10
+    22be:	5c 87 40 06 	LOD        6(SP),R11
+    22bf:	64 87 40 07 	LOD        7(SP),R12
+    22c0:	68 80 00 08 	ADD        $8,SP
+    22c1:	7b c0 00 00 	JMP        R0
 
-000021d0 <free>:
-    21d0:	7b c0 00 00 	JMP        R0
+000022c2 <upper_lower>:
+    22c2:	68 00 00 0b 	SUB        $11,SP
+    22c3:	2c c7 40 03 	STO        R5,$3(SP)
+    22c4:	34 c7 40 04 	STO        R6,$4(SP)
+    22c5:	3c c7 40 05 	STO        R7,$5(SP)
+    22c6:	44 c7 40 06 	STO        R8,$6(SP)
+    22c7:	4c c7 40 07 	STO        R9,$7(SP)
+    22c8:	54 c7 40 08 	STO        R10,$8(SP)
+    22c9:	5c c7 40 09 	STO        R11,$9(SP)
+    22ca:	64 c7 40 0a 	STO        R12,$10(SP)
+    22cb:	63 c3 40 03 	MOV        $3+SP,R12
+    22cc:	23 c0 c0 00 	MOV        R3,R4
+    22cd:	22 04 80 00 	MPY        R2,R4
+    22ce:	68 05 00 00 	SUB        R4,SP
+    22cf:	6c c7 3f ff 	STO        SP,$-1(R12)
+    22d0:	68 05 00 00 	SUB        R4,SP
+    22d1:	6c c7 3f fe 	STO        SP,$-2(R12)
+    22d2:	4b c3 40 00 	MOV        SP,R9
+    22d3:	23 c0 40 00 	MOV        R1,R4
+    22d4:	45 80 00 00 	CLR        R8
+    22d5:	1c 00 00 00 	CMP        $0,R3
+    22d6:	78 a0 00 0c 	BGT        @0x000022e3	// 22e3 <upper_lower+0x21>
+    22d7:	78 80 00 23 	BRA        @0x000022fb	// 22fb <upper_lower+0x39>
+    22d8:	34 85 00 00 	LOD        (R4),R6
+    22d9:	20 80 00 01 	ADD        $1,R4
+    22da:	34 c5 40 00 	STO        R6,(R5)
+    22db:	28 80 00 01 	ADD        $1,R5
+    22dc:	3c 05 00 00 	CMP        R4,R7
+    22dd:	78 9b ff fa 	BNZ        @0x000022d8	// 22d8 <upper_lower+0x16>
+    22de:	40 80 00 01 	ADD        $1,R8
+    22df:	48 84 c0 00 	ADD        R3,R9
+    22e0:	1c 06 00 00 	CMP        R8,R3
+    22e1:	78 98 00 01 	BNZ        @0x000022e3	// 22e3 <upper_lower+0x21>
+    22e2:	78 80 00 0f 	BRA        @0x000022f2	// 22f2 <upper_lower+0x30>
+    22e3:	3b c1 00 00 	MOV        R4,R7
+    22e4:	38 84 80 00 	ADD        R2,R7
+    22e5:	2b c2 40 00 	MOV        R9,R5
+    22e6:	14 00 00 00 	CMP        $0,R2
+    22e7:	78 a3 ff f0 	BGT        @0x000022d8	// 22d8 <upper_lower+0x16>
+    22e8:	78 83 ff f5 	BRA        @0x000022de	// 22de <upper_lower+0x1c>
+    22e9:	34 c5 00 00 	STO        R6,(R4)
+    22ea:	20 80 00 01 	ADD        $1,R4
+    22eb:	24 05 40 00 	CMP        R5,R4
+    22ec:	78 9b ff fc 	BNZ        @0x000022e9	// 22e9 <upper_lower+0x27>
+    22ed:	40 80 00 01 	ADD        $1,R8
+    22ee:	38 84 c0 00 	ADD        R3,R7
+    22ef:	1c 06 00 00 	CMP        R8,R3
+    22f0:	78 98 00 04 	BNZ        @0x000022f5	// 22f5 <upper_lower+0x33>
+    22f1:	78 80 00 4a 	BRA        @0x0000233c	// 233c <upper_lower+0x7a>
+    22f2:	3c 87 3f ff 	LOD        -1(R12),R7
+    22f3:	45 80 00 00 	CLR        R8
+    22f4:	33 c2 00 00 	MOV        R8,R6
+    22f5:	2b c0 80 00 	MOV        R2,R5
+    22f6:	28 85 c0 00 	ADD        R7,R5
+    22f7:	23 c1 c0 00 	MOV        R7,R4
+    22f8:	14 00 00 00 	CMP        $0,R2
+    22f9:	78 a3 ff ef 	BGT        @0x000022e9	// 22e9 <upper_lower+0x27>
+    22fa:	78 83 ff f2 	BRA        @0x000022ed	// 22ed <upper_lower+0x2b>
+    22fb:	5b c0 80 00 	MOV        R2,R11
+    22fc:	59 40 00 1f 	LSR        $31,R11
+    22fd:	58 84 80 00 	ADD        R2,R11
+    22fe:	59 c0 00 01 	ASR        $1,R11
+    22ff:	78 a0 00 1a 	BGT        @0x0000231a	// 231a <upper_lower+0x58>
+    2300:	78 80 00 41 	BRA        @0x00002342	// 2342 <upper_lower+0x80>
+    2301:	1c 00 00 00 	CMP        $0,R3
+    2302:	78 a0 00 31 	BGT        @0x00002334	// 2334 <upper_lower+0x72>
+    2303:	78 80 00 3e 	BRA        @0x00002342	// 2342 <upper_lower+0x80>
+    2304:	23 c2 80 00 	MOV        R10,R4
+    2305:	0d 80 00 00 	CLR        R1
+    2306:	33 c2 00 00 	MOV        R8,R6
+    2307:	30 86 40 00 	ADD        R9,R6
+    2308:	14 c7 3f fd 	STO        R2,$-3(R12)
+    2309:	2b c0 c0 00 	MOV        R3,R5
+    230a:	2a 04 40 00 	MPY        R1,R5
+    230b:	13 c1 80 00 	MOV        R6,R2
+    230c:	10 85 40 00 	ADD        R5,R2
+    230d:	2c 84 80 00 	LOD        (R2),R5
+    230e:	2c c5 00 00 	STO        R5,(R4)
+    230f:	08 80 00 01 	ADD        $1,R1
+    2310:	20 80 00 01 	ADD        $1,R4
+    2311:	0c 05 c0 00 	CMP        R7,R1
+    2312:	78 9b ff f6 	BNZ        @0x00002309	// 2309 <upper_lower+0x47>
+    2313:	14 87 3f fd 	LOD        -3(R12),R2
+    2314:	48 80 00 01 	ADD        $1,R9
+    2315:	50 84 c0 00 	ADD        R3,R10
+    2316:	5c 06 40 00 	CMP        R9,R11
+    2317:	78 a0 00 0e 	BGT        @0x00002326	// 2326 <upper_lower+0x64>
+    2318:	0c 87 3f fe 	LOD        -2(R12),R1
+    2319:	78 83 ff e7 	BRA        @0x00002301	// 2301 <upper_lower+0x3f>
+    231a:	3b c0 c0 00 	MOV        R3,R7
+    231b:	39 40 00 1f 	LSR        $31,R7
+    231c:	38 84 c0 00 	ADD        R3,R7
+    231d:	39 c0 00 01 	ASR        $1,R7
+    231e:	23 c2 c0 00 	MOV        R11,R4
+    231f:	22 04 c0 00 	MPY        R3,R4
+    2320:	20 85 c0 00 	ADD        R7,R4
+    2321:	54 87 3f ff 	LOD        -1(R12),R10
+    2322:	50 85 00 00 	ADD        R4,R10
+    2323:	4d 80 00 00 	CLR        R9
+    2324:	44 87 3f fe 	LOD        -2(R12),R8
+    2325:	0c c7 3f fe 	STO        R1,$-2(R12)
+    2326:	3c 00 00 00 	CMP        $0,R7
+    2327:	78 a3 ff dc 	BGT        @0x00002304	// 2304 <upper_lower+0x42>
+    2328:	78 83 ff eb 	BRA        @0x00002314	// 2314 <upper_lower+0x52>
+    2329:	08 80 00 01 	ADD        $1,R1
+    232a:	2c 85 00 00 	LOD        (R4),R5
+    232b:	2c c4 7f ff 	STO        R5,$-1(R1)
+    232c:	20 80 00 01 	ADD        $1,R4
+    232d:	34 04 40 00 	CMP        R1,R6
+    232e:	78 9b ff fa 	BNZ        @0x00002329	// 2329 <upper_lower+0x67>
+    232f:	38 80 00 01 	ADD        $1,R7
+    2330:	40 84 c0 00 	ADD        R3,R8
+    2331:	1c 05 c0 00 	CMP        R7,R3
+    2332:	78 a0 00 03 	BGT        @0x00002336	// 2336 <upper_lower+0x74>
+    2333:	78 80 00 0e 	BRA        @0x00002342	// 2342 <upper_lower+0x80>
+    2334:	44 87 3f ff 	LOD        -1(R12),R8
+    2335:	3d 80 00 00 	CLR        R7
+    2336:	33 c0 40 00 	MOV        R1,R6
+    2337:	30 84 80 00 	ADD        R2,R6
+    2338:	23 c2 00 00 	MOV        R8,R4
+    2339:	14 00 00 00 	CMP        $0,R2
+    233a:	78 a3 ff ee 	BGT        @0x00002329	// 2329 <upper_lower+0x67>
+    233b:	78 83 ff f3 	BRA        @0x0000232f	// 232f <upper_lower+0x6d>
+    233c:	5b c0 80 00 	MOV        R2,R11
+    233d:	59 40 00 1f 	LSR        $31,R11
+    233e:	58 84 80 00 	ADD        R2,R11
+    233f:	59 c0 00 01 	ASR        $1,R11
+    2340:	78 a3 ff d9 	BGT        @0x0000231a	// 231a <upper_lower+0x58>
+    2341:	78 83 ff f2 	BRA        @0x00002334	// 2334 <upper_lower+0x72>
+    2342:	6b c3 00 00 	MOV        R12,SP
+    2343:	2c 87 40 00 	LOD        (SP),R5
+    2344:	34 87 40 01 	LOD        1(SP),R6
+    2345:	3c 87 40 02 	LOD        2(SP),R7
+    2346:	44 87 40 03 	LOD        3(SP),R8
+    2347:	4c 87 40 04 	LOD        4(SP),R9
+    2348:	54 87 40 05 	LOD        5(SP),R10
+    2349:	5c 87 40 06 	LOD        6(SP),R11
+    234a:	64 87 40 07 	LOD        7(SP),R12
+    234b:	68 80 00 08 	ADD        $8,SP
+    234c:	7b c0 00 00 	JMP        R0
 
-000021d1 <malloc>:
-    21d1:	1b 00 00 00 	LDI        0x00002226,R3	// 2226 <heap>
-    21d2:	1a 40 22 26 
-    21d3:	14 84 c0 00 	LOD        (R3),R2
-    21d4:	23 c0 80 00 	MOV        R2,R4
-    21d5:	20 84 40 00 	ADD        R1,R4
-    21d6:	24 c4 c0 00 	STO        R4,(R3)
-    21d7:	0b c0 80 00 	MOV        R2,R1
-    21d8:	7b c0 00 00 	JMP        R0
+0000234d <zip_write_image>:
+    234d:	68 00 00 02 	SUB        $2,SP
+    234e:	2c c7 40 00 	STO        R5,(SP)
+    234f:	34 c7 40 01 	STO        R6,$1(SP)
+    2350:	15 80 00 00 	CLR        R2
+    2351:	14 c0 01 04 	STO        R2,($260)
+    2352:	15 81 00 01 	LDI        $65537,R2
+    2353:	14 c0 01 06 	STO        R2,($262)
+    2354:	33 c0 40 00 	MOV        R1,R6
+    2355:	30 81 00 00 	ADD        $65536,R6
+    2356:	2b 00 0f f8 	BREV       $4088,R5
+    2357:	25 87 fc 00 	LDI        $523264,R4
+    2358:	14 80 01 0b 	LOD        ($267),R2
+    2359:	14 00 00 00 	CMP        $0,R2
+    235a:	78 9b ff fd 	BNZ        @0x00002358	// 2358 <zip_write_image+0xb>
+    235b:	1c 84 40 00 	LOD        (R1),R3
+    235c:	18 45 40 00 	AND        R5,R3
+    235d:	19 c0 00 14 	ASR        $20,R3
+    235e:	14 80 01 0b 	LOD        ($267),R2
+    235f:	14 00 00 00 	CMP        $0,R2
+    2360:	78 9b ff fd 	BNZ        @0x0000235e	// 235e <zip_write_image+0x11>
+    2361:	1c c0 01 0b 	STO        R3,($267)
+    2362:	1c 84 40 00 	LOD        (R1),R3
+    2363:	18 45 00 00 	AND        R4,R3
+    2364:	19 c0 00 0a 	ASR        $10,R3
+    2365:	14 80 01 0b 	LOD        ($267),R2
+    2366:	14 00 00 00 	CMP        $0,R2
+    2367:	78 9b ff fd 	BNZ        @0x00002365	// 2365 <zip_write_image+0x18>
+    2368:	1c c0 01 0b 	STO        R3,($267)
+    2369:	1c 84 40 00 	LOD        (R1),R3
+    236a:	18 40 01 ff 	AND        $511,R3
+    236b:	14 80 01 0b 	LOD        ($267),R2
+    236c:	14 00 00 00 	CMP        $0,R2
+    236d:	78 9b ff fd 	BNZ        @0x0000236b	// 236b <zip_write_image+0x1e>
+    236e:	1c c0 01 0b 	STO        R3,($267)
+    236f:	14 80 01 0b 	LOD        ($267),R2
+    2370:	14 00 00 00 	CMP        $0,R2
+    2371:	78 9b ff fd 	BNZ        @0x0000236f	// 236f <zip_write_image+0x22>
+    2372:	08 80 00 01 	ADD        $1,R1
+    2373:	0c 05 80 00 	CMP        R6,R1
+    2374:	78 9b ff e3 	BNZ        @0x00002358	// 2358 <zip_write_image+0xb>
+    2375:	2c 87 40 00 	LOD        (SP),R5
+    2376:	34 87 40 01 	LOD        1(SP),R6
+    2377:	68 80 00 02 	ADD        $2,SP
+    2378:	7b c0 00 00 	JMP        R0
 
-000021d9 <test_malloc>:
-    21d9:	68 00 00 07 	SUB        $7,SP
-    21da:	04 c7 40 04 	STO        R0,$4(SP)
-    21db:	2c c7 40 05 	STO        R5,$5(SP)
-    21dc:	34 c7 40 06 	STO        R6,$6(SP)
-    21dd:	0d 80 00 10 	LDI        $16,R1
-    21de:	03 c3 c0 02 	MOV        $2+PC,R0
-    21df:	7c 87 c0 00 	LJMP       @0x000021d1	// 21d1 <malloc>
-    21e0:	00 00 21 d1 
-    21e1:	33 c0 40 00 	MOV        R1,R6
-    21e2:	0d 80 00 10 	LDI        $16,R1
-    21e3:	03 c3 c0 02 	MOV        $2+PC,R0
-    21e4:	7c 87 c0 00 	LJMP       @0x000021d1	// 21d1 <malloc>
-    21e5:	00 00 21 d1 
-    21e6:	2b c0 40 00 	MOV        R1,R5
-    21e7:	15 80 00 10 	LDI        $16,R2
-    21e8:	0b 01 e1 00 	LDI        0x0087fff9,R1	// 87fff9 <_top_of_stack+0x87bffa>
-    21e9:	0a 40 ff f9 
-    21ea:	14 c4 40 00 	STO        R2,(R1)
-    21eb:	0b 01 e1 00 	LDI        0x0087fff8,R1	// 87fff8 <_top_of_stack+0x87bff9>
-    21ec:	0a 40 ff f8 
-    21ed:	03 c3 40 00 	MOV        SP,R0
-    21ee:	04 c4 40 00 	STO        R0,(R1)
-    21ef:	0b 01 e1 00 	LDI        0x0087fffa,R1	// 87fffa <_top_of_stack+0x87bffb>
-    21f0:	0a 40 ff fa 
-    21f1:	34 c4 40 00 	STO        R6,(R1)
-    21f2:	0b 01 e1 00 	LDI        0x0087fffb,R1	// 87fffb <_top_of_stack+0x87bffc>
-    21f3:	0a 40 ff fb 
-    21f4:	2c c4 40 00 	STO        R5,(R1)
-    21f5:	0b c1 80 00 	MOV        R6,R1
-    21f6:	03 c3 c0 02 	MOV        $2+PC,R0
-    21f7:	7c 87 c0 00 	LJMP       @0x000021d0	// 21d0 <free>
-    21f8:	00 00 21 d0 
-    21f9:	0b c1 40 00 	MOV        R5,R1
-    21fa:	03 c3 c0 02 	MOV        $2+PC,R0
-    21fb:	7c 87 c0 00 	LJMP       @0x000021d0	// 21d0 <free>
-    21fc:	00 00 21 d0 
-    21fd:	04 87 40 04 	LOD        4(SP),R0
-    21fe:	2c 87 40 05 	LOD        5(SP),R5
-    21ff:	34 87 40 06 	LOD        6(SP),R6
-    2200:	68 80 00 07 	ADD        $7,SP
-    2201:	7b c0 00 00 	JMP        R0
+00002379 <free>:
+    2379:	7b c0 00 00 	JMP        R0
 
-00002202 <msg1>:
-    2202:	00 00 00 44 00 00 00 61 00 00 00 74 00 00 00 61     ...D...a...t...a
-    2206:	00 00 00 20 00 00 00 72 00 00 00 64 00 00 00 79     ... ...r...d...y
-    220a:	00 00 00 20 00 00 00 20 00 00 00 20 00 00 00 20     ... ... ... ... 
-    220e:	00 00 00 20 00 00 00 0d 00 00 00 0a 00 00 00 00     ... ............
+0000237a <malloc>:
+    237a:	1b 00 00 00 	LDI        0x000023cf,R3	// 23cf <heap>
+    237b:	1a 40 23 cf 
+    237c:	14 84 c0 00 	LOD        (R3),R2
+    237d:	23 c0 80 00 	MOV        R2,R4
+    237e:	20 84 40 00 	ADD        R1,R4
+    237f:	24 c4 c0 00 	STO        R4,(R3)
+    2380:	0b c0 80 00 	MOV        R2,R1
+    2381:	7b c0 00 00 	JMP        R0
 
-00002212 <msg>:
-    2212:	00 00 00 48 00 00 00 65 00 00 00 6c 00 00 00 6c     ...H...e...l...l
-    2216:	00 00 00 6f 00 00 00 2c 00 00 00 20 00 00 00 77     ...o...,... ...w
-    221a:	00 00 00 6f 00 00 00 72 00 00 00 6c 00 00 00 64     ...o...r...l...d
-    221e:	00 00 00 21 00 00 00 0d 00 00 00 0a 00 00 00 00     ...!............
+00002382 <test_malloc>:
+    2382:	68 00 00 07 	SUB        $7,SP
+    2383:	04 c7 40 04 	STO        R0,$4(SP)
+    2384:	2c c7 40 05 	STO        R5,$5(SP)
+    2385:	34 c7 40 06 	STO        R6,$6(SP)
+    2386:	0d 80 00 10 	LDI        $16,R1
+    2387:	03 c3 c0 02 	MOV        $2+PC,R0
+    2388:	7c 87 c0 00 	LJMP       @0x0000237a	// 237a <malloc>
+    2389:	00 00 23 7a 
+    238a:	33 c0 40 00 	MOV        R1,R6
+    238b:	0d 80 00 10 	LDI        $16,R1
+    238c:	03 c3 c0 02 	MOV        $2+PC,R0
+    238d:	7c 87 c0 00 	LJMP       @0x0000237a	// 237a <malloc>
+    238e:	00 00 23 7a 
+    238f:	2b c0 40 00 	MOV        R1,R5
+    2390:	15 80 00 10 	LDI        $16,R2
+    2391:	0b 01 e1 00 	LDI        0x0087fff9,R1	// 87fff9 <_top_of_stack+0x87bffa>
+    2392:	0a 40 ff f9 
+    2393:	14 c4 40 00 	STO        R2,(R1)
+    2394:	0b 01 e1 00 	LDI        0x0087fff8,R1	// 87fff8 <_top_of_stack+0x87bff9>
+    2395:	0a 40 ff f8 
+    2396:	03 c3 40 00 	MOV        SP,R0
+    2397:	04 c4 40 00 	STO        R0,(R1)
+    2398:	0b 01 e1 00 	LDI        0x0087fffa,R1	// 87fffa <_top_of_stack+0x87bffb>
+    2399:	0a 40 ff fa 
+    239a:	34 c4 40 00 	STO        R6,(R1)
+    239b:	0b 01 e1 00 	LDI        0x0087fffb,R1	// 87fffb <_top_of_stack+0x87bffc>
+    239c:	0a 40 ff fb 
+    239d:	2c c4 40 00 	STO        R5,(R1)
+    239e:	0c 85 80 00 	LOD        (R6),R1
+    239f:	03 c3 c0 02 	MOV        $2+PC,R0
+    23a0:	7c 87 c0 00 	LJMP       @0x00002379	// 2379 <free>
+    23a1:	00 00 23 79 
+    23a2:	0c 85 40 00 	LOD        (R5),R1
+    23a3:	03 c3 c0 02 	MOV        $2+PC,R0
+    23a4:	7c 87 c0 00 	LJMP       @0x00002379	// 2379 <free>
+    23a5:	00 00 23 79 
+    23a6:	04 87 40 04 	LOD        4(SP),R0
+    23a7:	2c 87 40 05 	LOD        5(SP),R5
+    23a8:	34 87 40 06 	LOD        6(SP),R6
+    23a9:	68 80 00 07 	ADD        $7,SP
+    23aa:	7b c0 00 00 	JMP        R0
 
-00002222 <XULA_BUSY>:
-    2222:	40 00 00 00                                         @...
+000023ab <msg1>:
+    23ab:	00 00 00 44 00 00 00 61 00 00 00 74 00 00 00 61     ...D...a...t...a
+    23af:	00 00 00 20 00 00 00 72 00 00 00 64 00 00 00 79     ... ...r...d...y
+    23b3:	00 00 00 20 00 00 00 20 00 00 00 20 00 00 00 20     ... ... ... ... 
+    23b7:	00 00 00 20 00 00 00 0d 00 00 00 0a 00 00 00 00     ... ............
 
-00002223 <READY_FOR_XMIT>:
-    2223:	40 00 40 00                                         @.@.
+000023bb <msg>:
+    23bb:	00 00 00 48 00 00 00 65 00 00 00 6c 00 00 00 6c     ...H...e...l...l
+    23bf:	00 00 00 6f 00 00 00 2c 00 00 00 20 00 00 00 77     ...o...,... ...w
+    23c3:	00 00 00 6f 00 00 00 72 00 00 00 6c 00 00 00 64     ...o...r...l...d
+    23c7:	00 00 00 21 00 00 00 0d 00 00 00 0a 00 00 00 00     ...!............
 
-00002224 <LED_OFF>:
-    2224:	00 02 00 00                                         ....
+000023cb <XULA_BUSY>:
+    23cb:	40 00 00 00                                         @...
 
-00002225 <LED_ON>:
-    2225:	00 02 00 02                                         ....
+000023cc <READY_FOR_XMIT>:
+    23cc:	40 00 40 00                                         @.@.
+
+000023cd <LED_OFF>:
+    23cd:	00 02 00 00                                         ....
+
+000023ce <LED_ON>:
+    23ce:	00 02 00 02                                         ....
