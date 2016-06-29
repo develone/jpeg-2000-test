@@ -365,9 +365,9 @@ h = 64;
 int sar[w][h];
 int tar[w][h];
 
-sptr = malloc(sizeof(int)*(w*h));
+sptr = (int *)malloc(sizeof(int)*(w*h));
 sptr1 = &sar[0][0]; 
-dptr = malloc(sizeof(int)*(w*h));
+dptr = (int *)malloc(sizeof(int)*(w*h));
 //printf("%x %x %x\n",sptr,sptr1,dptr);
 cc = 0;
 
@@ -456,8 +456,8 @@ for(row=0;row<h;row++)
 	printf("\n");
 }
 */ 		   	
-free ((int*)*sptr);
+free (sptr);
 
-free ((int*)*dptr);
+free (dptr);
 }
  
