@@ -119,7 +119,17 @@ for(row=0;row<h;row++)
 	buf = buf + 192;
 	//printf(" %x \n",buf);
 }
-for(steps=0;steps<3;steps++){
+printf("64 x 64 input data \n");
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{ 
+	   printf("%d  ",sar[row][col]);
+	}
+	printf("\n");
+}
+
+for(steps=0;steps<1;steps++){
 	if (steps == 0)	{
 		w = 64;
 		h = 64;
@@ -134,12 +144,52 @@ for(steps=0;steps<3;steps++){
 	}
 	printf("%d %d \n",w,h);	
 	lift_step(sptr1,w, h);
+printf("even odd pass1 \n");	
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{ 
+	   printf("%d  ",sar[row][col]);
+	}
+	printf("\n");
+}
+	
 	de_interleave(sptr1,w,h);
+printf("de_interleave pass1 \n");	
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{ 
+	   printf("%d  ",sar[row][col]);
+	}
+	printf("\n");
+}
+	
 	lift_step(sptr1,w, h);
+printf("even odd pass2 \n");	
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{ 
+	   printf("%d  ",sar[row][col]);
+	}
+	printf("\n");
+}
+	
 	de_interleave(sptr1,w,h);
+printf("de_interleave pass2 \n");	
+for(row=0;row<h;row++)
+{
+	for(col=0;col<w;col++)
+	{ 
+	   printf("%d  ",sar[row][col]);
+	}
+	printf("\n");
+}
+	
 	lower_upper(sptr1,w,h);
 
-
+printf("lower upper \n");
 for(row=0;row<h;row++)
 {
 	for(col=0;col<w;col++)

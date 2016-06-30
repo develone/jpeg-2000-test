@@ -37,9 +37,9 @@ typedef	struct	{
 static SDCARD	* const sd = (SDCARD *)0x0120;
 void zip_read_image(int *imbuf);
 void zip_clear_sdram(int *imbuf);
-void dwt_process(int *imgbuf);
-void zip_write_image(int *imbuf); 
 
+void zip_write_image(int *imbuf); 
+//void free (void * ptr);
 #define	SDRAM	(void *)0x800000
 #define	FLASH	(void *)0x040000
 #define	CLOCKFREQHZ	80000000

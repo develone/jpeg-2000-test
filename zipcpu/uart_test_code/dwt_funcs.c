@@ -60,7 +60,7 @@ for(row=0;row<h;row++)
 
 void lower_upper(int *ptr, int w, int h) 
 {
-int row,col,r2,r2h;	
+int row,col;	
  
 int tar[w][h];
 //save ptr to initial value passed into subroutine
@@ -120,9 +120,9 @@ for(row=0;row<h;row++)
 
 void lift_step(int *ptr, int w, int h) 
 {
-int row,col,r2,r2h;	
+int row,col;	
  
-int tar[w][h];
+
 //save ptr to initial value passed into subroutine
 //so it can be restored 
 int *init_ptr;
@@ -168,9 +168,8 @@ for(row=0;row<h;row++)
 }
 void inv_lift_step(int *ptr, int w, int h) 
 {
-int row,col,r2,r2h;	
- 
-int tar[w][h];
+int row,col;	
+
 //save ptr to initial value passed into subroutine
 //so it can be restored 
 int *init_ptr;
@@ -231,7 +230,7 @@ def upper_lower(s, width, height):
 */
 void upper_lower(int *ptr, int w, int h) 
 {
-int row,col,r2,r2h;	
+int row,col;	
  
  
 int tar[w][h];

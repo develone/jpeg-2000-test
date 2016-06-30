@@ -1,0 +1,118 @@
+The code in test_malloc.c is used to unpack the RGB packed data
+into 64 x 64 r g b pointers will be created with malloc and
+saved in SDRAM 0x87fff2 red, 0x87fff3 green & 0x87fff2 blue.
+Note the values below will chg if large working area a set.
+
+pointer buf_r_used  to 0x87fff2 buf_r is stored here 0x00850000
+pointer buf_g_used  to 0x87fff3	buf_g is stored here 0x00851000
+pointer buf_b_used  to 0x87fff4 buf_b is stored here 0x00820000
+
+The packed data is stored at 0x800000 to 0x83ffff.
+jpeg-2000-test/jpeg2k/parallel_jpeg/lena_rgb_256.png
+jpeg-2000-test/zipcpu/uart_test_code/rgb.bin
+
+
+Note: On RPi2B the adding 192 following incrementing 64 times 
+800000
+800100
+800400
+
+0x800000 0x8000ff  	row0	0x800000 0x800040  	buf_ptr = buf_ptr + 192; buf_ptr at 0x800100
+0x800100 0x8001ff	row1	0x800000 0x800140  	buf_ptr = buf_ptr + 192; buf_ptr at 0x800200
+0x800200 0x8002ff	row2
+0x800300 0x8003ff	row3
+0x800400 0x8004ff	row4
+	.
+	.
+	.
+0x800c00 0x800cff	row12
+0x800d00 0x800dff	row13
+0x800e00 0x800eff	row14
+0x800f00 0x800fff	row15
+
+Assign pointer buf_r_used  to 0x87fff2
+Assign pointer buf_g_used  to 0x87fff3
+Assign pointer buf_b_used  to 0x87fff4
+
+int *buf_r_used = (int *)0x87fff2;
+Allocate 64 x 64 memory in pointed 
+by pointer buf_r.
+
+buf_r = (int *)malloc(sizeof(int)*(w*h));
+Check to see that the buf_r pointer was stored at 
+location pointed by pointer buf_r_used  to 0x87fff2
+
+wbregs 0x87fff2
+0087fff2 ( no name) : [....] 00850000
+
+buf_g = (int *)malloc(sizeof(int)*(w*h));
+Check to see that the buf_g pointer was stored at 
+location pointed by pointer buf_r_used  to 0x87fff3
+
+wbregs 0x87fff3
+0087fff3 ( no name) : [....] 00851000
+
+buf_b = (int *)malloc(sizeof(int)*(w*h));
+Check to see that the buf_b pointer was stored at 
+location pointed by pointer buf_r_used  to 0x87fff4
+
+wbregs 0x87fff4
+0087fff4 ( no name) : [....] 00852000
+
+wbregs 0x850000
+start of row0
+un-packed red 64 x 64
+00850000 ( no name) : [....] 000000e2	0x00000000	okay
+
+wbregs 0x850009
+00850009 ( no name) : [....] 000000de	0x0000001b 	okay
+
+wbregs 0x85000a
+0085000a ( no name) : [....] 000000df	0x0000001e	okay
+
+wbregs 0x85000f
+0085000f ( no name) : [....] 000000dd  	0x0000002d 	okay
+
+wbregs 0x85003f
+0085003f ( no name) : [....] 000000cb	0x000000bd 	okay
+
+wbregs 0x850040
+00850040 ( no name) : [....] 000000e2  	0x00000300 	okay 
+
+wbregs 0x850041
+00850041 ( no name) : [....] 000000de 	0x00000303	okay
+
+wbregs 0x85007f
+0085007f ( no name) : [....] 000000cb	0x000003BD 	okay
+
+wbregs 0x850080
+00850080 ( no name) : [....] 000000e2	0x00000600 	okay
+
+wbregs 0x850084
+00850084 ( no name) : [....] 000000e1	0x0000060C	okay
+wbregs 0x8500ff
+
+wbregs 0x8500bf
+008500bf ( no name) : [....] 000000c9	0x000006BD	okay
+
+Raw RGB  		  
+00000000   E2 89 7C DE  88 83 E2 85  75 E3 88 7B  E1 8A 7A E2  ..|.....u..{..z.		0 - 63	row0 of 64 x 64	red
+00000010   86 7C E0 86  70 DD 83 75  DC 84 6D DE  8B 76 DF 80  .|..p..u..m..v..
+00000020   6A DE 83 69  DB 84 6F E0  7F 65 DC 81  74 DD 81 74  j..i..o..e..t..t
+ 
+000000B0   59 C4 5A 5B  CA 60 5C C9  5E 5C CB 5A  5A CB 66 5F  Y.Z[.`\.^\.ZZ.f_
+
+
+00000300   E2 89 7C DE  88 83 E2 85  75 E3 88 7B  E1 8A 7A E2  ..|.....u..{..z.		64 - 127 row1 of 64 x 64 red
+ 
+000003B0   59 C4 5A 5B  CA 60 5C C9  5E 5C CB 5A  5A CB 66 5F  Y.Z[.`\.^\.ZZ.f_
+
+
+00000600   E2 8B 7C DF  84 78 E2 85  75 E3 86 78  E1 88 75 E2  ..|..x..u..x..u.		128 - 191 row2  of 64 x 64	red
+ 
+000006B0   5A C6 5B 5E  C9 5C 5A C9  5E 5E CB 5A  5B C9 60 5D  Z.[^.\Z.^^.Z[.`]
+
+wbregs 0x851000
+00851000 ( no name) : [....] 00000089	0x00000001 is the first green value
+wbregs 0x852000
+00852000 ( no name) : [...|] 0000007c	0x00000002 is the first blue value

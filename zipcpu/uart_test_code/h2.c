@@ -1,3 +1,4 @@
+#include "dwt_funcs.h"
 
 asm("\t.section\t.start\n"
 	"\t.global\t_start\n"
@@ -19,9 +20,9 @@ void entry(void) {
 	//register IOSPACE	*sys = (IOSPACE *)0x0100;
 	int	counts = 0;
 	int w,h;  
-    int *buf_ptr = (char *)0x800000;
-    int *clocks_used = (char *)0x87fffe;
-    int *tmp_ptr = (char *)0x820000;
+    int *buf_ptr = (int *)0x800000;
+    int *clocks_used = (int *)0x87fffe;
+    int *tmp_ptr = (int *)0x820000;
     zip_clear_sdram(buf_ptr);
 	// Let's set ourselves up for 1000000 baud, 8-bit characters, no parity,
 	// and one stop bit.
@@ -42,25 +43,19 @@ void entry(void) {
 			
  
 		}
-		test_malloc();
+		
 		sys -> io_gpio = LED_ON|READY_FOR_XMIT ;
         zip_read_image(buf_ptr);
-        
+
         sys->io_gpio = LED_OFF|XULA_BUSY;
+        //testing time to perform 64 x 64
+        //red subband
         sys->io_bustimer = 0x7fffffff;
-         
+        //testing red subband
+        test_malloc();         
         *clocks_used = 0x7fffffff-sys->io_bustimer;
         
-        //pp(buf_ptr,tmp_ptr);
-        w = 64;
-        h = 64;
-        lift_step(buf_ptr,w,h);
-        de_interleave(buf_ptr,w,h);
-        lift_step(buf_ptr,w,h);
-        de_interleave(buf_ptr,w,h);
-        lower_upper(buf_ptr,w,h);
-        //pp(buf_ptr,tmp_ptr);
-        zip_write_image(buf_ptr);
+         zip_write_image(buf_ptr);
          
 		// Now, wait for the top of the second
 		unsigned secv = sys->io_rtc_clock;
