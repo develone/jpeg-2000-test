@@ -1,4 +1,12 @@
 #include "board.h"
+#ifdef __ZIPCPU__
+void *malloc(int sz);
+void free(void *);
+typedef int int32;
+#else
+#include <stdlib.h>
+#include <stdint.h>
+#endif
 /*
  * 
 The Heap
@@ -22,7 +30,7 @@ The heap is a region of your computer's memory that is not managed automatically
 *  Creator:	Dan Gisselquist, Ph.D.
 *		Gisselquist Technology, LLC
 */
-void free (void * ptr) {}
+void free (void * ptr ) {}
 
 void * heap = (void *)(SDRAM+0x50000);
 
