@@ -8,54 +8,95 @@ typedef int int32;
 #include <stdint.h>
 #endif
 
-void	singlelift(int rb, int w, int *ibuf, int *obuf) {
-	int	col, row,loop=0;
-    printf("sl %d addr %d, %d\n",w,ibuf,obuf);
-    for(col=0; col< w; col++) {
-		
-		ibuf = ibuf + col;
-		ibuf = &ibuf[col];
-		printf("col %d addr %d \n",col,ibuf);
-	for(row=1; row<w-6; row+= 2) {
-		register int	*ip, *op,*ip1,*ip2;
-		register int	a,c,e,bp,dp,idp;
-		ip = ibuf+(row*rb); op = obuf+(row*rb);
- 
-		// dp = (dp - ((c+e)>>1));
+void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
+	int	col, row;
 
-		c  = ip[0]; 	//1 3 5 ... 245 247 249
-		dp = ip[256];	//2 4 6 ... 246 248 250
-		e  = ip[512];	//3 5 7 ... 247 249 251
-		printf("row  %d (row-1) %d sam %d  (row+1) %d \n", row, c,dp,e);
-		dp = (dp - ((c+e)>>1));
-		printf("row %d addr (row-1) %d addr sam %d addr (row+1) %d even lift %d %d\n",row,&ip[0],&ip[256],&ip[512],dp,loop);
-		ip[256] = dp;
-		printf("row %d addr ibuf %d %d \n",row,&ip[256],ip[256]);
-		// bp = (bp+((a+c+2)>>2));
-		a = ip[-256];	//0 2 4 ... 244 246 248
-		bp = ip[0];		//1 3 5 ... 245 247 249
-		c = ip[256];	//2 4 6 ... 246 248 250 
-        printf("row %d (row-1) %d sam %d (row+1) %d \n", row, a,bp,c);
-        bp = (bp + ((a + c + 2 )>>2));
-        printf("row %d addr (row-1) %d addr sam %d addr (row+1) %d  odd lift %d %d\n",row,&ip[-256],&ip[0],&ip[256],bp,loop);
-		//op[0] = c;
-		ip[-256] = bp;
-		printf("row %d addr ibuf %d %d \n",row,&ip[-256],ip[-256]);
-		loop++;
- 
-	}
+	for(row=0; row<w; row++) {
+		register int	*ip, *op, *opb;
+		register int	c,e,bp,dp;
+
+		//
+		// Ibuf walks down rows (here), but reads across columns (below)
+		// We might manage to get rid of the multiply by doing something
+		// like: 
+		//	ip = ip + (rb-w);
+		// but we'll keep it this way for now.
+		//
+		ip = ibuf+row*rb;
+
+		//
+		// Obuf walks across columns (here), writing down rows (below)
+		//
+		// Here again, we might be able to get rid of the multiply,
+		// but let's get some confidence as written first.
+		//
+		op = obuf+row;
+		opb = op + w*rb/2;
+
+		//
+		// Pre-charge our pipeline
+		//
+
+		// a,b,c,d,e
+		// a = a;
+		// c = c;
+		// b = (b+((a+c+2)>>2));
+		// e = e;
+		// d = (d+((c+e+2)>>2));
+
+		// Put these three together so that they can get some
+		// potential pipeline savings.  (Sadly, looking at the 
+		// assembly, these could be pipelined, just the compiler
+		// didn't -- so there's some benefit to be had here.)
+		c  = ip[0];
+		dp = ip[1];
+		e  = ip[2];
+		dp = (dp + ((c+e+2)>>2));
+
+		op[0]  = c;
+		opb[0] = dp;
+
+		for(col=1; col<w/2; col++) {
+			op +=rb; // = obuf+row+rb*col = obuf[col][row]
+			opb+=rb;// = obuf+row+rb*(col+w/2) = obuf[col+w/2][row]
+			ip+=2;	// = ibuf + (row*rb)+2*col
+			c = e;
+			bp = dp;
+			dp = ip[1];	// = ip[row][2*col+1]
+			e  = ip[2];	// = ip[row][2*col+2]
+			*op  = (c+((bp+dp+2)>>2)); //op[0] is obuf[col][row]
+			dp = (dp - ((c+e)>>1));
+			*opb = bp;	// opb[0] is obuf[col+w/2][row-1]
+		} op[w-1] = dp;
 	}
 }
 
 void	lifting(int w, int *ibuf, int *tmpbuf) {
 	int	lvl, rb=w;
-	//printf("%d %d, %d\n",w,ibuf,tmpbuf);
+
 	for(lvl=0; lvl<3; lvl++) {
 		// Process columns -- leave result in tmpbuf
 		singlelift(rb, w, ibuf, tmpbuf);
+		// Process columns, what used to be the rows from the last
+		// round, pulling the data from tmpbuf and moving it back
+		// to ibuf.
 		singlelift(rb, w, tmpbuf, ibuf);
 
 		// lower_upper
+		//
+		// For this, we just adjust our pointer(s) so that the "image"
+		// we are processing, as referenced by our two pointers, now
+		// references the bottom right part of the image.
+		//
+		// Of course, we haven't really changed the dimensions of the
+		// image.  It started out rb * rb in size, or the initial w*w,
+		// we're just changing where our pointer into the image is.
+		// Rows remain rb long.  We pretend (above) that this new image
+		// is w*w, or should I say (w/2)*(w/2), but really we're just
+		// picking a new starting coordinate and it remains rb*rb.
+		//
+		// Still, this makes a subimage, within our image, containing
+		// the low order results of our processing.
 		int	offset = w*rb/2+w/2;
 		ibuf = &ibuf[offset];
 		tmpbuf = &tmpbuf[offset];
