@@ -45,8 +45,8 @@ void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 		// Here again, we might be able to get rid of the multiply,
 		// but let's get some confidence as written first.
 		//
-		op = obuf+row;
-		opb = op + w*rb/2;
+		opb = obuf+row;
+		op = opb + w*rb/2;
 
 		//
 		// Pre-charge our pipeline
@@ -87,7 +87,8 @@ void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 }
 
 void	lifting(int w, int *ibuf, int *tmpbuf) {
-	int	lvl, rb=w;
+	const	int	rb = w;
+	int	lvl;
 
 	for(lvl=0; lvl<3; lvl++) {
 		// Process columns -- leave result in tmpbuf
