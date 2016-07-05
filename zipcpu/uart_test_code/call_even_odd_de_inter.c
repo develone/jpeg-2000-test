@@ -7,6 +7,7 @@ typedef int int32;
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <assert.h>
 #endif
 int main(void) {
 	
@@ -24,8 +25,9 @@ struct rec
 	char raw_buf[3];
 };
 struct rec my_record;
+assert(sizeof(struct rec)==3);
 //struct results my_results;
-FILE *ptr_myfile;
+FILE *ptr_myfile, *ofp;
 ptr_myfile=fopen("rgb.bin","rb");
 if (!ptr_myfile)
 {
@@ -67,7 +69,15 @@ buf = (int *)&xx[0];
 		red = ((*buf++)&rr)>>20;
 		*img++ = red;
 	}
+	
     img = xxx;
+    /*octave
+    fid = fopen('img.bin','r'); im = fread(fid, [256,inf], 'int32'); fclose(fid);
+    imagesc(im)
+    */
+	ofp = fopen("img.bin","w");
+	fwrite(img, sizeof(int), w*h, ofp);
+	fclose(ofp);    
     alt = &img[256*256];
     //printf("%d %x, %x %d\n",w,img,alt,sizeof(img)); 
 	//int	*img = SDRAM, *alt = &img[256*256];
@@ -75,8 +85,17 @@ buf = (int *)&xx[0];
 
 	//sys->io_bustimer = 0x7fffffff;
 	lifting(w, img, alt);
-	xxx = xxx + 57568;
+	/*octave
+    fid = fopen('outimg.bin','r'); im = fread(fid, [256,inf], 'int32'); fclose(fid);
+    imagesc(im)
+    */
+    ofp = fopen("outimg.bin","w");
+	fwrite(img, sizeof(int), w*h, ofp);
+	fclose(ofp);
+	
+	xxx = xxx + 57568 -256;
 	for (row= 0 ;row<32;row++) {
+		xxx += 256;
 		for(col=0;col< 32;col++) {
 			printf("%d ",*xxx++);
 		}
