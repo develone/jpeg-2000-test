@@ -84,15 +84,16 @@ for(row=0;row<h;row++)
 
 	
  
-    int *img, *alt;
+    int *img, *alt, *xxx;
     
     img = (int *)malloc(sizeof(int)*(w*h)*2);
+    xxx = img;
     for(row=0;row<h;row++) {
     for(col=0;col<w;col++) {
 		*img++ = sar[row][col];
     }
     }
-    img = img - w*h;
+    img = xxx;
     alt = &img[256*256];
     //printf("%d %x, %x %d\n",w,img,alt,sizeof(img)); 
 	//int	*img = SDRAM, *alt = &img[256*256];
@@ -100,6 +101,14 @@ for(row=0;row<h;row++)
 
 	//sys->io_bustimer = 0x7fffffff;
 	lifting(w, img, alt);
+	
+	for (row= 0 ;row<32;row++) {
+		for(col=0;col< 32;col++) {
+			printf("%d ",*xxx++);
+		}
+		printf("\n");
+	}
+	 
 	//done = 0x7fffffff - sys->io_bustimer;
 	//img[0] = done;
 	free (sptr);
