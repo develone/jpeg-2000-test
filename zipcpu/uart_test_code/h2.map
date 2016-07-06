@@ -12,66 +12,63 @@ Linker script and memory map
 LOAD obj-zip/h2.o
 LOAD obj-zip/pushtozipcpu.o
 LOAD obj-zip/clr_sdram.o
-LOAD obj-zip/dwt_funcs.o
 LOAD obj-zip/pushtorpi2B.o
 LOAD obj-zip/my_malloc.o
 LOAD obj-zip/test_malloc.o
+LOAD obj-zip/even_odd_de_inter.o
                 0x00003fff                _top_of_stack = ((ORIGIN (blkram) + 0x2000) - 0x1)
                 0x00002000                . = 0x2000
 
-.rocode         0x00002000      0x3cf
+.rocode         0x00002000      0x27e
  *(.start)
  .start         0x00002000        0x4 obj-zip/h2.o
                 0x00002000                _start
  *(.text)
- .text          0x00002004       0x55 obj-zip/h2.o
+ .text          0x00002004       0x2e obj-zip/h2.o
                 0x00002004                entry
- .text          0x00002059       0x31 obj-zip/pushtozipcpu.o
-                0x00002059                zip_read_image
- .text          0x0000208a        0x9 obj-zip/clr_sdram.o
-                0x0000208a                zip_clear_sdram
- .text          0x00002093      0x2ba obj-zip/dwt_funcs.o
-                0x00002093                de_interleave
-                0x00002112                lower_upper
-                0x0000219e                lift_step
-                0x00002231                inv_lift_step
-                0x000022c2                upper_lower
- .text          0x0000234d       0x2c obj-zip/pushtorpi2B.o
-                0x0000234d                zip_write_image
- .text          0x00002379        0x9 obj-zip/my_malloc.o
-                0x00002379                free
-                0x0000237a                malloc
- .text          0x00002382       0x29 obj-zip/test_malloc.o
-                0x00002382                test_malloc
+ .text          0x00002032       0x31 obj-zip/pushtozipcpu.o
+                0x00002032                zip_read_image
+ .text          0x00002063        0x9 obj-zip/clr_sdram.o
+                0x00002063                zip_clear_sdram
+ .text          0x0000206c       0x2c obj-zip/pushtorpi2B.o
+                0x0000206c                zip_write_image
+ .text          0x00002098        0x9 obj-zip/my_malloc.o
+                0x00002098                free
+                0x00002099                malloc
+ .text          0x000020a1       0x76 obj-zip/test_malloc.o
+                0x000020a1                test_malloc
+ .text          0x00002117      0x143 obj-zip/even_odd_de_inter.o
+                0x00002117                singlelift
+                0x00002181                lifting
  *(.rodata)
- .rodata        0x000023ab       0x24 obj-zip/h2.o
-                0x000023ab                msg1
-                0x000023bb                msg
-                0x000023cb                XULA_BUSY
-                0x000023cc                READY_FOR_XMIT
-                0x000023cd                LED_OFF
-                0x000023ce                LED_ON
+ .rodata        0x0000225a       0x24 obj-zip/h2.o
+                0x0000225a                msg1
+                0x0000226a                msg
+                0x0000227a                XULA_BUSY
+                0x0000227b                READY_FOR_XMIT
+                0x0000227c                LED_OFF
+                0x0000227d                LED_ON
  *(.strings)
 
-.data           0x000023cf        0x1
+.data           0x0000227e        0x1
  *(.data)
- .data          0x000023cf        0x0 obj-zip/h2.o
- .data          0x000023cf        0x0 obj-zip/pushtozipcpu.o
- .data          0x000023cf        0x0 obj-zip/clr_sdram.o
- .data          0x000023cf        0x0 obj-zip/dwt_funcs.o
- .data          0x000023cf        0x0 obj-zip/pushtorpi2B.o
- .data          0x000023cf        0x1 obj-zip/my_malloc.o
-                0x000023cf                heap
- .data          0x000023d0        0x0 obj-zip/test_malloc.o
+ .data          0x0000227e        0x0 obj-zip/h2.o
+ .data          0x0000227e        0x0 obj-zip/pushtozipcpu.o
+ .data          0x0000227e        0x0 obj-zip/clr_sdram.o
+ .data          0x0000227e        0x0 obj-zip/pushtorpi2B.o
+ .data          0x0000227e        0x1 obj-zip/my_malloc.o
+                0x0000227e                heap
+ .data          0x0000227f        0x0 obj-zip/test_malloc.o
+ .data          0x0000227f        0x0 obj-zip/even_odd_de_inter.o
  *(COMMON)
  *(.bss)
- .bss           0x000023d0        0x0 obj-zip/h2.o
- .bss           0x000023d0        0x0 obj-zip/pushtozipcpu.o
- .bss           0x000023d0        0x0 obj-zip/clr_sdram.o
- .bss           0x000023d0        0x0 obj-zip/dwt_funcs.o
- .bss           0x000023d0        0x0 obj-zip/pushtorpi2B.o
- .bss           0x000023d0        0x0 obj-zip/my_malloc.o
- .bss           0x000023d0        0x0 obj-zip/test_malloc.o
+ .bss           0x0000227f        0x0 obj-zip/h2.o
+ .bss           0x0000227f        0x0 obj-zip/pushtozipcpu.o
+ .bss           0x0000227f        0x0 obj-zip/clr_sdram.o
+ .bss           0x0000227f        0x0 obj-zip/pushtorpi2B.o
+ .bss           0x0000227f        0x0 obj-zip/my_malloc.o
+ .bss           0x0000227f        0x0 obj-zip/test_malloc.o
+ .bss           0x0000227f        0x0 obj-zip/even_odd_de_inter.o
                 0x00f00000                _top_of_heap = 0xf00000
 OUTPUT(h2 elf32-zip)
 
@@ -80,7 +77,7 @@ OUTPUT(h2 elf32-zip)
                                  0x20 (size before relaxing)
  .comment       0x00000007        0x8 obj-zip/pushtozipcpu.o
  .comment       0x00000007        0x8 obj-zip/clr_sdram.o
- .comment       0x00000007        0x8 obj-zip/dwt_funcs.o
  .comment       0x00000007        0x8 obj-zip/pushtorpi2B.o
  .comment       0x00000007        0x8 obj-zip/my_malloc.o
  .comment       0x00000007        0x8 obj-zip/test_malloc.o
+ .comment       0x00000007        0x8 obj-zip/even_odd_de_inter.o
