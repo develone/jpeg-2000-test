@@ -21,7 +21,7 @@ void entry(void) {
 	int	counts = 0;
 	int w,h;  
     int *buf_ptr = (int *)0x800000;
-    int *clocks_used = (int *)0x87fffe;
+    
     int *tmp_ptr = (int *)0x820000;
     zip_clear_sdram(buf_ptr);
 	// Let's set ourselves up for 1000000 baud, 8-bit characters, no parity,
@@ -53,9 +53,9 @@ void entry(void) {
         sys->io_bustimer = 0x7fffffff;
         //testing red subband
         test_malloc();         
-        *clocks_used = 0x7fffffff-sys->io_bustimer;
         
-         zip_write_image(buf_ptr);
+        
+         //zip_write_image(buf_ptr);
          
 		// Now, wait for the top of the second
 		unsigned secv = sys->io_rtc_clock;

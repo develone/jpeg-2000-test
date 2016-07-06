@@ -10,7 +10,7 @@ typedef int int32;
 #include <stdint.h>
 #endif
 void test_malloc(void) {
-
+    //sys->io_bustimer = 0x7fffffff;
     const int bb = 0x1ff;
     const int gg = 0x7fc00;
     const int rr = 0x1ff00000;
@@ -25,7 +25,7 @@ void test_malloc(void) {
 	int *buf_r_used = (int *)0x87fff2;
 	int *buf_g_used = (int *)0x87fff3;
 	int *buf_b_used = (int *)0x87fff4;
-	
+	int *clocks_used = (int *)0x87fffe;
 	int *ar_used = (int *)0x87fff8;
 	int *ar_size =	 (int *)0x87fff9;
 	int *sptr_used = (int *)0x87fffa;
@@ -36,10 +36,9 @@ void test_malloc(void) {
 	int row,col,steps;
 	int w,h,rgb;
 
-	w = 32;
-	h = 32;
+	w = 256;
+	h = 256;
 
-	int ar[w][h];
 	//pointers to r g b
 	
 	buf_r = (int *)malloc(sizeof(int)*(w*h));
@@ -55,14 +54,11 @@ void test_malloc(void) {
 	
 	sptr = (int *)malloc(sizeof(int)*(w*h));
  
-	dptr = (int *)malloc(sizeof(int)*(w*h));
-	*ar_size = sizeof(ar);
-	*ar_used = &ar;
+ 
 
 
 	
 	*sptr_used = sptr; 
-	*dptr_used = dptr;
 	for(row=0;row<h;row++)
 	{
 		for(col=0;col<w;col++)
@@ -72,44 +68,19 @@ void test_malloc(void) {
 			*buf_g++ = (rgb&gg)>>10;
 			*buf_b++ = (rgb&bb);
 		}
-	    //buf_ptr moved to next row
-	    //buf_ptr at 0x40 incremented by col loop above
-		buf_ptr = buf_ptr + 224;
  
 	}
-	//time to here 0x3111 0.0001570125 16 x 16 following read 1.971 buf_ptr = buf_ptr + 240;
-	//time to here 0xc4d7 0.0006298875 32 x 32	following read 1.971 buf_ptr = buf_ptr + 224;
-	//time to here 0x305e4 0.00247645 64 x 64 following read 1.971 buf_ptr = buf_ptr + 192;
-	//time to here 0x30c8ed 0.0399645625 256 x 256 following read 1.971 
+
+	//time to here 0x30c514 0.03995225  splitting 256 x 256 following read 1.971 
 	sptr = *buf_r_used;
-	lift_step(sptr,w,h);
+    sys->io_bustimer = 0x7fffffff;
+	//lifting(w,sptr,buf_dwt);
+	*clocks_used = 0x7fffffff-sys->io_bustimer;
 	//set sptr to buf_r - increments of setting
 	//buf_r with values from rgb
-	/*
-	sptr = buf_r - (w*h);		
-	for(steps=0;steps<1;steps++){
-		if (steps == 0)	{
-			w = 64;
-			h = 64;
-		}
-		if (steps == 1)	{
-			w = 32;
-			h = 32;
-		}
-		if (steps == 2)	{
-			w = 16;
-			h = 16;
-		}
-	 	
-		lift_step(sptr,w, h);
-		de_interleave(sptr,w,h);
-		lift_step(sptr,w, h);
-		de_interleave(sptr,w,h);
-		lower_upper(sptr,w,h);
-}*/
-
+ 
 free(sptr);
-free(dptr);
+
 free(buf_r);
 free(buf_g);
 free(buf_b);
