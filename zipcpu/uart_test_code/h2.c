@@ -19,7 +19,7 @@ void entry(void) {
 	
 	//register IOSPACE	*sys = (IOSPACE *)0x0100;
 	int	counts = 0;
-	int w,h;  
+	 
     int *buf_ptr = (int *)0x800000;
     
     int *tmp_ptr = (int *)0x820000;
@@ -55,7 +55,7 @@ void entry(void) {
         test_malloc();         
         
         
-         //zip_write_image(buf_ptr);
+        zip_write_image(buf_ptr);
          
 		// Now, wait for the top of the second
 		unsigned secv = sys->io_rtc_clock;

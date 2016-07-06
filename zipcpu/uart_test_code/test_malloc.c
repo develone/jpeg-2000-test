@@ -17,7 +17,7 @@ void test_malloc(void) {
     int *buf_r;
     int *buf_g;
     int *buf_b;    	
-	int *dptr, *sptr;
+	int *sptr;
 	//the contents of the buf_r_used
 	//where the red lift steps are stored
 	//before packing to send back to RPi2B
@@ -26,14 +26,13 @@ void test_malloc(void) {
 	int *buf_g_used = (int *)0x87fff3;
 	int *buf_b_used = (int *)0x87fff4;
 	int *clocks_used = (int *)0x87fffe;
-	int *ar_used = (int *)0x87fff8;
-	int *ar_size =	 (int *)0x87fff9;
+ 
 	int *sptr_used = (int *)0x87fffa;
-	int *dptr_used = (int *)0x87fffb;
+	 
 	int *buf_ptr = (int *)0x800000;
     int *buf_dwt = (int *)0x810000;
 
-	int row,col,steps;
+	int row,col;
 	int w,h,rgb;
 
 	w = 256;
@@ -71,10 +70,18 @@ void test_malloc(void) {
  
 	}
 
-	//time to here 0x30c514 0.03995225  splitting 256 x 256 following read 1.971 
-	sptr = *buf_r_used;
-    sys->io_bustimer = 0x7fffffff;
-	//lifting(w,sptr,buf_dwt);
+	//time to here 0x30c514 0.03995225  splitting 256 x 256 
+	//time to process the the red subband including splitting r g b
+	//0x6b60b8 0.0879639 processing r
+	//0xe097f1 0.1839870125 processing r g b with splitting.
+	//following read 1.971 
+	sptr = buf_r-w*h;
+    //sys->io_bustimer = 0x7fffffff;
+	lifting(w,sptr,buf_dwt);
+	sptr = buf_g-w*h;
+	lifting(w,sptr,buf_dwt);
+	sptr = buf_b-w*h;
+	lifting(w,sptr,buf_dwt);	
 	*clocks_used = 0x7fffffff-sys->io_bustimer;
 	//set sptr to buf_r - increments of setting
 	//buf_r with values from rgb
