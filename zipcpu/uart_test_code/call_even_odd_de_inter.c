@@ -97,7 +97,7 @@ buf = (int *)&xx[0];
 	for (row= 0 ;row<32;row++) {
 		xxx += 256;
 		for(col=0;col< 32;col++) {
-			printf("%d ",*xxx++);
+			printf("%d ",xxx[col]);
 		}
 		printf("\n");
 	}
