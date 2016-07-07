@@ -38,8 +38,8 @@ static SDCARD	* const sd = (SDCARD *)0x0120;
 void	lifting(int w, int *ibuf, int *tmpbuf);
 void zip_read_image(int *imbuf);
 void zip_clear_sdram(int *imbuf);
-
-void zip_write_image(int *imbuf); 
+void test_malloc(void);
+void zip_write(int *imbuf); 
 //void free (void * ptr);
 #define	SDRAM	(void *)0x800000
 #define	FLASH	(void *)0x040000

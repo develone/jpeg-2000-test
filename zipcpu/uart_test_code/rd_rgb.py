@@ -30,10 +30,30 @@ print "transfer time", end_time-start_time, "sec"
 start_time = time.time()
 reply=[]
 print "waiting for Data rdy     !"
-reply = ser.read(196608)
+reply = ser.read(131072)
 end_time = time.time()
 print "transfer time", end_time-start_time, "sec"
 print len(reply) 
-file = open("rgb_dwt_zip.bin", "wb")
+file = open("r_dwt_zip.bin", "wb")
+file.write(reply)
+file.close()
+start_time = time.time()
+reply=[]
+print "waiting for Data rdy     !"
+reply = ser.read(131072)
+end_time = time.time()
+print "transfer time", end_time-start_time, "sec"
+print len(reply) 
+file = open("g_dwt_zip.bin", "wb")
+file.write(reply)
+file.close()
+start_time = time.time()
+reply=[]
+print "waiting for Data rdy     !"
+reply = ser.read(131072)
+end_time = time.time()
+print "transfer time", end_time-start_time, "sec"
+print len(reply) 
+file = open("b_dwt_zip.bin", "wb")
 file.write(reply)
 file.close()
