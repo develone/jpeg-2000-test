@@ -10,7 +10,7 @@ typedef int int32;
 #include <stdint.h>
 #endif
 void test_malloc(void) {
-    //sys->io_bustimer = 0x7fffffff;
+    sys->io_bustimer = 0x7fffffff;
     const int bb = 0x1ff;
     const int gg = 0x7fc00;
     const int rr = 0x1ff00000;
@@ -103,14 +103,21 @@ free(buf_b);
 }
 
 void zip_write(int *imbuf) {
+	//0x90ab12cd
+	//little endia
+	//cd uu
+	//12 ul
+	//ab lu
+	//90 ll
 const int LED_SW_ON = 0x10001;
 const int LED_SW_OFF = 0x10000;	
 int i, ch;
 i = 0;
 ch = 0;
- 
+const int uu = 0xff000000;
+const int ul = 0x00ff0000; 
 
-const int uu = 0x0000ff00;
+const int lu = 0x0000ff00;
 const int ll = 0x000000ff;
  
 // Set a timer to abort in case things go bad
@@ -134,12 +141,27 @@ for(i=0; i<256*256; i++) {
 	 sys->io_uart_tx = ch;	
  
      // Write upper byte
-     ch = (*imbuf&uu)>>8;
+     ch = (*imbuf&lu)>>8;
      // Wait while our transmitter is busy
 	 while(sys->io_uart_tx)
 		; 
 	 sys->io_uart_tx = ch;
+     while(sys->io_uart_tx)
+		; 
+     ch = (*imbuf&ul)>>16;
+	 // Wait while our transmitter is busy
+	 while(sys->io_uart_tx)
+		; 
+	 sys->io_uart_tx = ch;	
  
+     // Write upper byte
+     //if (((*imbuf&uu)>>24) == 0x3f) ch = 255;
+     //else ch = (*imbuf&uu)>>24;
+     ch = (*imbuf&uu)>>24;
+     // Wait while our transmitter is busy
+	 while(sys->io_uart_tx)
+		; 
+	 sys->io_uart_tx = ch; 
 *imbuf++ ;
 }
 sys->io_gpio = LED_SW_OFF;
