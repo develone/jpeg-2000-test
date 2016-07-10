@@ -11,9 +11,9 @@ typedef int int32;
 #endif
 int main(void) {
 	
-	const int bb = 0x1ff;
-    const int gg = 0x7fc00;
-    const int rr = 0x1ff00000;
+	const int bb = 0x0ff;
+    const int gg = 0x3fc00;
+    const int rr = 0x0ff00000;
 //read RGB data from file 
 int index; 	
 int i,ii0,ii1,ii2,val;
