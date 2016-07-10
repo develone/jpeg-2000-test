@@ -1,7 +1,7 @@
 #include "board.h"
 
 
-void zip_read_image(int *imbuf) {
+void zip_read_image(int *img1, int *img2, int *img3) {
 const int LED_SW_ON = 0x10001;
 const int LED_SW_OFF = 0x10000;	
 int i, ch, val,recd;
@@ -24,7 +24,7 @@ sys->io_bustimer = 0;
 sys->io_gpio = LED_SW_ON; 
 for(i=0; i<256*256; i++) {
 // Read red
- imbuf[i] = -1; // An invalid image value
+ 
 do {
 // Read a character from the UART port
 ch = sys->io_uart_rx;
@@ -39,7 +39,7 @@ ch = sys->io_uart_rx;
 // address.  This packing will allow us to do vector operations
 // on the pixels later, so that we can do all three colors at
 // once.
-val = ch<<20;
+*img1++ = ch;
 
 // Read green
 do {
@@ -48,7 +48,7 @@ do {
 // here after only one time through.
 ch = sys->io_uart_rx;
 } while(((ch&0x0100)!=0) );
-val |= ch<<10;
+*img2++ = ch;
 
 // Read blue
 do {
@@ -58,9 +58,9 @@ ch = sys->io_uart_rx;
 
 // Pack our final pixel value into this word, and write it to
 // memory.
-val |= ch;
+*img3++ = ch;
 recd = recd + 1;
-*imbuf++ = val;
+ 
 *ptr = i;
 sys->io_gpio = LED_SW_OFF;
 if (sys->io_pic & INT_TIMER) {
