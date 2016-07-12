@@ -67,6 +67,8 @@ void test_malloc(void) {
 	
  
 	wptr = *buf_r_used;
+	zip_write(wptr);
+	wptr = *buf_r_used;
     sys->io_bustimer = 0x7fffffff;
 	lifting(w,wptr,buf_dwt);
 	wptr = *buf_g_used;
@@ -78,7 +80,7 @@ void test_malloc(void) {
 	buf_r = *buf_r_used;
 	buf_g = *buf_g_used;
 	buf_b = *buf_b_used;
-    zip_write(buf_r);
+    //zip_write(buf_r);
     zip_write(buf_g);
     zip_write(buf_b);  
 

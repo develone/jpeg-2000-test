@@ -67,8 +67,9 @@ void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 			e  = ip[2];	// = ip[row][2*col+2]
 			*op  = (c+((bp+dp+2)>>2)); //op[0] is obuf[col][row]
 			dp = (dp - ((c+e)>>1));
-			if (dp == 0x3ffffffd)
-			zip_halt();			
+			//if (dp == 0x3ffffffd)
+			//zip_halt();	
+			//printf("should have and err\n");		
 			*opb = bp;	// opb[0] is obuf[col+w/2][row-1]
 		} op[w-1] = dp;
 	}
