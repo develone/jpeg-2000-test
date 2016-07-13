@@ -44,7 +44,7 @@ void entry(void) {
 	 
     int *buf_ptr = (int *)0x800000;
     
-    //int *tmp_ptr = (int *)0x820000;
+ 
     zip_clear_sdram(buf_ptr);
 	// Let's set ourselves up for 1000000 baud, 8-bit characters, no parity,
 	// and one stop bit.
@@ -66,15 +66,10 @@ void entry(void) {
  
 		}
 		
-
-        //testing time to perform 64 x 64
-        //red subband
-        //sys->io_bustimer = 0x7fffffff;
-        //testing red subband
-        test_malloc();         
+        rd_dwt_wr();         
         
         
-        //zip_write_image(buf_ptr);
+  
          
 		// Now, wait for the top of the second
 		unsigned secv = sys->io_rtc_clock;

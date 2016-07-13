@@ -30,7 +30,7 @@ print "transfer time", end_time-start_time, "sec"
 start_time = time.time()
 reply=[]
 print "waiting for Data rdy     !"
-reply = ser.read(252144)
+reply = ser.read(262144)
 end_time = time.time()
 print "transfer time", end_time-start_time, "sec"
 print len(reply) 

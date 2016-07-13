@@ -4,14 +4,13 @@
 void zip_read_image(int *img1, int *img2, int *img3) {
 const int LED_SW_ON = 0x10001;
 const int LED_SW_OFF = 0x10000;	
-int i, ch, val,recd;
+int i, ch;
 i = 0;
 ch = 0;
-val = 0;
-recd = 0;
-int *ptr;
-ptr = (int *)0x830000;
-//*ptr = 0x55aaaa55;
+
+
+
+
 // Set a timer to abort in case things go bad
 // We'll set our abort for about 750 ms into the future ... that should
 //   be plenty of time to transfer the image
@@ -59,9 +58,8 @@ ch = sys->io_uart_rx;
 // Pack our final pixel value into this word, and write it to
 // memory.
 *img3++ = ch;
-recd = recd + 1;
+
  
-*ptr = i;
 sys->io_gpio = LED_SW_OFF;
 if (sys->io_pic & INT_TIMER) {
 	//*ptr=0xaa5555aa;

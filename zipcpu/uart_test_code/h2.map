@@ -14,53 +14,53 @@ LOAD obj-zip/pushtozipcpu.o
 LOAD obj-zip/clr_sdram.o
 LOAD obj-zip/my_malloc.o
 LOAD obj-zip/even_odd_de_inter.o
-LOAD obj-zip/split_dwt_wr.o
+LOAD obj-zip/rd_dwt_wr.o
                 0x00003fff                _top_of_stack = ((ORIGIN (blkram) + 0x2000) - 0x1)
                 0x00002000                . = 0x2000
 
-.rocode         0x00002000      0x2db
+.rocode         0x00002000      0x2a6
  *(.start)
- .start         0x00002000        0x4 obj-zip/h2.o
+ .start         0x00002000       0x15 obj-zip/h2.o
                 0x00002000                _start
  *(.text)
- .text          0x00002004       0x21 obj-zip/h2.o
-                0x00002004                entry
- .text          0x00002025       0x2d obj-zip/pushtozipcpu.o
-                0x00002025                zip_read_image
- .text          0x00002052        0x9 obj-zip/clr_sdram.o
-                0x00002052                zip_clear_sdram
- .text          0x0000205b        0x9 obj-zip/my_malloc.o
-                0x0000205b                free
-                0x0000205c                malloc
- .text          0x00002064      0x143 obj-zip/even_odd_de_inter.o
-                0x00002064                singlelift
-                0x000020ce                lifting
- .text          0x000021a7      0x114 obj-zip/split_dwt_wr.o
-                0x000021a7                test_malloc
-                0x0000228a                zip_write
+ .text          0x00002015       0x21 obj-zip/h2.o
+                0x00002015                entry
+ .text          0x00002036       0x29 obj-zip/pushtozipcpu.o
+                0x00002036                zip_read_image
+ .text          0x0000205f        0x9 obj-zip/clr_sdram.o
+                0x0000205f                zip_clear_sdram
+ .text          0x00002068        0x9 obj-zip/my_malloc.o
+                0x00002068                free
+                0x00002069                malloc
+ .text          0x00002071      0x116 obj-zip/even_odd_de_inter.o
+                0x00002071                singlelift
+                0x000020db                lifting
+ .text          0x00002187       0xff obj-zip/rd_dwt_wr.o
+                0x00002187                rd_dwt_wr
+                0x00002255                zip_write
  *(.rodata)
- .rodata        0x000022bb       0x20 obj-zip/h2.o
-                0x000022bb                msg1
-                0x000022cb                msg
+ .rodata        0x00002286       0x20 obj-zip/h2.o
+                0x00002286                msg1
+                0x00002296                msg
  *(.strings)
 
-.data           0x000022db        0x1
+.data           0x000022a6        0x1
  *(.data)
- .data          0x000022db        0x0 obj-zip/h2.o
- .data          0x000022db        0x0 obj-zip/pushtozipcpu.o
- .data          0x000022db        0x0 obj-zip/clr_sdram.o
- .data          0x000022db        0x1 obj-zip/my_malloc.o
-                0x000022db                heap
- .data          0x000022dc        0x0 obj-zip/even_odd_de_inter.o
- .data          0x000022dc        0x0 obj-zip/split_dwt_wr.o
+ .data          0x000022a6        0x0 obj-zip/h2.o
+ .data          0x000022a6        0x0 obj-zip/pushtozipcpu.o
+ .data          0x000022a6        0x0 obj-zip/clr_sdram.o
+ .data          0x000022a6        0x1 obj-zip/my_malloc.o
+                0x000022a6                heap
+ .data          0x000022a7        0x0 obj-zip/even_odd_de_inter.o
+ .data          0x000022a7        0x0 obj-zip/rd_dwt_wr.o
  *(COMMON)
  *(.bss)
- .bss           0x000022dc        0x0 obj-zip/h2.o
- .bss           0x000022dc        0x0 obj-zip/pushtozipcpu.o
- .bss           0x000022dc        0x0 obj-zip/clr_sdram.o
- .bss           0x000022dc        0x0 obj-zip/my_malloc.o
- .bss           0x000022dc        0x0 obj-zip/even_odd_de_inter.o
- .bss           0x000022dc        0x0 obj-zip/split_dwt_wr.o
+ .bss           0x000022a7        0x0 obj-zip/h2.o
+ .bss           0x000022a7        0x0 obj-zip/pushtozipcpu.o
+ .bss           0x000022a7        0x0 obj-zip/clr_sdram.o
+ .bss           0x000022a7        0x0 obj-zip/my_malloc.o
+ .bss           0x000022a7        0x0 obj-zip/even_odd_de_inter.o
+ .bss           0x000022a7        0x0 obj-zip/rd_dwt_wr.o
                 0x00f00000                _top_of_heap = 0xf00000
 OUTPUT(h2 elf32-zip)
 
@@ -71,4 +71,4 @@ OUTPUT(h2 elf32-zip)
  .comment       0x00000007        0x8 obj-zip/clr_sdram.o
  .comment       0x00000007        0x8 obj-zip/my_malloc.o
  .comment       0x00000007        0x8 obj-zip/even_odd_de_inter.o
- .comment       0x00000007        0x8 obj-zip/split_dwt_wr.o
+ .comment       0x00000007        0x8 obj-zip/rd_dwt_wr.o
