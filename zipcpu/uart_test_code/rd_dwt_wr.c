@@ -19,20 +19,21 @@ void rd_dwt_wr(void) {
     int *buf_r;
     int *buf_g;
     int *buf_b;    	
-	int *wptr;
+	int *wptr,*wptr1,*wptr2;
+	int *alt,*alt1,*alt2;
 	//the contents of the buf_r_used
 	//where the red lift steps are stored
 	//before packing to send back to RPi2B
 	
-	int *buf_r_used = (int *)0x89fff2;
-	int *buf_g_used = (int *)0x89fff3;
-	int *buf_b_used = (int *)0x89fff4;
-	int *clocks_used = (int *)0x89fff5;
-    int *buf_dwt_used = (int *)0x89fff7; 
-	int *wptr_used = (int *)0x89fff6;
+	int *buf_r_used = (int *)0x8efff2;
+	int *buf_g_used = (int *)0x8efff3;
+	int *buf_b_used = (int *)0x8efff4;
+	int *clocks_used = (int *)0x8efff5;
+    ///int *buf_dwt_used = (int *)0x89fff7; 
+	//int *wptr_used = (int *)0x89fff6;
 	 
  
-    int *buf_dwt = (int *)0x800000;
+    //int *buf_dwt = (int *)0x800000;
 
  
 	int w,h;
@@ -42,60 +43,74 @@ void rd_dwt_wr(void) {
 
 	//pointers to r g b
  
-	buf_r = malloc(sizeof(int)*(w*h));
-	buf_g = malloc(sizeof(int)*(w*h));
-	buf_b = malloc(sizeof(int)*(w*h));
+	buf_r = malloc(sizeof(int)*(w*h)*2);
+	buf_g = malloc(sizeof(int)*(w*h)*2);
+	buf_b = malloc(sizeof(int)*(w*h)*2);
 
 	//pointer to un-packed r g b
 	//saved at pointer 
 	//buf_r_used 0x87fff2
 	//buf_g_used 0x87fff3
 	//buf_b_used 0x87fff4
-	*buf_r_used = (int *)buf_r;
-	*buf_g_used = (int *)buf_g;
-	*buf_b_used = (int *)buf_b;
-	*buf_dwt_used = (int *)buf_dwt;	
+	*buf_r_used = buf_r;
+	*buf_g_used = buf_g;
+	*buf_b_used = buf_b;
+	//*buf_dwt_used = (int *)buf_dwt;	
  
- 
+    wptr = buf_r;
+    wptr1 =  buf_g;
+    wptr2 = buf_b;
 	sys -> io_gpio = LED_ON|READY_FOR_XMIT ;
-    zip_read_image(buf_r, buf_g, buf_b);
+    zip_read_image(wptr, wptr1, wptr2);
 	sys->io_gpio = LED_OFF|XULA_BUSY; 
 
 
 	
-	*wptr_used = wptr; 
+	//*wptr_used = wptr; 
 	
- 
-	wptr = *buf_r_used;
+    /*
+	wptr = buf_r;//*buf_r_used;
 	zip_write(wptr);
-	wptr = *buf_g_used;
+	wptr = buf_g;//*buf_g_used;
 	zip_write(wptr);
-	wptr = *buf_b_used;
+	wptr = buf_b;//*buf_b_used;
 	zip_write(wptr);
-	/*	
+	*/
+	 
+	
     sys->io_bustimer = 0x7fffffff;
-	lifting(w,wptr,buf_dwt);
-	//buf_dwt = *buf_dwt_used;
-	zip_write(buf_dwt);
-	wptr = *buf_g_used;
-	buf_dwt = *buf_dwt_used;
-	lifting(w,wptr,buf_dwt);
-	buf_dwt = *buf_dwt_used;
-	zip_write(buf_dwt);
-	wptr = *buf_b_used;
-	buf_dwt = *buf_dwt_used;
-	lifting(w,wptr,buf_dwt);
-	buf_dwt = *buf_dwt_used;
-	zip_write(buf_dwt);	
+    wptr = buf_r;
+    wptr1 =  buf_g;
+    wptr2 = buf_b;
+    alt = &buf_r[256*256];
+	lifting(w,wptr,alt);
+ 
+	//wptr = buf_r;
+	//zip_write(wptr);
+	wptr1 = buf_g;
+	alt1 = &buf_g[256*256];
+	lifting(w,wptr1,alt1);
+	//wptr = buf_g;
+	//zip_write(wptr);
+	
+	wptr2 = buf_b;
+	alt2 = &buf_b[256*256];
+	lifting(w,wptr2,alt2);
+	//wptr = buf_b;
+	//zip_write(wptr);	
 	*clocks_used = 0x7fffffff-sys->io_bustimer;
+	
 	//transfer image to RPi2B
 	//buf_r = *buf_r_used;
-	buf_g = *buf_g_used;
 	//buf_b = *buf_b_used;
-    //zip_write(buf_r);
-    //zip_write(buf_g);
-    //zip_write(buf_b);  
-*/
+	wptr = buf_r;
+    wptr1 =  buf_g;
+    wptr2 = buf_b;
+	
+    zip_write(wptr);
+    zip_write(wptr1);
+    zip_write(wptr2);  
+    
 
 free(buf_r);
 free(buf_g);

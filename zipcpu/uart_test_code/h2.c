@@ -1,5 +1,5 @@
 #include "dwt_funcs.h"
-
+/*
 asm("\t.section\t.start\n" // Makes sure we start at the beginning of program memory, and specifically that the _start function is the first address (a.k.a. the reset address) in memory.
     "\t.global\t_start\n"        // Makes certain the linker sees this symbol
     "\t.type\t_start,@function\n" // Probably superfluous--some CPU's treat function symbols different from data symbols, the ZipCPU doesn't care
@@ -24,7 +24,7 @@ asm("\t.section\t.start\n" // Makes sure we start at the beginning of program me
     "\tBRA\tentry\n"    // Otherwise--start your program.
     "\t.section\t.text"); // Switch back to the text segment, so that nothing else ends up in that ".start" segment
 
-/*
+*/
 asm("\t.section\t.start\n"
 	"\t.global\t_start\n"
 	"\t.type\t_start,@function\n"
@@ -32,7 +32,7 @@ asm("\t.section\t.start\n"
 	"LDI\t_top_of_stack,SP\n"
 	"\tBRA\tentry\n"
 	"\t.section\t.text"); 
-*/
+
 #include "board.h" 
 
 const char msg[] =  "Hello, world!\r\n";
