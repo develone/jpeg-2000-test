@@ -61,7 +61,7 @@ buf = (int *)&xx[0];
 
 	
  
-    int *img, *alt, *xxx;
+    int *img, *alt, *xxx,*yyy;
     
     img = (int *)malloc(sizeof(int)*(w*h)*2);
     xxx = img;
@@ -72,7 +72,7 @@ buf = (int *)&xx[0];
 	
     img = xxx;
     /*octave
-    fid = fopen('img.bin','r'); im = fread(fid, [256,inf], 'int32'); fclose(fid);
+    fid = fopen('img.bin','r'); im1 = fread(fid, [256,inf], 'int32'); fclose(fid);
     imagesc(im)
     */
 	ofp = fopen("img.bin","w");
@@ -86,7 +86,7 @@ buf = (int *)&xx[0];
 	//sys->io_bustimer = 0x7fffffff;
 	lifting(w, img, alt);
 	/*octave
-    fid = fopen('outimg.bin','r'); im = fread(fid, [256,inf], 'int32'); fclose(fid);
+    fid = fopen('outimg.bin','r'); im2 = fread(fid, [256,inf], 'int32'); fclose(fid);
     imagesc(im)
     */
     ofp = fopen("outimg.bin","w");
@@ -94,14 +94,29 @@ buf = (int *)&xx[0];
 	fclose(ofp);
 	
 	xxx = xxx + 57568 -256;
+	
+
+	int yy[32][32];
+	yyy=&yy[0][0];
 	for (row= 0 ;row<32;row++) {
 		xxx += 256;
 		for(col=0;col< 32;col++) {
-			printf("%d ",xxx[col]);
+			//printf("%d ",xxx[col]);
+			yy[row][col]=xxx[col];
+		    printf("%d ",yy[row][col]);
 		}
 		printf("\n");
 	}
-	 
+	
+	/*octave
+    fid = fopen('imgdwt.bin','r'); im3 = fread(fid, [32,inf], 'int32'); fclose(fid);
+    imagesc(im3)
+    colorbar
+    title 'red 3 levels dwt 32 x 32'
+    */
+    ofp = fopen("imgdwt.bin","w");
+	fwrite(yyy, sizeof(int), 1024, ofp);
+	fclose(ofp); 
 	//done = 0x7fffffff - sys->io_bustimer;
 	//img[0] = done;
  
