@@ -93,19 +93,19 @@ buf = (int *)&xx[0];
 	fwrite(img, sizeof(int), w*h, ofp);
 	fclose(ofp);
 	
-	xxx = xxx + 57568 -256;
+	xxx = xxx + 32768;
 	
 
-	int yy[32][32];
+	int yy[128][128];
 	yyy=&yy[0][0];
-	for (row= 0 ;row<32;row++) {
+	for (row= 0 ;row<128;row++) {
 		xxx += 256;
-		for(col=0;col< 32;col++) {
+		for(col=0;col< 128;col++) {
 			//printf("%d ",xxx[col]);
 			yy[row][col]=xxx[col];
-		    printf("%d ",yy[row][col]);
+		    //printf("%d ",yy[row][col]);
 		}
-		printf("\n");
+		//printf("\n");
 	}
 	
 	/*octave
@@ -115,11 +115,14 @@ buf = (int *)&xx[0];
     title 'red 3 levels dwt 32 x 32'
     */
     ofp = fopen("imgdwt.bin","w");
-	fwrite(yyy, sizeof(int), 1024, ofp);
+	fwrite(yyy, sizeof(int), 16384, ofp);
 	fclose(ofp); 
 	//done = 0x7fffffff - sys->io_bustimer;
 	//img[0] = done;
- 
-	
+	w = 32;
+    invlifting(w, img, alt);
+    ofp = fopen("imgdwt1.bin","w");
+	fwrite(yyy, sizeof(int), 65536, ofp);
+	fclose(ofp); 
     free (img);	
     }
