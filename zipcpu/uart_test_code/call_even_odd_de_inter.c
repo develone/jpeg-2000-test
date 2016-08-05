@@ -93,18 +93,19 @@ buf = (int *)&xx[0];
 	fwrite(img, sizeof(int), w*h, ofp);
 	fclose(ofp);
 	
-	xxx = xxx + 32768;
+	xxx = xxx + 32768 + 128;
 	
 
 	int yy[128][128];
 	yyy=&yy[0][0];
 	for (row= 0 ;row<128;row++) {
-		xxx += 256;
+		
 		for(col=0;col< 128;col++) {
 			//printf("%d ",xxx[col]);
 			yy[row][col]=xxx[col];
 		    //printf("%d ",yy[row][col]);
 		}
+		xxx += 256;
 		//printf("\n");
 	}
 	
@@ -120,6 +121,7 @@ buf = (int *)&xx[0];
 	//done = 0x7fffffff - sys->io_bustimer;
 	//img[0] = done;
 	w = 32;
+	xxx = xxx + 32768 + 128;
     invlifting(w, img, alt);
     ofp = fopen("imgdwt1.bin","w");
 	fwrite(yyy, sizeof(int), 65536, ofp);
