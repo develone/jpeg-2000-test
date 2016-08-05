@@ -18,5 +18,5 @@ title 'red subband 1 lvl dwt RPi2B'
 figure
 imagesc(im4)
 colorbar
-title 'red subband inv dwt RPi2B'
+title 'red subband inv dwt pass 1 RPi2B'
 

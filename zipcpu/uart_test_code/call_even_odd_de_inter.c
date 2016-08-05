@@ -120,11 +120,11 @@ buf = (int *)&xx[0];
 	fclose(ofp); 
 	//done = 0x7fffffff - sys->io_bustimer;
 	//img[0] = done;
-	w = 32;
+	w = 128;
 	xxx = xxx + 32768 + 128;
     invlifting(w, img, alt);
     ofp = fopen("imgdwt1.bin","w");
-	fwrite(yyy, sizeof(int), 65536, ofp);
+	fwrite(alt, sizeof(int), 65536, ofp);
 	fclose(ofp); 
     free (img);	
     }

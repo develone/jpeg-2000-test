@@ -193,7 +193,7 @@ void	invsinglelift(int rb, int w, int * const ibuf, int * const obuf) {
 }
 
 void	invlifting(int w, int *ibuf, int *tmpbuf) {
-	const	int	rb = w*2*2*2;
+	const	int	rb = w*2;
 	int	lvl;
 
 	for(lvl=0; lvl<1; lvl++) {
@@ -202,7 +202,7 @@ void	invlifting(int w, int *ibuf, int *tmpbuf) {
 		// Process columns, what used to be the rows from the last
 		// round, pulling the data from tmpbuf and moving it back
 		// to ibuf.
-		singlelift(rb, w, tmpbuf, ibuf);
+		//singlelift(rb, w, tmpbuf, ibuf);
 
 		// lower_upper
 		//
