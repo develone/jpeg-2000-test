@@ -132,10 +132,10 @@ void	invsinglelift(int rb, int w, int * const ibuf, int * const obuf) {
 		//	ip = ip + (rb-w);
 		// but we'll keep it this way for now.
 		//
-		//assigning to row 1 
-		//setting to beginning of each row at row 1
-		ip = ibuf+row*2*rb;
-
+		//assigning to row 0 
+		//setting to lower corner beginning of each row at row 1
+		//ip = ibuf+row*2*rb;
+        ip = ibuf+row*rb + 32768 + 128;
 		//
 		// Obuf walks across columns (here), writing down rows (below)
 		//
@@ -149,12 +149,12 @@ void	invsinglelift(int rb, int w, int * const ibuf, int * const obuf) {
 		// Pre-charge our pipeline
 		//
 
-		// a,b,c,d,e
-		// a = a;
+		// c,e,bp,dp
+ 
 		// c = c;
 		// b = (b+((a+c+2)>>2));
 		// e = e;
-		// d = (d+((c+e+2)>>2));
+		// dp = (d+((c+e+2)>>2));
 
 		// Put these three together so that they can get some
 		// potential pipeline savings.  (Sadly, looking at the 
@@ -163,23 +163,21 @@ void	invsinglelift(int rb, int w, int * const ibuf, int * const obuf) {
 		c  = ip[0];
 		dp = ip[1];
 		e  = ip[2];
-		//printf("**input rows 0x%x 0x%x 0x%x row %d \n",ip,ip+256,ip+512,row);
-		//printf("output rows 0x%x 0x%x\n",opb,op);
-		//dp = (dp + ((c+e+2)>>2));
+ 
+		//dp = (dp + ((c+e)>>1));
         dp = (dp + ((c+e)>>1));
 		op[0]  = c;
 		opb[0] = dp;
 
 		for(col=1; col<w/2; col++) {
-			op -=rb; // = obuf+row+rb*col = obuf[col][row]
-			opb-=rb;// = obuf+row+rb*(col+w/2) = obuf[col+w/2][row]
-			ip-=2;	// = ibuf + (row*rb)+2*col
+			op +=rb; // = obuf+row+rb*col = obuf[col][row]
+			opb+=rb;// = obuf+row+rb*(col+w/2) = obuf[col+w/2][row]
+			ip+=2;	// = ibuf + (row*rb)+2*col
 			c = e;
 			bp = dp;
 			dp = ip[0];	// = ip[row][2*col+1]
 			e  = ip[1];	// = ip[row][2*col+2]
-			//printf("input rows 0X%x 0X%x 0X%x col %d\n",ip,ip+256,ip+512,col);
-			//printf("output rows 0x%x 0x%x\n",opb,op);
+ 
 			//*op  = (c+((bp+dp+2)>>2)); //op[0] is obuf[col][row]
 			//dp = (dp - ((c+e)>>1));
 			*op  = (c-((bp+dp+2)>>2)); //op[0] is obuf[col][row]
@@ -198,11 +196,11 @@ void	invlifting(int w, int *ibuf, int *tmpbuf) {
 
 	for(lvl=0; lvl<1; lvl++) {
 		// Process columns -- leave result in tmpbuf
-		singlelift(rb, w, ibuf, tmpbuf);
+		invsinglelift(rb, w, ibuf, tmpbuf);
 		// Process columns, what used to be the rows from the last
 		// round, pulling the data from tmpbuf and moving it back
 		// to ibuf.
-		//singlelift(rb, w, tmpbuf, ibuf);
+		invsinglelift(rb, w, tmpbuf, ibuf);
 
 		// lower_upper
 		//

@@ -125,6 +125,9 @@ buf = (int *)&xx[0];
     invlifting(w, img, alt);
     ofp = fopen("imgdwt1.bin","w");
 	fwrite(alt, sizeof(int), 65536, ofp);
+	fclose(ofp);
+    ofp = fopen("imgdwt2.bin","w");
+	fwrite(img, sizeof(int), 65536, ofp);
 	fclose(ofp); 
     free (img);	
     }
