@@ -39,12 +39,12 @@ void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 		// Pre-charge our pipeline
 		//
 
-		// a,b,c,d,e
-		// a = a;
+		//c,bp,dp,e
+		 
 		// c = c;
-		// b = (b+((a+c+2)>>2));
+ 
 		// e = e;
-		// d = (d+((c+e+2)>>2));
+		// dp = (d+((c+e+2)>>2));
 
 		// Put these three together so that they can get some
 		// potential pipeline savings.  (Sadly, looking at the 
@@ -53,8 +53,7 @@ void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 		c  = ip[0];
 		dp = ip[1];
 		e  = ip[2];
-		//printf("**input rows 0x%x 0x%x 0x%x row %d \n",ip,ip+256,ip+512,row);
-		//printf("output rows 0x%x 0x%x\n",opb,op);
+ 
 		dp = (dp + ((c+e+2)>>2));
 
 		op[0]  = c;
@@ -68,15 +67,12 @@ void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 			bp = dp;
 			dp = ip[1];	// = ip[row][2*col+1]
 			e  = ip[2];	// = ip[row][2*col+2]
-			//printf("input rows 0X%x 0X%x 0X%x col %d\n",ip,ip+256,ip+512,col);
-			//printf("output rows 0x%x 0x%x\n",opb,op);
+ 
 			//odd
 			*op  = (c+((bp+dp+2)>>2)); //op[0] is obuf[col][row]
 			//even
 			dp = (dp - ((c+e)>>1));
-			//if (dp == 0x3ffffffd)
-			//zip_halt();	
-			//printf("should have and err\n");		
+ 		
 			*opb = bp;	// opb[0] is obuf[col+w/2][row-1]
 		} op[w-1] = dp;
 	}
@@ -135,14 +131,15 @@ void	invsinglelift(int rb, int w, int * const ibuf, int * const obuf) {
 		//assigning to row 0 
 		//setting to lower corner beginning of each row at row 1
 		//ip = ibuf+row*2*rb;
-        ip = ibuf+row*rb + 32768 + 128;
+        //ip = ibuf+row*rb + 32768 + 128;
+        ip = ibuf+row*rb ;
 		//
 		// Obuf walks across columns (here), writing down rows (below)
 		//
 		// Here again, we might be able to get rid of the multiply,
 		// but let's get some confidence as written first.
 		//
-		opb = obuf+row;
+		opb = obuf+row*rb;
 		op = opb + w*rb/2;
 
 		//
@@ -152,9 +149,9 @@ void	invsinglelift(int rb, int w, int * const ibuf, int * const obuf) {
 		// c,e,bp,dp
  
 		// c = c;
-		// b = (b+((a+c+2)>>2));
+ 
 		// e = e;
-		// dp = (d+((c+e+2)>>2));
+		// dp = (dp-((c+e+2)>>2));
 
 		// Put these three together so that they can get some
 		// potential pipeline savings.  (Sadly, looking at the 
@@ -164,8 +161,8 @@ void	invsinglelift(int rb, int w, int * const ibuf, int * const obuf) {
 		dp = ip[1];
 		e  = ip[2];
  
-		//dp = (dp + ((c+e)>>1));
-        dp = (dp + ((c+e)>>1));
+		
+        dp = (dp - ((c+e+2)>>2));
 		op[0]  = c;
 		opb[0] = dp;
 
@@ -175,16 +172,12 @@ void	invsinglelift(int rb, int w, int * const ibuf, int * const obuf) {
 			ip+=2;	// = ibuf + (row*rb)+2*col
 			c = e;
 			bp = dp;
-			dp = ip[0];	// = ip[row][2*col+1]
-			e  = ip[1];	// = ip[row][2*col+2]
- 
-			//*op  = (c+((bp+dp+2)>>2)); //op[0] is obuf[col][row]
-			//dp = (dp - ((c+e)>>1));
-			*op  = (c-((bp+dp+2)>>2)); //op[0] is obuf[col][row]
-			dp = (dp + ((c+e)>>1));
-			//if (dp == 0x3ffffffd)
-			//zip_halt();	
-			//printf("should have and err\n");		
+			dp = ip[1];	// = ip[row][2*col+1]
+			e  = ip[2];	// = ip[row][2*col+2]
+            //odd 
+			*op  = (c-((bp+dp)>>1)); //op[0] is obuf[col][row]
+			//even
+			dp = (dp + ((c+e)>>1));		
 			*opb = bp;	// opb[0] is obuf[col+w/2][row-1]
 		} op[w-1] = dp;
 	}
@@ -196,11 +189,11 @@ void	invlifting(int w, int *ibuf, int *tmpbuf) {
 
 	for(lvl=0; lvl<1; lvl++) {
 		// Process columns -- leave result in tmpbuf
-		invsinglelift(rb, w, ibuf, tmpbuf);
+		invsinglelift(rb, w, (ibuf+32768+128), tmpbuf);
 		// Process columns, what used to be the rows from the last
 		// round, pulling the data from tmpbuf and moving it back
 		// to ibuf.
-		invsinglelift(rb, w, tmpbuf, ibuf);
+		invsinglelift(rb, w, tmpbuf, ibuf+32768+128);
 
 		// lower_upper
 		//
