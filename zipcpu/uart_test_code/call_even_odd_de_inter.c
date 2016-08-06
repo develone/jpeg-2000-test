@@ -92,7 +92,9 @@ buf = (int *)&xx[0];
     ofp = fopen("outimg.bin","w");
 	fwrite(img, sizeof(int), w*h, ofp);
 	fclose(ofp);
-	
+	ofp = fopen("imgdwt.bin","w");
+	fwrite(alt, sizeof(int), w*h, ofp);
+	fclose(ofp); 
 	xxx = xxx + 32768 + 128;
 	
 
@@ -115,9 +117,9 @@ buf = (int *)&xx[0];
     colorbar
     title 'red 3 levels dwt 32 x 32'
     */
-    ofp = fopen("imgdwt.bin","w");
-	fwrite(yyy, sizeof(int), 16384, ofp);
-	fclose(ofp); 
+    //ofp = fopen("imgdwt.bin","w");
+	//fwrite(yyy, sizeof(int), 16384, ofp);
+	//fclose(ofp); 
 	//done = 0x7fffffff - sys->io_bustimer;
 	//img[0] = done;
 	w = 128;
