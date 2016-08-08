@@ -82,7 +82,7 @@ void	lifting(int w, int *ibuf, int *tmpbuf) {
 	const	int	rb = w;
 	int	lvl;
 
-	for(lvl=0; lvl<1; lvl++) {
+	for(lvl=0; lvl<3; lvl++) {
 		// Process columns -- leave result in tmpbuf
 		singlelift(rb, w, ibuf, tmpbuf);
 		// Process columns, what used to be the rows from the last
@@ -186,14 +186,15 @@ void	invsinglelift(int rb, int w, int * const ibuf, int * const obuf) {
 void	invlifting(int w, int *ibuf, int *tmpbuf) {
 	const	int	rb = w*2;
 	int	lvl;
-
+    int offset = 0;
+    int offset1 = 32960;
 	for(lvl=0; lvl<1; lvl++) {
 		// Process columns -- leave result in tmpbuf
-		invsinglelift(rb, w, (ibuf+32768+128), tmpbuf);
+		invsinglelift(rb, w, (ibuf+offset), tmpbuf+offset1);
 		// Process columns, what used to be the rows from the last
 		// round, pulling the data from tmpbuf and moving it back
 		// to ibuf.
-		invsinglelift(rb, w, tmpbuf, ibuf+32768+128);
+		//invsinglelift(rb, w, tmpbuf+offset1, ibuf+offset);
 
 		// lower_upper
 		//
@@ -210,10 +211,11 @@ void	invlifting(int w, int *ibuf, int *tmpbuf) {
 		//
 		// Still, this makes a subimage, within our image, containing
 		// the low order results of our processing.
-		int	offset = w*rb/2+w/2;
-		ibuf = &ibuf[offset];
-		tmpbuf = &tmpbuf[offset];
-
+		//int	offset = w*rb/2+w/2;
+		//ibuf = &ibuf[offset];
+		//tmpbuf = &tmpbuf[offset];
+        offset1 = 32960;
+        offset = 0;
 		// Move to the corner, and repeat
 		w<<=1;
 	}
