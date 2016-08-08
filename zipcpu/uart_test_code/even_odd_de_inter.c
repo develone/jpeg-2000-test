@@ -139,7 +139,7 @@ void	invsinglelift(int rb, int w, int * const ibuf, int * const obuf) {
 		// Here again, we might be able to get rid of the multiply,
 		// but let's get some confidence as written first.
 		//
-		opb = obuf+row*rb;
+		opb = obuf+row;
 		op = opb + w*rb/2;
 
 		//
@@ -184,17 +184,18 @@ void	invsinglelift(int rb, int w, int * const ibuf, int * const obuf) {
 }
 
 void	invlifting(int w, int *ibuf, int *tmpbuf) {
-	const	int	rb = w*2;
+	const	int	rb = w*2*2*2;
 	int	lvl;
+	
     int offset = 0;
-    int offset1 = 32960;
-	for(lvl=0; lvl<1; lvl++) {
+    int offset1 = 57568;
+	for(lvl=0; lvl<3; lvl++) {
 		// Process columns -- leave result in tmpbuf
 		invsinglelift(rb, w, (ibuf+offset), tmpbuf+offset1);
 		// Process columns, what used to be the rows from the last
 		// round, pulling the data from tmpbuf and moving it back
 		// to ibuf.
-		//invsinglelift(rb, w, tmpbuf+offset1, ibuf+offset);
+		invsinglelift(rb, w, tmpbuf+offset1, ibuf+offset);
 
 		// lower_upper
 		//
@@ -214,8 +215,15 @@ void	invlifting(int w, int *ibuf, int *tmpbuf) {
 		//int	offset = w*rb/2+w/2;
 		//ibuf = &ibuf[offset];
 		//tmpbuf = &tmpbuf[offset];
-        offset1 = 32960;
-        offset = 0;
+        if(lvl==3) {
+			offset1 = 32960;
+            offset = 0;
+        } 
+          
+        if(lvl==2) {
+			offset1 = 16384;
+            offset = 32960;
+        }               
 		// Move to the corner, and repeat
 		w<<=1;
 	}
