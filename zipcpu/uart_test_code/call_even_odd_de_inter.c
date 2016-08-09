@@ -65,7 +65,7 @@ buf = (int *)&xx[0];
      
     img = (int *)malloc(sizeof(int)*(w*h)*2);
     
-    printf("0x%x\n",img);
+    
     xxx = img;
 	for(index=0; index<h*w; index++) {
 		red = ((*buf++)&rr)>>20;
@@ -73,7 +73,7 @@ buf = (int *)&xx[0];
 	}
 	
     img = xxx;
-    printf("0x%x\n",img);
+   
     /*octave
     fid = fopen('img.bin','r'); im1 = fread(fid, [256,inf], 'int32'); fclose(fid);
     imagesc(im)
@@ -115,7 +115,7 @@ buf = (int *)&xx[0];
 	
 	//xxx = xxx + 32768 + 128;
 	w = 128;
-	array_inv(xxx,w);
+	array_inv(img,w);
 	
     //invlifting(w, img, alt);
     ofp = fopen("imgdwt1.bin","w");
