@@ -112,11 +112,12 @@ buf = (int *)&xx[0];
 	*/
 	//done = 0x7fffffff - sys->io_bustimer;
 	//img[0] = done;
-	w = 32;
-	//xxx = xxx + 32768 + 128;
 	
-	array_inv(xxx);
-    invlifting(w, img, alt);
+	//xxx = xxx + 32768 + 128;
+	w = 128;
+	array_inv(xxx,w);
+	
+    //invlifting(w, img, alt);
     ofp = fopen("imgdwt1.bin","w");
 	fwrite(alt, sizeof(int), 65536, ofp);
 	fclose(ofp);

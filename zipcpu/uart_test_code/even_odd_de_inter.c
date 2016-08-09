@@ -82,7 +82,7 @@ void	lifting(int w, int *ibuf, int *tmpbuf) {
 	const	int	rb = w;
 	int	lvl;
 
-	for(lvl=0; lvl<3; lvl++) {
+	for(lvl=0; lvl<1; lvl++) {
 		// Process columns -- leave result in tmpbuf
 		singlelift(rb, w, ibuf, tmpbuf);
 		// Process columns, what used to be the rows from the last
@@ -187,8 +187,9 @@ void	invlifting(int w, int *ibuf, int *tmpbuf) {
 	const	int	rb = w*2*2*2;
 	int	lvl;
 	
-    int offset = 0;
-    int offset1 = 57568;
+    int offset1 = 32768; //puts the image at top line on right 
+    //int offset1 = 0;
+    int offset = 57568;
 	for(lvl=0; lvl<3; lvl++) {
 		// Process columns -- leave result in tmpbuf
 		invsinglelift(rb, w, (ibuf+offset), tmpbuf+offset1);
@@ -215,15 +216,22 @@ void	invlifting(int w, int *ibuf, int *tmpbuf) {
 		//int	offset = w*rb/2+w/2;
 		//ibuf = &ibuf[offset];
 		//tmpbuf = &tmpbuf[offset];
+		//break;
+		printf("lvl%d\n",lvl);
         if(lvl==3) {
-			offset1 = 32960;
-            offset = 0;
+			offset1 = 0;
+            offset = 1;
         } 
-          
+        ibuf = &ibuf[offset];
+		tmpbuf = &tmpbuf[offset1];
+        /*
+        break;  
         if(lvl==2) {
 			offset1 = 16384;
             offset = 32960;
-        }               
+            
+        }   
+        if(lvl==2) break; */           
 		// Move to the corner, and repeat
 		w<<=1;
 	}

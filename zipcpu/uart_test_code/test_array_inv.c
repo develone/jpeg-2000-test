@@ -7,63 +7,69 @@ typedef int int32;
 #include <stdlib.h>
 #include <stdint.h>
 #endif
-void array_inv(int *xxx) {
+void array_inv(int *xxx, int ww) {
 	FILE *ptr_myfile, *ofp;
 	 
-	int zz[64][64],*zzz;
+	int zz[2*ww][2*ww],*zzz;
 	int row,col;
     int *l_xxx;
     l_xxx = xxx;
     
-	int yy[32][32],*yyy;
+	int yy[ww][ww],*yyy;
     
-	printf("in test_array 0x%x 0x%x\n",xxx,l_xxx);
-	l_xxx = l_xxx + 57568;
-	printf("0x%x\n",l_xxx);
-	for (row= 0 ;row<32;row++) {
+	//point to the 3 lvls of dwt within the image to 
+	//create the yy array
+	//32768 + 16384 + 8192 + 128 + 64 + 32
+	if (ww==32) l_xxx = l_xxx + 57568;
+	//32768 + 16384 + 128 + 64 
+	if (ww==64) l_xxx = l_xxx + 49344;
+	//32768  + 128 
+	if (ww==128) l_xxx = l_xxx + 32896;
+	//printf("0x%x\n",l_xxx);
+	for (row= 0 ;row<ww;row++) {
                 
-                for(col=0;col< 32;col++) {
+                for(col=0;col< ww;col++) {
                         //printf("%d ",xxx[col]);
                         yy[row][col]=*l_xxx;
                         l_xxx++;
                         
-                    printf("%d ",yy[row][col]);
+                    //printf("%d ",yy[row][col]);
                 }
-                l_xxx+=256-32;
-                printf("\n");
+                l_xxx+=256-ww;
+                //printf("\n");
         }
-    for (col=0;col<64;col++){
-    for (row=0;row<64;row++){ 
+    for (col=0;col<ww;col++){
+    for (row=0;row<ww;row++){ 
 		zz[row][col]=0;
 	}
     }       
     yyy=&yy[0][0];
 	    
-	ofp = fopen("32x32dwt.bin","w");
-	fwrite(yyy, sizeof(int), 1024, ofp);
+	ofp = fopen("inpimg.bin","w");
+	fwrite(yyy, sizeof(int), ww*ww, ofp);
 	fclose(ofp);
  	  
-	for (col=0;col<32/2;col++){
-    for (row=0;row<32;row++){
-		printf("*%d %d \n",row,col);
+	for (col=0;col<2*ww/2;col++){
+    for (row=0;row<2*ww;row++){
+		//printf("*%d %d \n",row,col);
 		zz[col*2][row]=(int)yy[row][col];
-		zz[col*2+1][row]=(int)yy[row][col+32/2];
-		printf("*%d %d %d %d \n",row,col,zz[col*2][row],zz[col*2+1][row]);
+		zz[col*2+1][row]=(int)yy[row][col+2*ww/2];
+		//printf("*%d %d %d %d \n",row,col,zz[col*2][row],zz[col*2+1][row]);
 	}
     }
 
     zzz = &zz[0][0];
-	ofp = fopen("64x64inter.bin","w");
-	fwrite(zzz, sizeof(int), 4096, ofp);
+	ofp = fopen("lnterleave.bin","w");
+	fwrite(zzz, sizeof(int), 2*ww*2*ww, ofp);
 	fclose(ofp);
-	for (col=0;col<32;col++){
-    for (row=0;row<32;row++){ 
+	for (col=0;col<ww;col++){
+    for (row=0;row<ww;row++){ 
 		yy[row][col]=zz[row][col];
 	}
     }
     
-    for (col=0;col<64;col++){
-    for (row=0;row<64;row++){ 
+    for (col=0;col<ww;col++){
+    for (row=0;row<ww;row++){ 
 		zz[row][col]=0;
 	}
     }     
@@ -73,28 +79,28 @@ void array_inv(int *xxx) {
             s[row][col] = temp_bank[row][col]
     */
     
-	for (col=0;col<32;col++) {
-		for(row=1;row<32-1;row+=2){
-			printf("%d %d %d \n",row,col,yy[row][col]);
+	for (col=0;col<ww;col++) {
+		for(row=1;row<ww-1;row+=2){
+			printf("%d dd %d \n",row,col,yy[row][col]);
 			zz[col][row] = (yy[row][col] - ((yy[row-1][col]+yy[row+1][col]+2)>>2));
 			yy[row][col] = zz[col][row];
 			printf("%d %d %d \n",zz[row][col],yy[row-1][col],yy[row-1][col]);
 		}
-		for(row=2;row<32;row+=2){
+		for(row=2;row<ww;row+=2){
 			printf("%d %d %d \n",row,col,yy[row][col]);
 			zz[col][row] = (yy[row][col] + ((yy[row-1][col]+yy[row+1][col])>>1));
 			yy[row][col] = zz[col][row];
 			printf("%d %d %d \n",zz[row][col],yy[row-1][col],yy[row-1][col]);
 		}
 	}
-	for (col=0;col<32;col++) {
-		for(row=1;row<32-1;row+=2){
+	for (col=0;col<ww;col++) {
+		for(row=1;row<ww-1;row+=2){
 			printf("%d %d %d \n",row,col,yy[row][col]);
 			zz[col][row] = (yy[row][col] - ((yy[row-1][col]+yy[row+1][col]+2)>>2));
 			yy[row][col] = zz[col][row];
 			printf("%d %d %d \n",zz[row][col],yy[row-1][col],yy[row-1][col]);
 		}
-		for(row=2;row<32;row+=2){
+		for(row=2;row<ww;row+=2){
 			printf("%d %d %d \n",row,col,yy[row][col]);
 			zz[col][row] = (yy[row][col] + ((yy[row-1][col]+yy[row+1][col])>>1));
 			yy[row][col] = zz[col][row];
@@ -110,7 +116,7 @@ void array_inv(int *xxx) {
     */
 	
 	ofp = fopen("64x64idwt.bin","w");
-	fwrite(zzz, sizeof(int), 4096, ofp);
+	fwrite(zzz, sizeof(int), ww*ww, ofp);
 	fclose(ofp);
 	
 }
