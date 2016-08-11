@@ -115,7 +115,7 @@ buf = (int *)&xx[0];
 	
 	//xxx = xxx + 32768 + 128;
 	w = 128;
-	array_inv(img,w);
+	array_inv(img,alt,w);
 	
     //invlifting(w, img, alt);
     ofp = fopen("imgdwt1.bin","w");

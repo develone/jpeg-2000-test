@@ -1,0 +1,18 @@
+nested row col loops using pointer vs array
+
+for(row=0; row<w; row++) { 
+ip = ibuf+row*rb;
+for(col=1; col<w/2; col++) {
+ip+=2;	// = ibuf + (row*rb)+2*col
+dp = ip[1];	// = ip[row][2*col+1]
+
+
+ibuf + (row*rb) based on line 4 above
+2*col line 4  based on line 7 above
+ip[0] = ip[row][2*col] 
+ip[1] = ip[row][2*col+1]
+ip[2] = ip[row][2*col+2]
+ip[3] = ip[row][2*col+3]
+
+desired pointers for input
+s[row][col + width/2]  wh width for 1 lvl will be 128

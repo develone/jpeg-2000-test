@@ -12,7 +12,7 @@ typedef int int32;
  *  is twice the height of the original. 
  *   
 */
-void array_inv(int *xxx, int ww) {
+void array_inv(int *xxx, int *yyy, int ww) {
 	FILE *ptr_myfile, *ofp;
 	 
  
@@ -21,7 +21,7 @@ void array_inv(int *xxx, int ww) {
     int rb = 256;
     register int	*ip, *opb;
     //register int	*ip, *op, *opb, a, b;
-    origin_xxx = xxx;
+    origin_xxx = yyy;
     offset_xxx = xxx;
     
 	//point to the 3 lvls of dwt within the image to 
@@ -34,7 +34,7 @@ void array_inv(int *xxx, int ww) {
 	if (ww==128) offset_xxx = offset_xxx + 32896;
 	//printf("%x %x %x\n",xxx,origin_xxx,offset_xxx); 
     for(row=0;row<ww;row++) { 
-		ip = offset_xxx + 2*row*rb/2;
+		ip = offset_xxx + row*rb;
 		opb = origin_xxx + 2*row;
 		//op = opb + rb/2; 
 		for(col=0;col<ww;col++) {
@@ -44,7 +44,7 @@ void array_inv(int *xxx, int ww) {
 			//op+=256;		//adding 256 is going down the col
 			opb+=256;		//adding 256 is going down the co
             opb[0]=ip[0];
-            opb[1]=ip[1];
+            opb[1]=ip[ww/2];
 	}
 	
 	} 
@@ -52,7 +52,9 @@ void array_inv(int *xxx, int ww) {
 	ofp = fopen("inpimg.bin","w");
 	fwrite(xxx, sizeof(int), 256*256, ofp);
 	fclose(ofp);
-	
+	ofp = fopen("outimg.bin","w");
+	fwrite(yyy, sizeof(int), 256*256, ofp);
+	fclose(ofp);	
  
 	
 }
