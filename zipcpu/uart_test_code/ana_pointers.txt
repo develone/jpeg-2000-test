@@ -14,5 +14,31 @@ ip[1] = ip[row][2*col+1]
 ip[2] = ip[row][2*col+2]
 ip[3] = ip[row][2*col+3]
 
+Dan Notes.
 desired pointers for input
 s[row][col + width/2]  wh width for 1 lvl will be 128
+
+1. temp_bank[col*2][row] = srow[row][col]
+
+To handle this, let's create a temp_bank pointer, tp, and an s pointer, sp.  To set this up, all you need to do is evaluate the pointer where col=0 (assuming col is your inner loop):
+
+tp = temp_bank+row;
+sp = s + row*rowbytes;
+
+To increment these within the loop, you just add (at the end of the loop ...)
+
+tp += 2*rowbytes; (you can precompute this)
+sp += 1;
+
+You can now use *tp and *sp to reference these two values and you are good to go.
+
+2. temp_bank[2*col+1][row] = s[row][col+width/2]
+
+is done similarly.  If we use the same pointers with the same initialization, you then wish to access these values using:
+
+tp[rowbytes] and
+sp[width/2]
+
+Alternatively, you could create a tp2 or sp2 variable that had rowbytes and width/2 as offsets respectively and increment them as you do tp and sp.
+
+Incidentally, this is the easy part.  Unrolling the loop to where you only need 4 accesses is harder.  ;)

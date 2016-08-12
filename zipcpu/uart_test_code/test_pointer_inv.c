@@ -32,19 +32,29 @@ void array_inv(int *xxx, int *yyy, int ww) {
 	if (ww==64) offset_xxx = offset_xxx + 49344;
 	//32768  + 128 
 	if (ww==128) offset_xxx = offset_xxx + 32896;
-	//printf("%x %x %x\n",xxx,origin_xxx,offset_xxx); 
-    for(row=0;row<ww;row++) { 
-		ip = offset_xxx + row*rb;
-		opb = origin_xxx + 2*row;
+	//printf("%x %x %x\n",xxx,origin_xxx,offset_xxx);
+    for(row=0;row<ww*2;row++) {
+		opb = origin_xxx + row;
+		for(col=0;col<ww*2;col++) {
+			opb+=rb;
+            opb[0]=0;
+	}
+	} 
+	 
+    for(row=0;row<ww;row++) {
+		//The input image for testing is 128 
+		// 
+		ip = offset_xxx + row*rb/2;
+		opb = origin_xxx + row;
 		//op = opb + rb/2; 
 		for(col=0;col<ww;col++) {
 
 		
 			ip+=1;     	//adding 1 is going across the row
 			//op+=256;		//adding 256 is going down the col
-			opb+=256;		//adding 256 is going down the co
+			opb+=2*rb;		//adding 256 is going down the co
             opb[0]=ip[0];
-            opb[1]=ip[ww/2];
+            opb[1]=ip[1];
 	}
 	
 	} 
