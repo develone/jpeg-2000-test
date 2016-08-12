@@ -41,7 +41,7 @@ void array_inv(int *xxx, int *yyy, int ww) {
 	}
 	} 
 	 
-    for(row=0;row<ww;row++) {
+    for(row=0;row<ww*2;row++) {
 		//The input image for testing is 128 
 		// 
 		ip = offset_xxx + row*rb/2;
