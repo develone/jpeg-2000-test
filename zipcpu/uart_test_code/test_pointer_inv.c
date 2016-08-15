@@ -7,64 +7,37 @@ typedef int int32;
 #include <stdlib.h>
 #include <stdint.h>
 #endif
-/*  process the input image which is in the lower right corner
- *  rotates the images 90 degrees clockwise with the output 
- *  is twice the height of the original. 
- *   
-*/
-void array_inv(int *xxx, int *yyy, int ww) {
-	FILE *ptr_myfile, *ofp;
-	 
- 
-	int row,col, *offset_xxx,*origin_xxx;
- 
-    int rb = 256;
-    register int	*ip, *opb;
-    //register int	*ip, *op, *opb, a, b;
-    origin_xxx = yyy;
-    offset_xxx = xxx;
-    
-	//point to the 3 lvls of dwt within the image to 
-	//create the yy array
-	//32768 + 16384 + 8192 + 128 + 64 + 32
-	if (ww==32) offset_xxx = offset_xxx + 57568;
-	//32768 + 16384 + 128 + 64 
-	if (ww==64) offset_xxx = offset_xxx + 49344;
-	//32768  + 128 
-	if (ww==128) offset_xxx = offset_xxx + 32896;
-	//printf("%x %x %x\n",xxx,origin_xxx,offset_xxx);
-    for(row=0;row<ww*2;row++) {
-		opb = origin_xxx + row;
-		for(col=0;col<ww*2;col++) {
-			opb+=rb;
-            opb[0]=0;
-	}
-	} 
-	 
-    for(row=0;row<ww*2;row++) {
-		//The input image for testing is 128 
-		// 
-		ip = offset_xxx + row*rb/2;
-		opb = origin_xxx + row;
-		//op = opb + rb/2; 
-		for(col=0;col<ww;col++) {
 
+//ww = 128 offset = 32896 ibuf = alt tmpbuf = img 
+void pointer_inv_de_interleave(int ww, int offset, int *ibuf, int *tmpbuf) {
+	FILE *ptr_myfile, *ofp;
+	int idx,w,h,row,col, *idx_off; 
+	int rb = 256;
+	w = 256;
+	h = 256;
+	register int	*ip, *opb;
+	
+	idx_off = ibuf;
+	//lvl1 32896 lvl2 49344 lvl3 57568   
+	idx_off = idx_off + offset;
+	
+	//clearing the tmpbuf since it was used in fwt dwt	
+	for(idx=0;idx<w*h;idx++)
+		tmpbuf[idx]=0; 
 		
-			ip+=1;     	//adding 1 is going across the row
-			//op+=256;		//adding 256 is going down the col
-			opb+=2*rb;		//adding 256 is going down the co
-            opb[0]=ip[0];
-            opb[1]=ip[1];
-	}
-	
+	for(row=0;row<ww*2;row++) {
+		//The input image for testing is 128 x 128
+		ip = idx_off + row*256;
+		opb = tmpbuf + row;  
+		for(col=0;col<ww;col++) {			
+			opb[0]=ip[0];//temp_bank[col * 2][row]=s[row][col]
+			opb[1] = ip[ww/2];//temp_bank[col * 2 + 1][row]=s[row][col + width/2]
+			ip+=1;     	//adding 1 is going down the rows
+			opb+=2*256;		//adding 2*rowbytes going across the cols
+		}	
 	} 
-	   
-	ofp = fopen("inpimg.bin","w");
-	fwrite(xxx, sizeof(int), 256*256, ofp);
-	fclose(ofp);
-	ofp = fopen("outimg.bin","w");
-	fwrite(yyy, sizeof(int), 256*256, ofp);
-	fclose(ofp);	
- 
 	
+	ofp = fopen("interimg.bin","w");
+	fwrite(tmpbuf, sizeof(int), 256*256, ofp);
+	fclose(ofp);		
 }
