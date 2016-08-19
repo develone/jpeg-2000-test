@@ -55,7 +55,8 @@ void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 		e  = ip[2];
  
 		//dp = (dp + ((c+e+2)>>2));
-		dp = (dp + ((c+e)>>1));
+		//HP filter in fwd dwt
+		dp = (dp - ((c+e)>>1));
 
 		op[0]  = c;
 		opb[0] = dp;
@@ -71,11 +72,13 @@ void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
  
 			//odd
 			//*op  = (c+((bp+dp+2)>>2)); //op[0] is obuf[col][row]
-			*op  = (c+((bp+dp)>>1)); //op[0] is obuf[col][row]
-			
+			//HP filter in fwd dwt			
+			*op  = (c-((bp+dp)>>1)); //op[0] is obuf[col][row]
+			 
 			//even
 			//dp = (dp - ((c+e)>>1));
-			dp = (dp - ((c+e+2)>>2));
+			//LP filter in fwd dwt
+			dp = (dp + ((c+e+2)>>2));
  		
 			*opb = bp;	// opb[0] is obuf[col+w/2][row-1]
 		} op[w-1] = dp;
@@ -179,7 +182,7 @@ void	invsinglelift(int rb, int w, int * const ibuf, int * const obuf) {
 			dp = ip[1];	// = ip[row][2*col+1]
 			e  = ip[2];	// = ip[row][2*col+2]
             //odd 
-			*op  = (c-((bp+dp)>>1)); //op[0] is obuf[col][row]
+			*op  = (c-((bp+dp+2)>>2)); //op[0] is obuf[col][row]
 			//even
 			dp = (dp + ((c+e)>>1));		
 			*opb = bp;	// opb[0] is obuf[col+w/2][row-1]

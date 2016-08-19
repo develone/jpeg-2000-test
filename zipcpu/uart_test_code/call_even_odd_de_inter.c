@@ -142,10 +142,10 @@ int main(void) {
 	fclose(ofp);
 	//****************************************************************
 	
-	w = 128;
+	w = 256;
 	//lvl1 32896 lvl2 49344 lvl3 57568
 	//int offset = 32896;
-	int offset = 32896;
+	int offset = 0;
 	pointer_inv_de_interleave(w, offset, img, alt);
 	w = 256;
 	invlifting(w, alt,img);

@@ -25,11 +25,11 @@ void pointer_inv_de_interleave(int ww, int offset, int *ibuf, int *tmpbuf) {
 	for(idx=0;idx<w*h;idx++)
 		tmpbuf[idx]=0; 
 		
-	for(row=0;row<ww*2;row++) {
+	for(row=0;row<ww;row++) {
 		//The input image for testing is 128 x 128
 		ip = idx_off + row*256;
 		opb = tmpbuf + row;  
-		for(col=0;col<ww;col++) {			
+		for(col=0;col<ww/2;col++) {			
 			opb[0]=ip[0];//temp_bank[col * 2][row]=s[row][col]
 			opb[1] = ip[ww/2];//temp_bank[col * 2 + 1][row]=s[row][col + width/2]
 			ip+=1;     	//adding 1 is going down the rows
