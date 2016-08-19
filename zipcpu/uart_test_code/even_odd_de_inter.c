@@ -112,7 +112,8 @@ void	lifting(int w, int *ibuf, int *tmpbuf) {
 		//
 		// Still, this makes a subimage, within our image, containing
 		// the low order results of our processing.
-		int	offset = w*rb/2+w/2;
+		//int	offset = w*rb/2+w/2;
+		int	offset = 0;
 		ibuf = &ibuf[offset];
 		tmpbuf = &tmpbuf[offset];
 
@@ -203,7 +204,7 @@ void	invlifting(int w, int *ibuf, int *tmpbuf) {
 		// Process columns, what used to be the rows from the last
 		// round, pulling the data from tmpbuf and moving it back
 		// to ibuf.
-		invsinglelift(rb, w, tmpbuf+offset1, ibuf+offset);
+		//invsinglelift(rb, w, tmpbuf+offset1, ibuf+offset);
 
 		// lower_upper
 		//

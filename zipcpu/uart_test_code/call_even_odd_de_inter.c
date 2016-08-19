@@ -126,7 +126,7 @@ int main(void) {
 // sense, and yet will be more maintainable in the future?
 //
 // 
-	ip = img+32896; //this is the offset that is will be passed
+	ip = img; //this is the offset that is will be passed
 	w = 128;  //width of 1 lvl dwt
 	for (row= 0 ;row<w;row++) {
 		ip1 = ip + row*256;
