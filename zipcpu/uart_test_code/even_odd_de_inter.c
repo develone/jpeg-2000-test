@@ -54,7 +54,8 @@ void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 		dp = ip[1];
 		e  = ip[2];
  
-		dp = (dp + ((c+e+2)>>2));
+		//dp = (dp + ((c+e+2)>>2));
+		dp = (dp + ((c+e)>>1));
 
 		op[0]  = c;
 		opb[0] = dp;
@@ -69,9 +70,12 @@ void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 			e  = ip[2];	// = ip[row][2*col+2]
  
 			//odd
-			*op  = (c+((bp+dp+2)>>2)); //op[0] is obuf[col][row]
+			//*op  = (c+((bp+dp+2)>>2)); //op[0] is obuf[col][row]
+			*op  = (c+((bp+dp)>>1)); //op[0] is obuf[col][row]
+			
 			//even
-			dp = (dp - ((c+e)>>1));
+			//dp = (dp - ((c+e)>>1));
+			dp = (dp - ((c+e+2)>>2));
  		
 			*opb = bp;	// opb[0] is obuf[col+w/2][row-1]
 		} op[w-1] = dp;
@@ -187,14 +191,9 @@ void	invlifting(int w, int *ibuf, int *tmpbuf) {
 	const	int	rb = w;
 	int	lvl;
 	
-	int offset1 = 0; //puts the image at top line on right 
-	//int offset1 = 0;
-	int offset = 0;
-	//clearing the tmpbuf since it was used in fwt dwt
-	int idx;
-	for(idx=0;idx<65536;idx++)
-		tmpbuf[idx]=0; 
-	//
+    int offset1 = 0; 
+    //int offset1 = 0;
+    int offset = 0;
 	for(lvl=0; lvl<1; lvl++) {
 		// Process columns -- leave result in tmpbuf
 		invsinglelift(rb, w, (ibuf+offset), tmpbuf+offset1);
@@ -222,7 +221,21 @@ void	invlifting(int w, int *ibuf, int *tmpbuf) {
 		//ibuf = &ibuf[offset];
 		//tmpbuf = &tmpbuf[offset];
 		//break;
-           
+		printf("lvl%d\n",lvl);
+        if(lvl==3) {
+			offset1 = 0;
+            offset = 1;
+        } 
+        ibuf = &ibuf[offset];
+		tmpbuf = &tmpbuf[offset1];
+        /*
+        break;  
+        if(lvl==2) {
+			offset1 = 16384;
+            offset = 32960;
+            
+        }   
+        if(lvl==2) break; */           
 		// Move to the corner, and repeat
 		w<<=1;
 	}
