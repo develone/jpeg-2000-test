@@ -221,7 +221,7 @@ void	invlifting(int w, int *ibuf, int *tmpbuf) {
 		//ibuf = &ibuf[offset];
 		//tmpbuf = &tmpbuf[offset];
 		//break;
-		printf("lvl%d\n",lvl);
+
         if(lvl==3) {
 			offset1 = 0;
             offset = 1;
