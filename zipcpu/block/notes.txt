@@ -1,0 +1,39 @@
+Questions wb_dwt.
+	Verilog code for adding to xulalx25soc toplevel.bit
+		3 instances of ram to hold the samples 
+		1 instance of ram to save the lift
+	Want to learn verilator 
+	see ram.v, dwt.v, ver_dwt.sh 
+	
+	 
+The paper located 
+http://www.ee.ucl.ac.uk/~iandreop/Angelopoulou_et_al_JVLSI_Comparisons_53_published.pdf
+	provides lift filters.
+		hi pass  HP HP{2n+1] = X[2n + 1] - ((X[2n] + X[2n + 1])/2)
+		lo pass  LP LP[2n] = X[2n] + ((HP[2n -1] + HP[2n + 1] + 2)/4)
+	provides 3 methods of processing
+		RC Row Column
+		LB Line Base
+		BB Block Base
+	provides a method to performance symmetrical extension
+		  01234567	row 0 of 8 x 8
+		2101234567	row 0 of 10 x 8
+		  01234567	row 1 of 8 x 8
+		2101234567	row 1 of 10 x 8
+		  01234567	row 2 of 8 x 8
+		2101234567	row 2 of 10 x 8
+		  01234567	row 3 of 8 x 8
+		2101234567	row 3 of 10 x 8
+		  01234567	row 4 of 8 x 8
+		2101234567	row 4 of 10 x 8
+		  01234567	row 5 of 8 x 8
+		2101234567	row 5 of 10 x 8
+		  01234567	row 6 of 8 x 8
+		2101234567	row 6 of 10 x 8
+		  01234567	row 7 of 8 x 8
+		2101234567	row 7 of 10 x 8
+	provides way to handle medium, large, and very
+	large images.
+Results from the HP filter are used in the
+LP.  This defines the order which the 
+filters are applied to the block.
