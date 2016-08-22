@@ -35,12 +35,12 @@ m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
 #print m.__sizeof__()
 #print len(m[0]), len(m[1])
 """Converts the 16bit to list m[row][col] this is the procedure that will be needed in the FPGA"""
-convert_intelhex_to_list()
+#convert_intelhex_to_list()
 #print m[0][0].__sizeof__()
 m = dwt.fwt97_2d(m, 1)
 # Convert the list of lists matrix to an image.
 dwt.seq_to_img(m, pix)
-convert_list_to_bin()
+#convert_list_to_bin()
 # Save the transformed image.
 im.save("test1_256_fwt.png")
 w, h = im.size
