@@ -131,7 +131,7 @@ int main(void) {
 	for (row= 0 ;row<w;row++) {
 		ip1 = ip + row*256;
 		for(col=0;col< w;col++) {
-			printf("%d ",ip1[0]);
+			//printf("%d ",ip1[0]);
 			yy[row][col] = ip1[0];
 			ip1+=1;           
 		}
@@ -147,16 +147,25 @@ int main(void) {
 	//int offset = 32896;
 	int offset = 0;
 	pointer_inv_de_interleave(w, offset, img, alt);
+	ofp = fopen("interimg1.bin","w");
+	fwrite(alt, sizeof(int), 256*256, ofp);
+	fclose(ofp);
 	w = 256;
 	invlifting(w, alt,img);
-
-	ofp = fopen("invdwt.bin","w");
+	ofp = fopen("invdwt1.bin","w");
 	fwrite(img, sizeof(int), 65536, ofp);
 	fclose(ofp);
-
-	ofp = fopen("imgdwt2.bin","w");
+	/*
+	pointer_inv_de_interleave(w, offset, img, alt);
+	ofp = fopen("interimg2.bin","w");
+	fwrite(alt, sizeof(int), 65536, ofp);
+	fclose(ofp);	
+	invlifting(w, alt,img);
+	ofp = fopen("invdwt2.bin","w");
 	fwrite(img, sizeof(int), 65536, ofp);
-	fclose(ofp);
+	fclose(ofp);	
+	*/
+
 
 	free (img);	
 }
