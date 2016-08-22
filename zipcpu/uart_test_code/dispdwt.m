@@ -45,4 +45,4 @@ title 'red subband 1 lvls inv dwt pass 1 img RPi2B'
 %imagesc(im7)
 %colorbar
 %colormap "gray"
-%title 'red subband 1 lvls inv dwt pass 2 img RPi2B'
+%rmtitle 'red subband 1 lvls inv dwt pass 2 img RPi2B'
