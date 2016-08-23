@@ -51,7 +51,8 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 	row = 256
 	col = 256
 	m = [ [0] * col ] * row
-	
+	block = [ [0] * 10 ] * 8
+
 	
 	for row in range(256):
 		for col in range(256):
@@ -59,8 +60,35 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 			#print xx
 			m[col][row] = xx
 			idx = idx + 1
-	print m
- 		
+	
+	#print m
+	for row in range(8):
+		print m[row][0:8]
+	
+		
+	#symmetrical extension
+	for row in range(8):
+		block[row][0] = m[row][2]
+		block[row][1] = m[row][1]
+		
+	#transfer m to block
+ 	for row in range(8):
+		block[row][2:10]=m[row][0:8]
+ 
+	for row in range(8):
+		print block[row][0:10]
+	w = 10
+	h = 8
+	for col in range(w):
+		for row in range(1,h-1,2):
+			print row, col, block[row-1][col],block[row][col],block[row+1][col]
+			block[row][col] = block[row][col] - \
+			((block[row-1][col] + block[row+1][col])>>1)
+			print block[row][col]
+			 
+	for row in range(8):
+		print block[row][0:10]
+			
 	instance_lift = dwt(flgs,upd,lft,sam,rht,lift,done,clock)
 
 	@always(delay(10))
@@ -72,12 +100,33 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 	"""
 	@instance
 	def stimulus():
-		
-		lft.next = 164
+		#2 1 0 
+		lft.next = m[0][2]
 		yield clock.posedge
-		sam.next = 160
+		sam.next = m[0][1]
 		yield clock.posedge
-		rht.next = 170
+		rht.next = m[0][0]
+		yield clock.posedge
+		flgs.next = 7
+		yield clock.posedge
+		upd.next = 1				
+		print ('time %d left %d sam %d right %d flgs %d lift %d ' % (now(),  lft, sam, rht, flgs, lift))
+		# 1 2 3
+		lft.next = m[0][1]
+		yield clock.posedge
+		sam.next = m[0][2]
+		yield clock.posedge
+		rht.next = m[0][3]
+		yield clock.posedge
+		flgs.next = 7
+		yield clock.posedge
+		upd.next = 1				
+		print ('time %d left %d sam %d right %d flgs %d lift %d ' % (now(),  lft, sam, rht, flgs, lift))
+		lft.next = m[0][0]
+		yield clock.posedge
+		sam.next = m[0][1]
+		yield clock.posedge
+		rht.next = m[0][2]
 		yield clock.posedge
 		flgs.next = 7
 		yield clock.posedge

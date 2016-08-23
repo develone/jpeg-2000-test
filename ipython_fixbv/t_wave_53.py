@@ -1,6 +1,7 @@
 import waveletsim_53 as dwt
 from  intelhex import *
 from struct import *
+import copy
 def convert_intelhex_to_list():
 	"""Converts the 16bit to list m[row][col]
 	this is the procedure that will be needed in the FPGA"""
@@ -30,8 +31,13 @@ def convert_list_to_bin():
 im = dwt.Image.open("../lena_256.png")
 pix = im.load()
 m = list(im.getdata())
+
 #print m.__sizeof__()
 m = [m[i:i+im.size[0]] for i in range(0, len(m), im.size[0])]
+m_orig = copy.deepcopy(m)
+#m_orig[0][0]=300
+#print m_orig[0][0], m[0][0]
+#print len(m_orig[0]), len(m_orig[1])
 #print m.__sizeof__()
 #print len(m[0]), len(m[1])
 """Converts the 16bit to list m[row][col] this is the procedure that will be needed in the FPGA"""
@@ -45,6 +51,16 @@ dwt.seq_to_img(m, pix)
 im.save("test1_256_fwt.png")
 w, h = im.size
 m = dwt.upper_lower(m, w, h)
-mm = dwt.iwt97_2d(m, 1)
+mm = copy.deepcopy(m)
+mm = dwt.iwt97_2d(mm, 1)
 dwt.seq_to_img(mm, pix)
-im.save("test1_256_iwt.png") 
+mm_1lvl = copy.deepcopy(mm)
+
+im.save("test1_256_iwt.png")
+
+for i in range(256):
+	for j in range(256):
+		diff = m_orig[j][i] - mm_1lvl[j][i]
+		if (diff != 0): 
+			print "i", i,"j",j,"diff", diff,"orig", m_orig[j][i] , "fwd/inv",mm_1lvl[j][i]
+
