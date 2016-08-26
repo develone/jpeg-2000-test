@@ -89,7 +89,7 @@ void	lifting(int w, int *ibuf, int *tmpbuf) {
 	const	int	rb = w;
 	int	lvl;
 
-	for(lvl=0; lvl<1; lvl++) {
+	for(lvl=0; lvl<3; lvl++) {
 		// Process columns -- leave result in tmpbuf
 		singlelift(rb, w, ibuf, tmpbuf);
 		// Process columns, what used to be the rows from the last
