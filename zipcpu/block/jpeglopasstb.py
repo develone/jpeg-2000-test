@@ -280,7 +280,14 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 	print "process down the cols top to bottom"
 	print "process across the cols left to right"	
 	print "col row loops [row][col] input data "
-
+	print "restored m"
+	print "lo pass"
+	idx = 0
+	for col in range(w):
+		for row in range(h):
+			m[row][col] = inp[idx]
+			idx = idx + 1
+		idx= idx + 248
 
 	
 	
@@ -288,102 +295,102 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 	def stimulus():
 		for row in range(8):
 		
-			lft.next = m[row][1]
+			lft.next = m[row][0]
 			yield clock.posedge
-			sam.next = m[row][2]
+			sam.next = m[row][1]
 			yield clock.posedge
-			rht.next = m[row][3]
+			rht.next = m[row][2]
 			yield clock.posedge
-			flgs.next = 7
+			flgs.next = 6
 			yield clock.posedge
 			upd.next = 1
 			yield clock.posedge
 			upd.next = 0
 			yield clock.posedge			
-			m[row][2] = lift.next
+			m[row][1] = lift.next
 			yield clock.posedge				
 			print ('time %d left %d sam %d right %d flgs %d lift %d ' % (now(),  lft, sam, rht, flgs, lift))
 		
-			lft.next = m[row][1]
+			lft.next = m[row][0]
 			yield clock.posedge
-			sam.next = m[row][2]
+			sam.next = m[row][1]
 			yield clock.posedge
-			rht.next = m[row][3]
+			rht.next = m[row][2]
 			yield clock.posedge
-			flgs.next = 5
+			flgs.next = 4
 			yield clock.posedge
 			upd.next = 1
 			yield clock.posedge
 			upd.next = 0
 			yield clock.posedge			
-			m[row][2] = lift.next	
+			m[row][1] = lift.next	
 			yield clock.posedge			
 			print ('time %d left %d sam %d right %d flgs %d lift %d ' % (now(),  lft, sam, rht, flgs, lift))
 		
 	
-			lft.next = m[row][3]
+			lft.next = m[row][2]
 			yield clock.posedge
-			sam.next = m[row][4]
+			sam.next = m[row][3]
 			yield clock.posedge
-			rht.next = m[row][5]
+			rht.next = m[row][4]
 			yield clock.posedge
-			flgs.next = 7
+			flgs.next = 6
 			yield clock.posedge
 			upd.next = 1
 			yield clock.posedge
 			upd.next = 0
 			yield clock.posedge			
-			m[row][4] = lift.next
+			m[row][3] = lift.next
 			yield clock.posedge				
 			print ('time %d left %d sam %d right %d flgs %d lift %d ' % (now(),  lft, sam, rht, flgs, lift))
 
-			lft.next = m[row][3]
+			lft.next = m[row][2]
 			yield clock.posedge
-			sam.next = m[row][4]
+			sam.next = m[row][3]
 			yield clock.posedge
-			rht.next = m[row][5]
+			rht.next = m[row][4]
 			yield clock.posedge
-			flgs.next = 5
+			flgs.next = 4
 			yield clock.posedge
 			upd.next = 1
 			yield clock.posedge
 			upd.next = 0
 			yield clock.posedge			
-			m[row][4] = lift.next	
+			m[row][3] = lift.next	
 			yield clock.posedge			
 			print ('time %d left %d sam %d right %d flgs %d lift %d ' % (now(),  lft, sam, rht, flgs, lift))
-			lft.next = m[row][5]
+			lft.next = m[row][4]
 			yield clock.posedge
-			sam.next = m[row][6]
+			sam.next = m[row][5]
 			yield clock.posedge
-			rht.next = m[row][7]
+			rht.next = m[row][6]
 			yield clock.posedge
-			flgs.next = 7
+			flgs.next = 6
 			yield clock.posedge
 			upd.next = 1
 			yield clock.posedge			
 			upd.next = 0
 			yield clock.posedge
-			m[row][6] = lift.next
+			m[row][5] = lift.next
 			yield clock.posedge
 			print ('time %d left %d sam %d right %d flgs %d lift %d ' % (now(),  lft, sam, rht, flgs, lift))
 
-			lft.next = m[row][5]
+			lft.next = m[row][4]
 			yield clock.posedge
-			sam.next = m[row][6]
+			sam.next = m[row][5]
 			yield clock.posedge
-			rht.next = m[row][7]
+			rht.next = m[row][6]
 			yield clock.posedge
-			flgs.next = 5
+			flgs.next = 4
 			yield clock.posedge
 			upd.next = 1
 			yield clock.posedge
 			upd.next = 0
 			yield clock.posedge
-			m[row][6] = lift.next
+			m[row][5] = lift.next
 			yield clock.posedge
 			print ('time %d left %d sam %d right %d flgs %d lift %d ' % (now(),  lft, sam, rht, flgs, lift))
- 
+   
 
 
 		raise StopSimulation
