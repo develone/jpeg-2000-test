@@ -116,8 +116,8 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 		inp.append(struct.unpack('i', fin.read(4))[0])
 		#print inp[i]
 
-	w = 10
-	h = 10
+	w = 12
+	h = 12
 	bl = [[0 for xx in range(w)] for yy in range(h)]
 	w = 8
 	h = 8
@@ -134,6 +134,7 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 	copy m row 1 to row 1 of bl
 	symmetrical extension
 	"""
+	
 	for col in range(6):
 		for row in range(2):
 			bl[row][col] = m[row+1][col]
@@ -146,11 +147,22 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 	for col in range(8):
 		for row in range(8):
 			bl[row+2][col] = m[row][col]
-
+	
+	for col in range(6):
+		for row in range(5,6,1):
+			#bl[row+6][col] = m[row][col]
+			bl[row+5][col] = m[row+1][col]
+	
+	bl[10][7] = m[5][7]
+	bl[10][6] = m[5][6]
+	
+	for col in range(8):
+		bl[11][col] = m[5][col]
+			
 	print "row col loops [row][col]"
 	prowcol(m,8,8)
-	w = 10
-	h = 10
+	w = 12
+	h = 12
 	print "row col loops [row][col]"
 	prowcol(bl,w,h)	
 
