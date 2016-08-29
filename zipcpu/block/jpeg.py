@@ -91,7 +91,20 @@ def dwt(flgs,upd,lft,sam,rht,lift,done,clock):
         else:
             done.next = 1
     return rtl
-
+    
+def prowcol (s,w,h):
+	for row in range(h):
+		for col in range(w):
+			print s[row][col],
+		print
+	print
+def pcolrow (s,w,h):
+	for col in range(w):
+		for row in range(h):
+			print s[row][col],
+		print
+	print
+			
 def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 	fin = open("c2.bin", "rb")
 	import struct
@@ -103,148 +116,103 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 		inp.append(struct.unpack('i', fin.read(4))[0])
 		#print inp[i]
 
-	#print x
+	w = 10
+	h = 10
+	bl = [[0 for xx in range(w)] for yy in range(h)]
 	w = 8
 	h = 8
 	m = [[0 for xx in range(w)] for yy in range(h)]
-	#print m
+
 	
 	for col in range(w):
 		for row in range(h):
 			m[row][col] = inp[idx]
 			idx = idx + 1
 		idx= idx + 248
+	"""
+	copy m row 1 to row 0 of bl
+	copy m row 1 to row 1 of bl
+	symmetrical extension
+	"""
+	for col in range(6):
+		for row in range(2):
+			bl[row][col] = m[row+1][col]
+			bl[row+1][col] = m[row+2][col]
+	bl[0][6] = m[1][6]
+	bl[1][6] = m[2][6]
+	bl[0][7] = m[1][7]
+	bl[1][7] = m[2][7]
 	
-	print "row col loops [row][col]"
+	for col in range(8):
+		for row in range(8):
+			bl[row+2][col] = m[row][col]
 
-	print "is this the way C stores in memory?"
-	for row in range(h):
-		for col in range(w):
-			print m[row][col],
-		print
-	print
-	"""
-	print "row col loops [col][row]" 
-	for row in range(h):
-		for col in range(w):
-			print m[col][row],
-		print
-	"""
-	print "order in fwt97 which is fwt53"
+	print "row col loops [row][col]"
+	prowcol(m,8,8)
+	w = 10
+	h = 10
+	print "row col loops [row][col]"
+	prowcol(bl,w,h)	
+
+
+	
+
+	print "order in fwt97 "
 	print "process down the cols top to bottom"
 	print "process across the cols left to right"	
 	print "col row loops [row][col] input data "
 
-	for col in range(w):
-		for row in range(h):
-			print m[row][col],
-		print
-	print
+ 
+	pcolrow(bl,w,h)
 	
-
-	"""
-	print "col row loops [col][row]"
-	for col in range(w):
-		for row in range(h):
-			print m[col][row],
-		print 	
-	"""
-	"""
-	going down the col
-	with col row loops goes across the 
-	col's
-	"""
-	print
-	#fwd dwt 
+	print "fwd dwt pass 1" 
 	for col in range(w):
 		for row in range(2, h-2,2):
-			#print row,col,m[row-1][col], m[row][col],m[row+1][col]
-			m[row][col] = m[row][col] - ((m[row-1][col] + m[row+2][col])>>1)
-			#print m[row][col]
+			 
+			bl[row][col] = bl[row][col] - ((bl[row-1][col] + bl[row+2][col])>>1)
+			 
 	print "col row loops [row][col] hi pass"
+	prowcol(bl,w,h)
+ 	
 	for col in range(w):
-		for row in range(h):
-			print m[row][col],
-		print	
-	for col in range(w):
-		for row in range(1, h-2,2):
-			#print row,col,m[row-1][col], m[row][col],m[row+1][col]
-			m[row][col] = m[row][col] - ((m[row-1][col] + m[row+2][col]+2)>>2)
-			#print m[row][col]
+		for row in range(1, h-1,2):
+			 
+			bl[row][col] = bl[row][col] - ((bl[row-1][col] + bl[row+2][col]+2)>>2)
+			 
 	
 	print "col row loops [row][col] lo pass"
-	for col in range(w):
-		for row in range(h):
-			print m[row][col],
-		print
-	m = de_interleave(m,w,h)
+	prowcol(bl,w,h)
+ 
+	bl = de_interleave(bl,w,h)
 	print "col row loops [row][col] de_interleave"
-	for col in range(w):
-		for row in range(h):
-			print m[row][col],
-		print
-	"""	
+	prowcol(bl,w,h)
+	
+	print "fwd dwt pass 2"
 	for col in range(w):
 		for row in range(2, h-2,2):
-			#print row,col,m[row-1][col], m[row][col],m[row+1][col]
-			m[row][col] = m[row][col] - ((m[row-1][col] + m[row+2][col])>>1)
-			#print m[row][col]
+			 
+			bl[row][col] = bl[row][col] - ((bl[row-1][col] + bl[row+2][col])>>1)
+			 
 	print "col row loops [row][col] hi pass"
+	prowcol(bl,w,h)
+ 	
 	for col in range(w):
-		for row in range(h):
-			print m[row][col],
-		print	
-	for col in range(w):
-		for row in range(1, h-2,2):
-			#print row,col,m[row-1][col], m[row][col],m[row+1][col]
-			m[row][col] = m[row][col] - ((m[row-1][col] + m[row+2][col]+2)>>2)
-			#print m[row][col]
+		for row in range(1, h-1,2):
+			 
+			bl[row][col] = bl[row][col] - ((bl[row-1][col] + bl[row+2][col]+2)>>2)
+			 
 	
 	print "col row loops [row][col] lo pass"
-	for col in range(w):
-		for row in range(h):
-			print m[row][col],
-		print
-	m = de_interleave(m,w,h)
+	prowcol(bl,w,h)
+ 
+	bl = de_interleave(bl,w,h)
 	print "col row loops [row][col] de_interleave"
-	for col in range(w):
-		for row in range(h):
-			print m[row][col],
-		print
-	print "pass 1 2 de_interleave pass 1 2 de_interleave"
-
+	prowcol(bl,w,h)
 	
-	for col in range(w):
-		for row in range(h):
-			print m[row][col],
-		print
-	
-	m = iwt97(m,w,h)
-	
-	print "col row loops inv dwt"
-	for col in range(w):
-		for row in range(h):
-			print m[row][col],
-		print
-	"""
-	
-	"""
-	for i in range(row):
-		for j in range(col):
-			print m[i][j],
-		print	
-	for i in range(row-2,2):
-		for j in range(col):
-			#m[i+1][j] = m[i+1][j] - ((m[i-1][j] + m[i+2][j])>>1)
-			m[i+1][j] = m[i+1][j] + ((m[i-1][j] + m[i+2][j] +2)>>2)
-	for i in range(row):
-		for j in range(col):
-			print m[i][j],
-		print	
-
-	"""
-	block = [ [0] * 10 ] * 8
-
+	bl = iwt97(bl,w,h)
+	print "col row loops [row][col] inv dwt"
+	prowcol(bl,w,h)
+ 
 	
  	instance_lift = dwt(flgs,upd,lft,sam,rht,lift,done,clock)
         
@@ -252,6 +220,8 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 	def clkgen():
 		clock.next = not clock
 	idx = 0
+	w = 8
+	h = 8
 	for col in range(w):
 		for row in range(h):
 			m[row][col] = inp[idx]
