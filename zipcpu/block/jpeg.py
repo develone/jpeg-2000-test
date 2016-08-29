@@ -84,6 +84,25 @@ def pcolrow (s,w,h):
 			print s[row][col],
 		print
 	print
+	
+def hipass(s,w,h,fwdinv):
+		
+	for col in range(w):
+		for row in range(2, h-2,2):
+			if (fwdinv==1): 
+			 	s[row][col] = s[row][col] - ((s[row-1][col] + s[row+2][col])>>1)
+			else:
+			 	s[row][col] = s[row][col] + ((s[row-1][col] + s[row+2][col])>>1)
+	return s
+
+def lopass(s,w,h,fwdinv):
+	for col in range(w):
+		for row in range(1, h-1,2):
+			if (fwdinv==1): 
+				s[row][col] = s[row][col] - ((s[row-1][col] + s[row+2][col]+2)>>2)
+			else:
+				s[row][col] = s[row][col] + ((s[row-1][col] + s[row+2][col]+2)>>2)
+	return s
 			
 def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 	fin = open("c2.bin", "rb")
@@ -157,60 +176,69 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
  
 	pcolrow(bl,w,h)
 	
-	print "fwd dwt pass 1" 
-	for col in range(w):
-		for row in range(2, h-2,2):
-			 
-			bl[row][col] = bl[row][col] - ((bl[row-1][col] + bl[row+2][col])>>1)
-			 
+	print "fwd dwt pass 1"
+	bl = hipass(bl,w,h,1)
+ 			 
 	print "col row loops [row][col] pass 1 hi pass"
-	prowcol(bl,w,h)
- 	
-	for col in range(w):
-		for row in range(1, h-1,2):
-			 
-			bl[row][col] = bl[row][col] - ((bl[row-1][col] + bl[row+2][col]+2)>>2)
-			 
+	pcolrow(bl,w,h)
 	
+	bl = lopass(bl,w,h,1)
+ 	 
 	print "col row loops [row][col] pass 1 lo pass"
-	prowcol(bl,w,h)
+	pcolrow(bl,w,h)
  
 	bl = de_interleave(bl,w,h)
 	print "col row loops [row][col] pass1 de_interleave"
-	prowcol(bl,w,h)
+	pcolrow(bl,w,h)
 	
 	print "fwd dwt pass 2"
-	for col in range(w):
-		for row in range(2, h-2,2):
-			 
-			bl[row][col] = bl[row][col] - ((bl[row-1][col] + bl[row+2][col])>>1)
+	bl = hipass(bl,w,h,1)
+ 
+	bl = lopass(bl,w,h,1)
 			 
 	print "col row loops [row][col] pass 2 hi pass"
-	prowcol(bl,w,h)
- 	
-	for col in range(w):
-		for row in range(1, h-1,2):
-			 
-			bl[row][col] = bl[row][col] - ((bl[row-1][col] + bl[row+2][col]+2)>>2)
-			 
-	
-	print "col row loops [row][col] pass2 lo pass"
-	prowcol(bl,w,h)
+	pcolrow(bl,w,h)
+ 		 	
+	print "col row loops [row][col] pass2 lo pass match interleave fwd dwt below"
+	pcolrow(bl,w,h)
  
 	bl = de_interleave(bl,w,h)
 	print "col row loops [row][col] pass 2 de_interleave"
-	prowcol(bl,w,h)
+	pcolrow(bl,w,h)
 	
 	bl = interleave(bl,w,h)
 	print "col row loops [row][col] interleave fwd dwt"
+	pcolrow(bl,w,h)
+
+	bl = hipass(bl,w,h,0)			 
+	print "col row loops [row][col] pass 1 inv hi pass"
+	pcolrow(bl,w,h)
+
+	bl = lopass(bl,w,h,0)			 
+	print "col row loops [row][col] pass 1 inv lo pass"
+	pcolrow(bl,w,h)
+
+	bl = interleave(bl,w,h)
+	print "col row loops [row][col] interleave fwd dwt"
+	pcolrow(bl,w,h)
+
+	bl = hipass(bl,w,h,0)			 
+	print "col row loops [row][col] pass 2 inv hi pass"
+	pcolrow(bl,w,h)
+
+	bl = lopass(bl,w,h,0)			 
+	print "col row loops [row][col] pass 2 inv lo pass"
 	prowcol(bl,w,h)
  
+	print "row col loops [row][col] inv dwt "
+	prowcol(bl,w,h)
 	"""
  	instance_lift = dwt(flgs,upd,lft,sam,rht,lift,done,clock)
         
 	@always(delay(10))
 	def clkgen():
 		clock.next = not clock
+	
 	idx = 0
 	w = 8
 	h = 8
