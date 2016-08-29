@@ -29,7 +29,7 @@ def de_interleave(s,height,width):
 		for col in range(height):
 			s[row][col] = temp_bank[row][col]
 	return s
-def iwt97(s, width, height):
+def interleave(s, width, height):
     ''' Inverse CDF 5/3. '''
 
 
@@ -43,26 +43,6 @@ def iwt97(s, width, height):
     for row in range(width):
         for col in range(height):
             s[row][col] = temp_bank[row][col]
-
-
-    for col in range(width): # Do the 1D transform on all cols:
-        ''' Perform the inverse 1D transform. '''
-
-        # Inverse update 2.
-        for row in range(1, height-1, 2):
-
-			s[row][col] = (s[row][col] - ((int(s[row-1][col]) + int(s[row+1][col]) + 2)>>2))
-
-            #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
-        #s[0][col] += 2 * a4 * s[1][col]
-
-        # Inverse predict 2.
-        for row in range(2, height, 2):
-
-			s[row][col] = (s[row][col] + ((int(s[row-1][col])>>1) + (int(s[row+1][col])>>1)))
-            #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
-        #s[height-1][col] += 2 * a3 * s[height-2][col]
-
 
     return s
 	
@@ -183,7 +163,7 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 			 
 			bl[row][col] = bl[row][col] - ((bl[row-1][col] + bl[row+2][col])>>1)
 			 
-	print "col row loops [row][col] hi pass"
+	print "col row loops [row][col] pass 1 hi pass"
 	prowcol(bl,w,h)
  	
 	for col in range(w):
@@ -192,11 +172,11 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 			bl[row][col] = bl[row][col] - ((bl[row-1][col] + bl[row+2][col]+2)>>2)
 			 
 	
-	print "col row loops [row][col] lo pass"
+	print "col row loops [row][col] pass 1 lo pass"
 	prowcol(bl,w,h)
  
 	bl = de_interleave(bl,w,h)
-	print "col row loops [row][col] de_interleave"
+	print "col row loops [row][col] pass1 de_interleave"
 	prowcol(bl,w,h)
 	
 	print "fwd dwt pass 2"
@@ -205,7 +185,7 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 			 
 			bl[row][col] = bl[row][col] - ((bl[row-1][col] + bl[row+2][col])>>1)
 			 
-	print "col row loops [row][col] hi pass"
+	print "col row loops [row][col] pass 2 hi pass"
 	prowcol(bl,w,h)
  	
 	for col in range(w):
@@ -214,18 +194,18 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 			bl[row][col] = bl[row][col] - ((bl[row-1][col] + bl[row+2][col]+2)>>2)
 			 
 	
-	print "col row loops [row][col] lo pass"
+	print "col row loops [row][col] pass2 lo pass"
 	prowcol(bl,w,h)
  
 	bl = de_interleave(bl,w,h)
-	print "col row loops [row][col] de_interleave"
+	print "col row loops [row][col] pass 2 de_interleave"
 	prowcol(bl,w,h)
 	
-	bl = iwt97(bl,w,h)
-	print "col row loops [row][col] inv dwt"
+	bl = interleave(bl,w,h)
+	print "col row loops [row][col] interleave fwd dwt"
 	prowcol(bl,w,h)
  
-	
+	"""
  	instance_lift = dwt(flgs,upd,lft,sam,rht,lift,done,clock)
         
 	@always(delay(10))
@@ -369,7 +349,7 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 
 
 		raise StopSimulation
-		
+	"""	
 	return instances()
 	
 def convert(args):
