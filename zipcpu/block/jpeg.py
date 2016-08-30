@@ -90,18 +90,18 @@ def hipass(s,w,h,fwdinv):
 	for col in range(w):
 		for row in range(2, h-2,2):
 			if (fwdinv==1): 
-			 	s[row][col] = s[row][col] - ((s[row-1][col] + s[row+2][col])>>1)
+			 	s[row][col] = s[row][col] - ((s[row-1][col] + s[row+1][col])>>1)
 			else:
-			 	s[row][col] = s[row][col] + ((s[row-1][col] + s[row+2][col])>>1)
+				s[row][col] = s[row][col] + ((s[row-1][col] + s[row+1][col])>>1)
 	return s
 
 def lopass(s,w,h,fwdinv):
 	for col in range(w):
 		for row in range(1, h-1,2):
 			if (fwdinv==1): 
-				s[row][col] = s[row][col] - ((s[row-1][col] + s[row+2][col]+2)>>2)
+				s[row][col] = s[row][col] - ((s[row-1][col] + s[row+1][col]+2)>>2)
 			else:
-				s[row][col] = s[row][col] + ((s[row-1][col] + s[row+2][col]+2)>>2)
+				s[row][col] = s[row][col] + ((s[row-1][col] + s[row+1][col]+2)>>2)
 	return s
 			
 def tb(flgs,upd,lft,sam,rht,lift,done,clock):
@@ -179,9 +179,8 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 	print "fwd dwt pass 1"
 	bl = hipass(bl,w,h,1)
  			 
-	print "col row loops [row][col] pass 1 hi pass"
-	pcolrow(bl,w,h)
-	
+ 	print "col row loops [row][col] pass 1 hi pass"
+	pcolrow(bl,w,h)	
 	bl = lopass(bl,w,h,1)
  	 
 	print "col row loops [row][col] pass 1 lo pass"
@@ -230,6 +229,10 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
  
 	print "row col loops [row][col] inv dwt "
 	prowcol(bl,w,h)
+
+	print "row col loops [row][col]"
+	prowcol(m,8,8)
+
 	"""
  	instance_lift = dwt(flgs,upd,lft,sam,rht,lift,done,clock)
         
