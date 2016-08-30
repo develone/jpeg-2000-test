@@ -1,6 +1,6 @@
 from myhdl import *
 import argparse
-
+import sys
 W0 = 31
 flgs = Signal(intbv(0)[3:])
 lft = Signal(intbv(0, min=-(2**(W0)), max=(2**(W0))))
@@ -75,14 +75,15 @@ def dwt(flgs,upd,lft,sam,rht,lift,done,clock):
 def prowcol (s,w,h):
 	for row in range(h):
 		for col in range(w):
-			print s[row][col],
-		print
+			sys.stdout.write (('%5d ')%(s[row][col]))
+		sys.stdout.write('\n')
 	print
 def pcolrow (s,w,h):
 	for col in range(w):
 		for row in range(h):
-			print s[row][col],
-		print
+			sys.stdout.write (('%5d ')%(s[row][col]))
+		sys.stdout.write('\n')			
+ 
 	print
 	
 def hipass(s,w,h,fwdinv):
