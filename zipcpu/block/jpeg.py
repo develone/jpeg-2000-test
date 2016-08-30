@@ -193,12 +193,10 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 	
 	print "fwd dwt pass 2"
 	bl = hipass(bl,w,h,1)
- 
-	bl = lopass(bl,w,h,1)
-			 
 	print "col row loops [row][col] pass 2 hi pass"
 	pcolrow(bl,w,h)
- 		 	
+	
+	bl = lopass(bl,w,h,1)
 	print "col row loops [row][col] pass2 lo pass match interleave fwd dwt below"
 	pcolrow(bl,w,h)
  
@@ -210,24 +208,24 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 	print "col row loops [row][col] interleave fwd dwt"
 	pcolrow(bl,w,h)
 
-	bl = hipass(bl,w,h,0)			 
-	print "col row loops [row][col] pass 1 inv hi pass"
-	pcolrow(bl,w,h)
-
 	bl = lopass(bl,w,h,0)			 
 	print "col row loops [row][col] pass 1 inv lo pass"
+	pcolrow(bl,w,h)
+
+	bl = hipass(bl,w,h,0)			 
+	print "col row loops [row][col] pass 1 inv hi pass"
 	pcolrow(bl,w,h)
 
 	bl = interleave(bl,w,h)
 	print "col row loops [row][col] interleave fwd dwt"
 	pcolrow(bl,w,h)
 
-	bl = hipass(bl,w,h,0)			 
-	print "col row loops [row][col] pass 2 inv hi pass"
-	pcolrow(bl,w,h)
-
 	bl = lopass(bl,w,h,0)			 
 	print "col row loops [row][col] pass 2 inv lo pass"
+	pcolrow(bl,w,h)
+
+	bl = hipass(bl,w,h,0)			 
+	print "col row loops [row][col] pass 2 inv hi pass"
 	prowcol(bl,w,h)
  
 	print "row col loops [row][col] inv dwt "
