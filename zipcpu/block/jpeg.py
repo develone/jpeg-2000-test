@@ -226,7 +226,7 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 
 	bl = hipass(bl,w,h,0)			 
 	print "col row loops [row][col] pass 2 inv hi pass"
-	prowcol(bl,w,h)
+	pcolrow(bl,w,h)
  
 	print "row col loops [row][col] inv dwt "
 	prowcol(bl,w,h)
