@@ -106,7 +106,8 @@ def lopass(s,w,h,fwdinv):
 	return s
 			
 def tb(flgs,upd,lft,sam,rht,lift,done,clock):
-	fin = open("c2.bin", "rb")
+	#fin = open("c2.bin", "rb")
+	fin = open("c1.bin", "rb")
 	import struct
 	inp = []
 
@@ -135,14 +136,15 @@ def tb(flgs,upd,lft,sam,rht,lift,done,clock):
 	symmetrical extension
 	"""
 	
-	for col in range(6):
-		for row in range(2):
-			bl[row][col] = m[row+1][col]
-			bl[row+1][col] = m[row+2][col]
-	bl[0][6] = m[1][6]
-	bl[1][6] = m[2][6]
-	bl[0][7] = m[1][7]
-	bl[1][7] = m[2][7]
+	for col in range(8):
+		for row in range(1):
+			bl[row+1][col] = m[row+1][col]
+			bl[row][col] = m[row+2][col]
+	
+	#bl[0][6] = m[1][6]
+	#bl[1][6] = m[2][6]
+	#bl[0][7] = m[1][7]
+	#bl[1][7] = m[2][7]
 	
 	for col in range(8):
 		for row in range(8):
