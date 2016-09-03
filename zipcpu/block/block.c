@@ -13,7 +13,8 @@ typedef int int32;
 
 void extract(int *ibuf, int *obuf, int w, int h) {
 	int *ip,*op;
-	int row,col;		
+	int row,col;	
+		
 	for (row=0;row<h;row++) {
 		ip = ibuf + row;
 		op = obuf + row;
@@ -62,7 +63,7 @@ void disp1(int *ibuf,  int w, int h) {
 	}
 }
 
-
+ 
  /*
  *process down the col
  * based on ibuf of 256 x 256
@@ -125,42 +126,58 @@ void de_interleave(int *ibuf, int *obuf, int w, int h) {
 	int *ip,*x0,*x1;
 	int row,col,dwt;		
 	for (row=0;row<h;row++) {
+		//each time the row is incremented
+		//ip is incremented to next row
+		//ip starts at row 0
 		ip = ibuf + row*256;
+		//each time the row is incremented
+		//x0 is increment by 1
+		//each time the col is incremented
+		//x0+=256; increments to next row
 		x0 = obuf + row;
-		x1 = x1 + w*128/2;		 
+		x1 = x0 + 128/2;		 
 		for (col=0;col<w;col++) {
 			if(row % 2 == 0) {
 				//printf("even %d %d %d\n",row,ip[0],x0[0]);
 				x0[0] = ip[0];
 			}
-			/*
+			
 			else {
-				printf("odd %d %d %d\n",row,ip[0],x0[0]);
-			}*/
+				//writes zeros to see where is writing
+				//x0[0] = ip[0];
+				x0[0] = 0;
+			}
+			//ip is giing across the row
 			ip+=1;
 			x0+=256;
 			x1+=256;
 		}
 	}
 }
+
 int main(void) {
  	int m[8*8],bl[12*12],tmpbnk[12*12];
  	int *blptr,*tmpbnkptr;
  	int *img,*alt,*ip,*op;
- 	int idx,idx1,idx2,w,h,row,col,fwdinv;	
+ 	int idx,idx1,idx2,w,h,row,col,fwdinv;
+ 		
  	FILE *ptr_myfile, *ofp;
 	w = 256;
 	h = 256;
 	img = (int *)malloc(sizeof(int)*(w*h)*2);
 	alt = &img[256*256];
+	//ofp = fopen("img.bin","r");
 	ofp = fopen("c2.bin","r");
+	//ofp = fopen("c1.bin","r");
 	fread(img, sizeof(int), w*h, ofp);
 	fclose(ofp); 
 	ofp = fopen("img.bin","w");
 	fwrite(img, sizeof(int), w*h, ofp);
 	fclose(ofp); 	   
 	//w = 8;
-	//h = 8;	
+	//h = 8;
+	int arr[w][h],tp[w][h],passes;	
+ 
  	
  	extract(img,alt,w,h);
  	printf("extracted disp row as rows\n");	
@@ -171,40 +188,94 @@ int main(void) {
  	printf("disp row as col\n");
  	disp1(alt,w,h);	
   	printf("\n");
-	printf("even samples hi pass fwd\n");
-  	printf("rows 2, 4, and 6\n");
-	fwdinv = 1;
- 	hi_pass(alt,w,h,fwdinv);
- 	disp1(alt,w,h);
- 	/*	
-	fwdinv = 0;
-	printf("even samples hi pass inv\n");
-  	printf("rows 2, 4, and 6\n");	
- 	hi_pass(alt,w,h,fwdinv);
- 	disp1(alt,w,h);
- 	*/	
-  	printf("odd samples lo pass fwd\n");
-  	printf("rows 1, 3, 5 and 7\n");
-	fwdinv = 1;
- 	lo_pass(alt,w,h,fwdinv);
- 	disp1(alt,w,h);	
-   	printf("\n");
-	/*
-  	printf("odd samples lo pass inv\n");
-  	printf("rows 1, 3, 5 and 7\n"); 	
-	fwdinv = 0;
- 	lo_pass(alt,w,h,fwdinv);
- 	disp1(alt,w,h);	
-   	printf("\n");
+  	for(passes=0; passes<2;passes++) {
+		printf("even samples hi pass fwd\n");
+		printf("rows 2, 4, and 6\n");
+		fwdinv = 1;
+		hi_pass(alt,w,h,fwdinv);
+		disp1(alt,w,h);
+		/*	
+		fwdinv = 0;
+		printf("even samples hi pass inv\n");
+		printf("rows 2, 4, and 6\n");	
+		hi_pass(alt,w,h,fwdinv);
+		disp1(alt,w,h);
+		*/	
+		printf("odd samples lo pass fwd\n");
+		printf("rows 1, 3, 5 and 7\n");
+		fwdinv = 1;
+		lo_pass(alt,w,h,fwdinv);
+		disp1(alt,w,h);	
+		printf("\n");
+  
+		for(row=0;row<h;row++) {
+			ip = alt + row*256;
+			for(col=0;col<w;col++) {
+				arr[row][col] = ip[0];
+				ip+=1;
+			}
+		
+		}
+		printf("arr print \n");
+		for(row=0;row<h;row++) {
+		
+			for(col=0;col<w;col++) {
+				printf("%5d ",arr[row][col]);
+			}
+			printf("\n");
+			
+		
+		}
+		printf("arr de_interleave\n");
 	
-	de_interleave(alt,img,w,h);
- 	disp1(img,w,h);	
-   	printf("\n");
-   	*/
+		for (row=0;row<h;row++) {
+			for (col=0;col<w;col++) {
+				if (row % 2 == 0) {
+					tp[col][row/2] =  arr[row][col];
+					printf("%5d ",tp[col][row/2]);
+				}
+				else {
+					tp[col][row/2 + h/2] =  arr[row][col];
+					printf("%5d ",tp[col][row/2 + h/2]);
+				}
+			
+			}
+			printf("\n");
+		}
+		printf("\n");
+	
+		for (row=0;row<h;row++) {
+			for (col=0;col<w;col++) {
+				arr[row][col] = tp[row][col];
+			}
+		}
+		printf("arr print \n");
+			for(row=0;row<h;row++) {
+		
+				for(col=0;col<w;col++) {
+					printf("%5d ",arr[row][col]);
+				}
+			printf("\n");
+			
+		
+		}
+		for(row=0;row<h;row++) {
+			ip = alt + row*256;
+			for(col=0;col<w;col++) {
+				ip[0] = arr[row][col];
+				ip+=1;
+			}
+		
+		}
+	}
+   	
 	ofp = fopen("block.bin","w");
 	fwrite(alt, sizeof(int), w*h, ofp);
 	fclose(ofp); 
 	
+
+
+	/*
   	printf("odd samples lo pass inv\n");
   	printf("rows 1, 3, 5 and 7\n"); 	
 	fwdinv = 0;
@@ -218,7 +289,8 @@ int main(void) {
  	disp1(alt,w,h);
 	ofp = fopen("invblock.bin","w");
 	fwrite(alt, sizeof(int), w*h, ofp);
-	fclose(ofp); 	
+	fclose(ofp);
+	*/	
 	free (img);
  
 
