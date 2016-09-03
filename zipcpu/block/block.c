@@ -188,7 +188,7 @@ int main(void) {
  	printf("disp row as col\n");
  	disp1(alt,w,h);	
   	printf("\n");
-  	for(passes=0; passes<2;passes++) {
+  	for(passes=0; passes<1;passes++) {
 		printf("even samples hi pass fwd\n");
 		printf("rows 2, 4, and 6\n");
 		fwdinv = 1;
@@ -267,6 +267,7 @@ int main(void) {
 			}
 		
 		}
+	printf("fwd passes %d\n",passes);
 	}
    	
 	ofp = fopen("block.bin","w");
@@ -275,22 +276,70 @@ int main(void) {
 	
 
 
-	/*
-  	printf("odd samples lo pass inv\n");
-  	printf("rows 1, 3, 5 and 7\n"); 	
-	fwdinv = 0;
- 	lo_pass(alt,w,h,fwdinv);
- 	disp1(alt,w,h);	
-   	printf("\n");
-	fwdinv = 0;
-	printf("even samples hi pass inv\n");
-  	printf("rows 2, 4, and 6\n");	
- 	hi_pass(alt,w,h,fwdinv);
- 	disp1(alt,w,h);
-	ofp = fopen("invblock.bin","w");
-	fwrite(alt, sizeof(int), w*h, ofp);
-	fclose(ofp);
-	*/	
+	for(passes=0; passes<1;passes++) {
+
+
+		printf("arr print \n");
+		for(row=0;row<h;row++) {
+		
+			for(col=0;col<w;col++) {
+				printf("%5d ",arr[row][col]);
+			}
+			printf("\n");
+			
+		
+		}
+		printf("arr interleave\n");
+	
+		for(col=0;col<w/2;col++) {
+			for(row=0;row<h;row++) {
+				tp[col*2][row] = arr[row][col];
+				tp[col*2+1][row] = arr[row][col+w/2];
+	
+			}
+		}
+		for (row=0;row<h;row++) {
+			for (col=0;col<w;col++) {
+				arr[row][col] = tp[row][col];
+			}
+		}
+		printf("arr print \n");
+			for(row=0;row<h;row++) {
+		
+				for(col=0;col<w;col++) {
+					printf("%5d ",arr[row][col]);
+				}
+			printf("\n");
+			
+		
+		}
+		for(row=0;row<h;row++) {
+			ip = alt + row*256;
+			for(col=0;col<w;col++) {
+				ip[0] = arr[row][col];
+				ip+=1;
+			}
+		ofp = fopen("interleaveblk.bin","w");
+		fwrite(alt, sizeof(int), w*h, ofp);
+		fclose(ofp);
+		printf("odd samples lo pass inv\n");
+		printf("rows 1, 3, 5 and 7\n"); 	
+		fwdinv = 0;
+		lo_pass(alt,w,h,fwdinv);
+		disp1(alt,w,h);	
+		printf("\n");
+		fwdinv = 0;
+		printf("even samples hi pass inv\n");
+		printf("rows 2, 4, and 6\n");	
+		hi_pass(alt,w,h,fwdinv);
+		disp1(alt,w,h);
+		ofp = fopen("invblock.bin","w");
+		fwrite(alt, sizeof(int), w*h, ofp);
+		fclose(ofp);
+		
+		}
+		
+	} 	
 	free (img);
  
 
