@@ -167,8 +167,8 @@ int main(void) {
 	img = (int *)malloc(sizeof(int)*(w*h)*2);
 	alt = &img[256*256];
 	//ofp = fopen("img.bin","r");
-	ofp = fopen("c2.bin","r");
-	//ofp = fopen("c1.bin","r");
+	//ofp = fopen("c2.bin","r");
+	ofp = fopen("c1.bin","r");
 	fread(img, sizeof(int), w*h, ofp);
 	fclose(ofp); 
 	ofp = fopen("img.bin","w");
@@ -207,6 +207,7 @@ int main(void) {
 		lo_pass(alt,w,h,fwdinv);
 		disp1(alt,w,h);	
 		printf("\n");
+
   
 		for(row=0;row<h;row++) {
 			ip = alt + row*256;
@@ -278,7 +279,7 @@ int main(void) {
 
 	for(passes=0; passes<1;passes++) {
 
-
+		
 		printf("arr print \n");
 		for(row=0;row<h;row++) {
 		
@@ -319,6 +320,7 @@ int main(void) {
 				ip[0] = arr[row][col];
 				ip+=1;
 			}
+		}
 		ofp = fopen("interleaveblk.bin","w");
 		fwrite(alt, sizeof(int), w*h, ofp);
 		fclose(ofp);
@@ -330,8 +332,11 @@ int main(void) {
 		printf("\n");
 		fwdinv = 0;
 		printf("even samples hi pass inv\n");
-		printf("rows 2, 4, and 6\n");	
+		printf("using disp not disp1\n");	
 		hi_pass(alt,w,h,fwdinv);
+		disp(alt,w,h);
+		printf("even samples hi pass inv\n");
+		printf("using disp1\n");
 		disp1(alt,w,h);
 		ofp = fopen("invblock.bin","w");
 		fwrite(alt, sizeof(int), w*h, ofp);
@@ -339,7 +344,7 @@ int main(void) {
 		
 		}
 		
-	} 	
+	 	
 	free (img);
  
 
