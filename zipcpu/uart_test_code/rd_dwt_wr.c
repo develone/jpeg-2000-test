@@ -29,6 +29,7 @@ void rd_dwt_wr(void) {
 	int *buf_g_used = (int *)0x8efff3;
 	int *buf_b_used = (int *)0x8efff4;
 	int *clocks_used = (int *)0x8efff5;
+	int *fwd_inv = (int *)0x8efff6;
     ///int *buf_dwt_used = (int *)0x89fff7; 
 	//int *wptr_used = (int *)0x89fff6;
 	 
@@ -83,19 +84,19 @@ void rd_dwt_wr(void) {
     wptr1 =  buf_g;
     wptr2 = buf_b;
     alt = &buf_r[256*256];
-	lifting(w,wptr,alt);
+	lifting(w,wptr,alt,fwd_inv);
  
 	//wptr = buf_r;
 	//zip_write(wptr);
 	wptr1 = buf_g;
 	alt1 = &buf_g[256*256];
-	lifting(w,wptr1,alt1);
+	lifting(w,wptr1,alt1,fwd_inv);
 	//wptr = buf_g;
 	//zip_write(wptr);
 	
 	wptr2 = buf_b;
 	alt2 = &buf_b[256*256];
-	lifting(w,wptr2,alt2);
+	lifting(w,wptr2,alt2,fwd_inv);
 	//wptr = buf_b;
 	//zip_write(wptr);	
 	*clocks_used = 0x7fffffff-sys->io_bustimer;
