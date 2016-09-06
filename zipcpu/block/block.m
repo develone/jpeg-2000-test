@@ -14,8 +14,10 @@ figure
 imagesc(im2)
 colorbar
 %colormap "gray"
-title 'c1 subband pass 1 hi-pass lo-pass w/de_interleave '
+%title 'c1 subband pass 1 hi-pass lo-pass w/de_interleave '
 %title 'c1 subband pass 1 hi-pass lo-pass pass 2 hi-pass lo-pass '
+title 'c1 subband 3 lvls pass 1 hi-pass lo-pass pass 2 hi-pass lo-pass '
+%title 'c1 subband 3 lvls pass 1 lo-pass hi-pass pass 2 lo-pass hi-pass '
 
 %figure
 %hist(im2)

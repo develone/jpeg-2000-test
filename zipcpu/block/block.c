@@ -167,8 +167,8 @@ int main(void) {
 	img = (int *)malloc(sizeof(int)*(w*h)*2);
 	alt = &img[256*256];
 	//ofp = fopen("img.bin","r");
-	//ofp = fopen("c2.bin","r");
-	ofp = fopen("c1.bin","r");
+	ofp = fopen("c2.bin","r");
+	//ofp = fopen("c1.bin","r");
 	fread(img, sizeof(int), w*h, ofp);
 	fclose(ofp); 
 	ofp = fopen("img.bin","w");
@@ -176,7 +176,7 @@ int main(void) {
 	fclose(ofp); 	   
 	//w = 8;
 	//h = 8;
-	int arr[w][h],tp[w][h],passes;	
+	int arr[w][h],tp[w][h],passes,lvls;	
  
  	
  	extract(img,alt,w,h);
@@ -188,7 +188,8 @@ int main(void) {
  	printf("disp row as col\n");
  	disp1(alt,w,h);	
   	printf("\n");
-  	for(passes=0; passes<1;passes++) {
+  	for(lvls=0;lvls<3;lvls++) {
+  	for(passes=0; passes<2;passes++) {
 		printf("even samples hi pass fwd\n");
 		printf("rows 2, 4, and 6\n");
 		fwdinv = 1;
@@ -274,10 +275,10 @@ int main(void) {
 	ofp = fopen("block.bin","w");
 	fwrite(alt, sizeof(int), w*h, ofp);
 	fclose(ofp); 
-	
+	}
 
-
-	for(passes=0; passes<1;passes++) {
+  	for(lvls=0;lvls<3;lvls++) {
+	for(passes=0; passes<2;passes++) {
 
 		
 		printf("arr print \n");
@@ -291,7 +292,11 @@ int main(void) {
 		
 		}
 		printf("arr interleave\n");
-	
+		for(row=0;row<h;row++) {
+			for(col=0;col<h;col++) {
+				tp[row][col]= 0;
+			}
+		}
 		for(col=0;col<w/2;col++) {
 			for(row=0;row<h;row++) {
 				tp[col*2][row] = arr[row][col];
@@ -343,6 +348,7 @@ int main(void) {
 		fclose(ofp);
 		
 		}
+	}
 		
 	 	
 	free (img);
