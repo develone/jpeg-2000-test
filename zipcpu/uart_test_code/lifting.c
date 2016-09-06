@@ -171,11 +171,11 @@ void	ilift(int rb, int w, int * const ibuf, int * const obuf) {
 	}
 }
 
-void	lifting(int w, int *ibuf, int *tmpbuf) {
+void	lifting(int w, int *ibuf, int *tmpbuf, int *fwd) {
 	const	int	rb = w;
 	int	lvl;
 
-	int	*ip = ibuf, *tp = tmpbuf;
+	int	*ip = ibuf, *tp = tmpbuf, *test_fwd = fwd;
 	int	ov[3];
 
 	const int	LVLS = 3;
@@ -227,7 +227,7 @@ void	lifting(int w, int *ibuf, int *tmpbuf) {
 		// Move to the corner, and repeat
 		w>>=1;
 	}
-	
+	if (test_fwd[0]==0) {
 	for(lvl=(LVLS-1); lvl>=0; lvl--) {
 		int	offset;
 
@@ -243,6 +243,6 @@ void	lifting(int w, int *ibuf, int *tmpbuf) {
 		ilift(rb, w, ip, tp);
 		ilift(rb, w, tp, ip);
 	}
-	
+	}
 }
 

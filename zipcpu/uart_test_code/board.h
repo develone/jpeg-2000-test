@@ -35,7 +35,7 @@ typedef	struct	{
 } SDCARD;
 
 static SDCARD	* const sd = (SDCARD *)0x0120;
-void	lifting(int w, int *ibuf, int *tmpbuf);
+
 void zip_read_image(int *img1, int *img2, int *img3);
 void zip_clear_sdram(int *imbuf);
 void rd_dwt_wr(void);
