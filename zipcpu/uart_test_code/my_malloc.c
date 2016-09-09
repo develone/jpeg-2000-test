@@ -32,7 +32,7 @@ The heap is a region of your computer's memory that is not managed automatically
 */
 void free (void * ptr ) {}
 
-void * heap = (void *)(SDRAM+0x50000);
+void * heap = (void *)(SDRAM+0x30000);
 
 
 void *malloc(int sz) {

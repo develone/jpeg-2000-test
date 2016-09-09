@@ -1,4 +1,4 @@
-#include "dwt_funcs.h"
+#include "lifting.h"
 /*
 asm("\t.section\t.start\n" // Makes sure we start at the beginning of program memory, and specifically that the _start function is the first address (a.k.a. the reset address) in memory.
     "\t.global\t_start\n"        // Makes certain the linker sees this symbol
