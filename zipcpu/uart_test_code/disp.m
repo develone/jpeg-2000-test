@@ -11,11 +11,11 @@ title("Red subband 3 levels dwt ZipCpu")
 colorbar
 figure
 imagesc(im1)
-title("Green subband 3 levels dwt ZipCpu")
+title("U subband 3 levels dwt ZipCpu")
 colorbar
 figure
 imagesc(im2)
-title("Blue subband 3 levels dwt ZipCpu")
+title("V subband 3 levels dwt ZipCpu")
 colorbar
 %figure
 %imagesc(im3)

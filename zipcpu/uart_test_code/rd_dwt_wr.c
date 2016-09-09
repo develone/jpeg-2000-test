@@ -16,25 +16,26 @@ void rd_dwt_wr(void) {
 	const int XULA_BUSY = 0x40000000;
     
  
-    int *buf_r;
-    int *buf_g;
-    int *buf_b;    	
+	int *buf_r;
+	int *buf_g;
+	int *buf_b;
+	int *buf_yuv;
 	int *wptr,*wptr1,*wptr2;
-	int *alt,*alt1,*alt2;
+	int *alt,*alt1,*alt2,*u,*v;
 	//the contents of the buf_r_used
 	//where the red lift steps are stored
 	//before packing to send back to RPi2B
-	
+	int *buf_yuv_used = (int *)0x8efff1;
 	int *buf_r_used = (int *)0x8efff2;
 	int *buf_g_used = (int *)0x8efff3;
 	int *buf_b_used = (int *)0x8efff4;
 	int *clocks_used = (int *)0x8efff5;
 	int *fwd_inv = (int *)0x8efff6;
-    ///int *buf_dwt_used = (int *)0x89fff7; 
+	///int *buf_dwt_used = (int *)0x89fff7; 
 	//int *wptr_used = (int *)0x89fff6;
 	 
  
-    //int *buf_dwt = (int *)0x800000;
+	//int *buf_dwt = (int *)0x800000;
 
  
 	int w,h;
@@ -42,34 +43,41 @@ void rd_dwt_wr(void) {
 	w = 256;
 	h = 256;
 
-	//pointers to r g b
- 
+	//pointers to r g b & yuv
+	//y' u v
+	buf_yuv = malloc(sizeof(int)*(w*h)*3);
 	buf_r = malloc(sizeof(int)*(w*h)*2);
 	buf_g = malloc(sizeof(int)*(w*h)*2);
 	buf_b = malloc(sizeof(int)*(w*h)*2);
 
 	//pointer to un-packed r g b
-	//saved at pointer 
-	//buf_r_used 0x87fff2
-	//buf_g_used 0x87fff3
-	//buf_b_used 0x87fff4
+	//saved at pointer
+	//buf_yuv_used 0x8efff1 
+	//buf_r_used 0x8efff2
+	//buf_g_used 0x8efff3
+	//buf_b_used 0x8efff4
+	*buf_yuv_used = buf_yuv;
 	*buf_r_used = buf_r;
 	*buf_g_used = buf_g;
 	*buf_b_used = buf_b;
 	//*buf_dwt_used = (int *)buf_dwt;	
- 
-    wptr = buf_r;
-    wptr1 =  buf_g;
-    wptr2 = buf_b;
+
+	wptr = buf_r;
+	wptr1 =  buf_g;
+	wptr2 = buf_b;
 	sys -> io_gpio = LED_ON|READY_FOR_XMIT ;
-    zip_read_image(wptr, wptr1, wptr2);
+	zip_read_image(wptr, wptr1, wptr2);
 	sys->io_gpio = LED_OFF|XULA_BUSY; 
+	yprime(w,buf_r,buf_g,buf_b,buf_yuv);
+	u = &buf_yuv[w*h];
+	v = &buf_yuv[w*h*2];
+	yuv(w,buf_r,buf_b,u,v,buf_yuv);
 
 
 	
 	//*wptr_used = wptr; 
 	
-    /*
+	/*
 	wptr = buf_r;//*buf_r_used;
 	zip_write(wptr);
 	wptr = buf_g;//*buf_g_used;
@@ -79,22 +87,22 @@ void rd_dwt_wr(void) {
 	*/
 	 
 	
-    sys->io_bustimer = 0x7fffffff;
-    wptr = buf_r;
-    wptr1 =  buf_g;
-    wptr2 = buf_b;
-    alt = &buf_r[256*256];
+	sys->io_bustimer = 0x7fffffff;
+	wptr = buf_r;
+	wptr1 =  u;
+	wptr2 = v;
+	alt = &buf_r[256*256];
 	lifting(w,wptr,alt,fwd_inv);
  
 	//wptr = buf_r;
 	//zip_write(wptr);
-	wptr1 = buf_g;
+	wptr1 = u;
 	alt1 = &buf_g[256*256];
 	lifting(w,wptr1,alt1,fwd_inv);
 	//wptr = buf_g;
 	//zip_write(wptr);
 	
-	wptr2 = buf_b;
+	wptr2 = v;
 	alt2 = &buf_b[256*256];
 	lifting(w,wptr2,alt2,fwd_inv);
 	//wptr = buf_b;
@@ -105,17 +113,18 @@ void rd_dwt_wr(void) {
 	//buf_r = *buf_r_used;
 	//buf_b = *buf_b_used;
 	wptr = buf_r;
-    wptr1 =  buf_g;
-    wptr2 = buf_b;
+	wptr1 =  u;
+	wptr2 = v;
 	
-    zip_write(wptr);
-    zip_write(wptr1);
-    zip_write(wptr2);  
+	zip_write(wptr);
+	zip_write(wptr1);
+	zip_write(wptr2);  
     
 
-free(buf_r);
-free(buf_g);
-free(buf_b);
+	free(buf_r);
+	free(buf_g);
+	free(buf_b);
+	free(yuv);
 }
 
 void zip_write(int *imbuf) {
