@@ -59,15 +59,20 @@ int main(void) {
 	
  
 	int *img, *alt, *alt1, *alt2, *alt3, *alt4, *alt5, *sav_img;
-	
-	img = (int *)malloc(sizeof(int)*(w*h)*7);
+	int *alt6, *alt7, *alt8, *alt9, *alt10;
+	img = (int *)malloc(sizeof(int)*(w*h)*13);
 	
 	sav_img = img;	
-	alt = &img[256*256];
-	alt1 = &img[256*256*2];
-	alt2 = &img[256*256*3];
-	alt3 = &img[256*256*4];
-	alt4 = &img[256*256*5];
+	alt = &img[256*256];//red
+	alt1 = &img[256*256*2];//green
+	alt2 = &img[256*256*3];//blue
+	alt3 = &img[256*256*4];//u
+	alt4 = &img[256*256*5];//v
+	alt5 = &img[256*256*6];//red
+	alt6 = &img[256*256*7];//green
+	alt7 = &img[256*256*8];//blue
+	alt8 = &img[256*256*9];//u
+	alt9 = &img[256*256*10];//v
 	
 	rgb(w, buf, alt, alt1, alt2);
 		
@@ -84,27 +89,55 @@ int main(void) {
 	fclose(ofp);
 	
 	img = sav_img;
-	alt = &img[256*256];
-	alt1 = &img[256*256*2];
-	alt2 = &img[256*256*3];
-	alt3 = &img[256*256*4];
-	alt4 = &img[256*256*5];
+	alt = &img[256*256];//red
+	alt1 = &img[256*256*2];//green
+	alt2 = &img[256*256*3];//blue
+	alt3 = &img[256*256*4];//u
+	alt4 = &img[256*256*5];//v
+	alt5 = &img[256*256*6]; 
+	alt6 = &img[256*256*7];//red
+	alt7 = &img[256*256*8];//green
+	alt8 = &img[256*256*9];//blue
+	alt9 = &img[256*256*10];
 		
-	yprime(w, alt, alt1, alt2, img);
+	//yprime(w, alt, alt1, alt2, img);
 	
+
+	
+	img = sav_img;	
+	alt = &img[256*256];//red
+	alt1 = &img[256*256*2];//green
+	alt2 = &img[256*256*3];//blue
+	alt3 = &img[256*256*4];//u
+	alt4 = &img[256*256*5];//v
+	alt5 = &img[256*256*6]; 
+	alt6 = &img[256*256*7];//red
+	alt7 = &img[256*256*8];//green
+	alt8 = &img[256*256*9];//blue
+	alt9 = &img[256*256*10];
+	yuv(w, alt, alt1, alt2, alt3, alt4, img);
+	invyuv(w, alt6, alt7, alt8, alt3, alt4, img);
+
+	ofp = fopen("rr.bin","w");
+	fwrite(alt6, sizeof(int), w*h, ofp);
+	fclose(ofp);
+
+	img = sav_img;
+	alt7 = &img[256*256*8];
+	ofp = fopen("gg.bin","w");
+	fwrite(alt1, sizeof(int), w*h, ofp);
+	fclose(ofp);
+	
+	ofp = fopen("bb.bin","w");
+	fwrite(alt8, sizeof(int), w*h, ofp);
+	fclose(ofp);
+
 	ofp = fopen("yy.bin","w");
 	fwrite(img, sizeof(int), w*w, ofp);
 	fclose(ofp);
 	
-	img = sav_img;	
-	alt = &img[256*256];
-	alt1 = &img[256*256*2];
-	alt2 = &img[256*256*3];
-	alt3 = &img[256*256*4];
-	alt4 = &img[256*256*5];
-
-	yuv(w, alt, alt2, alt3, alt4, img);
-
+	
+	
 	img = sav_img;
 	alt3 = &img[256*256*4];
 	ofp = fopen("u.bin","w");
@@ -113,33 +146,52 @@ int main(void) {
 
 	img = sav_img;
 	alt4 = &img[256*256*5];
+	alt5 = &img[256*256*6];
+	
 	ofp = fopen("v.bin","w");
 	fwrite(alt4, sizeof(int), w*h, ofp);
 	fclose(ofp);	 	  
 
+	img = sav_img;
+	alt3 = &img[256*256*4];
 	alt5 = &img[256*256*6];
 	lifting(w,alt3,alt5);
 
 	ofp = fopen("udwt.bin","w");
 	fwrite(alt3, sizeof(int), w*h, ofp);
 	fclose(ofp);
-
+	
+	img = sav_img;
+	alt2 = &img[256*256*3];
+	alt5 = &img[256*256*6];
 	lifting(w,alt2,alt5);
-
+	
+	img = sav_img;
+	alt2 = &img[256*256*3];
+	alt5 = &img[256*256*6];
 	ofp = fopen("bdwt.bin","w");
 	fwrite(alt2, sizeof(int), w*h, ofp);
 	fclose(ofp);
 
+	img = sav_img;
+	alt4 = &img[256*256*5];
+	alt5 = &img[256*256*6];
 	lifting(w,alt4,alt5);
 
 	ofp = fopen("vdwt.bin","w");
 	fwrite(alt4, sizeof(int), w*h, ofp);
 	fclose(ofp);
 
-	lifting(w,alt,alt5);
+	img = sav_img;
+	//alt = &img[256*256];
+	alt5 = &img[256*256*6];
+	lifting(w,img,alt5);
 
-	ofp = fopen("rdwt.bin","w");
-	fwrite(alt, sizeof(int), w*h, ofp);
+	ofp = fopen("ydwt.bin","w");
+	fwrite(img, sizeof(int), w*h, ofp);
 	fclose(ofp);
+	
+	
+		
 	free (img);	
 }
