@@ -7,9 +7,7 @@ typedef int int32;
 #include <stdint.h>
 #include <assert.h>
 #endif
-typedef struct {
-    int w, *y, *u, *v, *r, *g, *b;
-} YUVARGS;
+ 
 
 /*
 computes u  v using y.  b. and  r
@@ -17,18 +15,18 @@ y = (r + (g * 2) + b) >> 2;
 u = b - g;
 v = r - g;
 */
-void yuv(YUVARGS *ya) {
+void yuv(int w,int *r,int *g,int *b,int *u,int *v,int *y) {
 	int idx, lidx;
 	int *aa, *aa1, *aa2, *aa3, *aa4, *im;
 	
-	aa = ya->r;
-	aa1 = ya->g;
-	aa2 = ya->b;
-	aa3 = ya->u;
-	aa4 = ya->v;
-	im = ya->y;
+	aa = r;
+	aa1 = g;
+	aa2 = b;
+	aa3 = u;
+	aa4 = v;
+	im = y;
 	
-	lidx = ya->w * ya->w;
+	lidx = w * w;
 	
 	for(idx=0; idx<lidx; idx++) {
 
@@ -54,18 +52,18 @@ g = y - ((u + v) >> 2);
 r = v + g;
 b = u + g;
 */
-void invyuv(YUVARGS *ya) {
+void invyuv(int w,int *r,int *g,int *b,int *u,int *v,int *y) {
 	int idx, lidx;
 	int *aa, *aa1, *aa2, *aa3, *aa4, *im;
 	
-	aa = ya->r;
-	aa1 = ya->g;
-	aa2 = ya->b;
-	aa3 = ya->u;
-	aa4 = ya->v;
-	im = ya->y;
+	aa = r;
+	aa1 =g;
+	aa2 = b;
+	aa3 = u;
+	aa4 = v;
+	im = y;
 	
-	lidx = ya->w * ya->w;
+	lidx = w * w;
 	
 	for(idx=0; idx<lidx; idx++) {
 		

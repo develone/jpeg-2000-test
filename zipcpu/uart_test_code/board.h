@@ -33,17 +33,15 @@ static IOSPACE	* const sys = (IOSPACE *)0x0100;
 typedef	struct	{
 	volatile unsigned	sd_ctrl, sd_data, sd_fifo[2];
 } SDCARD;
-typedef struct {
-    int w, *y, *u, *v, *r, *g, *b;
-} YUVARGS;
+
 static SDCARD	* const sd = (SDCARD *)0x0120;
  
 void zip_read_image(int *img1, int *img2, int *img3);
 void zip_clear_sdram(int *imbuf);
 void rd_dwt_wr(void);
 void zip_write(int *imbuf);
-void yuv(YUVARGS *ya);
-void invyuv(YUVARGS *ya); 
+void yuv(int w,int *r,int *g,int *b,int *u,int *v,int *y);
+void invyuv(int w,int *r,int *g,int *b,int *u,int *v,int *y); 
 //void free (void * ptr);
 #define	SDRAM	(void *)0x800000
 #define	FLASH	(void *)0x040000

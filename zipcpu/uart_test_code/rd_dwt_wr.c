@@ -75,7 +75,7 @@ void rd_dwt_wr(void) {
 	else sets wptr, wptr1, and wptr2 to r g b
 	*/ 
 	if(flgyuv[0] == 0) {
-		YUVARGS ya;
+	
 		wptr = buf_r;
 		wptr1 =  buf_g;
 		wptr2 = buf_b;
@@ -83,14 +83,8 @@ void rd_dwt_wr(void) {
 		
 		u = &y[w*h];
 		v = &y[w*h*2];
-		ya.w= w;
-		ya.y = y;
-		ya.u = u;
-		ya.v = v;
-		ya.r = buf_r;
-		ya.g = buf_g;
-		ya.b = buf_b;	
-		yuv(&ya);
+ 	
+		yuv(w,wptr,wptr1,wptr2,u,v,y);
 		wptr = y;
 		wptr1 =  u;
 		wptr2 = v;
