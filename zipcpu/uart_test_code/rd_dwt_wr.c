@@ -34,7 +34,7 @@ void rd_dwt_wr(void) {
 	int *buf_b_used = (int *)0x8efff4;
 	int *clocks_used = (int *)0x8efff5;
 	int *fwd_inv = (int *)0x8efff6;
- 
+	int *flgyuv = (int *)0x8efff7;
 
  
 	int w,h;
@@ -63,34 +63,45 @@ void rd_dwt_wr(void) {
 	zip_read_image(wptr, wptr1, wptr2);
 	
 	sys->io_gpio = LED_OFF|XULA_BUSY;
-	YUVARGS ya;
-	wptr = buf_r;
-	wptr1 =  buf_g;
-	wptr2 = buf_b;
- 
-		
-	u = &y[w*h];
-	v = &y[w*h*2];
-	ya.w= w;
-	ya.y = y;
-	ya.u = u;
-	ya.v = v;
-	ya.r = buf_r;
-	ya.g = buf_g;
-	ya.b = buf_b;	
-	yuv(&ya);
- 	
 	sys->io_bustimer = 0x7fffffff;
 	/*
-	wptr = buf_r;
-	wptr1 = buf_g;
-	wptr2 = buf_b;
-	*/
+	y u v reduced the range of dwt lift values
+	flgyuv is set with either
+	wbregs 0x8efff7 0 y u v
+	wbregs 0x8efff7 1 r g b
+	if flgyuv is equal to zero y u v is computed
+	from r g b
+	sets the wptr, wptr1, and wptr2 y u v
+	else sets wptr, wptr1, and wptr2 to r g b
+	*/ 
+	if(flgyuv[0] == 0) {
+		YUVARGS ya;
+		wptr = buf_r;
+		wptr1 =  buf_g;
+		wptr2 = buf_b;
+ 
+		
+		u = &y[w*h];
+		v = &y[w*h*2];
+		ya.w= w;
+		ya.y = y;
+		ya.u = u;
+		ya.v = v;
+		ya.r = buf_r;
+		ya.g = buf_g;
+		ya.b = buf_b;	
+		yuv(&ya);
+		wptr = y;
+		wptr1 =  u;
+		wptr2 = v;
+	}
+ 	else {	
+		wptr = buf_r;
+		wptr1 = buf_g;
+		wptr2 = buf_b;
 	
-	wptr = y;
-	wptr1 =  u;
-	wptr2 = v;
-	
+	}
+ 	
  	
 	alt = &buf_r[256*256];
 	lifting(w,wptr,alt,fwd_inv);
@@ -103,17 +114,25 @@ void rd_dwt_wr(void) {
 	lifting(w,wptr2,alt2,fwd_inv);
 	
 	*clocks_used = 0x7fffffff-sys->io_bustimer;
-	
 	/*
-	wptr = buf_r;
-	wptr1 = buf_g;
-	wptr2 = buf_b;
-	*/
-	
-	wptr = y;
-	wptr1 =  u;
-	wptr2 = v;
-	
+	y u v reduces the range of dwt lift values
+	flgyuv is set with either
+	wbregs 0x8efff7 0 y u v
+	wbregs 0x8efff7 1 r g b
+	if flgyuv is equal to zero 
+	sets the wptr, wptr1, and wptr2 to y u v
+	else sets wptr, wptr1, and wptr2 to r g b
+	*/	
+	if(flgyuv[0] == 0) {
+		wptr = y;
+		wptr1 =  u;
+		wptr2 = v;
+	}	
+	else {	
+		wptr = buf_r;
+		wptr1 = buf_g;
+		wptr2 = buf_b;
+	}	
 	
 	zip_write(wptr);
 	zip_write(wptr1);
