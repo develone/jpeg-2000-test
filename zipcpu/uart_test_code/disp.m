@@ -7,7 +7,7 @@ fid = fopen('b_dwt_zip.bin','r'); im2 = fread(fid, [256,inf], 'int32'); fclose(f
 %fid = fopen('img.bin','r'); im4 = fread(fid, [256,inf], 'int32'); fclose(fid);
 figure
 imagesc(im)
-title("Red subband 3 levels dwt ZipCpu")
+title("Y subband 3 levels dwt ZipCpu")
 colorbar
 figure
 imagesc(im1)

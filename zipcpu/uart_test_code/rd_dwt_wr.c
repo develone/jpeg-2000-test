@@ -1,4 +1,5 @@
 #include "board.h"
+#include "lifting.h"
 
 #ifdef __ZIPCPU__
 void *malloc(int sz);
@@ -9,17 +10,19 @@ typedef int int32;
 #include <stdlib.h>
 #include <stdint.h>
 #endif
+ 
+
 void rd_dwt_wr(void) {
 	const int LED_ON = 0x20002;
 	const int LED_OFF = 0x20000;
 	const int READY_FOR_XMIT = 0x40004000;
 	const int XULA_BUSY = 0x40000000;
     
- 
+	//struct images im;
 	int *buf_r;
 	int *buf_g;
 	int *buf_b;
-	int *buf_yuv;
+	int *y;
 	int *wptr,*wptr1,*wptr2;
 	int *alt,*alt1,*alt2,*u,*v;
 	//the contents of the buf_r_used
@@ -31,11 +34,7 @@ void rd_dwt_wr(void) {
 	int *buf_b_used = (int *)0x8efff4;
 	int *clocks_used = (int *)0x8efff5;
 	int *fwd_inv = (int *)0x8efff6;
-	///int *buf_dwt_used = (int *)0x89fff7; 
-	//int *wptr_used = (int *)0x89fff6;
-	 
  
-	//int *buf_dwt = (int *)0x800000;
 
  
 	int w,h;
@@ -44,77 +43,77 @@ void rd_dwt_wr(void) {
 	h = 256;
 
 	//pointers to r g b & yuv
-	//y' u v
-	buf_yuv = malloc(sizeof(int)*(w*h)*3);
+	
+	y = malloc(sizeof(int)*(w*h)*3);
 	buf_r = malloc(sizeof(int)*(w*h)*2);
 	buf_g = malloc(sizeof(int)*(w*h)*2);
 	buf_b = malloc(sizeof(int)*(w*h)*2);
 
-	//pointer to un-packed r g b
-	//saved at pointer
-	//buf_yuv_used 0x8efff1 
-	//buf_r_used 0x8efff2
-	//buf_g_used 0x8efff3
-	//buf_b_used 0x8efff4
-	*buf_yuv_used = buf_yuv;
-	*buf_r_used = buf_r;
-	*buf_g_used = buf_g;
-	*buf_b_used = buf_b;
-	//*buf_dwt_used = (int *)buf_dwt;	
+ 
+	*buf_yuv_used = (int )y;
+	*buf_r_used = (int) buf_r;
+	*buf_g_used = (int) buf_g;
+	*buf_b_used = (int) buf_b;
+ 	
 
 	wptr = buf_r;
 	wptr1 =  buf_g;
 	wptr2 = buf_b;
 	sys -> io_gpio = LED_ON|READY_FOR_XMIT ;
 	zip_read_image(wptr, wptr1, wptr2);
-	sys->io_gpio = LED_OFF|XULA_BUSY; 
-	yprime(w,buf_r,buf_g,buf_b,buf_yuv);
-	u = &buf_yuv[w*h];
-	v = &buf_yuv[w*h*2];
-	yuv(w,buf_r,buf_b,u,v,buf_yuv);
-
-
 	
-	//*wptr_used = wptr; 
-	
-	/*
-	wptr = buf_r;//*buf_r_used;
-	zip_write(wptr);
-	wptr = buf_g;//*buf_g_used;
-	zip_write(wptr);
-	wptr = buf_b;//*buf_b_used;
-	zip_write(wptr);
-	*/
-	 
-	
-	sys->io_bustimer = 0x7fffffff;
+	sys->io_gpio = LED_OFF|XULA_BUSY;
+	YUVARGS ya;
 	wptr = buf_r;
+	wptr1 =  buf_g;
+	wptr2 = buf_b;
+ 
+		
+	u = &y[w*h];
+	v = &y[w*h*2];
+	ya.w= w;
+	ya.y = y;
+	ya.u = u;
+	ya.v = v;
+	ya.r = buf_r;
+	ya.g = buf_g;
+	ya.b = buf_b;	
+	yuv(&ya);
+ 	
+	sys->io_bustimer = 0x7fffffff;
+	/*
+	wptr = buf_r;
+	wptr1 = buf_g;
+	wptr2 = buf_b;
+	*/
+	
+	wptr = y;
 	wptr1 =  u;
 	wptr2 = v;
+	
+ 	
 	alt = &buf_r[256*256];
 	lifting(w,wptr,alt,fwd_inv);
- 
-	//wptr = buf_r;
-	//zip_write(wptr);
-	wptr1 = u;
+	
 	alt1 = &buf_g[256*256];
 	lifting(w,wptr1,alt1,fwd_inv);
-	//wptr = buf_g;
-	//zip_write(wptr);
 	
-	wptr2 = v;
+
 	alt2 = &buf_b[256*256];
 	lifting(w,wptr2,alt2,fwd_inv);
-	//wptr = buf_b;
-	//zip_write(wptr);	
+	
 	*clocks_used = 0x7fffffff-sys->io_bustimer;
 	
-	//transfer image to RPi2B
-	//buf_r = *buf_r_used;
-	//buf_b = *buf_b_used;
+	/*
 	wptr = buf_r;
+	wptr1 = buf_g;
+	wptr2 = buf_b;
+	*/
+	
+	wptr = y;
 	wptr1 =  u;
 	wptr2 = v;
+	
 	
 	zip_write(wptr);
 	zip_write(wptr1);
@@ -124,7 +123,7 @@ void rd_dwt_wr(void) {
 	free(buf_r);
 	free(buf_g);
 	free(buf_b);
-	free(yuv);
+	free(y);
 }
 
 void zip_write(int *imbuf) {

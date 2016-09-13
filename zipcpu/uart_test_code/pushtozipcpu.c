@@ -7,8 +7,10 @@ const int LED_SW_OFF = 0x10000;
 int i, ch;
 i = 0;
 ch = 0;
-
-
+int *r,*g,*b;
+r = img1;
+g = img2;
+b = img3;
 
 
 // Set a timer to abort in case things go bad
@@ -38,7 +40,8 @@ ch = sys->io_uart_rx;
 // address.  This packing will allow us to do vector operations
 // on the pixels later, so that we can do all three colors at
 // once.
-*img1++ = ch;
+r[0] = ch;
+r+=1;
 
 // Read green
 do {
@@ -47,7 +50,8 @@ do {
 // here after only one time through.
 ch = sys->io_uart_rx;
 } while(((ch&0x0100)!=0) );
-*img2++ = ch;
+g[0] = ch;
+g+=1;
 
 // Read blue
 do {
@@ -57,8 +61,8 @@ ch = sys->io_uart_rx;
 
 // Pack our final pixel value into this word, and write it to
 // memory.
-*img3++ = ch;
-
+b[0] = ch;
+b+=1;
  
 sys->io_gpio = LED_SW_OFF;
 if (sys->io_pic & INT_TIMER) {
