@@ -118,6 +118,7 @@ void rd_dwt_wr(void) {
 	else sets wptr, wptr1, and wptr2 to r g b
 	*/	
 	if(flgyuv[0] == 0) {
+		packyuv(w,y,u,v,buf_r);
 		wptr = y;
 		wptr1 =  u;
 		wptr2 = v;
