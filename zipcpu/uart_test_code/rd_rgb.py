@@ -37,6 +37,7 @@ print len(reply)
 file = open("r_dwt_zip.bin", "wb")
 file.write(reply)
 file.close()
+"""
 start_time = time.time()
 reply=[]
 print "waiting for Data rdy     !"
@@ -57,3 +58,4 @@ print len(reply)
 file = open("b_dwt_zip.bin", "wb")
 file.write(reply)
 file.close()
+"""

@@ -118,7 +118,7 @@ void rd_dwt_wr(void) {
 	else sets wptr, wptr1, and wptr2 to r g b
 	*/	
 	if(flgyuv[0] == 0) {
-		packyuv(w,y,u,v,buf_r);
+		//packyuv(w,y,u,v,buf_r);
 		wptr = y;
 		wptr1 =  u;
 		wptr2 = v;
@@ -129,11 +129,13 @@ void rd_dwt_wr(void) {
 		wptr2 = buf_b;
 	}	
 	
-	zip_write(wptr);
-	zip_write(wptr1);
-	zip_write(wptr2);  
-    
-
+	//zip_write(wptr);
+	//zip_write(wptr1);
+	//zip_write(wptr2);  
+	if(flgyuv[0] == 0) {
+		packyuv(w,y,u,v,buf_r);    
+	}
+	zip_write(buf_r);
 	free(buf_r);
 	free(buf_g);
 	free(buf_b);

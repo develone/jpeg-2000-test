@@ -41,7 +41,8 @@ void zip_clear_sdram(int *imbuf);
 void rd_dwt_wr(void);
 void zip_write(int *imbuf);
 void yuv(int w,int *r,int *g,int *b,int *u,int *v,int *y);
-void invyuv(int w,int *r,int *g,int *b,int *u,int *v,int *y); 
+void invyuv(int w,int *r,int *g,int *b,int *u,int *v,int *y);
+void packyuv(int w,int *y,int *u,int *v,int *pck); 
 //void free (void * ptr);
 #define	SDRAM	(void *)0x800000
 #define	FLASH	(void *)0x040000
