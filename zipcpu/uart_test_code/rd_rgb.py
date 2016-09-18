@@ -34,7 +34,7 @@ reply = ser.read(262144)
 end_time = time.time()
 print "transfer time", end_time-start_time, "sec"
 print len(reply) 
-file = open("r_dwt_zip.bin", "wb")
+file = open("pck.bin", "wb")
 file.write(reply)
 file.close()
 """
