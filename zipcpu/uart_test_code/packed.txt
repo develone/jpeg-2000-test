@@ -1,0 +1,77 @@
+sudo pigpiod
+shell 1
+cd jpeg-2000-test/zipcpu/uart_test_code
+. setzipcpuPath.sh
+
+shell 2
+cd jpeg-2000-test/zipcpu/uart_test_code
+. setzipcpuPath.sh
+
+shell 3
+cd jpeg-2000-test/zipcpu/uart_test_code
+. setzipcpuPath.sh
+
+wbregs 0x8efff6 1
+wbregs 0x8efff7 0
+gcc -c pack.c -o pack.o
+gcc rd_pack.c pack.o -o rd_pack
+
+pi@raspberrypi2-146:~/jpeg-2000-test/zipcpu/uart_test_code $ make clean
+rm -rf obj-zip/ h2
+pi@raspberrypi2-146:~/jpeg-2000-test/zipcpu/uart_test_code $ make 
+zip-gcc -O3 -Wall -Wextra -nostdlib -fno-builtin -c h2.c -o obj-zip/h2.o
+zip-gcc -O3 -Wall -Wextra -nostdlib -fno-builtin -c pushtozipcpu.c -o obj-zip/pushtozipcpu.o
+zip-gcc -O3 -Wall -Wextra -nostdlib -fno-builtin -c clr_sdram.c -o obj-zip/clr_sdram.o
+zip-gcc -O3 -Wall -Wextra -nostdlib -fno-builtin -c my_malloc.c -o obj-zip/my_malloc.o
+my_malloc.c: In function 'free':
+my_malloc.c:33:19: warning: unused parameter 'ptr' [-Wunused-parameter]
+ void free (void * ptr ) {}
+                   ^
+zip-gcc -O3 -Wall -Wextra -nostdlib -fno-builtin -c lifting.c -o obj-zip/lifting.o
+lifting.c: In function 'ilift':
+lifting.c:168:14: warning: 'b' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   c = e + ((b+d)>>1);
+              ^
+zip-gcc -O3 -Wall -Wextra -nostdlib -fno-builtin -c yuv.c -o obj-zip/yuv.o
+zip-gcc -O3 -Wall -Wextra -nostdlib -fno-builtin -c rd_dwt_wr.c -o obj-zip/rd_dwt_wr.o
+rd_dwt_wr.c: In function 'zip_write':
+rd_dwt_wr.c:205:1: warning: value computed is not used [-Wunused-value]
+ *imbuf++ ;
+ ^
+rd_dwt_wr.c: In function 'rd_dwt_wr':
+rd_dwt_wr.c:136:3: warning: 'v' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   packyuv(w,y,u,v,buf_r);    
+   ^
+rd_dwt_wr.c:136:3: warning: 'u' may be used uninitialized in this function [-Wmaybe-uninitialized]
+zip-gcc -O3 -Wall -Wextra -nostdlib -fno-builtin -c pack.c -o obj-zip/pack.o
+zip-gcc -T xula.ld -Wl,-Map,obj-zip/h2.map obj-zip/h2.o obj-zip/pushtozipcpu.o obj-zip/clr_sdram.o obj-zip/my_malloc.o obj-zip/lifting.o obj-zip/yuv.o obj-zip/rd_dwt_wr.o obj-zip/pack.o -o h2
+pi@raspberrypi2-146:~/jpeg-2000-test/zipcpu/uart_test_code $ ./ldfpga 
+Success: Bitstream in /home/pi/toplevel.bit downloaded to FPGA on XuLA2-LX9!
+pi@raspberrypi2-146:~/jpeg-2000-test/zipcpu/uart_test_code $ ./stzipcpu.sh 
+Halting the CPU
+Loading memory
+00002000 - 0000237f
+0000237f - 00002380
+Clearing the cache
+The CPU should be fully loaded, you may now start
+it.  To start the CPU, type wbregs cpu 0
+signal from zipcpu 0
+waiting for hello, world!
+signal from zipcpu 1
+sending data
+1+0 records in
+1+0 records out
+196608 bytes (197 kB) copied, 1.96289 s, 100 kB/s
+transfer time 1.97604608536 sec
+waiting for Data rdy     !
+transfer time 3.05727601051 sec
+262144
+
+cp r_dwt_zip.bin pck.bin
+
+./rd_pack
+
+octave:1> clear
+octave:2> load upck.m 
+octave:3> upck
+
