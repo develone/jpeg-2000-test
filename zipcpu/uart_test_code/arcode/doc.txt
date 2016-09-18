@@ -1,0 +1,373 @@
+
+Arithmetic Code Discussion and Implementation
+by Michael Dipperstein
+
+The insanity continues. After playing with Huffman coding and LZSS, I had to give arithmetic coding a try. It wasn't enough to understand how it worked I had to actually implement it.
+
+I've read about what this stuff did to Ross Williams. I can only hope that I'm not going to be subjected to a similar fate.
+
+As with my other compression implementations, my intent is to publish an easy to follow ANSI C implementation of the arithmetic coding algorithm. Anyone familiar with ANSI C and the arithmetic coding algorithm should be able to follow and learn from my implementation. There's a lot of room for improvement of compression ratios, speed, and memory usage, but this project is about learning and sharing, not perfection.
+
+Recently (since 2008 or so) I've been using Python when I've needed quick hacks to do something on a PC (vs an embedded system). I eventually wrote a bitfile library for Python, then I realized that I needed a to write some code that actually uses the library, so now there's a Python implementation too.
+
+Click here for information on downloading my source code.
+
+The rest of this page discusses arithmetic coding and the results of my efforts so far.
+Algorithm Overview
+
+Arithmetic coding is similar to Huffman coding; they both achieve their compression by reducing the average number of bits required to represent a symbol.
+
+Given:
+An alphabet with symbols S0, S1, ... Sn, where each symbol has a probability of occurrence of p0, p1, ... pn such that ∑pi = 1.
+
+From the fundamental theorem of information theory, it can be shown that the optimal coding for Si requires -(pi×log2(pi)) bits.
+
+More often than not, the optimal number of bits is fractional. Unlike Huffman coding, arithmetic coding provides the ability to represent symbols with fractional bits.
+
+Since, ∑pi = 1, we can represent each probability, pi, as a unique non-overlapping range of values between 0 and 1. There's no magic in this, we're just creating ranges on a probability line.
+
+For example, suppose we have an alphabet 'a', 'b', 'c', 'd', and 'e' with probabilities of occurrence of 30%, 15%, 25%, 10%, and 20%. We can choose the following range assignments to each symbol based on its probability:
+TABLE 1. Sample Symbol Ranges Symbol 	Probability 	Range
+a 	30% 	[0.00, 0.30)
+b 	15% 	[0.30, 0.45)
+c 	25% 	[0.45, 0.70)
+d 	10% 	[0.70, 0.80)
+e 	20% 	[0.80, 1.00)
+
+Where square brackets '[' and ']' mean the adjacent number is included and parenthesis '(' and ')' mean the adjacent number is excluded.
+
+Ranges assignments like the ones in this table can then be use for encoding and decoding strings of symbols in the alphabet. Algorithms using ranges for coding are often referred to as range coders.
+Encoding Strings
+
+By assigning each symbol its own unique probability range, it's possible to encode a single symbol by its range. Using this approach, we could encode a string as a series of probability ranges, but that doesn't compress anything. Instead additional symbols may be encoded by restricting the current probability range by the range of a new symbol being encoded. The pseudo code below illustrates how additional symbols may be added to an encoded string by restricting the string's range bounds.
+lower bound = 0
+upper bound = 1
+
+while there are still symbols to encode
+current range = upper bound - lower bound
+upper bound = lower bound + (current range × upper bound of new symbol)
+lower bound = lower bound + (current range × lower bound of new symbol)
+end while
+
+Any value between the computed lower and upper probability bounds now encodes the input string.
+
+Example:
+Encode the string "ace" using the probability ranges from Table 1.
+
+Start with lower and upper probability bounds of 0 and 1.
+
+Encode 'a'
+current range = 1 - 0 = 1
+upper bound = 0 + (1 × 0.3) = 0.3
+lower bound = 0 + (1 × 0.0) = 0.0
+
+Encode 'c'
+current range = 0.3 - 0.0 = 0.3
+upper bound = 0.0 + (0.3 × 0.70) = 0.210
+lower bound = 0.0 + (0.3 × 0.45) = 0.135
+
+Encode 'e'
+current range = 0.210 - 0.135 = 0.075
+upper bound = 0.135 + (0.075 × 1.00) = 0.210
+lower bound = 0.135 + (0.075 × 0.80) = 0.195
+
+The string "ace" may be encoded by any value within the probability range [0.195, 0.210).
+
+It should become apparent from the example that precision requirements increase as additional symbols are encoded. Strings of unlimited length require infinite precision probability range bounds. The section on implementation discusses how the need for infinite precision is handled.
+Decoding Strings
+
+The decoding process must start with a an encoded value representing a string. By definition, the encoded value lies within the lower and upper probability range bounds of the string it represents. Since the encoding process keeps restricting ranges (without shifting), the initial value also falls within the range of the first encoded symbol. Successive encoded symbols may be identified by removing the scaling applied by the known symbol. To do this, subtract out the lower probability range bound of the known symbol, and multiply by the size of the symbols' range.
+
+Based on the discussion above, decoding a value may be performed following the steps in the pseudo code below:
+encoded value = encoded input
+
+while string is not fully decoded
+identify the symbol containing encoded value within its range
+
+//remove effects of symbol from encoded value
+current range = upper bound of new symbol - lower bound of new symbol
+encoded value = (encoded value - lower bound of new symbol) ÷ current range
+end while
+
+Example:
+Using the probability ranges from Table 1 decode the three character string encoded as 0.20.
+
+Decode first symbol
+0.20 is within [0.00, 0.30)
+0.20 encodes 'a'
+
+Remove effects of 'a' from encode value
+current range = 0.30 - 0.00 = 0.30
+encoded value = (0.20 - 0.0) ÷ 0.30 = 0.67 (rounded)
+
+Decode second symbol
+0.67 is within [0.45, 0.70)
+0.67 encodes 'c'
+
+Remove effects of 'c' from encode value
+current range = 0.70 - 0.45 = 0.35
+encoded value = (0.67 - 0.45) ÷ 0.35 = 0.88
+
+Decode third symbol
+0.88 is within [0.80, 1.00)
+0.88 encodes 'e'
+
+The encoded string is "ace".
+In case you were sleeping, this is the string that was encoded in the encoding example.
+
+There are two issues I've glossed over with this example: knowing when to stop, and the required computational precision. The section on implementation addresses both of these issues.
+Implementation
+
+This section discusses some of the issues of implementing an arithmetic encoder/decoder and the approach that I took to handle those issues. As I have already stated, my implementation is intended to be easy to develop and follow, not necessarily optimal.
+What is a Symbol
+
+One of the first questions that needs to be resolved before you start is "What is a symbol?". For my implementation a symbol is any 8 bit combination as well as an End Of File (EOF) marker. This means that there are 257 possible symbols in any encoded stream.
+Infinite Precision
+
+In my algorithm overview I noted that the lower and upper probability range bounds as well as the encoded value theoretically require infinite precision values on the range [0, 1). The method chosen to handle this largely impacts the rest of the implementation. Not wanting to blaze new trials, I chose to use the common solution. Values on the probability range scale will be represented as infinite length fixed point values, with the binary point before the most significant bit.
+
+Example:
+.00000... = 0
+.10000... = 1/2
+.01000... = 1/4
+.11000... = 3/4
+.11111... = 1
+Wow Infinity. That's a Lot of Bits.
+
+Fortunately for us, we don't need to operate on all the bits at once. As additional symbols are encoded, the lower and upper range bounds converge. As the bounds converge, their most significant bits stop changing. By choosing the precision of each symbol's range bounds, we can also limit the amount of bits required for each computation.
+
+As you read through this section, you will learn how it is possible to achieve good compression results using 16 bit computations.
+Computing Probability Ranges
+
+I've implemented both static and adaptive order-0 probability models. The my static model computes probability ranges based on symbols counts obtained by making a pass on the input prior to starting the encoding. Others may use a predetermined set of ranges. My adaptive model assumes a uniform distribution and updates itself as new symbols are processed.
+
+For my static model, the first step to computing probability ranges for each symbol is to simply count occurrences of each symbol, as well as the total numbers of symbols.
+
+The next step is to scale all of the symbol counts so that they can be used in N bit computations. To do this symbol counts must be scaled to use no more than N - 2 bits. In the case of 16 bit computations, counts must be 14 bits or less. You'll see why in the next section.
+
+Use the following steps to scale the counts to be used with N bit integer math:
+Step 1. Divide the total symbol count by 2(N - 2)
+Step 2. Using integer division, divide each individual symbol count by the ceiling of the result of Step 1.
+Step 3. If a non-zero count became zero, make it one.
+
+Now we have a scaled count for each symbol. We need to convert the scaled counts to range bounds on a probability line. For an alphabet with symbols S0, S1, ... Sn and scaled counts c0, c1, ... cn, we can define ranges as follows:
+TABLE 2. Scaled Symbol Ranges Symbol 	Range
+S0 	[0, c0)
+S1 	[upper range of S0, upper range of S0 + c1)
+S2 	[upper range of S1, upper range of S1 + c2)
+.
+.
+. 	.
+.
+.
+Sn 	[upper range of Sn - 1, upper range of Sn - 1 + cn)
+
+For my adaptive model we start with scaled symbols, but the N - 2 bit restriction still applies. It's possible to add the effect of a new symbol that would make the symbol count too large to be represented by N - 2 bits (see Adaptive Model and Symbol Range Updates). When this happens, I just rescale the current model for half the symbol count.
+
+Use the following steps to scale an adaptive model to be used with N bit use integer math:
+Step 1. Determine the probability range for each symbol in the model.
+Step 2. Halve each of the ranges from Step 1.
+Step 3. The new range for symbol Si [upper bound of symbol Si - 1, upper bound of symbol Si - 1 + range from step 2).
+NOTE: The upper bound of symbol S-1 = 0
+Encoding with Scaled Ranges
+
+The standard form of arithmetic coding's encoding is based on fractional ranges on a probability line between 0 and 1. We just assigned our symbols probability ranges on a probability line between 0 and ∑ci (The total symbol count rescaled). The encoding algorithm needs to be adapted for our new range scale.
+
+The following pseudo code modifies the standard form of the encoding algorithm for a range scale of [0, ∑ci):
+lower bound = 0
+upper bound = ∑ci
+
+while there are still symbols to encode
+current range = upper bound - lower bound + 1
+upper bound = lower bound + ((current range × upper bound of new symbol) ÷ ∑ci) - 1
+lower bound = lower bound + (current range × lower bound of new symbol) ÷ ∑ci
+end while
+
+There are a few important things to know about this algorithm:
+
+    Notice that 1 is added to the computed current range. This is because the range is [lower bound, upper bound), including all values up to upper bound + 1.
+    The current range must be able to be stored in a value of N bits ((max upper bound - min lower bound + 1) < 2N).
+    Computing the new upper and lower bounds require that the multiplication precede the division to avoid loss of precision.
+    ∑ci must be less than 2(N - 2) when using N bits. This keeps (current range ÷ ∑ci) ≥ 2. Which in turn keeps the upper and lower bounds from crossing. 
+
+Decoding with Scaled Ranges
+
+The standard form of arithmetic coding's decoding is also based on fractional ranges on a probability line between 0 and 1. Like encoding, we have to rescale our calculations for the decoding process.
+
+The following pseudo code modifies the standard form of the decoding algorithm for a range scale of [0, ∑ci):
+encoded value = encoded input
+lower bound = 0
+upper bound = ∑ci
+
+while string is not fully decoded
+// remove scaling
+current range = upper bound - lower bound + 1
+encoded value = (encoded value - lower bound) + 1;
+encoded value = (encoded value × ∑ci) ÷ current range
+end while
+Limiting Computations to N Bits
+
+We have a way of representing floating point values as an infinite stream of bits, we have a way of scaling our probability ranges to N - 2 bits, and we can encode and decode using the scaled values. This still doesn't get us to a finite number of bits. There are a few facts that we can use to develop a solution that limits computations to N bits:
+
+    The lower bound starts as an infinite stream of bits set to 0.
+    The upper bound starts as an infinite stream of bits set to 1.
+    The upper and lower bounds become closer as more symbols are encoded.
+    By restricting symbol probability ranges to N - 2 bits long, we can avoid impacting the bits beyond the Nth in any given step. 
+
+As the lower and upper probability range bounds start to converge, they are likely to reach a point where the have identical MSBs (most significant bits). Once the bounds have matching MSBs, the MSBs will remain matching for the rest of the encoding process. From that point on we don't need to worry about the MSBs anymore. Shift the MSB out to the encoded data stream, and shift in a 0 and a 1 for the LSBs of the lower and upper range limits respectively. Since we didn't perform an operation that affects bits beyond the Nth, we know the LSBs will be 0 and 1.
+
+Example:
+Lower Range Bound = 1011010111001101
+Upper Range Bound = 1101001001001100
+
+Shift out the MSB (1) and write it to the encoded output
+
+Lower Range Bound = 011010111001101?
+Upper Range Bound = 101001001001100?
+
+Shift in the new LSB
+
+Lower Range Bound = 0110101110011010
+Upper Range Bound = 1010010010011001
+Underflow
+
+Now that we have a rule for shifting bits through our N bit variables, We can do everything with N bit math. Well almost. It turns out there's one thing I overlooked. What happens when the lower and upper range bounds start to converge around 1/2 (0111.... and 1000...)? This condition is called an underflow condition. When an underflow condition occurs the MSBs of the range bounds will never match.
+
+The good news is that there's a fairly simple way to handle underflow. We can recognize that an underflow condition is pending when the two MSBs of the lower range bound are different from the two MSBs of the upper range bound. What we have to do in this situation is to remove the second bit from both range bounds, shift the other bits left, and remember that we had an underflow condition. We may still have an underflow condition so this process may need to be repeated. When we finally get an opportunity to shift out the MSB, follow it with the underflow bit(s) of the opposite value of the converged MSB.
+
+Example:
+Lower Range Bound = 0111010111001101
+Upper Range Bound = 1011001001001100
+
+This is an underflow condition remove the second MSB and shift all the bits over.
+
+Lower Range Bound = 0110101110011010
+Upper Range Bound = 1110010010011001
+
+Continue with encoding until MSBs match.
+
+Lower Range Bound = 1011010111001101
+Upper Range Bound = 1101001001001100
+
+Write out the MSB (1) and underflow bit (0), and shift in the new LSB.
+
+Lower Range Bound = 0110101110011010
+Upper Range Bound = 1010010010011001
+Stopping The Decoding Process
+
+In my decoding example I stated that a three symbol string should be decoded, but if you notice, there is still a coded value when we're done. We stopped decoding because the problem said to only decode three symbols.
+
+One of the methods for knowing when to stop the decoding process is to include a symbol count somewhere in the encoded file. The file header is an ideal place to store the symbol count.
+
+Another approach is to implement a "bijective" coder. The idea of a "bijective" implementation seems like more a hassle than a benefit. If you're interested in learning about "bijective" encoding/decoding refer to SCOTT's "one to one" compression discussion.
+
+I took the approach of encoding an EOF. The upside is that I don't need to include a total symbol count in my header. I don't even need to count EOFs, because there's only one. The downsides are that the EOF does take up space in the probability line, and encoding the EOF may also add extra bits to the encoded file.
+
+I performed a few tests comparing including a total symbol count in the file header against encoding the EOF. Encoding the EOF appeared to result in the better average compression ratios. My testing was far from scientific. If I get some time I will actually do a mathematical analysis of the two methods to determine when one method is better than the other.
+Stopping the Encoding Process
+
+Since I stop my encoding process after encoding the EOF it is at that point that I know the final probability range bounds. However, our probability range bounds have infinite precision and we need to write enough bits to be sure that the value we output falls within the range for the string we just encoded. Since the decoder also uses N bits, we just need to make sure it will have N bits to work with when it decodes the EOF. To do this, output the lower range bound's second MSB, all remaining underflow bits, plus an additional underflow bit.
+Static vs. Adaptive Models
+
+The arithmetic coding algorithm is well suited for both static and adaptive probability models. Encoders and decoders using adaptive probability models start with a fixed model and use a set of rules to adjust the model as symbols are encoded/decoded. Encoders and decoders that use static symbol probability models start with a model that doesn't change during the encoding process. Static probability models may be constant regardless of what is being encoded or they may be generated based on the encoded input.
+Static Model and File Headers
+
+My static probability model implementation uses a file header. Symbol probabilities are computed prior to the start of the encoding process and they are stored in a file header for the decoder to use at the start of the decoding process.
+
+The file header is section of data prior to the encoded output that includes scaled range counts for each encoded symbol (except the EOF whose count is always one). Since I've scaled my counts to all be 14 bit values, I cheat a little and just write 14 bit values to the encoded file. Handling the 14 bit values is only slightly more complicated than handling 16 bit values, and it makes the file 512 bits smaller.
+Adaptive Model and Symbol Range Updates
+
+In the section on Computing Probability Ranges I touched on the potential need to rescale adaptive probability ranges and how I did it. What I neglected to mention was why this happens and what it means.
+
+As its name would suggest, the adaptive model updates with the data stream. I chose to update my model after a symbol is encoded or decoded. After a symbol is encoded or decoded, it's upper bound and the bounds of every symbol after it must be incremented by one. On average that will be 128 updates per an encode/decode in a 256 symbol alphabet. Others have tried to reduce the number of updates required by placing the more common symbols near the end of the list of ranges. Laziness and the my inability to see a great performance benefit kept me from trying that approach.
+
+If adding a new symbol causes the total probability to exceed N - 2 bits, the probability ranges must be rescaled. One side effect of rescaling is that symbols encoded/decode after a rescale operation will have twice the weight of symbols encoded prior to the rescale (the weight of prior symbols is halved). I have a feeling that this may be beneficial more often than not, but it's not intended to be a feature of my implementation.
+C Library Code Interface
+Encoding Data
+ArEncodeFile
+
+Declaration:
+
+int ArEncodeFile(FILE *inFile, FILE *outFile, const model_t model);
+
+Description:
+
+This routine generates a list of arithmetic code ranges for an input file and then uses the ranges to write out an encoded version of that file.
+
+Parameters:
+
+inFile - The file stream to be encoded. It must be opened and it must also be rewindable if a static model is used. If NULL, stdin will be used.
+outFile - The file stream receiving the encoded results. It must be opened as binary. If NULL, stdout will be used.
+model - model_t type value indicating whether a static model or a dynamic model is to be used.
+
+Effects:
+
+inFile is arithmetically encoded and written to outFile. Neither file is closed after exit.
+
+Returned:
+
+0 for success, non-zero for failure. errno will be set in the event of a failure.
+Decoding Data
+ArDecodeFile
+
+Declaration:
+
+int ArDecodeFile(FILE *inFile, FILE *outFile, const model_t model);
+
+Description:
+
+This routine opens an arithmetically encoded file, reads it's header, and builds a list of probability ranges which it then uses to decode the rest of the file.
+
+Parameters:
+
+inFile - The file stream containing the encoded input. It must be opened as binary. If NULL, stdin will be used.
+outFile - The file stream receiving the decoded results. It must be opened as binary. If NULL, stdout will be used.
+model - model_t type value indicating whether a static model or a dynamic model is to be used.
+
+Effects:
+
+The arithmetically encoded file inFile is decoded and the results are written to outFile. Neither file is closed after exit.
+
+Returned:
+
+0 for success, non-zero for failure. errno will be set in the event of a failure.
+Portability
+
+All of the C source code that I have provided is written in strict ANSI C. I would expect it to build correctly on any machine with an ANSI C compiler. I have tested the code compiled with gcc on Linux and mingw on Windows XP.
+
+There are some compile time options that offer minimal speed-up when compiling code for a little endian target, but the little endian code is disabled by default.
+
+My C implementation assumes that long integers (long) are bigger than short integers (short), if this is not the case with your compiler, a compile time error should be issued.
+
+The C implementation is also incapable of handling files with greater than ULONG_MAX bytes to be encoded. The program will issue an error and gracefully terminate if the file being encoded is too large.
+
+The Python code was tested using Python 2.6 on Linux and Windows XP. It's possible that minor tweaks will be required to get the code to run properly using other versions of Python.
+Further Information
+
+I found Arturo Campos' and Mark Nelson's articles on arithmetic codeing to be a huge help. They provided most of the information that I used to implemenent the algorithm.
+
+An excellent paper on arithmetic coding was published by Eric Bodden, Malte Clasen, and Joachim Kneis after my initial publication of this web page. It is recommended reading for anybody interrested in arithmetic coding.
+
+Lazar Sumar also has some interesting thoughts on arithmetic coding that he discusses on his blog.
+Actual Software
+
+I am releasing my implementations of the arithmetic coding algorithm under the LGPL. All of my releases may be found on this site. As I add enhancements or fix bugs, I will post them here as newer versions. The larger the version number, the newer the version. I'm retaining the older versions for historical reasons. I recommend that most people download the newest version unless there is a compelling reason to do otherwise.
+
+Each version is contained in its own zipped archive which includes the source files and brief instructions for building an executable. None of the archives contain executable programs. A copy of the archives may be obtained by clicking on the links below.
+C Version 	Comment
+Version 0.6 	Upgrade to latest bit file and optlist libraries
+  	Written with tighter adherence to Michael Barr's Top 10 Bug-Killing Coding Standard Rules.
+Version 0.5 	Changed the API so that encode and decode routines accept opened file streams instead of file names.
+  	Eliminated all global variables.
+Version 0.4 	Replaces getopt with my optlist library.
+  	Explicitly license the library under LGPL version 3.
+Version 0.3 	Uses latest bit file library containing a fix for bug in a function not used by this library.
+Version 0.2 	Includes support for adaptive models.
+  	Uses latest bit file library for files.
+  	Decode uses binary search instead of sequential search to find symbols within a probability range.
+Version 0.1 	Only supports static model.
+  	 
+Python Version 	Comment
+Version 0.1 	Initial release. Functionally equivalent to C Version 0.4.
+
+If you have any further questions or comments, you may contact me by e-mail. My e-mail address is: mdipper@alumni.engr.ucsb.edu
