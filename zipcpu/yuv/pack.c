@@ -33,6 +33,39 @@ void packyuv(int w,int *y,int *u,int *v,int *pck) {
 	
 	 
 }
-
+void unpackyuv(int w,int *y,int *u,int *v,int *pck) {
+	int idx, lidx;
+	int *wy,*wu,*wv,*wpck;
+	const int uv = 0x3ff;
+	const int uu = 0xffc00;
+	const int yy = 0x2ff00000;
+	const int neg = 0x00000200;
+	const int fill = 0xffffff00;
+	wy = y;
+	wu = u;
+	wv = v;
+ 	wpck = pck;
+	lidx = w * w;
+ 
+	for(idx=0; idx<lidx; idx++) {
+		wy[0] = (wpck[0]&yy)>>20;
+		if ((wy[0]&neg) == 512) {
+			wy[0] = wy[0]|fill;
+		}
+		wu[0] = (wpck[0]&uu)>>10;
+		if ((wu[0]&neg) == 512) {
+			wu[0] = wu[0]|fill;
+		}
+		wv[0] = (wpck[0]&uv);
+		if ((wv[0]&neg) == 512) {
+			wv[0] = wv[0]|fill;
+		}
+				 		
+		wy+=1;
+		wu+=1;
+		wv+=1;
+		wpck+=1;
+	}	 
+}
 
  
