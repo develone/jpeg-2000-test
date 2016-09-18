@@ -67,8 +67,6 @@ waiting for Data rdy     !
 transfer time 3.05727601051 sec
 262144
 
-cp r_dwt_zip.bin pck.bin
-
 ./rd_pack
 
 octave:1> clear
