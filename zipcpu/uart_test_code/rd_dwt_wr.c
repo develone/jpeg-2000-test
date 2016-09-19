@@ -133,6 +133,7 @@ void rd_dwt_wr(void) {
 	//zip_write(wptr1);
 	//zip_write(wptr2);  
 	if(flgyuv[0] == 0) {
+		quantize(w,y,u,v);
 		packyuv(w,y,u,v,buf_r);    
 	}
 	zip_write(buf_r);
