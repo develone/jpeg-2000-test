@@ -7,7 +7,27 @@ typedef int int32;
 #include <stdint.h>
 #include <assert.h>
 #endif
-
+void quantize(int w,int *y,int *u,int *v) {
+	int idx, lidx;
+	int *wy,*wu,*wv;
+	
+	wy = y;
+	wu = u;
+	wv = v;
+ 	
+	lidx = w * w;
+	
+	for(idx=0; idx<lidx; idx++) {
+		 
+		wy[0] = wy[0]>>1;
+		wu[0] = wu[0]>>1;
+		wv[0] = wv[0]>>1;
+		 
+		wy+=1;
+		wu+=1;
+		wv+=1;	
+	}		
+}
 void packyuv(int w,int *y,int *u,int *v,int *pck) {
 	int idx, lidx;
 	int *wy,*wu,*wv,*wpck;
