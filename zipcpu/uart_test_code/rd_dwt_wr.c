@@ -35,6 +35,7 @@ void rd_dwt_wr(void) {
 	int *clocks_used = (int *)0x8efff5;
 	int *fwd_inv = (int *)0x8efff6;
 	int *flgyuv = (int *)0x8efff7;
+	int *flglossy = (int *)0x8efff8;	
 
  
 	int w,h;
@@ -133,7 +134,9 @@ void rd_dwt_wr(void) {
 	//zip_write(wptr1);
 	//zip_write(wptr2);  
 	if(flgyuv[0] == 0) {
-		quantize(w,y,u,v);
+		if (flglossy[0] == 1) {
+			quantize(w,y,u,v);
+		}
 		packyuv(w,y,u,v,buf_r);    
 	}
 	zip_write(buf_r);

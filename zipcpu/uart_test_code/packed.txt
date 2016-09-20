@@ -11,8 +11,13 @@ shell 3
 cd jpeg-2000-test/zipcpu/uart_test_code
 . setzipcpuPath.sh
 
-wbregs 0x8efff6 1
-wbregs 0x8efff7 0
+wbregs 0x8efff6 1	fwd only dwt
+wbregs 0x8efff6 0	fwd inv dwt
+wbregs 0x8efff7 0	Use YUV
+wbregs 0x8efff7 1	Use RGB
+wbregs 0x8efff8 1	Use 1 bit shift
+wbregs 0x8efff8 0	don't use 1 bit shift
+
 gcc -c pack.c -o pack.o
 gcc rd_pack.c pack.o -o rd_pack
 
