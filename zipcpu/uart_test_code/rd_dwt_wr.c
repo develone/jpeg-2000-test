@@ -25,6 +25,7 @@ void rd_dwt_wr(void) {
 	int *y;
 	int *wptr,*wptr1,*wptr2;
 	int *alt,*alt1,*alt2,*u,*v;
+	int cbw,cbh,cb,ii;
 	//the contents of the buf_r_used
 	//where the red lift steps are stored
 	//before packing to send back to RPi2B
@@ -136,6 +137,11 @@ void rd_dwt_wr(void) {
 	if(flgyuv[0] == 0) {
 		if (flglossy[0] == 1) {
 			quantize(w,y,u,v);
+		}
+		cbw = 32;
+		cbh = 32;
+		for(ii=0;ii<2048;ii++) {
+			bp(ii,cbw,cbh,y);
 		}
 		packyuv(w,y,u,v,buf_r);    
 	}
