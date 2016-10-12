@@ -138,11 +138,12 @@ void rd_dwt_wr(void) {
 		if (flglossy[0] == 1) {
 			quantize(w,y,u,v);
 		}
+		/*
 		cbw = 32;
 		cbh = 32;
 		for(ii=0;ii<2048;ii++) {
 			bp(ii,cbw,cbh,y);
-		}
+		}*/
 		packyuv(w,y,u,v,buf_r);    
 	}
 	zip_write(buf_r);

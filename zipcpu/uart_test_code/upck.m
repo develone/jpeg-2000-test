@@ -30,4 +30,17 @@ colorbar
 %colormap "gray"
 title 'V subband'
 
- 
+ymin = min(im1);
+ymax = max(im1);
+yymin = min(ymin)
+yymax = max(ymax)
+
+umin = min(im2);
+umax = max(im2);
+uumin = min(umin)
+uumax = max(umax)
+
+vmin = min(im3);
+vmax = max(im3);
+vvmin = min(vmin)
+vvmax = max(vmax)
