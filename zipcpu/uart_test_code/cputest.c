@@ -33,7 +33,13 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
 //
+#ifndef	NULL
 #define NULL	(void *)0
+#endif
+
+#define	CC_GIE	0x020
+extern	int	zip_cc(void);
+
 volatile	int	*const UARTTX = (volatile int *)0x010b,
 	* const UART_CTRL = (int *)0x0107;
 // #define	ZIPSYS
@@ -44,7 +50,11 @@ const int	INT_UARTTX = 0x2000;
 volatile	int	*const COUNTER = (volatile int *)0xc0000008;
 
 #define	HAVE_SCOPE
-
+volatile	int	*const SCOPE = (volatile int *)0x011e;
+#define	SCOPE_TRIGGER	(SCOPE_NO_RESET|0x08000000)
+#define	SCOPE_DELAY		4
+#define	TRIGGER_SCOPE_NOW	(SCOPE_TRIGGER|SCOPE_DELAY)
+#define	PREPARE_SCOPE		SCOPE_DELAY
 #else
 volatile	int	* const PIC = (volatile int *)0x0102;
 const int	INT_UARTTX = 0x080;
@@ -53,12 +63,18 @@ volatile	int	*const TIMER = (volatile int *)0x0104;
 #endif
 
 #ifdef	HAVE_SCOPE
-volatile	int	*const SCOPE = (volatile int *)0x011e;
 #endif
 
 unsigned	zip_ucc(void);
 void		zip_save_context(int *);
 void		zip_halt(void);
+
+
+void	txchr(char v);
+void	txstr(const char *str);
+void	txhex(int num);
+void	tx4hex(int num);
+
 
 asm("\t.section\t.start\n"
 	"\t.global\t_start\n"
@@ -110,7 +126,7 @@ asm("\t.section\t.start\n"
 
 
 extern	int	run_test(void *pc, void *stack);
-asm("\t.global\trun_test\n"
+asm("\t.text\n\t.global\trun_test\n"
 	"\t.type\trun_test,@function\n"
 "run_test:\n"
 	"\tCLR\tR3\n"
@@ -125,11 +141,11 @@ asm("\t.global\trun_test\n"
 	"\tMOV\tR3,uR8\n"
 	"\tMOV\tR3,uR9\n"
 	"\tMOV\tR3,uR10\n"
-	"\tMOV\tR1,uR11\n"
-	"\tMOV\tR1,uR12\n"
-	"\tMOV\tR2,uSP\n"
-	"\tMOV\t0x20+R3,uCC\n"
-	"\tMOV\tR1,uPC\n"
+	"\tMOV\tR3,uR11\n"
+	"\tMOV\tR3,uR12\n"
+	"\tMOV\tR2,uSP\n"	// uSP = stack
+	"\tMOV\t0x20+R3,uCC\n"	// Clear uCC of all but the GIE bit
+	"\tMOV\tR1,uPC\n"	// uPC = pc
 	"\tRTU\n"
 "test_return:\n"
 	"\tMOV\tuR1,R1\n"
@@ -137,8 +153,39 @@ asm("\t.global\trun_test\n"
 	// Works with 5 NOOPS, works with 3 NOOPS, works with 1 NOOP
 	"\tJMP\tR0\n");
 
+extern	int	idle_test(void);
+asm("\t.text\n\t.global\tidle_test\n"
+	"\t.type\tidle_test,@function\n"
+"idle_test:\n"
+	"\tCLR\tR1\n"
+	"\tMOV\tidle_loop(PC),uR0\n"
+	"\tMOV\tR1,uR1\n"
+	"\tMOV\tR1,uR2\n"
+	"\tMOV\tR1,uR3\n"
+	"\tMOV\tR1,uR4\n"
+	"\tMOV\tR1,uR5\n"
+	"\tMOV\tR1,uR6\n"
+	"\tMOV\tR1,uR7\n"
+	"\tMOV\tR1,uR8\n"
+	"\tMOV\tR1,uR9\n"
+	"\tMOV\tR1,uR10\n"
+	"\tMOV\tR1,uR11\n"
+	"\tMOV\tR1,uR12\n"
+	"\tMOV\tR1,uSP\n"
+	"\tMOV\t0x20+R1,uCC\n"
+	"\tMOV\tidle_loop(PC),uPC\n"
+	"\tWAIT\n"
+	"\tMOV uPC,R1\n"
+	"\tCMP idle_loop(PC),R1\n"
+	"\tLDI   0,R1\n"
+	"\tLDI.NZ 1,R1\n"
+	"\nRETN\n"
+"idle_loop:\n"
+	"\tWAIT\n"
+	"\tBRA idle_loop\n");
+
 void	break_one(void);
-asm("\t.global\tbreak_one\n"
+asm("\t.text\n\t.global\tbreak_one\n"
 	"\t.type\tbreak_one,@function\n"
 "break_one:\n"
 	"\tLDI\t0,R1\n"
@@ -147,7 +194,8 @@ asm("\t.global\tbreak_one\n"
 	"\tJMP\tR0");
 
 void	break_two(void);
-asm("\t.global\tbreak_two\n"
+	// Can we stop a break before we hit it?
+asm("\t.text\n\t.global\tbreak_two\n"
 	"\t.type\tbreak_two,@function\n"
 "break_two:\n"
 	"\tLDI\t0,R1\n"
@@ -155,7 +203,7 @@ asm("\t.global\tbreak_two\n"
 	"\tBREAK\n");
 
 void	early_branch_test(void);
-asm("\t.global\tearly_branch_test\n"
+asm("\t.text\n\t.global\tearly_branch_test\n"
 	"\t.type\tearly_branch_test,@function\n"
 "early_branch_test:\n"
 	"\tLDI\t1,R1\n"
@@ -201,7 +249,7 @@ asm("\t.global\tearly_branch_test\n"
 	"\tJMP\tR0");
 
 void	trap_test_and(void);
-asm("\t.global\ttrap_test_and\n"
+asm("\t.text\n\t.global\ttrap_test_and\n"
 	"\t.type\ttrap_test_and,@function\n"
 "trap_test_and:\n"
 	"\tLDI\t0,R1\n"
@@ -210,7 +258,7 @@ asm("\t.global\ttrap_test_and\n"
 	"\tJMP\tR0");
 
 void	trap_test_clr(void);
-asm("\t.global\ttrap_test_clr\n"
+asm("\t.text\n\t.global\ttrap_test_clr\n"
 	"\t.type\ttrap_test_clr,@function\n"
 "trap_test_clr:\n"
 	"\tLDI\t0,R1\n"
@@ -219,7 +267,7 @@ asm("\t.global\ttrap_test_clr\n"
 	"\tJMP\tR0");
 
 void	overflow_test(void);
-asm("\t.global\toverflow_test\n"
+asm("\t.text\n\t.global\toverflow_test\n"
 	"\t.type\toverflow_test,@function\n"
 "overflow_test:\n"
 	"\tLDI\t0,R1\n"
@@ -253,7 +301,7 @@ asm("\t.global\toverflow_test\n"
 
 
 void	carry_test(void);
-asm("\t.global\tcarry_test\n"
+asm("\t.text\n\t.global\tcarry_test\n"
 	"\t.type\tcarry_test,@function\n"
 "carry_test:\n"
 	"\tLDI\t0,R1\n"
@@ -282,7 +330,7 @@ asm("\t.global\tcarry_test\n"
 	"\tJMP\tR0");
 
 void	loop_test(void);
-asm("\t.global\tloop_test\n"
+asm("\t.text\n\t.global\tloop_test\n"
 	"\t.type\tloop_test,@function\n"
 "loop_test:\n"
 	"\tLDI\t0,R1\n"
@@ -340,7 +388,7 @@ asm("\t.global\tloop_test\n"
 // Test whether or not LSL, LSR, and ASR instructions work, together with their
 // carry flags
 void	shift_test(void);
-asm("\t.global\tshift_test\n"
+asm("\t.text\n\t.global\tshift_test\n"
 	"\t.type\tshift_test,@function\n"
 "shift_test:\n"
 	"\tLDI\t0,R1\n"
@@ -407,7 +455,7 @@ asm("\t.global\tshift_test\n"
 	"\tJMP\tR0");
 
 int	sw_brev(int v);
-asm("\t.global\tsw_brev\n"
+asm("\t.text\n\t.global\tsw_brev\n"
 	"\t.type\tsw_brev,@function\n"
 "sw_brev:\n"
 	"\tSUB\t2,SP\n"
@@ -430,7 +478,7 @@ asm("\t.global\tsw_brev\n"
 	"\tJMP\tR0");
 
 void	pipeline_stack_test(void);
-asm("\t.global\tpipeline_stack_test\n"
+asm("\t.text\n\t.global\tpipeline_stack_test\n"
 	"\t.type\tpipeline_stack_test,@function\n"
 "pipeline_stack_test:\n"
 	"\tSUB\t1,SP\n"
@@ -472,7 +520,7 @@ asm("\t.global\tpipeline_stack_test\n"
 	);
 
 void	pipeline_stack_test_component(void);
-asm("\t.global\tpipeline_stack_test_component\n"
+asm("\t.text\n\t.global\tpipeline_stack_test_component\n"
 	"\t.type\tpipeline_stack_test_component,@function\n"
 "pipeline_stack_test_component:\n"
 	"\tSUB\t13,SP\n"
@@ -520,7 +568,7 @@ asm("\t.global\tpipeline_stack_test_component\n"
 
 //mpy_test
 void	mpy_test(void);
-asm("\t.global\tmpy_test\n"
+asm("\t.text\n\t.global\tmpy_test\n"
 	"\t.type\tmpy_test,@function\n"
 "mpy_test:\n"
 	"\tCLR\tR1\n"
@@ -552,10 +600,153 @@ asm("\t.global\tmpy_test\n"
 	// Second test ... whatever that might be
 	"\tJMP\tR0\n");
 
+unsigned	soft_mpyuhi(unsigned, unsigned);
+int		soft_mpyshi(int,int);
+
+unsigned	hard_mpyuhi(unsigned, unsigned);
+asm("\t.text\n\t.global\thard_mpyuhi\n"
+	"\t.type\thard_mpyuhi,@function\n"
+"hard_mpyuhi:\n"
+	"\tNOOP\n"
+	"\tNOOP\n"
+	"\tMPYUHI\tR2,R1\n"
+	"\tRETN\n");
+
+int	hard_mpyshi(int, int);
+asm("\t.text\n\t.global\thard_mpyshi\n"
+	"\t.type\thard_mpyshi,@function\n"
+"hard_mpyshi:\n"
+	"\tMPYSHI\tR2,R1\n"
+	"\tRETN\n");
+
+void	debugmpy(char *str, int a, int b, int s, int r) {
+#ifdef	HAVE_SCOPE
+	// Trigger the scope, if it hasn't been triggered yet
+	// but ... dont reset it if it has been.
+	*SCOPE = TRIGGER_SCOPE_NOW;
+#endif
+	txstr("\r\n"); txstr(str); txhex(a);
+	txstr(" x "); txhex(b);
+	txstr(" = "); txhex(s);
+	txstr("(Soft) = "); txhex(r);
+	txstr("(Hard)\r\n");
+}
+
+int	mpyhi_test(void) {
+	int	a = 0xf97e27ab, b = 0;
+
+	while(b<0x6fffffff) {
+		int	r, sr;
+
+		sr = soft_mpyuhi(a, b);
+		r = hard_mpyuhi(a,b);
+		if (r != sr) {
+			debugmpy("MPYUHI: ", a,b,sr,r);
+			return 1;
+		}
+
+		sr = soft_mpyshi(a, b);
+		r = hard_mpyshi(a,b);
+		if (r != sr) {
+			debugmpy("MPYSHI: ", a,b,sr,r);
+			return 2;
+		}
+
+		sr = soft_mpyshi(-a, b);
+		r = hard_mpyshi(-a,b);
+		if (r != sr) {
+			debugmpy("MPYSHI-NEG: ", -a,b,sr,r);
+			return 3;
+		}
+
+		b += 0x197e2*7;
+	}
+
+	return 0;
+}
+
+unsigned	soft_mpyuhi(unsigned a, unsigned b) {
+	unsigned	alo, ahi, blo, bhi;
+	unsigned	rhi, rlhi, rllo;
+
+	alo = (a     & 0x0ffff);
+	ahi = (a>>16)& 0x0ffff;
+	blo = (b     & 0x0ffff);
+	bhi = (b>>16)& 0x0ffff;
+
+	rhi = 0;
+	rlhi = 0;
+	rllo = 0;
+
+	for(int i=0; i<16; i++) {
+		if (b&(1<<i)) {
+			unsigned slo, shi, sup;
+			slo = (alo << i);
+			shi = (ahi << i);
+			shi |= (slo>>16) & 0x0ffff;
+			slo &= 0x0ffff;
+			sup = (shi>>16)&0x0ffff;
+			shi &= 0x0ffff;
+
+			rhi  += sup;
+			rlhi += shi;
+			rllo += slo;
+
+			rlhi += (rllo >> 16)&0x0ffff;
+			rllo &= 0x0ffff;
+
+			rhi  += (rlhi >> 16)&0x0ffff;
+			rlhi &= 0x0ffff;
+		}
+	}
+
+	for(int i=16; i<32; i++) {
+		if (b&(1<<i)) {
+			unsigned slo, shi, sup;
+			slo = (alo << (i-16));
+			shi = (ahi << (i-16));
+			shi |= (slo>>16) & 0x0ffff;
+			slo &= 0x0ffff;
+			sup = (shi>>16)&0x0ffff;
+			shi &= 0x0ffff;
+
+			rhi  += sup << 16;
+			rhi  += shi;
+			rlhi += slo;
+
+			rhi  += (rlhi >> 16)&0x0ffff;
+			rlhi &= 0x0ffff;
+		}
+	}
+
+	return rhi;
+}
+
+int	soft_mpyshi(int a, int b) {
+	unsigned	sgn, r, p;
+
+	sgn = ((a^b)>>31)&0x01;
+
+	if (a<0)	a = -a;
+	if (b<0)	b = -b;
+
+	p = a * b;
+
+	// This will only fail if the lower 32-bits of of a*b are 0,
+	// at which point our following negation won't capture the carry it
+	// needs.
+	r = soft_mpyuhi(a, b);
+
+	r = (sgn)?(r^-1):r;
+	if ((sgn)&&(p==0))
+		r += 1;
+	return r;
+}
+
 //brev_test
 //pipeline_test -- used to be called pipeline memory race conditions
 void	pipeline_test(void);
-asm("\t.global\tpipeline_test\n"
+asm("\t.text\n\t.global\tpipeline_test\n"
 	"\t.type\tpipeline_test,@function\n"
 "pipeline_test:\n"
 	"\tSUB\t2,SP\n"
@@ -605,7 +796,7 @@ asm("\t.global\tpipeline_test\n"
 
 //mempipe_test
 void	mempipe_test(void);
-asm("\t.global\tmempipe_test\n"
+asm("\t.text\n\t.global\tmempipe_test\n"
 	"\t.type\tmempipe_test,@function\n"
 "mempipe_test:\n"
 	"\tSUB\t4,SP\n"
@@ -642,7 +833,7 @@ asm("\t.global\tmempipe_test\n"
 
 //cexec_test
 void	cexec_test(void);
-asm("\t.global\tcexec_test\n"
+asm("\t.text\n\t.global\tcexec_test\n"
 	"\t.type\tcexec_test,@function\n"
 "cexec_test:\n"
 	"\tSUB\t1,SP\n"
@@ -666,7 +857,7 @@ asm("\t.global\tcexec_test\n"
 //
 //nowaitpipe_test
 void	nowaitpipe_test(void);
-asm("\t.global\tnowaitpipe_test\n"
+asm("\t.text\n\t.global\tnowaitpipe_test\n"
 	"\t.type\tnowaitpipe_test,@function\n"
 "nowaitpipe_test:\n"
 	"\tSUB\t2,SP\n"
@@ -741,7 +932,7 @@ asm("\t.global\tnowaitpipe_test\n"
 
 //bcmem_test
 void	bcmem_test(void);
-asm("\t.global\tbcmem_test\n"
+asm("\t.text\n.global\tbcmem_test\n"
 	"\t.type\tbcmem_test,@function\n"
 "bcmem_test:\n"
 	"\tSUB\t1,SP\n"
@@ -772,6 +963,20 @@ asm("\t.global\tbcmem_test\n"
 	"\tADD\t1,SP\n"
 	"\tJMP\tR0\n");
 
+// The illegal instruction test.  Specifically, illegal instructions cannot be
+// allowed to execute.  The PC must, upon completion, point to the illegal
+// instruction that caused the exception.
+//
+// To create our illegal instruction, we assume that the only the three
+// operations without arguments are NOOP, BREAK, LOCK, and so we envision a
+// fourth instruction to create.
+void	ill_test(void);
+asm("\t.text\n.global\till_test\n"
+	"\t.type\till_test,@function\n"
+"ill_test:\n"
+	"\t.word\t0x7ff00000\n"
+	"\tJMP\tR0\n");
+
 //
 // The CC register has some ... unique requirements associated with it.
 // Particularly, flags are unavailable until after an ALU operation completes,
@@ -786,7 +991,7 @@ asm("\t.global\tbcmem_test\n"
 // issues.
 //
 void	ccreg_test(void);
-asm("\t.global\tccreg_test\n"
+asm("\t.text\n.global\tccreg_test\n"
 	"\t.type\tccreg_test,@function\n"
 "ccreg_test:\n"
 	// First test: If we try to change the fixed bits, will they change
@@ -846,11 +1051,15 @@ void	wait(unsigned int msk) {
 	*PIC = 0; // Turn interrupts back off, lest they confuse the test
 }
 
-asm("\nidle_task:\n\tWAIT\n\tBRA\tidle_task\n");
+asm("\n\t.text\nidle_task:\n\tWAIT\n\tBRA\tidle_task\n");
 
 __attribute__((noinline))
 void	txchr(char v) {
-	wait(INT_UARTTX);
+	if (zip_cc() & CC_GIE) {
+		while(*UARTTX & 0x100)
+			;
+	} else
+		wait(INT_UARTTX);
 	*UARTTX = v;
 }
 
@@ -864,6 +1073,22 @@ void	txstr(const char *str) {
 __attribute__((noinline))
 void	txhex(int num) {
 	for(int ds=28; ds>=0; ds-=4) {
+		int	ch;
+		ch = (num >> ds)&0x0f;
+		if (ch >= 10)
+			ch = 'A'+ch-10;
+		else
+			ch += '0';
+		txchr(ch);
+	}
+}
+
+__attribute__((noinline))
+void	tx4hex(int num) {
+	if (num & 0xffff0000){
+		txhex(num);
+		return;
+	} for(int ds=12; ds>=0; ds-=4) {
 		int	ch;
 		ch = (num >> ds)&0x0f;
 		if (ch >= 10)
@@ -894,7 +1119,7 @@ void	test_fails(int start_time, int *listno) {
 	// Trigger the scope, if it hasn't already triggered.  Otherwise,
 	// if it has triggered, don't clear it.
 #ifdef	HAVE_SCOPE
-	*SCOPE = 0x8f000004;
+	*SCOPE = TRIGGER_SCOPE_NOW;
 #endif
 
 	MARKSTOP;
@@ -934,7 +1159,12 @@ void	test_fails(int start_time, int *listno) {
 	txreg("uPC : ", context[15]);
 	txstr("\r\n\r\n");
 
-	asm("\tBUSY");
+	// While previous versions of cputest.c called zip_busy(), here we
+	// reject that notion for the simple reason that zip_busy may not
+	// necessarily halt any Verilator simulation.  Instead, we try to 
+	// halt the CPU.
+	while(1)
+		zip_halt();
 }
 
 void	testid(const char *str) {
@@ -965,46 +1195,37 @@ void entry(void) {
 #ifdef	HAVE_COUNTER
 	*COUNTER = 0;
 #endif
-
-// #define	STACKTEST	asm("CMP\t16108,SP\n\tHALT.NZ\n")
-#define	STACKTEST
-	STACKTEST;
+#ifdef	HAVE_SCOPE
+	*SCOPE = PREPARE_SCOPE;
+#endif
 
 	// *UART_CTRL = 8333; // 9600 Baud, 8-bit chars, no parity, one stop bit
 	*UART_CTRL = 25; // 9600 Baud, 8-bit chars, no parity, one stop bit
 	//
-	STACKTEST;
 
 	txstr("\r\n");
-	txstr("Running CPU self-test\n");
+	txstr("Running CPU self-test\r\n");
 	txstr("-----------------------------------\r\n");
 
 	int	tnum = 0;
-	STACKTEST;
 
 	// Test break instruction in user mode
 	// Make sure the break works as designed
 	testid("Break test #1"); MARKSTART;
-	STACKTEST;
 
 	if ((run_test(break_one, user_stack_ptr))||(zip_ucc()&0x1f50))
 		test_fails(start_time, &testlist[tnum]);
-	STACKTEST;
 
 	save_context(context);
-	if (context[15] != (int)break_one+1)
-		test_fails(start_time, &testlist[tnum]);
-	if (0==(zip_ucc()&0x80))
+	if ((context[15] != (int)break_one+1)||(0==(zip_ucc()&0x80)))
 		test_fails(start_time, &testlist[tnum]);
 	txstr("Pass\r\n"); testlist[tnum++] = 0;	// 0
-
-	STACKTEST;
 
 	// Test break instruction in user mode
 	// Make sure that a decision on the clock prior won't still cause a 
 	// break condition
 	testid("Break test #2"); MARKSTART;
-	if ((run_test(break_two, user_stack_ptr))||(zip_ucc()&0x1f10))
+	if ((run_test(break_two, user_stack_ptr))||(zip_ucc()&0x1d90))
 		test_fails(start_time, &testlist[tnum]);
 	txstr("Pass\r\n"); testlist[tnum++] = 0;	// #1
 
@@ -1056,12 +1277,6 @@ void entry(void) {
 		test_fails(start_time, &testlist[tnum]);
 	txstr("Pass\r\n"); testlist[tnum++] = 0;	// #8
 
-	// MPY_TEST
-	testid("Multiply test"); MARKSTART;
-	if ((run_test(mpy_test, user_stack_ptr))||(zip_ucc()&0x01d90))
-		test_fails(start_time, &testlist[tnum]);
-	txstr("Pass\r\n"); testlist[tnum++] = 0;	// #9
-
 	// BREV_TEST
 	//testid("BREV/stack test"); MARKSTART;
 	//if ((run_test(brev_test, user_stack_ptr))||(zip_ucc()&0x01d90))
@@ -1099,8 +1314,17 @@ void entry(void) {
 	txstr("Pass\r\n"); testlist[tnum++] = 0;	// #14
 
 	// Illegal Instruction test
-	testid("Illegal Instruction test"); MARKSTART;
+	testid("Ill Instruction test, NULL PC"); MARKSTART;
 	if ((run_test(NULL, user_stack_ptr))||((zip_ucc()^0x100)&0x01d90))
+		test_fails(start_time, &testlist[tnum]);
+	txstr("Pass\r\n"); testlist[tnum++] = 0;
+
+	// Illegal Instruction test
+	testid("Ill Instruction test, two"); MARKSTART;
+	if ((run_test(ill_test, user_stack_ptr))||((zip_ucc()^0x100)&0x01d90))
+		test_fails(start_time, &testlist[tnum]);
+	save_context(context);
+	if (context[15] != (int)&ill_test)
 		test_fails(start_time, &testlist[tnum]);
 	txstr("Pass\r\n"); testlist[tnum++] = 0;
 
@@ -1119,9 +1343,21 @@ void entry(void) {
 		test_fails(start_time, &testlist[tnum]);
 	txstr("Pass\r\n"); testlist[tnum++] = 0;
 
+	// MPY_TEST
+	testid("Multiply test"); MARKSTART;
+	if ((run_test(mpy_test, user_stack_ptr))||(zip_ucc()&0x01d90))
+		test_fails(start_time, &testlist[tnum]);
+	txstr("Pass\r\n"); testlist[tnum++] = 0;	// #9
+
+	// MPYxHI_TEST
+	testid("Multiply HI-word test"); MARKSTART;
+	if ((run_test(mpyhi_test, user_stack_ptr))||(zip_ucc()&0x01d90))
+		test_fails(start_time, &testlist[tnum]);
+	txstr("Pass\r\n"); testlist[tnum++] = 0;	// #9
+
 	txstr("\r\n");
 	txstr("-----------------------------------\r\n");
-	txstr("All tests passed.  Halting CPU.\n");
+	txstr("All tests passed.  Halting CPU.\r\n");
 	zip_halt();
 }
 
