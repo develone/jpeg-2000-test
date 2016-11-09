@@ -5,7 +5,7 @@
 #Telnet localhost 7240
 #window if the tests pass
 #Running CPU self-test
-##-----------------------------------
+#-----------------------------------
 #Break test #1                   Pass
 #Break test #2                   Pass
 #Early Branch test               Pass
@@ -15,15 +15,17 @@
 #Carry test                      Pass
 #Loop test                       Pass
 #Shift test                      Pass
-#Multiply test                   Pass
 #Pipeline test                   Pass
 #Mem-Pipeline test               Pass
 #Conditional Execution test      Pass
 #No-waiting pipeline test        Pass
 #Conditional Branching test      Pass
-#Illegal Instruction test        Pass
+#Ill Instruction test, NULL PC   Pass
+#Ill Instruction test, two       Pass
 #CC Register test                Pass
 #Multi-Arg test                  Pass
+#Multiply test                   Pass
+#Multiply HI-word test           Pass
 #
 #-----------------------------------
 #All tests passed.  Halting CPU.

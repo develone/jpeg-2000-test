@@ -1,0 +1,134 @@
+Ubuntu 12.04
+11/07/16
+Testing busmaster_tb.cpp & cputest.c on Ubuntu 12.04 Since it had not been run with xulalx25soc
+from github.
+
+This test needs 4 shells
+
+Both of the following files
+/home/vidal/wkg/XULALX25SOC_GITHUB/xulalx25soc/rtl/cpu/cpudefs.v
+/home/vidal/wkg/XULALX25SOC_GITHUB/xulalx25soc/rtl/busmaster.v
+//`define	XULA25
+/home/vidal/wkg/XULALX25SOC_GITHUB/xulalx25soc/bench/cpp/bustmaster_tb.cpp
+//#define	XULA25
+
+
+shell 1
+
+vidal@vidal-MX6438:~$ cd wkg/XULALX25SOC_GITHUB/xulalx25soc/bench/cpp
+vidal@vidal-MX6438:~/wkg/XULALX25SOC_GITHUB/xulalx25soc/bench/cpp$ ./busmaster_tb 
+Listening on port 7239
+Listening on port 7240
+SDCARD: NBLOCKS = 0
+LOADING SDCARD FROM: '/dev/zero'
+
+
+shell 2
+
+vidal@vidal-MX6438:~$ telnet localhost 7240
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+
+Running CPU self-test
+-----------------------------------
+Break test #1                   Pass
+Break test #2                   Pass
+Early Branch test               Pass
+Trap test/AND                   Pass
+Trap test/CLR                   Pass
+Overflow test                   Pass
+Carry test                      Pass
+Loop test                       Pass
+Shift test                      Pass
+Multiply test                   Pass
+Pipeline test                   Pass
+Mem-Pipeline test               Pass
+Conditional Execution test      Pass
+No-waiting pipeline test        Pass
+Conditional Branching test      Pass
+Illegal Instruction test        Pass
+CC Register test                Pass
+Multi-Arg test                  Pass
+
+-----------------------------------
+All tests passed.  Halting CPU.
+
+shell 3
+
+vidal@vidal-MX6438:~$ . setxula2.sh 
+PATH,/usr/lib/lightdm/lightdm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/home/vidal/wkg/ZIPCPU_GITHUB/zipcpu/sw/install/cross-tools/bin:/home/vidal/wkg/XULALX25SOC_GITHUB/xulalx25soc/sw/
+vidal@vidal-MX6438:~$ cd wkg/jpeg-2000-test/zipcpu/uart_test_code/
+vidal@vidal-MX6438:~/wkg/jpeg-2000-test/zipcpu/uart_test_code$ zip-gcc -O3 -Wall -Wextra -nostdlib -fno-builtin -T xula.ld -Wl,-Map,cputest.map cputest.c -o cputest
+vidal@vidal-MX6438:~/wkg/jpeg-2000-test/zipcpu/uart_test_code$ ls -la cputest
+-rwxrwxr-x 1 vidal vidal 21304 Nov  7 19:14 cputest
+vidal@vidal-MX6438:~/wkg/jpeg-2000-test/zipcpu/uart_test_code$ ziprun -p cputestHalting the CPU
+Loading memory
+00002000 - 0000276b
+0000276b - 0000298f
+0000298f - 000029af
+Clearing the cache
+The CPU should be fully loaded, you may now start
+it.  To start the CPU, type wbregs cpu 0
+vidal@vidal-MX6438:~/wkg/jpeg-2000-test/zipcpu/uart_test_code$
+
+shell 4
+vidal@vidal-MX6438:~$ . setxula2.sh 
+PATH,/usr/lib/lightdm/lightdm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/home/vidal/wkg/ZIPCPU_GITHUB/zipcpu/sw/install/cross-tools/bin:/home/vidal/wkg/XULALX25SOC_GITHUB/xulalx25soc/sw/
+vidal@vidal-MX6438:~$ cd wkg/jpeg-2000-test/zipcpu/uart_test_code/
+vidal@vidal-MX6438:~/wkg/jpeg-2000-test/zipcpu/uart_test_code$ wbregs -p cpu 0
+01000000 ( ZIPCTRL)-> 00000000
+vidal@vidal-MX6438:~/wkg/jpeg-2000-test/zipcpu/uart_test_code$ 
+
+
+vidal@vidal-MX6438:~/wkg/XULALX25SOC_GITHUB/xulalx25soc$ git diff
+diff --git a/bench/cpp/busmaster_tb.cpp b/bench/cpp/busmaster_tb.cpp
+index 4d7d49d..62fb1c4 100644
+--- a/bench/cpp/busmaster_tb.cpp
++++ b/bench/cpp/busmaster_tb.cpp
+@@ -1,4 +1,4 @@
+-#define        XULA25
++//#define      XULA25
+ ///////////////////////////////////////////////////////////////////////////////
+ //
+ // Filename:   busmaster_tb.cpp
+diff --git a/rtl/builddate.v b/rtl/builddate.v
+index 9826bfa..59dcee2 100644
+--- a/rtl/builddate.v
++++ b/rtl/builddate.v
+@@ -1 +1 @@
+-`define DATESTAMP 32'h20160914
++`define DATESTAMP 32'h20161107
+diff --git a/rtl/busmaster.v b/rtl/busmaster.v
+index db6c25b..1ad2005 100644
+--- a/rtl/busmaster.v
++++ b/rtl/busmaster.v
+@@ -1,4 +1,4 @@
+-`define        XULA25
++//`define      XULA25
+ ///////////////////////////////////////////////////////////////////////////
+ //
+ // Filename:   busmaster.v
+diff --git a/rtl/cpu/cpudefs.v b/rtl/cpu/cpudefs.v
+index a77f391..a0e0d71 100644
+--- a/rtl/cpu/cpudefs.v
++++ b/rtl/cpu/cpudefs.v
+@@ -1,4 +1,4 @@
+-`define XULA25
++//`define XULA25
+ ///////////////////////////////////////////////////////////////////////////////
+ //
+ // Filename:   cpudefs.v
+diff --git a/sw/Makefile b/sw/Makefile
+index 50fb220..f372181 100644
+--- a/sw/Makefile
++++ b/sw/Makefile
+@@ -40,7 +40,7 @@ CXX := g++
+ LIBUSBINC := -I/usr/include/libusb-1.0/
+ LIBUSBDIR := -L/usr/lib/x86_64-linux-gnu
+ OBJDIR := obj-pc
+-ZIPD := /home/dan/work/rnd/zipcpu/trunk/sw/zasm
++ZIPD := /home/vidal/wkg/ZIPCPU_GITHUB/zipcpu/sw/zasm
+ BUSSRCS := ttybus.cpp llcomms.cpp regdefs.cpp usbi.cpp
+ SOURCES := ziprun.cpp zipdbg.cpp dumpsdram.cpp wbregs.cpp netusb.cpp   \
+                flashdrvr.cpp loadmem.cpp $(BUSSRCS)
