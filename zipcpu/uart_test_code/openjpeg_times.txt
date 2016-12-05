@@ -1,0 +1,94 @@
+11/27/16
+commit 7124d4a3e0800aa8a2ed5da370675c763aa49989
+Author: vidal <vidal@vidal-MX6438.(none)>
+Date:   Tue Nov 8 17:33:17 2016 -0700
+
+    modified test results and instruction for testing busmaster_tb
+
+dual core AMD x86_64
+512 x 512 png
+time opj_compress -mct 1 -b 64,64 -r 20 -i bin/lena_rgb_512.png -o bin/tt.jp2
+
+[INFO] tile number 1 / 1
+[INFO] Generated outfile bin/tt.jp2
+encode time: 1287 ms 
+
+real	0m1.341s
+user	0m1.281s
+sys	0m0.012s
+
+256 x 256 png
+time opj_compress -mct 1 -b 64,64 -r 20 -i bin/lena_rgb_256.png -o bin/tt.jp2
+
+[INFO] tile number 1 / 1
+[INFO] Generated outfile bin/tt.jp2
+encode time: 399 ms 
+
+real	0m0.487s
+user	0m0.393s
+sys	0m0.012s
+
+six core AMD x86_64
+vidal@ws009:~/wkg/openjpeg/build$ time opj_compress -mct 1 -SOP -EPH -r 20 -b 64,64 -i bin/lena_rgb_512.png -o bin/tt.jp2
+
+[INFO] tile number 1 / 1
+[INFO] Generated outfile bin/tt.jp2
+encode time: 495 ms 
+
+real	0m0.499s
+user	0m0.483s
+sys	0m0.016s
+
+ZipCPU I ran a test using Code-block size. -b 64,64 on
+a RPi2B & RPi3B
+The Rpi3B is considerabley faster than RPi2B.
+RPi2B
+pi@raspberrypi2-146:time ./opj_compress -mct 1 -b 64,64 -r 20 -i lena_rgb_512.png -o tt.jp2
+[INFO] tile number 1 / 1
+[INFO] Generated outfile tt.jp2
+encode time: 4280 ms 
+real 0m4.308s
+user 0m4.250s
+sys 0m0.040s
+pi@raspberrypi2-146:~/openjpeg/build/bin $ ls -la tt.jp2 
+-rw-r--r-- 1 pi pi 39309 Nov 26 15:29 tt.jp2
+pi@raspberrypi2-146:~/openjpeg/build/bin $ time ./opj_compress -mct 1  -r 20 -i lena_rgb_512.png -o tt.jp2
+[INFO] tile number 1 / 1
+[INFO] Generated outfile tt.jp2
+encode time: 4280 ms 
+real 0m4.340s
+user 0m4.240s
+sys 0m0.040s
+RPi3B
+pi@raspberrypi2-169:time ./opj_compress -mct 1 -b 64,64 -r 20 -i lena_rgb_512.png -o tt.jp2
+[INFO] tile number 1 / 1
+[INFO] Generated outfile tt.jp2
+encode time: 2830 ms 
+real 0m2.832s
+user 0m2.810s
+sys 0m0.020s
+pi@raspberrypi2-169:~/openjpeg/build/bin $ ls -la tt.jp2 
+-rw-r--r-- 1 pi pi 39309 Nov 26 15:29 tt.jp2
+pi@raspberrypi2-169:~/openjpeg/build/bin $ time ./opj_compress -mct 1  -r 20 -i lena_rgb_512.png -o tt.jp2
+[INFO] tile number 1 / 1
+[INFO] Generated outfile tt.jp2
+encode time: 2820 ms 
+real 0m2.824s
+user 0m2.800s
+
+pi@raspberrypi2-146:~/openjpeg/build/bin $ time cat lena_rgb_512.png > /dev/null 
+
+real	0m0.009s
+user	0m0.000s
+sys	0m0.010s
+pi@raspberrypi2-146:~/openjpeg/build/bin $ time cat tt.jp2 > /dev/null
+
+real	0m0.050s
+user	0m0.000s
+sys	0m0.010s
+pi@raspberrypi2-146:~/openjpeg/build/bin $ time cat tt.jp2 > junk.jp2
+
+real	0m0.026s
+user	0m0.000s
+sys	0m0.010s
+
