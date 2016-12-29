@@ -1,3 +1,6 @@
+On Ubuntu laptop needed to install
+p7zip-full & libghc-x11-dev 
+
 Building and using Ultibo in Linux:
 https://ultibo.org/forum/viewtopic.php?t=284
 
@@ -8,10 +11,13 @@ cd Development/
 git clone https://github.com/sysrpl/Codebot.Setup.git
 
 cd Codebot.Setup/raspberry/
+ubuntu laptop cd Codebot.Setup/linux
 
 chmod +x install.fpc-3.0.raspberry.sh
+ubuntu laptop chmod +x install.fpc-3.0.linux.sh
 
 ./install.fpc-3.0.raspberry.sh
+ubuntu laptop install.fpc-3.0.linux.sh
 
 Prerequisites for Free Pascal and Lazarus on Raspbian
 -----------------------------------------------------
