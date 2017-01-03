@@ -141,6 +141,23 @@ In a new shell
  2034  nano rpi.cfg
  2035  nano rpi2.cfg
  2036  nano rpi3.cfg
+Compiling an Application
+
+Compiling an application from the command line is quite simple, you just need to remember some extra parameters because of the different environment. To compile something like the Hello World example open a terminal window, change to the folder where the application is located and add the path to FPC 3.1.1 Ultibo edition like this:
+
+export PATH=/home/pi/ultibo/core/fpc/bin:$PATH
+
+Then compile the application using this command:
+
+fpc -B -Tultibo -Parm -CpARMV7A -WpRPI2B @/home/pi/ultibo/core/fpc/bin/rpi2.cfg -O2 HelloWorld.lpr
+
+This example is for a Raspberry Pi 2B but can easily be adjusted for any other model by changing the appropriate parameters, so to compile for Raspberry Pi B instead try this:
+
+fpc -B -Tultibo -Parm -CpARMV6 -WpRPIB @/home/pi/ultibo/core/fpc/bin/rpi.cfg -O2 HelloWorld.lpr
+
+Or for a Raspberry Pi 3B use this one:
+
+fpc -B -Tultibo -Parm -CpARMV7A -WpRPI3B @/home/pi/ultibo/core/fpc/bin/rpi3.cfg -O2 HelloWorld.lpr
 
 
  
