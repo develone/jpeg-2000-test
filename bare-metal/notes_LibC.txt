@@ -1,0 +1,66 @@
+sudo apt-get install gcc-arm-none-eabi
+
+Created /home/pi/test_ultibo/RPi3/LibC
+	test.c
+	LibCTest.lpr
+
+test.c
+
+/*
+ * test.c
+ * 
+ * A simple C library to include in your Ultibo project
+ * 
+ */
+ 
+#include <stdio.h>
+
+void test ()
+{
+
+   printf ("Hello Ultibo from C!!\n");
+   
+}
+
+LibCTest.lpr
+
+program LibCTest;
+
+{$mode objfpc}{$H+}
+
+uses
+ RaspberryPi3,  
+ GlobalConfig,
+ GlobalConst,
+ GlobalTypes,
+ Platform,
+ Threads,
+ Console,
+ Syscalls;
+
+{$linklib test}
+
+procedure test; cdecl; external 'libtest' name 'test';
+
+var
+ Handle:THandle;
+
+begin
+ Handle:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_FULL,True);
+
+ test;
+ 
+ ThreadHalt(0);
+end.
+		
+arm-none-eabi-gcc -O2 -mabi=aapcs -marm -march=armv6 -mfpu=vfp -mfloat-abi=hard -c test.c
+
+Creates test.o 
+
+arm-none-eabi-ar rcs libtest.a test.o
+
+Creates libtest.a
+ 
+fpc -B -Tultibo -Parm -CpARMV7A -WpRPI3B @/home/pi/ultibo/core/fpc/bin/rpi3.cfg -O2 LibCTest.lpr
+
+Creates LibCTest.o, LibCTest.elf, and  kernel7.img
