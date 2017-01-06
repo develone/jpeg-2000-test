@@ -60,7 +60,17 @@ Creates test.o
 arm-none-eabi-ar rcs libtest.a test.o
 
 Creates libtest.a
- 
-fpc -B -Tultibo -Parm -CpARMV7A -WpRPI3B @/home/pi/ultibo/core/fpc/bin/rpi3.cfg -O2 LibCTest.lpr
 
+export PATH=/home/pi/ultibo/core/fpc/bin:$PATH 
+
+fpc -B -Tultibo -Parm -CpARMV7A -WpRPI3B @/home/pi/ultibo/core/fpc/bin/rpi3.cfg -O2 LibCTest.lpr
+Free Pascal Compiler version 3.1.1 [2017/01/03] for arm
+Copyright (c) 1993-2015 by Florian Klaempfl and others
+Target OS: Ultibo
+Compiling LibCTest.lpr
+LibCTest.lpr(20,2) Note: Local variable "Handle" is assigned but never used
+Assembling libctest
+Linking LibCTest
+28 lines compiled, 3.7 sec, 2226164 bytes code, 85940 bytes data
+1 note(s) issued
 Creates LibCTest.o, LibCTest.elf, and  kernel7.img
