@@ -2,7 +2,7 @@ sudo apt-get install gcc-arm-none-eabi
 
 Created /home/pi/test_ultibo/RPi3/LibC
 	test.c
-	LibCTest.lpr
+	LibCTestRPi2.lpr & LibCTestRPi3.lpr
 
 test.c
 
@@ -22,14 +22,14 @@ void test ()
    
 }
 
-LibCTest.lpr
+LibCTestRPi2.lpr
 
 program LibCTest;
 
 {$mode objfpc}{$H+}
 
 uses
- RaspberryPi3,  
+ RaspberryPi2, {<-- Change this to suit which model you have!!}
  GlobalConfig,
  GlobalConst,
  GlobalTypes,
@@ -52,9 +52,45 @@ begin
  
  ThreadHalt(0);
 end.
-		
+
+
+
+LibCTestRPi3.lpr
+
+program LibCTest;
+
+{$mode objfpc}{$H+}
+
+uses
+ RaspberryPi3, {<-- Change this to suit which model you have!!}
+ GlobalConfig,
+ GlobalConst,
+ GlobalTypes,
+ Platform,
+ Threads,
+ Console,
+ Syscalls;
+
+{$linklib test}
+
+procedure test; cdecl; external 'libtest' name 'test';
+
+var
+ Handle:THandle;
+
+begin
+ Handle:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_FULL,True);
+
+ test;
+ 
+ ThreadHalt(0);
+end.
+
+Raspberry Pi A/B/A+/B+/Zero		
 arm-none-eabi-gcc -O2 -mabi=aapcs -marm -march=armv6 -mfpu=vfp -mfloat-abi=hard -c test.c
 
+Raspberry Pi 2B or 3B
+arm-none-eabi-gcc -O2 -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c test.c
 Creates test.o 
 
 arm-none-eabi-ar rcs libtest.a test.o
@@ -63,14 +99,20 @@ Creates libtest.a
 
 export PATH=/home/pi/ultibo/core/fpc/bin:$PATH 
 
-fpc -B -Tultibo -Parm -CpARMV7A -WpRPI3B @/home/pi/ultibo/core/fpc/bin/rpi3.cfg -O2 LibCTest.lpr
-Free Pascal Compiler version 3.1.1 [2017/01/03] for arm
-Copyright (c) 1993-2015 by Florian Klaempfl and others
+fpc -vi -B -Tultibo -Parm -CpARMV7A -WpRPI3B @/home/pi/ultibo/core/fpc/bin/rpi3.cfg -O2 LibCTestRPi3.lpr
 Target OS: Ultibo
-Compiling LibCTest.lpr
-LibCTest.lpr(20,2) Note: Local variable "Handle" is assigned but never used
+Compiling LibCTestRPi3.lpr
 Assembling libctest
-Linking LibCTest
-28 lines compiled, 3.7 sec, 2226164 bytes code, 85940 bytes data
-1 note(s) issued
-Creates LibCTest.o, LibCTest.elf, and  kernel7.img
+Linking LibCTestRPi3
+28 lines compiled, 3.9 sec, 2252192 bytes code, 86088 bytes data
+
+Creates LibCTestRPi3.o, LibCTestRPi3.elf, and  kernel7.img
+
+fpc -vi -B -Tultibo -Parm -CpARMV7A -WpRPI2B @/home/pi/ultibo/core/fpc/bin/rpi2.cfg -O2 LibCTestRPi2.lpr 
+Target OS: Ultibo
+Compiling LibCTestRPi2.lpr
+Assembling libctest
+Linking LibCTestRPi2
+28 lines compiled, 4.0 sec, 2254688 bytes code, 86120 bytes data
+
+Creates LibCTestRPi2.o, LibCTestRPi2.elf, and  kernel7.img
