@@ -3,7 +3,7 @@ program LibCTest;
 {$mode objfpc}{$H+}
 
 uses
- RaspberryPi3,  
+ RaspberryPi2, {<-- Change this to suit which model you have!!}
  GlobalConfig,
  GlobalConst,
  GlobalTypes,

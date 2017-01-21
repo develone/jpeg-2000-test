@@ -1,12 +1,3 @@
-/*
- * test.c
- * 
- * A simple C library to include in your Ultibo project
- * 
- */
- 
-#include <stdio.h>
-
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Filename: 	lifting.c
@@ -51,7 +42,7 @@
 //
 //
 #include "lifting.h"
-#include "test.h"
+
 void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 	int	col, row;
 
@@ -187,7 +178,7 @@ void	lifting(int w, int *ibuf, int *tmpbuf) {
 	int	*ip = ibuf, *tp = tmpbuf;
 	int	ov[3];
 
-	const int	LVLS = 3;
+	const int	LVLS = 1;
 
 /*
 	for(lvl=0; lvl<w*w; lvl++)
@@ -236,7 +227,7 @@ void	lifting(int w, int *ibuf, int *tmpbuf) {
 		// Move to the corner, and repeat
 		w>>=1;
 	}
-    	/*
+	/*
 	for(lvl=(LVLS-1); lvl>=0; lvl--) {
 		int	offset;
 
@@ -255,46 +246,3 @@ void	lifting(int w, int *ibuf, int *tmpbuf) {
 	*/
 }
 
-
-void test ()
-{
-
-   printf ("Hello Ultibo from C!!\n");
-   
-	sam = 164;
-	lf = 156;
-	rh = 160;
-	fwd = 7;
-	dwt = lift(sam, lf, rh, fwd);
-	printf ("fwd dwt even \n");
-	printf("%d %d %d %d\n",sam, lf, rh, dwt);
-	fwd = 5;
-	sam = dwt;
-	dwt = lift(sam, lf, rh, fwd);
-	printf ("inv dwt even \n");
-	printf("%d %d %d %d\n",sam, lf, rh, dwt);
-	
-	fwd = 6;
-	sam = 164;
-	dwt = lift(sam, lf, rh, fwd);
-	printf ("fwd dwt odd \n");
-	printf("%d %d %d %d\n",sam, lf, rh, dwt);
-	fwd = 4;
-	sam = dwt;
-	dwt = lift(sam, lf, rh, fwd);
-	printf ("inv dwt odd \n");
-	printf("%d %d %d %d\n",sam, lf, rh, dwt);
-}
-
-int lift(int sam, int lf, int rh, int fwd) 
-{
-	if (fwd==7) 
-		dwt = sam - ((lf + rh) >> 1);
-	else if (fwd==5)
-		 dwt = sam + ((lf + rh) >> 1);
-	else if (fwd==6)
-		dwt = sam + ((lf + rh + 2) >> 2);
-	else 
-		dwt = sam - ((lf + rh + 2 ) >> 2);
-	return dwt;
-}	
