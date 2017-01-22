@@ -1,0 +1,25 @@
+https://ultibo.org/forum/viewtopic.php?f=13&t=312
+
+This is a simple example that your can copy and paste into a new project in 
+Lazarus, it is written for a Raspberry Pi 2B but you can easily change it 
+to a 3B by replacing the RaspberryPi2 in the uses clause with 
+RaspberryPi3 and if you want to make it work with Raspberry 
+Pi A/B/A+/B+/Zero then just replace RaspberryPi2 in the uses clause 
+with RaspberryPi instead.
+
+Most likely you'll want to use this in your own projects so we've made 
+drawing the bitmap its own function, just copy the DrawBitmap() 
+function into a unit of your project and make sure you have the 
+GraphicsConsole, BMPcomn, Classes and SysUtils units in the uses clause.
+
+Saved the code in 
+/home/pi/jpeg-2000-test/bare-metal/Dbitmap/bitmap.lpr
+
+export PATH=/home/pi/ultibo/core/fpc/bin:$PATH
+
+ fpc -vi -B -Tultibo -Parm -CpARMV7A -WpRPI2B @/home/pi/ultibo/core/fpc/bin/rpi2.cfg -O2 bitmap.lpr 
+Target OS: Ultibo
+Compiling bitmap.lpr
+Assembling drawbmp
+Linking bitmap
+196 lines compiled, 3.9 sec, 2216844 bytes code, 84752 bytes data

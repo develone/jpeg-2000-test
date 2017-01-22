@@ -46,29 +46,29 @@ begin
  if Handle = INVALID_HANDLE_VALUE then Exit;
  if Length(Filename) = 0 then Exit;
  
- {Check if the file exists}
+ {Check if the file exists} 
  if not FileExists(Filename) then Exit;
  
  {Open the file using a TFileStream class}
  FileStream:=TFileStream.Create(Filename,fmOpenRead or fmShareDenyNone);
  try
- 
+  
   {Check the file size}
   if FileStream.Size < (SizeOf(TBitMapFileHeader) + SizeOf(TBitMapInfoHeader)) then Exit;
- 
+  
   {Read the Bitmap file header}
   if FileStream.Read(BitMapFileHeader,SizeOf(TBitMapFileHeader)) <> SizeOf(TBitMapFileHeader) then Exit;
- 
+  
   {Check the magic number in the header}
   if BitMapFileHeader.bfType = BMmagic then
    begin
     {Read the Bitmap info header}
     if FileStream.Read(BitMapInfoHeader,SizeOf(TBitMapInfoHeader)) <> SizeOf(TBitMapInfoHeader) then Exit;
-   
+    
     {Most Bitmaps are stored upside down in the file, but they can be right way up}
     TopDown:=(BitMapInfoHeader.Height < 0);
     BitMapInfoHeader.Height:=Abs(BitMapInfoHeader.Height);
-   
+    
     {Check how many bits per pixel in this Bitmap, we only support 16, 24 and 32 in this function}
     if BitMapInfoHeader.BitCount = 16 then
      begin
@@ -121,10 +121,10 @@ begin
      begin
       Exit;
      end;     
- 
+  
     {Get the size of the Bitmap image not including the headers, just the actual pixels}
     Size:=LineSize * BitMapInfoHeader.Height;
-   
+    
     {Allocate a buffer to hold all the pixels}
     Buffer:=GetMem(Size);
     try
@@ -138,11 +138,11 @@ begin
         begin
          {Update the position of the file stream}
          FileStream.Position:=BitMapFileHeader.bfOffset + (Count * ReadSize);
-       
+        
          {Read a full line of pixels from the file}     
          if FileStream.Read((Buffer + Offset)^,LineSize) <> LineSize then Exit;
          
-         {Update the offset of our buffer}   
+         {Update the offset of our buffer}    
          Inc(Offset,LineSize);
         end;
       end
@@ -157,10 +157,10 @@ begin
          {Read a full line of pixels from the file}     
          if FileStream.Read((Buffer + Offset)^,LineSize) <> LineSize then Exit;
          
-         {Update the offset of our buffer}   
+         {Update the offset of our buffer}    
          Inc(Offset,LineSize);
         end;
-      end;       
+      end;        
      
      {Draw the entire image onto our graphics console window in one request}
      if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
@@ -171,7 +171,7 @@ begin
     end;
    end;
  finally
-  FileStream.Free;
+  FileStream.Free; 
  end;
 end;
  
@@ -185,8 +185,8 @@ begin
  
  {Call our bitmap drawing function and pass the name of our bitmap file on the SD card,
   we also pass the handle for our graphics console window and the X and Y locations to
-  draw the bitmap.
- 
+  draw the bitmap. 
+  
   What happens if the bitmap is bigger than the window? It will be trimmed to fit, try it
   yourself and see}
  DrawBitmap(Window,'C:\MyBitmap.bmp',0,0);
