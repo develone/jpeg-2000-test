@@ -28,8 +28,16 @@ cp /home/pi/jpeg-2000-test/bare-metal/build_lazarus_RPi/regexpr/Package.fpc /hom
 
 fpcmake -v
 
-#make 
+cd ide
+fpcmake -v
+
+cd ../components
+fpcmake -v
+
+cd ../tools
+fpcmake -v
+
+cd ..
 
 make clean all OPT="@/home/pi/ultibo/core/fpc/bin/fpc.cfg" 
 
-#make  all OPT="@/home/pi/ultibo/core/fpc/bin/fpc.cfg"
