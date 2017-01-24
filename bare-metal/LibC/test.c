@@ -284,8 +284,32 @@ void test ()
 	dwt = lift(sam, lf, rh, fwd);
 	printf ("inv dwt odd \n");
 	printf("%d %d %d %d\n",sam, lf, rh, dwt);
-}
+	int ctn;
+	ctn = 0;
 
+	printf("start of loop %d\n",ctn);
+	for(i = 0;i < 50000000; i++) {
+		 
+		ctn = 10000;
+		delay(ctn);
+		delay(ctn);
+		delay(ctn);
+		sam = 164;
+		lf = 156;
+		rh = 160;
+		fwd = 7;
+		dwt = lift(sam, lf, rh, fwd); 
+	}
+	
+	printf("end of loop %d\n",ctn);
+	
+		
+}
+void delay(int dd) {
+	int lp,ar[dd];
+	
+	for(lp = 0;lp < dd;lp++) ar[i] = lp;
+}
 int lift(int sam, int lf, int rh, int fwd) 
 {
 	if (fwd==7) 
@@ -296,5 +320,6 @@ int lift(int sam, int lf, int rh, int fwd)
 		dwt = sam + ((lf + rh + 2) >> 2);
 	else 
 		dwt = sam - ((lf + rh + 2 ) >> 2);
+
 	return dwt;
 }	
