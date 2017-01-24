@@ -16,6 +16,10 @@ uses
  BMPcomn,         {Include the BMPcomn unit from the fpc-image package to give the Bitmap headers}
  Classes,
  { needed by bitmap }
+ { needed to use ultibo-tftp  }
+ uTFTP,
+ Winsock2,
+ { needed to use ultibo-tftp  }
  Syscalls;
 
 {$linklib test}
@@ -29,6 +33,60 @@ var
  Window:TWindowHandle;
  Handle3:THandle;
 
+ IPAddress : string;
+
+
+function WaitForIPComplete : string;
+
+var
+
+  TCP : TWinsock2TCPClient;
+
+begin
+
+  TCP := TWinsock2TCPClient.Create;
+
+  Result := TCP.LocalAddress;
+
+  if (Result = '') or (Result = '0.0.0.0') or (Result = '255.255.255.255') then
+
+    begin
+
+      while (Result = '') or (Result = '0.0.0.0') or (Result = '255.255.255.255') do
+
+        begin
+
+          sleep (1000);
+
+          Result := TCP.LocalAddress;
+
+        end;
+
+    end;
+
+  TCP.Free;
+
+end;
+
+
+
+procedure Msg (Sender : TObject; s : string);
+
+begin
+
+  ConsoleWindowWriteLn (Handle1, s);
+
+end;
+
+
+
+procedure WaitForSDDrive;
+
+begin
+
+  while not DirectoryExists ('C:\') do sleep (500);
+
+end;
 function DrawBitmap(Handle:TWindowHandle;const Filename:String;X,Y:LongWord):Boolean;
 var
  Size:LongWord;
@@ -187,7 +245,10 @@ end;
 
 
 begin
-
+ ConsoleWindowWriteLn (Handle1, 'TFTP Demo.');
+ // wait for IP address and SD Card to be initialised.
+ WaitForSDDrive;
+ IPAddress := WaitForIPComplete;
  {Wait a few seconds for all initialization (like filesystem and network) to be done}
  Sleep(3000);
 
@@ -211,7 +272,8 @@ begin
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
   	
  test;
- 
+ ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
+ SetOnMsg (@Msg);
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
  ThreadHalt(0);
 end.
