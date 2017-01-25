@@ -52,6 +52,7 @@
 //
 #include "lifting.h"
 #include "test.h"
+#include <sys/time.h>
 void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 	int	col, row;
 
@@ -284,32 +285,26 @@ void test ()
 	dwt = lift(sam, lf, rh, fwd);
 	printf ("inv dwt odd \n");
 	printf("%d %d %d %d\n",sam, lf, rh, dwt);
-	int ctn;
-	ctn = 0;
-
-	printf("start of loop %d\n",ctn);
-	for(i = 0;i < 50000000; i++) {
-		 
-		ctn = 10000;
-		delay(ctn);
-		delay(ctn);
-		delay(ctn);
+	gettimeofday(&currentTime, NULL);
+	start_sec = currentTime.tv_sec;
+	
+	printf("start time in sec %ld\n", start_sec);
+	for(i = 0;i < 1e9; i++) {
 		sam = 164;
-		lf = 156;
+		lf = 156; 
 		rh = 160;
 		fwd = 7;
 		dwt = lift(sam, lf, rh, fwd); 
 	}
+	gettimeofday(&currentTime, NULL);
+	end_sec = currentTime.tv_sec;	
+	//end_sec = time(NULL);
+	printf("start time in sec %ld end time in sec %ld 1e9 dwt processing time %ld\n", start_sec, end_sec,(end_sec - start_sec) );
 	
-	printf("end of loop %d\n",ctn);
 	
 		
 }
-void delay(int dd) {
-	int lp,ar[dd];
-	
-	for(lp = 0;lp < dd;lp++) ar[i] = lp;
-}
+ 
 int lift(int sam, int lf, int rh, int fwd) 
 {
 	if (fwd==7) 
