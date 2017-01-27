@@ -318,3 +318,13 @@ int lift(int sam, int lf, int rh, int fwd)
 
 	return dwt;
 }	
+
+void PtoCptrs (int w, int *ibuf, int *tmpbuf)
+{
+
+	printf ("Hello Ultibo from C!!\n");
+	printf ("This will demonstrate passing integers from Pascal to C\n");
+	printf ("In additon demonstrate passing integers as pointer from Pascal to C\n");
+	printf(" a %d b %d c %d \n",w,ibuf,tmpbuf);
+	printf(" a %d b %d c %d \n",w,*ibuf,*tmpbuf);
+}

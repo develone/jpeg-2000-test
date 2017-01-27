@@ -23,9 +23,12 @@ uses
  Syscalls;
 
 {$linklib test}
-
+procedure PtoCptrs(w: Integer; ibuf: PInteger; tmpbuf: PInteger); cdecl; external 'libtest' name 'PtoCptrs';
 procedure test; cdecl; external 'libtest' name 'test';
 
+var
+	A, B, C: Integer;
+	
 var
  Handle:THandle;
  Handle1:THandle;
@@ -245,6 +248,7 @@ end;
 
 
 begin
+
  ConsoleWindowWriteLn (Handle1, 'TFTP Demo.');
  // wait for IP address and SD Card to be initialised.
  WaitForSDDrive;
@@ -272,6 +276,10 @@ begin
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
   	
  test;
+ 	A:=160;
+	B:=156;
+	C:=164;
+ PtoCptrs(A, @B, @C);
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
