@@ -20,6 +20,13 @@ uses
  uTFTP,
  Winsock2,
  { needed to use ultibo-tftp  }
+ { needed for telnet }
+      Shell,           
+     ShellFilesystem, 
+     ShellUpdate,
+     RemoteShell,
+  { needed for telnet }
+    
  Syscalls;
 
 {$linklib test}
