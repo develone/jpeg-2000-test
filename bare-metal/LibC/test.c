@@ -327,4 +327,8 @@ void PtoCptrs (int w, int *ibuf, int *tmpbuf)
 	printf ("In additon demonstrate passing integers as pointer from Pascal to C\n");
 	printf(" a %d b %d c %d \n",w,ibuf,tmpbuf);
 	printf(" a %d b %d c %d \n",w,*ibuf,*tmpbuf);
+	printf("Modifing ibuf to send back to Pascal\n");
+	
+	*ibuf = *ibuf + 50;
+	printf(" ibuf %d \n",*ibuf);
 }

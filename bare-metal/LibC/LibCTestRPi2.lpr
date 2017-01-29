@@ -287,6 +287,7 @@ begin
 	B:=156;
 	C:=164;
  PtoCptrs(A, @B, @C);
+ ConsoleWindowWriteLn (Handle, IntToStr(B));
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
