@@ -53,6 +53,7 @@
 #include "lifting.h"
 #include "test.h"
 #include <sys/time.h>
+#include <stdlib.h>
 void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 	int	col, row;
 
@@ -331,4 +332,20 @@ void PtoCptrs (int w, int *ibuf, int *tmpbuf)
 	
 	*ibuf = *ibuf + 50;
 	printf(" ibuf %d \n",*ibuf);
+	IMAGEP		img;
+	int ww = 512;
+	int hh = 512;
+	printf("allocating memory with malloc \n");
+	img = (IMAGEP)malloc(sizeof(IMAGE)+3*ww*hh*sizeof(int));
+	img->m_w = ww;
+	img->m_h = hh;
+	img->m_red   = img->data;
+	img->m_green = &img->data[ww*hh];
+	img->m_blue  = &img->data[2*ww*hh];
+	printf("the size of malloc %x \n",sizeof(img));
+	printf("img->m_red 0x%x \n",img->m_red);
+	printf("img->m_green 0x%x \n",img->m_green);
+	printf("img->m_blue 0x%x \n",img->m_blue);
+	free(img);
+	
 }
