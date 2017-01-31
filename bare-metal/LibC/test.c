@@ -319,7 +319,12 @@ int lift(int sam, int lf, int rh, int fwd)
 
 	return dwt;
 }	
+void xyz(long ss,int *xx)
+{
+printf("size %ld\n",ss);
 
+printf("ptr points %x\n",*xx);
+}
 void PtoCptrs (int w, int *ibuf, int *tmpbuf)
 {
 

@@ -26,11 +26,12 @@ uses
      ShellUpdate,
      RemoteShell,
   { needed for telnet }
-    
+ uPointersToC,
+ uBufferToC,   
  Syscalls;
 
 {$linklib test}
-procedure PtoCptrs(w: Integer; ibuf: PInteger; tmpbuf: PInteger); cdecl; external 'libtest' name 'PtoCptrs';
+ 
 procedure test; cdecl; external 'libtest' name 'test';
 
 var
@@ -44,8 +45,7 @@ var
  Handle3:THandle;
 
  IPAddress : string;
-
-
+ 
 function WaitForIPComplete : string;
 
 var
@@ -98,6 +98,7 @@ begin
 
 end;
 function DrawBitmap(Handle:TWindowHandle;const Filename:String;X,Y:LongWord):Boolean;
+ 
 var
  Size:LongWord;
  Count:LongWord;
@@ -114,7 +115,10 @@ var
 begin
  {}
  Result:=False;
- 
+      A:=160;
+      B:=156;
+      C:=164;
+      PtoCptrs(A, @B, @C);
  {There are a few different ways to load a bitmap file and draw it on the screen in Ultibo, in this example
   we'll use a TFileStream class to read the file and then load the image data (the pixels) into a memory
   buffer that we allocate. Finally we'll put the pixels onto the screen using the GraphicsWindowDrawImage()
@@ -145,9 +149,11 @@ begin
     
     {Most Bitmaps are stored upside down in the file, but they can be right way up}
     TopDown:=(BitMapInfoHeader.Height < 0);
+    
     BitMapInfoHeader.Height:=Abs(BitMapInfoHeader.Height);
     
     {Check how many bits per pixel in this Bitmap, we only support 16, 24 and 32 in this function}
+    
     if BitMapInfoHeader.BitCount = 16 then
      begin
       {Check the compression format used, this function only supports raw RGB files so far}
@@ -202,9 +208,14 @@ begin
   
     {Get the size of the Bitmap image not including the headers, just the actual pixels}
     Size:=LineSize * BitMapInfoHeader.Height;
-    
+     
     {Allocate a buffer to hold all the pixels}
+    
     Buffer:=GetMem(Size);
+    ConsoleWindowWriteLn (Handle3, 'Buffer ' + hexStr(Buffer)+ ' Size ' + IntToStr(Size) +' LineSize ' + IntToStr(LineSize) + ' BitCount ' + IntToStr(BitMapInfoHeader.BitCount));
+    
+    Pbuff(Size,Buffer);
+    
     try
      Offset:=0;
      
@@ -245,6 +256,7 @@ begin
      
      Result:=True;
     finally
+     
      FreeMem(Buffer);
     end;
    end;
@@ -272,7 +284,7 @@ begin
   
   What happens if the bitmap is bigger than the window? It will be trimmed to fit, try it
   yourself and see}
- DrawBitmap(Window,'C:\MyBitmap.bmp',0,0);
+ 
  Handle:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_TOPLEFT,True);
  Handle1:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_TOPRIGHT,True);
  {Handle2:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMLEFT,True);}
@@ -283,10 +295,8 @@ begin
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
   	
  test;
- 	A:=160;
-	B:=156;
-	C:=164;
- PtoCptrs(A, @B, @C);
+ DrawBitmap(Window,'C:\MyBitmap.bmp',0,0); 
+ //DrawBitmap(Window,'C:\MyBitmap.bmp',260,0);
  ConsoleWindowWriteLn (Handle, IntToStr(B));
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
