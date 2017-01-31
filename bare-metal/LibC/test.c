@@ -321,9 +321,13 @@ int lift(int sam, int lf, int rh, int fwd)
 }	
 void xyz(long ss,int *xx)
 {
+int	*ip = xx;	
 printf("size %ld\n",ss);
 
-printf("ptr points %x\n",*xx);
+printf("ptr points %x\n",*ip);
+
+ip++;
+printf("ptr points %x\n",*ip);
 }
 void PtoCptrs (int w, int *ibuf, int *tmpbuf)
 {

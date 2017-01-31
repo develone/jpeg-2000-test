@@ -1,0 +1,12 @@
+
+binary
+put kernel7.img aa
+get aa bb
+quit
+
+
+md5sum kernel7.img bb
+
+del kernel7.img
+copy aa kernel7.img
+logout

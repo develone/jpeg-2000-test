@@ -118,7 +118,7 @@ begin
       A:=160;
       B:=156;
       C:=164;
-      PtoCptrs(A, @B, @C);
+      
  {There are a few different ways to load a bitmap file and draw it on the screen in Ultibo, in this example
   we'll use a TFileStream class to read the file and then load the image data (the pixels) into a memory
   buffer that we allocate. Finally we'll put the pixels onto the screen using the GraphicsWindowDrawImage()
@@ -180,6 +180,7 @@ begin
         Format:=COLOR_FORMAT_RGB24;
         LineSize:=BitMapInfoHeader.Width * 3;
         ReadSize:=(((BitMapInfoHeader.Width * 8 * 3) + 31) div 32) shl 2;
+        ConsoleWindowWriteLn (Handle3,'ReadSize ' + IntToStr(ReadSize));
        end
       else
        begin
@@ -214,7 +215,7 @@ begin
     Buffer:=GetMem(Size);
     ConsoleWindowWriteLn (Handle3, 'Buffer ' + hexStr(Buffer)+ ' Size ' + IntToStr(Size) +' LineSize ' + IntToStr(LineSize) + ' BitCount ' + IntToStr(BitMapInfoHeader.BitCount));
     
-    Pbuff(Size,Buffer);
+    
     
     try
      Offset:=0;
@@ -222,21 +223,24 @@ begin
      {Check for a which way up}
      if TopDown then
       begin
+       ConsoleWindowWriteLn (Handle3, 'TOPDOWN ');
        {Right way up is a rare case}
        for Count:=0 to BitMapInfoHeader.Height - 1 do
         begin
          {Update the position of the file stream}
          FileStream.Position:=BitMapFileHeader.bfOffset + (Count * ReadSize);
-        
+         
          {Read a full line of pixels from the file}     
          if FileStream.Read((Buffer + Offset)^,LineSize) <> LineSize then Exit;
          
          {Update the offset of our buffer}    
          Inc(Offset,LineSize);
         end;
+        
       end
      else
       begin
+       ConsoleWindowWriteLn (Handle3, 'UPSIDEDOWN ' );
        {Upside down is the normal case}
        for Count:=BitMapInfoHeader.Height - 1 downto 0 do
         begin
@@ -253,11 +257,18 @@ begin
      
      {Draw the entire image onto our graphics console window in one request}
      if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
-     
+     Pbuff(Size,Buffer);
+     PtoCptrs(A, @B, @C);
      Result:=True;
     finally
-     
-     FreeMem(Buffer);
+     ConsoleWindowWriteLn (Handle3, 'Going to free Buffer memory' );
+     {waiting for C to tell Pascal that the memory can be free 
+     B was sent as 156 and returns as 206}
+     while B = 156 do
+       begin
+         ConsoleWindowWriteLn (Handle3, 'waiting for 206');
+       end; 
+       FreeMem(Buffer);
     end;
    end;
  finally
