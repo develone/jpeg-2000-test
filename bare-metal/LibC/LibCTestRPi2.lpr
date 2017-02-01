@@ -262,12 +262,7 @@ begin
      Result:=True;
     finally
      ConsoleWindowWriteLn (Handle3, 'Going to free Buffer memory' );
-     {waiting for C to tell Pascal that the memory can be free 
-     B was sent as 156 and returns as 206}
-     while B = 156 do
-       begin
-         ConsoleWindowWriteLn (Handle3, 'waiting for 206');
-       end; 
+      
        FreeMem(Buffer);
     end;
    end;

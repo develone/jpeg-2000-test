@@ -321,13 +321,18 @@ int lift(int sam, int lf, int rh, int fwd)
 }	
 void xyz(long ss,int *xx)
 {
-int	*ip = xx;	
+int *ip = xx;
+
 printf("size %ld\n",ss);
 
-printf("ptr points %x\n",*ip);
+printf("pointer passed %x\n",*xx);
 
-ip++;
-printf("ptr points %x\n",*ip);
+printf("local int ptr addr %x\n",ip);
+
+printf("local int ptr points to %x\n",*ip);
+//Alternate method of referencing data pointer by pointer
+printf("local int ptr points to %x\n",ip[0]);
+ 
 }
 void PtoCptrs (int w, int *ibuf, int *tmpbuf)
 {
