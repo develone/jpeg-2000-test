@@ -66,7 +66,7 @@ begin
 
         begin
 
-          sleep (1000);
+          sleep (1500);
 
           Result := TCP.LocalAddress;
 
@@ -258,7 +258,7 @@ begin
      {Draw the entire image onto our graphics console window in one request}
      if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
      Pbuff(Size,Buffer);
-     PtoCptrs(A, @B, @C);
+     //PtoCptrs(A, @B, @C);
      Result:=True;
     finally
      ConsoleWindowWriteLn (Handle3, 'Going to free Buffer memory' );
@@ -300,7 +300,7 @@ begin
  ConsoleWindowWriteLn(Handle3, 'writing bottom right handle3');
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
   	
- test;
+ //test;
  DrawBitmap(Window,'C:\MyBitmap.bmp',0,0); 
  //DrawBitmap(Window,'C:\MyBitmap.bmp',260,0);
  ConsoleWindowWriteLn (Handle, IntToStr(B));

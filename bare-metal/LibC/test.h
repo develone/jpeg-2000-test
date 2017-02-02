@@ -8,6 +8,6 @@ int lift(int sam, int lf, int rh, int fwd);
 void delay(int dd);
 typedef struct {
 	int	m_w, m_h;
-	int	*m_red, *m_green, *m_blue;
+	int	*m_red, *m_green, *m_blue, *m_tmp;
 	int	data[1];
 } IMAGE, *IMAGEP;

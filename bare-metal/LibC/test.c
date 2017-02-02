@@ -287,7 +287,7 @@ void test ()
 	printf ("inv dwt odd \n");
 	printf("%d %d %d %d\n",sam, lf, rh, dwt);
 	gettimeofday(&currentTime, NULL);
-	start_sec = currentTime.tv_sec;
+	start_sec = currentTime.tv_usec;
 	
 	printf("start time in sec %ld\n", start_sec);
 	for(i = 0;i < 1e9; i++) {
@@ -298,7 +298,7 @@ void test ()
 		dwt = lift(sam, lf, rh, fwd); 
 	}
 	gettimeofday(&currentTime, NULL);
-	end_sec = currentTime.tv_sec;	
+	end_sec = currentTime.tv_usec;	
 	//end_sec = time(NULL);
 	printf("start time in sec %ld end time in sec %ld 1e9 dwt processing time %ld\n", start_sec, end_sec,(end_sec - start_sec) );
 	
@@ -319,20 +319,100 @@ int lift(int sam, int lf, int rh, int fwd)
 
 	return dwt;
 }	
+
+//pass ip to a routine 
+//which malloc 3 area
+//read 65536  values of red 262144 32 bit int  0xc0000424 to 0xc0040423
+//read 65536  values of green 262144 32 bit int 0xc0040424 to 0xc00c0423
+//read 65536  values of blue 262144 32 bit int
+
 void xyz(long ss,int *xx)
 {
-int *ip = xx;
-
+printf("In xyz\n");
 printf("size %ld\n",ss);
-
 printf("pointer passed %x\n",*xx);
 
-printf("local int ptr addr %x\n",ip);
+char *ip = (char *)*xx;
+int loop;
+printf("local char ptr %x\n",&ip[0]);
+/*
+printf("local char ptr %x\n",&ip[0]);
+printf("red %x\n",ip[0]);
+ip++;
 
-printf("local int ptr points to %x\n",*ip);
-//Alternate method of referencing data pointer by pointer
-printf("local int ptr points to %x\n",ip[0]);
- 
+printf("local char ptr %x\n",&ip[0]);
+printf("green %x\n",ip[0]);
+ip++;
+
+printf("local char ptr %x\n",&ip[0]);
+printf("blue %x\n",ip[0]);
+ip++;
+*/
+	IMAGEP		img;
+	int ww = 256;
+	int hh = 256;
+	printf("allocating memory with malloc \n");
+	img = (IMAGEP)malloc(sizeof(IMAGE)+3*ww*hh*sizeof(int));
+	img->m_w = ww;
+	img->m_h = hh;
+	img->m_red   = img->data;
+	img->m_green = &img->data[ww*hh];
+	img->m_blue  = &img->data[2*ww*hh];
+	img->m_tmp  = &img->data[3*ww*hh];
+	//printf("the size of malloc %x \n",sizeof(img));
+	printf("img->m_red 0x%x \n",img->m_red);
+	printf("img->m_green 0x%x \n",img->m_green);
+	printf("img->m_blue 0x%x \n",img->m_blue);
+	printf("img->m_tmp 0x%x \n",img->m_tmp);
+	
+	printf("Copying RGB 8 bit char to 32 int \n");
+	
+	for (loop=0; loop < ss/3; loop++) {
+		 *img->m_red = ip[0];
+		 ip++;
+		 img->m_red++;
+		 *img->m_green = ip[0];
+		 ip++;
+		 img->m_green++;
+		 *img->m_blue = ip[0];
+		 ip++;
+		 img->m_blue++;
+	}
+		
+	printf("img->m_red 0x%x  \n",img->m_red);
+	printf("img->m_green 0x%x \n",img->m_green);
+	printf("img->m_blue 0x%x \n",img->m_blue);
+
+    printf("reseting pointers \n");
+     	
+	img->m_red   = img->data;
+	img->m_green = &img->data[ww*hh];
+	img->m_blue  = &img->data[2*ww*hh];	
+
+	ip = (char *)*xx;
+
+	printf("img->m_red 0x%x passed ptr 0x%x\n",img->m_red, &ip[0]);
+	printf("img->m_green 0x%x \n",img->m_green);
+	printf("img->m_blue 0x%x \n",img->m_blue);	
+	
+	printf("Calling lifting\n");
+	gettimeofday(&currentTime, NULL);
+	start_sec = currentTime.tv_sec;	
+	
+	img->m_red   = img->data;
+	lifting(ww, img->m_red, img->m_tmp);
+	
+	img->m_green = &img->data[ww*hh];
+	lifting(ww, img->m_green, img->m_tmp);
+	
+	img->m_blue  = &img->data[2*ww*hh];
+	lifting(ww, img->m_blue, img->m_tmp);
+	
+	gettimeofday(&currentTime, NULL);
+	end_sec = currentTime.tv_sec;	
+	printf("start time in sec %ld end time in sec %ld 1e9 dwt processing time %ld\n", start_sec, end_sec,(end_sec - start_sec) );
+	
+	free(img);	 
 }
 void PtoCptrs (int w, int *ibuf, int *tmpbuf)
 {
