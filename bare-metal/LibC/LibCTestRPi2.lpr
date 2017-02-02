@@ -256,8 +256,9 @@ begin
       end;        
      
      {Draw the entire image onto our graphics console window in one request}
-     if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
+     //if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
      Pbuff(Size,Buffer);
+     if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
      //PtoCptrs(A, @B, @C);
      Result:=True;
     finally

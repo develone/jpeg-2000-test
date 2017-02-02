@@ -411,6 +411,18 @@ ip++;
 	gettimeofday(&currentTime, NULL);
 	end_sec = currentTime.tv_sec;	
 	printf("start time in sec %ld end time in sec %ld 1e9 dwt processing time %ld\n", start_sec, end_sec,(end_sec - start_sec) );
+
+	for (loop=0; loop < ss/3; loop++) {
+		 ip[0] = *img->m_red ;
+		 ip++;
+		 img->m_red++;
+		 ip[0] = *img->m_green ;
+		 ip++;
+		 img->m_green++;
+		 ip[0] = *img->m_blue ;
+		 ip++;
+		 img->m_blue++;
+	}
 	
 	free(img);	 
 }
