@@ -1,8 +1,9 @@
 int sam, lf, rh, dwt;
 int fwd;
-struct timeval currentTime;
-long start_sec;
-long end_sec;
+struct timeval currentTime,start,end;
+//long start_sec;
+//long end_sec;
+long mtime, seconds, useconds;
 int i;
 int lift(int sam, int lf, int rh, int fwd);
 void delay(int dd);

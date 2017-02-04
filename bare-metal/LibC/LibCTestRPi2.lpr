@@ -45,6 +45,10 @@ var
  Handle3:THandle;
 
  IPAddress : string;
+ X:LongWord;
+ Y:LongWord;
+ Width:LongWord;
+ Height:LongWord; 
  
 function WaitForIPComplete : string;
 
@@ -97,6 +101,143 @@ begin
   while not DirectoryExists ('C:\') do sleep (500);
 
 end;
+
+{A function for saving all or part of an Ultibo graphics console window to a standard bitmap file}
+function SaveBitmap(Handle:TWindowHandle;const Filename:String;X,Y,Width,Height,BPP:LongWord):Boolean;
+var
+ Size:LongWord;
+ Count:LongWord;
+ Offset:LongWord;
+ Format:LongWord;
+ Buffer:Pointer;
+ LineSize:LongWord;
+ ReadSize:LongWord;
+ MemoryStream:TMemoryStream;
+ 
+ BitMapFileHeader:TBitMapFileHeader;
+ BitMapInfoHeader:TBitMapInfoHeader;
+begin
+ {}
+ Result:=False;
+ try
+  {Saving all or part of the screen to a bitmap file can be done very simply using a number of different methods.
+   Here we get the image to be saved from the screen in a single to call GraphicsWindowGetImage() which copies the
+   image to a memory buffer we provide. From there we use a TMemoryStream class to write each row of pixels in the
+   image into the correct format for storing in a BMP file and finally the memory stream is saved to a file using the
+   SaveToFile() method}
+ 
+  {Check the parameters}
+  if Handle = INVALID_HANDLE_VALUE then Exit;
+  if Length(Filename) = 0 then Exit;
+  if (Width = 0) or (Height = 0) then Exit;
+ 
+  {Check the BPP (Bits Per Pixel) value. It must be 16, 24 or 32 for this function}
+  if BPP = 16 then
+   begin
+    {Get the color format}
+    Format:=COLOR_FORMAT_RGB15;
+    {Work ou the number ofbytes per line}
+    LineSize:=Width * 2;
+    {And the actual number of bytes until the next line}
+    ReadSize:=(((Width * 8 * 2) + 31) div 32) shl 2;
+   end
+  else if BPP = 24 then
+   begin
+    {Color format, bytes per line and actual bytes again}
+    Format:=COLOR_FORMAT_RGB24;
+    LineSize:=Width * 3;
+    ReadSize:=(((Width * 8 * 3) + 31) div 32) shl 2;
+   end
+  else if BPP = 32 then
+   begin
+    {Color format, bytes per line and actual bytes as above}
+    Format:=COLOR_FORMAT_URGB32;
+    LineSize:=Width * 4;
+    ReadSize:=(((Width * 8 * 4) + 31) div 32) shl 2;
+   end
+  else
+   begin
+    Exit;
+   end;
+   
+  {Check the file does not exist}
+  if FileExists(Filename) then Exit;
+ 
+  {Create the TMemoryStream object}
+  MemoryStream:=TMemoryStream.Create;
+  try
+   {Get the total size of the image in the file (not including the headers)}
+   Size:=ReadSize * Height;
+   
+   {Set the size of the memory stream (Adding the size of the headers)}
+   MemoryStream.Size:=Size + SizeOf(TBitMapFileHeader) + SizeOf(TBitMapInfoHeader);
+   MemoryStream.Position:=0;
+   
+   {Create the Bitmap file header}
+   FillChar(BitMapFileHeader,SizeOf(TBitMapFileHeader),0);
+   BitMapFileHeader.bfType:=BMmagic;
+   BitMapFileHeader.bfSize:=Size + SizeOf(TBitMapFileHeader) + SizeOf(TBitMapInfoHeader);
+   BitMapFileHeader.bfReserved:=0;
+   BitMapFileHeader.bfOffset:=SizeOf(TBitMapFileHeader) + SizeOf(TBitMapInfoHeader);
+   if MemoryStream.Write(BitMapFileHeader,SizeOf(TBitMapFileHeader)) <> SizeOf(TBitMapFileHeader) then Exit;
+   
+   {And create the Bitmap info header}
+   FillChar(BitMapInfoHeader,SizeOf(TBitMapInfoHeader),0);
+   BitMapInfoHeader.Size:=SizeOf(TBitMapInfoHeader);
+   BitMapInfoHeader.Width:=Width;
+   BitMapInfoHeader.Height:=Height;
+   BitMapInfoHeader.Planes:=1;
+   BitMapInfoHeader.BitCount:=BPP;
+   BitMapInfoHeader.Compression:=BI_RGB;
+   BitMapInfoHeader.SizeImage:=Size;
+   BitMapInfoHeader.XPelsPerMeter:=3780; {96 DPI} {(3780 / 1000) * 25.4}
+   BitMapInfoHeader.YPelsPerMeter:=3780; {96 DPI} {(3780 / 1000) * 25.4}
+   BitMapInfoHeader.ClrUsed:=0;
+   BitMapInfoHeader.ClrImportant:=0;
+   if MemoryStream.Write(BitMapInfoHeader,SizeOf(TBitMapInfoHeader)) <> SizeOf(TBitMapInfoHeader) then Exit;
+ 
+   {Get the size of the pixels to be copied from the screen}
+   Size:=LineSize * BitMapInfoHeader.Height;
+     
+   {Allocate a buffer to copy to}
+   Buffer:=GetMem(Size);
+   try
+    Offset:=0;
+     
+    {Get the entire image from the screen into our buffer. The function will translate the colors into the format we asked for}
+    if GraphicsWindowGetImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
+   
+    {Go through each row in the image starting at the bottom because bitmaps are normally upside down}
+    for Count:=BitMapInfoHeader.Height - 1 downto 0 do
+     begin
+      {Update the position of the memory stream for the next row}
+      MemoryStream.Position:=BitMapFileHeader.bfOffset + (Count * ReadSize);
+     
+      {Write a full line of pixels to the memory stream from our buffer}     
+      if MemoryStream.Write((Buffer + Offset)^,LineSize) <> LineSize then Exit;
+         
+      {Update the offet of our buffer}   
+      Inc(Offset,LineSize);
+     end;
+   
+    {Write the memory stream to the file}
+    MemoryStream.SaveToFile(Filename);
+   
+    Result:=True;
+   finally
+    FreeMem(Buffer);
+   end;
+  finally
+   MemoryStream.Free;
+  end;
+ except
+  on E: Exception do
+   begin
+    {Log an error or return a message etc}
+   end;
+ end;
+end;
+
 function DrawBitmap(Handle:TWindowHandle;const Filename:String;X,Y:LongWord):Boolean;
  
 var
@@ -301,12 +442,23 @@ begin
  ConsoleWindowWriteLn(Handle3, 'writing bottom right handle3');
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
   	
- //test;
+ test;
  DrawBitmap(Window,'C:\MyBitmap.bmp',0,0); 
  //DrawBitmap(Window,'C:\MyBitmap.bmp',260,0);
  ConsoleWindowWriteLn (Handle, IntToStr(B));
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
+  {Set the area we want to save to make it easier to work with}
+ X:=0;
+ Y:=0;
+ Width:=256;
+ Height:=256;
+  if SaveBitmap(Window,'C:\MySavedBitmap.bmp',X,Y,Width,Height,24) then
+  begin
+   {Output a message when the file is saved}
+   GraphicsWindowDrawTextEx(Window,GraphicsWindowGetFont(Window),'Bitmap file saved successfully',260,100,COLOR_BLACK,COLOR_WHITE);
+  end;
+ 
  ThreadHalt(0);
 end.

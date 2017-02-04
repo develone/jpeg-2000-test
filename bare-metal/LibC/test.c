@@ -286,10 +286,10 @@ void test ()
 	dwt = lift(sam, lf, rh, fwd);
 	printf ("inv dwt odd \n");
 	printf("%d %d %d %d\n",sam, lf, rh, dwt);
-	gettimeofday(&currentTime, NULL);
-	start_sec = currentTime.tv_usec;
+	gettimeofday(&start, NULL);
 	
-	printf("start time in sec %ld\n", start_sec);
+	
+	printf("start time in sec %ld\n", start);
 	for(i = 0;i < 1e9; i++) {
 		sam = 164;
 		lf = 156; 
@@ -297,10 +297,15 @@ void test ()
 		fwd = 7;
 		dwt = lift(sam, lf, rh, fwd); 
 	}
-	gettimeofday(&currentTime, NULL);
-	end_sec = currentTime.tv_usec;	
+	gettimeofday(&end, NULL);
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+ 
+    mtime = seconds + useconds;
+ 
+    printf("Elapsed time: %ld microseconds\n", mtime);
 	//end_sec = time(NULL);
-	printf("start time in sec %ld end time in sec %ld 1e9 dwt processing time %ld\n", start_sec, end_sec,(end_sec - start_sec) );
+	//printf("start time in sec %ld end time in sec %ld 1e9 dwt processing time %ld\n", start, end,(end - start) );
 	
 	
 		
@@ -328,6 +333,9 @@ int lift(int sam, int lf, int rh, int fwd)
 
 void xyz(long ss,int *xx)
 {
+	gettimeofday(&start, NULL);
+	//start_sec = currentTime.tv_usec;	
+
 printf("In xyz\n");
 printf("size %ld\n",ss);
 printf("pointer passed %x\n",*xx);
@@ -396,8 +404,6 @@ ip++;
 	printf("img->m_blue 0x%x \n",img->m_blue);	
 	
 	printf("Calling lifting\n");
-	gettimeofday(&currentTime, NULL);
-	start_sec = currentTime.tv_sec;	
 	
 	img->m_red   = img->data;
 	lifting(ww, img->m_red, img->m_tmp);
@@ -408,10 +414,6 @@ ip++;
 	img->m_blue  = &img->data[2*ww*hh];
 	lifting(ww, img->m_blue, img->m_tmp);
 	
-	gettimeofday(&currentTime, NULL);
-	end_sec = currentTime.tv_sec;	
-	printf("start time in sec %ld end time in sec %ld 1e9 dwt processing time %ld\n", start_sec, end_sec,(end_sec - start_sec) );
-
 	for (loop=0; loop < ss/3; loop++) {
 		 ip[0] = *img->m_red ;
 		 ip++;
@@ -424,6 +426,14 @@ ip++;
 		 img->m_blue++;
 	}
 	
+	gettimeofday(&end, NULL);
+ 
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+ 
+	mtime = seconds + useconds;
+ 
+    printf("Elapsed time: %ld microseconds\n", mtime); 	
 	free(img);	 
 }
 void PtoCptrs (int w, int *ibuf, int *tmpbuf)
