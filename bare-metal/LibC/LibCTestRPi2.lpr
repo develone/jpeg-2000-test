@@ -450,10 +450,10 @@ begin
  SetOnMsg (@Msg);
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
   {Set the area we want to save to make it easier to work with}
- X:=0;
- Y:=0;
- Width:=256;
- Height:=256;
+ X:=224;
+ Y:=224;
+ Width:=32;
+ Height:=32;
   if SaveBitmap(Window,'C:\MySavedBitmap.bmp',X,Y,Width,Height,24) then
   begin
    {Output a message when the file is saved}
