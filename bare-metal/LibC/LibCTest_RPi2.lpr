@@ -35,7 +35,7 @@ uses
 procedure test; cdecl; external 'libtest' name 'test';
 
 var
-	A, B, C: Integer;
+	A, B, C, IBPP: Integer;
 
 var
  Handle:THandle;
@@ -354,6 +354,7 @@ begin
     {Allocate a buffer to hold all the pixels}
 
     Buffer:=GetMem(Size);
+    IBPP:=BitMapInfoHeader.BitCount;
     ConsoleWindowWriteLn (Handle3, 'Buffer ' + hexStr(Buffer)+ ' Size ' + IntToStr(Size) +' LineSize ' + IntToStr(LineSize) + ' BitCount ' + IntToStr(BitMapInfoHeader.BitCount));
 
 
@@ -398,7 +399,7 @@ begin
 
      {Draw the entire image onto our graphics console window in one request}
      //if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
-     Pbuff(Size,Buffer);
+     Pbuff(IBPP,Size,Buffer);
      if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
      //PtoCptrs(A, @B, @C);
      Result:=True;

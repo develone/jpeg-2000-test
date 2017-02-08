@@ -331,12 +331,13 @@ int lift(int sam, int lf, int rh, int fwd)
 //read 65536  values of green 262144 32 bit int 0xc0040424 to 0xc00c0423
 //read 65536  values of blue 262144 32 bit int
 
-void xyz(long ss,int *xx)
+void xyz(int bp, long ss,int *xx)
 {
 	gettimeofday(&start, NULL);
 	//start_sec = currentTime.tv_usec;	
 
 printf("In xyz\n");
+printf("bpp %ld\n",bp);
 printf("size %ld\n",ss);
 printf("pointer passed %x\n",*xx);
 
