@@ -5,6 +5,7 @@ struct timeval currentTime,start,end;
 //long end_sec;
 long mtime, seconds, useconds;
 int i;
+double sqrt(double x);
 int lift(int sam, int lf, int rh, int fwd);
 void delay(int dd);
 typedef struct {

@@ -31,7 +31,7 @@ uses
  Syscalls;
 
 {$linklib test}
-
+{$linklib libm}
 procedure test; cdecl; external 'libtest' name 'test';
 
 var
@@ -42,7 +42,8 @@ var
  Handle1:THandle;
  {Handle2:THandle;}
  Window:TWindowHandle;
- Handle3:THandle;
+ Window1:TWindowHandle;
+ //Handle3:THandle;
 
  IPAddress : string;
  X:LongWord;
@@ -219,6 +220,13 @@ begin
       {Update the offet of our buffer}
       Inc(Offset,LineSize);
      end;
+  {Set the area we want to save to make it easier to work with}
+ {w/2 + w/4 + w/8 224 for 256
+  w/2 + w/4 + w/8 512 for 448
+  w/2 + w/4 + w/8 1024 for 896
+  256 32, 512 64, & 1024 128}
+ X:= 224;
+ Y:= X;
 
     {Write the memory stream to the file}
     MemoryStream.SaveToFile(Filename);
@@ -321,7 +329,7 @@ begin
         Format:=COLOR_FORMAT_RGB24;
         LineSize:=BitMapInfoHeader.Width * 3;
         ReadSize:=(((BitMapInfoHeader.Width * 8 * 3) + 31) div 32) shl 2;
-        ConsoleWindowWriteLn (Handle3,'ReadSize ' + IntToStr(ReadSize));
+        //ConsoleWindowWriteLn (Handle1,'ReadSize ' + IntToStr(ReadSize));
        end
       else
        begin
@@ -355,7 +363,7 @@ begin
 
     Buffer:=GetMem(Size);
     IBPP:=BitMapInfoHeader.BitCount;
-    ConsoleWindowWriteLn (Handle3, 'Buffer ' + hexStr(Buffer)+ ' Size ' + IntToStr(Size) +' LineSize ' + IntToStr(LineSize) + ' BitCount ' + IntToStr(BitMapInfoHeader.BitCount));
+    ConsoleWindowWriteLn (Handle1, 'Buffer ' + hexStr(Buffer)+ ' Size ' + IntToStr(Size) +' LineSize ' + IntToStr(LineSize) + ' BitCount ' + IntToStr(BitMapInfoHeader.BitCount));
 
 
 
@@ -365,7 +373,7 @@ begin
      {Check for a which way up}
      if TopDown then
       begin
-       ConsoleWindowWriteLn (Handle3, 'TOPDOWN ');
+       ConsoleWindowWriteLn (Handle1, 'TOPDOWN ');
        {Right way up is a rare case}
        for Count:=0 to BitMapInfoHeader.Height - 1 do
         begin
@@ -382,7 +390,7 @@ begin
       end
      else
       begin
-       ConsoleWindowWriteLn (Handle3, 'UPSIDEDOWN ' );
+       ConsoleWindowWriteLn (Handle1, 'UPSIDEDOWN ' );
        {Upside down is the normal case}
        for Count:=BitMapInfoHeader.Height - 1 downto 0 do
         begin
@@ -398,13 +406,13 @@ begin
       end;
 
      {Draw the entire image onto our graphics console window in one request}
-     //if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
+     if GraphicsWindowDrawImage(Window,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
      Pbuff(IBPP,Size,Buffer);
-     if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
+     if GraphicsWindowDrawImage(Window1,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
      //PtoCptrs(A, @B, @C);
      Result:=True;
     finally
-     ConsoleWindowWriteLn (Handle3, 'Going to free Buffer memory' );
+     ConsoleWindowWriteLn (Handle1, 'Going to free Buffer memory' );
 
        FreeMem(Buffer);
     end;
@@ -426,7 +434,7 @@ begin
 
  {Create a graphics window to display our bitmap, let's use the new CONSOLE_POSITION_FULLSCREEN option}
  Window:=GraphicsWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMLEFT);
-
+ Window1:=GraphicsWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMRIGHT);
  {Call our bitmap drawing function and pass the name of our bitmap file on the SD card,
   we also pass the handle for our graphics console window and the X and Y locations to
   draw the bitmap.
@@ -437,10 +445,10 @@ begin
  Handle:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_TOPLEFT,True);
  Handle1:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_TOPRIGHT,True);
  {Handle2:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMLEFT,True);}
- Handle3:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMRIGHT,True);
+ //Handle3:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMRIGHT,True);
  ConsoleWindowWriteLn(Handle1, 'writing top right handle1');
  {ConsoleWindowWriteLn(Handle2, 'writing bottom left handle2');}
- ConsoleWindowWriteLn(Handle3, 'writing bottom right handle3');
+ //ConsoleWindowWriteLn(Handle3, 'writing bottom right handle3');
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
 
  test;
@@ -450,15 +458,12 @@ begin
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
-  {Set the area we want to save to make it easier to work with}
- X:=224;
- Y:=224;
- Width:=32;
- Height:=32;
+ Width:= 32;
+ Height:= Width;
   if SaveBitmap(Window,'C:\MySavedBitmap.bmp',X,Y,Width,Height,24) then
   begin
    {Output a message when the file is saved}
-   GraphicsWindowDrawTextEx(Window,GraphicsWindowGetFont(Window),'Bitmap file saved successfully',260,100,COLOR_BLACK,COLOR_WHITE);
+   GraphicsWindowDrawTextEx(Window1,GraphicsWindowGetFont(Window),'Bitmap file saved successfully',260,100,COLOR_BLACK,COLOR_WHITE);
   end;
 
  ThreadHalt(0);

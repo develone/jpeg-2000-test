@@ -54,6 +54,7 @@
 #include "test.h"
 #include <sys/time.h>
 #include <stdlib.h>
+#include <math.h>
 void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 	int	col, row;
 
@@ -338,12 +339,23 @@ void xyz(int bp, long ss,int *xx)
 
 printf("In xyz\n");
 printf("bpp %ld\n",bp);
+
 printf("size %ld\n",ss);
 printf("pointer passed %x\n",*xx);
 
-char *ip = (char *)*xx;
+char *lclip = (char *)*xx;
 int loop;
-printf("local char ptr %x\n",&ip[0]);
+/* Need to determine the ww width & hh height 
+ * given the ss bpp BPP bits per pixel & Size
+ */   
+double tt;
+if(bp==8) tt = (double)ss;
+else tt = (double)(ss/3.0);
+int ww, hh;
+ww = (int)sqrt(tt);
+hh = ww;
+printf("tt %lf sqrt tt %lf %d %d \n",tt,sqrt(tt),ww,hh);
+printf("local char ptr %x\n",&lclip[0]);
 /*
 printf("local char ptr %x\n",&ip[0]);
 printf("red %x\n",ip[0]);
@@ -358,8 +370,8 @@ printf("blue %x\n",ip[0]);
 ip++;
 */
 	IMAGEP		img;
-	int ww = 256;
-	int hh = 256;
+	//int ww = 256;
+	//int hh = 256;
 	printf("allocating memory with malloc \n");
 	img = (IMAGEP)malloc(sizeof(IMAGE)+3*ww*hh*sizeof(int));
 	img->m_w = ww;
@@ -377,14 +389,14 @@ ip++;
 	printf("Copying RGB 8 bit char to 32 int \n");
 	
 	for (loop=0; loop < ss/3; loop++) {
-		 *img->m_red = ip[0];
-		 ip++;
+		 *img->m_red = lclip[0];
+		 lclip++;
 		 img->m_red++;
-		 *img->m_green = ip[0];
-		 ip++;
+		 *img->m_green = lclip[0];
+		 lclip++;
 		 img->m_green++;
-		 *img->m_blue = ip[0];
-		 ip++;
+		 *img->m_blue = lclip[0];
+		 lclip++;
 		 img->m_blue++;
 	}
 		
@@ -398,32 +410,36 @@ ip++;
 	img->m_green = &img->data[ww*hh];
 	img->m_blue  = &img->data[2*ww*hh];	
 
-	ip = (char *)*xx;
+	lclip = (char *)*xx;
 
-	printf("img->m_red 0x%x passed ptr 0x%x\n",img->m_red, &ip[0]);
+	printf("img->m_red 0x%x passed ptr 0x%x\n",img->m_red, &lclip[0]);
 	printf("img->m_green 0x%x \n",img->m_green);
 	printf("img->m_blue 0x%x \n",img->m_blue);	
 	
-	printf("Calling lifting\n");
+	printf("Calling lifting red\n");
 	
-	img->m_red   = img->data;
+	//img->m_red   = img->data;
 	lifting(ww, img->m_red, img->m_tmp);
+	img->m_tmp  = &img->data[3*ww*hh];
+	printf("Calling lifting green\n");
 	
-	img->m_green = &img->data[ww*hh];
+	//img->m_green = &img->data[ww*hh];
 	lifting(ww, img->m_green, img->m_tmp);
+	img->m_tmp  = &img->data[3*ww*hh];
+	printf("Calling lifting blue\n");
 	
-	img->m_blue  = &img->data[2*ww*hh];
+	//img->m_blue  = &img->data[2*ww*hh];
 	lifting(ww, img->m_blue, img->m_tmp);
-	
+	printf("lifting to Buffer\n");
 	for (loop=0; loop < ss/3; loop++) {
-		 ip[0] = *img->m_red ;
-		 ip++;
+		 lclip[0] = *img->m_red ;
+		 lclip++;
 		 img->m_red++;
-		 ip[0] = *img->m_green ;
-		 ip++;
+		 lclip[0] = *img->m_green ;
+		 lclip++;
 		 img->m_green++;
-		 ip[0] = *img->m_blue ;
-		 ip++;
+		 lclip[0] = *img->m_blue ;
+		 lclip++;
 		 img->m_blue++;
 	}
 	
