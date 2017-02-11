@@ -225,7 +225,7 @@ begin
   w/2 + w/4 + w/8 512 for 448
   w/2 + w/4 + w/8 1024 for 896
   256 32, 512 64, & 1024 128}
- X:= 224;
+ X:= 896;
  Y:= X;
 
     {Write the memory stream to the file}
@@ -458,7 +458,7 @@ begin
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
- Width:= 32;
+ Width:= 128;
  Height:= Width;
   if SaveBitmap(Window,'C:\MySavedBitmap.bmp',X,Y,Width,Height,24) then
   begin

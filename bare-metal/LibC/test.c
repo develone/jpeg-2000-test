@@ -373,7 +373,7 @@ ip++;
 	//int ww = 256;
 	//int hh = 256;
 	printf("allocating memory with malloc \n");
-	img = (IMAGEP)malloc(sizeof(IMAGE)+3*ww*hh*sizeof(int));
+	img = (IMAGEP)malloc(sizeof(IMAGE)+4*ww*hh*sizeof(int));
 	img->m_w = ww;
 	img->m_h = hh;
 	img->m_red   = img->data;
