@@ -1,8 +1,7 @@
 program DWT_LIFT_RPi2;
 
 {$mode objfpc}{$H+}
-{$linklib dwtlift}
-{$linklib libm}
+ 
 uses
  RaspberryPi2, {<-- Change this to suit which model you have!!}
  GlobalConfig,
@@ -28,7 +27,7 @@ uses
      RemoteShell,
   { needed for telnet }
  
- uBufferToC,
+ 
  uLiftBitmap,
  Syscalls;
 
