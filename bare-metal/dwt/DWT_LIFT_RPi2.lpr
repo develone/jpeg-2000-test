@@ -49,6 +49,8 @@ var
  Y:LongWord;
  Width:LongWord;
  Height:LongWord;
+ DECOMP: Integer;
+ ENCODE: Integer;
 
 function WaitForIPComplete : string;
 
@@ -132,8 +134,9 @@ begin
  //ConsoleWindowWriteLn(Handle3, 'writing bottom right handle3');
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
 
- 
- DrawBitmap(Window,'C:\MyBitmap.bmp',0,0);
+ DECOMP:=3;
+ ENCODE:=0; 
+ DrawBitmap(Window,'C:\MyBitmap.bmp',0,0,DECOMP,ENCODE);
  
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);

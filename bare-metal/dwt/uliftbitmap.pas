@@ -55,7 +55,7 @@ uses GlobalConfig,GlobalConst,GlobalTypes,Platform,Console,GraphicsConsole,Class
             
 {==============================================================================}
 
-function DrawBitmap(Handle:TWindowHandle;const Filename:String;X,Y:LongWord):Boolean;
+function DrawBitmap(Handle:TWindowHandle;const Filename:String;X,Y:LongWord;DECOMP,ENCODE:Integer):Boolean;
 function SaveBitmap(Handle:TWindowHandle;const Filename:String;X,Y,Width,Height,BPP:LongWord):Boolean;
 
 {==============================================================================}
@@ -66,7 +66,7 @@ implementation
 {==============================================================================}
 {==============================================================================}
 
-function DrawBitmap(Handle:TWindowHandle;const Filename:String;X,Y:LongWord):Boolean;
+function DrawBitmap(Handle:TWindowHandle;const Filename:String;X,Y:LongWord;DECOMP,ENCODE:Integer):Boolean;
 {A function for drawing a standard bitmap image onto an Ultibo graphics console window}
 {Handle: The handle of an existing graphics console window}
 {Filename: The name of the file to load the bitmap from}
@@ -84,8 +84,7 @@ var
  ReadSize:LongWord;
  FileStream:TFileStream;
  IBPP: Integer;
- DECOMP: Integer;
- ENCODE: Integer;
+ 
  BitMapFileHeader:TBitMapFileHeader;
  BitMapInfoHeader:TBitMapInfoHeader;
 begin
@@ -220,8 +219,7 @@ begin
      
      {Draw the entire image onto our graphics console window in one request}
      if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
-     DECOMP:=3;
-     ENCODE:=1;
+ 
      lift_config(DECOMP,ENCODE,IBPP,Size,Buffer);
      if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
      Result:=True;
