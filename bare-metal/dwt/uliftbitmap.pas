@@ -84,7 +84,8 @@ var
  ReadSize:LongWord;
  FileStream:TFileStream;
  IBPP: Integer;
- 
+ DECOMP: Integer;
+ ENCODE: Integer;
  BitMapFileHeader:TBitMapFileHeader;
  BitMapInfoHeader:TBitMapInfoHeader;
 begin
@@ -219,7 +220,9 @@ begin
      
      {Draw the entire image onto our graphics console window in one request}
      if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
-     lift_config(IBPP,Size,Buffer);
+     DECOMP:=3;
+     ENCODE:=1;
+     lift_config(DECOMP,ENCODE,IBPP,Size,Buffer);
      if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
      Result:=True;
     finally

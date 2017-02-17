@@ -259,6 +259,150 @@ void	lifting(int w, int *ibuf, int *tmpbuf, int decomp) {
 	*/
 }
 
+void	dosinglelift(int rb, int w, int * const ibuf, int * const obuf) {
+	int	col, row;
+
+	for(row=0; row<w; row++) {
+		register int	*ip, *op, *opb;
+		register int	ap,b,cp,d;
+
+		//
+		// Ibuf walks down rows (here), but reads across columns (below)
+		// We might manage to get rid of the multiply by doing something
+		// like: 
+		//	ip = ip + (rb-w);
+		// but we'll keep it this way for now.
+		//
+		//setting to beginning of each row
+		ip = ibuf+row*rb;
+
+		//
+		// Obuf walks across columns (here), writing down rows (below)
+		//
+		// Here again, we might be able to get rid of the multiply,
+		// but let's get some confidence as written first.
+		//
+		op = obuf+row;
+		opb = op + w*rb/2;
+
+		//
+		// Pre-charge our pipeline
+		//
+
+		// a,b,c,d,e ...
+		// Evens get updated first, via the highpass filter
+		ap = ip[0];
+		b  = ip[1];
+		cp = ip[2];
+		d  = ip[3]; ip += 4;
+		//
+		ap = ap-b; // img[0]-(img[1]+img[-1])>>1)
+		cp = cp- ((b+d)>>1);
+		 
+		op[0] = ap;
+		opb[0]  = b+((ap+cp+2)>>2);
+
+		for(col=1; col<w/2-1; col++) {
+			op +=rb; // = obuf+row+rb*col = obuf[col][row]
+			opb+=rb;// = obuf+row+rb*(col+w/2) = obuf[col+w/2][row]
+			ap = cp;
+			b  = d;
+			cp = ip[0];	// = ip[row][2*col+1]
+			d  = ip[1];	// = ip[row][2*col+2]
+
+			//HP filter in fwd dwt			
+			cp  = (cp-((b+d)>>1)); //op[0] is obuf[col][row]
+			*op = ap; //op[0] is obuf[col][row]
+			 
+			//LP filter in fwd dwt
+			*opb = b+((ap+cp+2)>>2);
+			ip+=2;	// = ibuf + (row*rb)+2*col
+		}
+
+		op += rb; opb += rb;
+		*op  = cp;
+		*opb = d+((cp+1)>>3);
+	}
+}
+
+
+void	invlifting(int w, int *ibuf, int *tmpbuf, int decomp) {
+	const	int	rb = w;
+	int	lvl, LVLS = decomp;
+
+	int	*ip = ibuf, *tp = tmpbuf;
+	int	ov[5];
+
+	//const int	LVLS = 3;
+
+/*
+	for(lvl=0; lvl<w*w; lvl++)
+		ibuf[lvl] = 0;
+	for(lvl=0; lvl<w*w; lvl++)
+		tmpbuf[lvl] = 5000;
+
+	for(lvl=0; lvl<w; lvl++)
+		ibuf[lvl*(rb+1)] = 20;
+
+	singlelift(rb,w,ip,tp);
+	for(lvl=0; lvl<w*w; lvl++)
+		ibuf[lvl] = tmpbuf[lvl];
+
+	return;
+*/
+
+	for(lvl=0; lvl<LVLS; lvl++) {
+		// Process columns -- leave result in tmpbuf
+		dosinglelift(rb, w, ip, tp);
+		
+		// Process columns, what used to be the rows from the last
+		// round, pulling the data from tmpbuf and moving it back
+		// to ibuf.
+		
+		dosinglelift(rb, w, tp, ip);
+
+		// lower_upper
+		//
+		// For this, we just adjust our pointer(s) so that the "image"
+		// we are processing, as referenced by our two pointers, now
+		// references the bottom right part of the image.
+		//
+		// Of course, we haven't really changed the dimensions of the
+		// image.  It started out rb * rb in size, or the initial w*w,
+		// we're just changing where our pointer into the image is.
+		// Rows remain rb long.  We pretend (above) that this new image
+		// is w*w, or should I say (w/2)*(w/2), but really we're just
+		// picking a new starting coordinate and it remains rb*rb.
+		//
+		// Still, this makes a subimage, within our image, containing
+		// the low order results of our processing.
+		int	offset = w*rb/2+w/2;
+		ip = &ip[offset];
+		tp = &tp[offset];
+		ov[lvl] = offset + ((lvl)?(ov[lvl-1]):0);
+
+		// Move to the corner, and repeat
+		w>>=1;
+	}
+    	/*
+	for(lvl=(LVLS-1); lvl>=0; lvl--) {
+		int	offset;
+
+		w <<= 1;
+
+		if (lvl)
+			offset = ov[lvl-1];
+		else
+			offset = 0;
+		ip = &ibuf[offset];
+		tp = &tmpbuf[offset];
+
+		ilift(rb, w, ip, tp);
+		ilift(rb, w, tp, ip);
+	}
+	*/
+}
+
 
   
  	
@@ -269,9 +413,12 @@ void	lifting(int w, int *ibuf, int *tmpbuf, int decomp) {
 //read 65536  values of green 262144 32 bit int 0xc0040424 to 0xc00c0423
 //read 65536  values of blue 262144 32 bit int
 
-void lift_config(int bp, long imgsz,int *bufferptr)
+void lift_config(int dec, int enc, int bp, long imgsz,int *bufferptr)
 {
-	decomp = 5;
+	printf("dec %d enc %d \n", dec,enc);
+	decomp = dec;
+	encode = enc;
+	flgyuv = 0;
 	gettimeofday(&start, NULL);
 	//start_sec = currentTime.tv_usec;	
 	char *lclip = (char *)*bufferptr;
@@ -298,13 +445,22 @@ void lift_config(int bp, long imgsz,int *bufferptr)
  
 	printf("allocating memory with malloc \n");
 	if (bp == 24) {
-		img = (IMAGEP)malloc(sizeof(IMAGE)+4*ww*hh*sizeof(int));
+		if(flgyuv == 1) {
+			img = (IMAGEP)malloc(sizeof(IMAGE)+7*ww*hh*sizeof(int));
+			y = &img->data[4*ww*hh];
+			u = &img->data[5*ww*hh];
+			v = &img->data[6*ww*hh];
+		}
+		else {
+			img = (IMAGEP)malloc(sizeof(IMAGE)+4*ww*hh*sizeof(int));
+		}
 		img->m_w = ww;
 		img->m_h = hh;
 		img->m_red   = img->data;
 		img->m_green = &img->data[ww*hh];
 		img->m_blue  = &img->data[2*ww*hh];
 		img->m_tmp  = &img->data[3*ww*hh];
+
 		//printf("the size of malloc %x \n",sizeof(img));
 		printf("img->m_red 0x%x \n",img->m_red);
 		printf("img->m_green 0x%x \n",img->m_green);
@@ -361,21 +517,41 @@ void lift_config(int bp, long imgsz,int *bufferptr)
 	}	
  
 	if (bp==24) {
-		printf("Calling lifting red\n");
+		if (encode == 1) {
+			printf("Calling lifting red\n");
 	
-		//img->m_red   = img->data;
-		lifting(ww, img->m_red, img->m_tmp, decomp);
-		img->m_tmp  = &img->data[3*ww*hh];
-		printf("Calling lifting green\n");
+			//img->m_red   = img->data;
+			lifting(ww, img->m_red, img->m_tmp, decomp);
+			img->m_tmp  = &img->data[3*ww*hh];
+			printf("Calling lifting green\n");
 	
-		//img->m_green = &img->data[ww*hh];
-		lifting(ww, img->m_green, img->m_tmp, decomp);
-		img->m_tmp  = &img->data[3*ww*hh];
-		printf("Calling lifting blue\n");
+			//img->m_green = &img->data[ww*hh];
+			lifting(ww, img->m_green, img->m_tmp, decomp);
+			img->m_tmp  = &img->data[3*ww*hh];
+			printf("Calling lifting blue\n");
 	
-		//img->m_blue  = &img->data[2*ww*hh];
-		lifting(ww, img->m_blue, img->m_tmp,decomp);
-		printf("lifting to Buffer\n");
+			//img->m_blue  = &img->data[2*ww*hh];
+			lifting(ww, img->m_blue, img->m_tmp,decomp);
+			printf("lifting to Buffer\n");
+		}
+		else {
+			printf("Calling invlifting red\n");
+	
+			//img->m_red   = img->data;
+			invlifting(ww, img->m_red, img->m_tmp, decomp);
+			img->m_tmp  = &img->data[3*ww*hh];
+			printf("Calling invlifting green\n");
+	
+			//img->m_green = &img->data[ww*hh];
+			//lifting(ww, img->m_green, img->m_tmp, decomp);
+			img->m_tmp  = &img->data[3*ww*hh];
+			printf("Calling invlifting blue\n");
+	
+			//img->m_blue  = &img->data[2*ww*hh];
+			invlifting(ww, img->m_blue, img->m_tmp,decomp);
+			printf("invlifting to Buffer\n");
+			
+		}
 		for (loop=0; loop < imgsz/3; loop++) {
 			lclip[0] = *img->m_red ;
 			lclip++;
@@ -411,3 +587,77 @@ void lift_config(int bp, long imgsz,int *bufferptr)
 	free(img);	 
 }
  
+/*
+computes u  v using y.  b. and  r
+y = (r + (g * 2) + b) >> 2;
+u = b - g;
+v = r - g;
+*/
+void yuv(int w,int *r,int *g,int *b,int *u,int *v,int *y) {
+	int idx, lidx;
+	int *aa, *aa1, *aa2, *aa3, *aa4, *im;
+	
+	aa = r;
+	aa1 = g;
+	aa2 = b;
+	aa3 = u;
+	aa4 = v;
+	im = y;
+	
+	lidx = w * w;
+	
+	for(idx=0; idx<lidx; idx++) {
+
+ 
+		
+		im[0] = (aa[0] + aa1[0]*2 + aa2[0])>>2;
+		//u = b - g 
+		aa3[0] = aa2[0] - aa1[0];
+		//v = r - g
+		aa4[0] = aa[0] - aa1[0];
+		im+=1;
+		aa+=1;
+		aa2+=1;
+		aa3+=1;
+		aa4+=1;
+		
+	} 
+}
+/*computes r g b  from u v using y  u  v . 
+r  g , and  b.
+g = y - ((u + v) >> 2);
+r = v + g;
+b = u + g;
+*/
+void invyuv(int w,int *r,int *g,int *b,int *u,int *v,int *y) {
+	int idx, lidx;
+	int *aa, *aa1, *aa2, *aa3, *aa4, *im;
+	
+	aa = r;
+	aa1 =g;
+	aa2 = b;
+	aa3 = u;
+	aa4 = v;
+	im = y;
+	
+	lidx = w * w;
+	
+	for(idx=0; idx<lidx; idx++) {
+		
+		//g = y - ((u + v) >> 2);
+		aa1[0] = (im[0] - ((aa3[0] + aa4[0]) >> 2));
+		 
+		//r = v + g;
+		aa[0] = aa4[0] + aa1[0];
+		//b = u + g;
+		aa2[0] = aa3[0] + aa1[0];
+		
+		im+=1;
+		aa+=1;
+		aa1+=1;
+		aa2+=1;
+		aa3+=1;
+		aa4+=1;
+		
+	} 
+}
