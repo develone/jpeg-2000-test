@@ -191,24 +191,6 @@ void	lifting(int w, int *ibuf, int *tmpbuf, int decomp) {
 	int	*ip = ibuf, *tp = tmpbuf;
 	int	ov[5];
 
-	//const int	LVLS = 3;
-
-/*
-	for(lvl=0; lvl<w*w; lvl++)
-		ibuf[lvl] = 0;
-	for(lvl=0; lvl<w*w; lvl++)
-		tmpbuf[lvl] = 5000;
-
-	for(lvl=0; lvl<w; lvl++)
-		ibuf[lvl*(rb+1)] = 20;
-
-	singlelift(rb,w,ip,tp);
-	for(lvl=0; lvl<w*w; lvl++)
-		ibuf[lvl] = tmpbuf[lvl];
-
-	return;
-*/
-
 	for(lvl=0; lvl<LVLS; lvl++) {
 		// Process columns -- leave result in tmpbuf
 		singlelift(rb, w, ip, tp);
@@ -240,23 +222,7 @@ void	lifting(int w, int *ibuf, int *tmpbuf, int decomp) {
 		// Move to the corner, and repeat
 		w>>=1;
 	}
-    	/*
-	for(lvl=(LVLS-1); lvl>=0; lvl--) {
-		int	offset;
-
-		w <<= 1;
-
-		if (lvl)
-			offset = ov[lvl-1];
-		else
-			offset = 0;
-		ip = &ibuf[offset];
-		tp = &tmpbuf[offset];
-
-		ilift(rb, w, ip, tp);
-		ilift(rb, w, tp, ip);
-	}
-	*/
+ 
 }
 
 void	dosinglelift(int rb, int w, int * const ibuf, int * const obuf) {
@@ -333,24 +299,6 @@ void	invlifting(int w, int *ibuf, int *tmpbuf, int decomp) {
 	int	*ip = ibuf, *tp = tmpbuf;
 	int	ov[5];
 
-	//const int	LVLS = 3;
-
-/*
-	for(lvl=0; lvl<w*w; lvl++)
-		ibuf[lvl] = 0;
-	for(lvl=0; lvl<w*w; lvl++)
-		tmpbuf[lvl] = 5000;
-
-	for(lvl=0; lvl<w; lvl++)
-		ibuf[lvl*(rb+1)] = 20;
-
-	singlelift(rb,w,ip,tp);
-	for(lvl=0; lvl<w*w; lvl++)
-		ibuf[lvl] = tmpbuf[lvl];
-
-	return;
-*/
-
 	for(lvl=0; lvl<LVLS; lvl++) {
 		// Process columns -- leave result in tmpbuf
 		dosinglelift(rb, w, ip, tp);
@@ -384,7 +332,7 @@ void	invlifting(int w, int *ibuf, int *tmpbuf, int decomp) {
 		// Move to the corner, and repeat
 		w>>=1;
 	}
-    	/*
+    	
 	for(lvl=(LVLS-1); lvl>=0; lvl--) {
 		int	offset;
 
@@ -400,7 +348,7 @@ void	invlifting(int w, int *ibuf, int *tmpbuf, int decomp) {
 		ilift(rb, w, ip, tp);
 		ilift(rb, w, tp, ip);
 	}
-	*/
+	
 }
 
 
