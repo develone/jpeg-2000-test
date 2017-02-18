@@ -361,12 +361,12 @@ void	invlifting(int w, int *ibuf, int *tmpbuf, int decomp) {
 //read 65536  values of green 262144 32 bit int 0xc0040424 to 0xc00c0423
 //read 65536  values of blue 262144 32 bit int
 
-void lift_config(int dec, int enc, int bp, long imgsz,int *bufferptr)
+void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr)
 {
-	printf("dec %d enc %d \n", dec,enc);
+	printf("dec %d enc %d yuv %d \n", dec,enc,mct);
 	decomp = dec;
 	encode = enc;
-	flgyuv = 0;
+	flgyuv = mct;
 	gettimeofday(&start, NULL);
 	//start_sec = currentTime.tv_usec;	
 	char *lclip = (char *)*bufferptr;
@@ -448,7 +448,11 @@ void lift_config(int dec, int enc, int bp, long imgsz,int *bufferptr)
 		lclip = (char *)*bufferptr;
 		printf("img->m_red 0x%x passed ptr 0x%x\n",img->m_red, &lclip[0]);
 		printf("img->m_green 0x%x \n",img->m_green);
-		printf("img->m_blue 0x%x \n",img->m_blue);	
+		printf("img->m_blue 0x%x \n",img->m_blue);
+		if(flgyuv == 1) {
+			printf("converting rgb to yuv\n");
+			yuv(ww, img->m_red, img->m_green, img->m_blue, u, v, v);
+		}	
 	
 	} else if (bp == 8) {
 		printf("Copying GRAY  8 bit char to 32 int \n");
@@ -466,50 +470,58 @@ void lift_config(int dec, int enc, int bp, long imgsz,int *bufferptr)
  
 	if (bp==24) {
 		if (encode == 1) {
-			printf("Calling lifting red\n");
-	
-			//img->m_red   = img->data;
-			lifting(ww, img->m_red, img->m_tmp, decomp);
-			img->m_tmp  = &img->data[3*ww*hh];
-			printf("Calling lifting green\n");
-	
-			//img->m_green = &img->data[ww*hh];
-			lifting(ww, img->m_green, img->m_tmp, decomp);
-			img->m_tmp  = &img->data[3*ww*hh];
-			printf("Calling lifting blue\n");
-	
-			//img->m_blue  = &img->data[2*ww*hh];
-			lifting(ww, img->m_blue, img->m_tmp,decomp);
-			printf("lifting to Buffer\n");
+			if(flgyuv ==1){
+				printf("Calling lifting y\n");
+				lifting(ww, y, img->m_tmp, decomp);
+				printf("Calling lifting u\n");
+				lifting(ww, u, img->m_tmp, decomp); 
+				printf("Calling lifting v\n");
+				lifting(ww, v, img->m_tmp,decomp);
+				printf("lifting to Buffer\n");
+			}
+			else {
+				
+				printf("Calling lifting red\n");
+				lifting(ww, img->m_red, img->m_tmp, decomp);
+				printf("Calling lifting green\n");
+				lifting(ww, img->m_green, img->m_tmp, decomp);
+				printf("Calling lifting blue\n");
+				lifting(ww, img->m_blue, img->m_tmp,decomp);
+				printf("lifting to Buffer\n");
+			}
 		}
 		else {
 			printf("Calling invlifting red\n");
-	
-			//img->m_red   = img->data;
 			invlifting(ww, img->m_red, img->m_tmp, decomp);
-			img->m_tmp  = &img->data[3*ww*hh];
 			printf("Calling invlifting green\n");
-	
-			//img->m_green = &img->data[ww*hh];
-			//lifting(ww, img->m_green, img->m_tmp, decomp);
-			img->m_tmp  = &img->data[3*ww*hh];
+			invlifting(ww, img->m_green, img->m_tmp, decomp);
 			printf("Calling invlifting blue\n");
-	
-			//img->m_blue  = &img->data[2*ww*hh];
 			invlifting(ww, img->m_blue, img->m_tmp,decomp);
-			printf("invlifting to Buffer\n");
-			
+			printf("invlifting to Buffer\n");			
 		}
 		for (loop=0; loop < imgsz/3; loop++) {
-			lclip[0] = *img->m_red ;
-			lclip++;
-			img->m_red++;
-			lclip[0] = *img->m_green ;
-			lclip++;
-			img->m_green++;
-			lclip[0] = *img->m_blue ;
-			lclip++;
-			img->m_blue++;
+			if(flgyuv ==1){
+				lclip[0] = *y ;
+				lclip++;
+				y++;
+				lclip[0] = *u;
+				lclip++;
+				u++;
+				lclip[0] = *v ;
+				lclip++;
+				v++;
+			}
+			else {
+				lclip[0] = *img->m_red ;
+				lclip++;
+				img->m_red++;
+				lclip[0] = *img->m_green ;
+				lclip++;
+				img->m_green++;
+				lclip[0] = *img->m_blue ;
+				lclip++;
+				img->m_blue++;
+			}
 		}
 	} else if (bp == 8) {
 		printf("Calling lifting red\n");

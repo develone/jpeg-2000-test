@@ -51,6 +51,7 @@ var
  Height:LongWord;
  DECOMP: Integer;
  ENCODE: Integer;
+ YUV: Integer;
 
 function WaitForIPComplete : string;
 
@@ -135,16 +136,17 @@ begin
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
 
  DECOMP:=3;
- ENCODE:=0; 
- DrawBitmap(Window,'C:\MyBitmap.bmp',0,0,DECOMP,ENCODE);
+ ENCODE:=1; 
+ YUV:=0;
+ DrawBitmap(Window,'C:\MyBitmap.bmp',0,0,DECOMP,ENCODE,YUV);
  
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
  X:= 0;
  y:= 0;
- Width:= 1024;
- Height:= 1024;
+ Width:= 256;
+ Height:= 256;
   if SaveBitmap(Window,'C:\MySavedBitmap.bmp',X,Y,Width,Height,24) then
   begin
    {Output a message when the file is saved}

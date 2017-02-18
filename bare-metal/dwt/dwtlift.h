@@ -7,8 +7,8 @@ struct timeval currentTime,start,end;
 long mtime, seconds, useconds;
 
 double sqrt(double x);
-
-
+void yuv(int w,int *r,int *g,int *b,int *u,int *v,int *y);
+void invyuv(int w,int *r,int *g,int *b,int *u,int *v,int *y);
 typedef struct {
 	int	m_w, m_h;
 	int	*m_red, *m_green, *m_blue, *m_tmp;
