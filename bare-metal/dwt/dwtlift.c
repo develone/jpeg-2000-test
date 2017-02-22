@@ -363,18 +363,18 @@ void	invlifting(int w, int *ibuf, int *tmpbuf, int decomp) {
 
 void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr)
 {
-	printf("dec %d enc %d yuv %d \n", dec,enc,mct);
+	printf("in lift_config dec %d enc %d yuv %d \n", dec,enc,mct);
 	decomp = dec;
 	encode = enc;
 	flgyuv = mct;
 	gettimeofday(&start, NULL);
 	//start_sec = currentTime.tv_usec;	
 	char *lclip = (char *)*bufferptr;
-	printf("In lift_config\n");
+	printf("In lift_config first byte 0x%x\n",lclip[0]);
 	printf("bpp %ld\n",bp);
 
 	printf("size %ld\n",imgsz);
-	printf("pointer passed %x\n",*bufferptr);
+	printf("pointer passed %x %x\n",*bufferptr,bufferptr);
 
 
 	/* Need to determine the ww width & hh height 

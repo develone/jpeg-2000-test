@@ -135,9 +135,9 @@ begin
  //ConsoleWindowWriteLn(Handle3, 'writing bottom right handle3');
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
 
- DECOMP:=3;
+ DECOMP:=5;
  ENCODE:=1; 
- YUV:=0;
+ YUV:=1;
  DrawBitmap(Window,'C:\MyBitmap.bmp',0,0,DECOMP,ENCODE,YUV);
  
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
@@ -145,8 +145,8 @@ begin
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
  X:= 0;
  y:= 0;
- Width:= 256;
- Height:= 256;
+ Width:= 1024;
+ Height:= 1024;
   if SaveBitmap(Window,'C:\MySavedBitmap.bmp',X,Y,Width,Height,24) then
   begin
    {Output a message when the file is saved}

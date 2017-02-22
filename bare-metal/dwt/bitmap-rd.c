@@ -4,7 +4,7 @@
 #include <sys/time.h>
 #include "lifting.h"
 #include "dwtlift.h"
-
+#include <stdlib.h>
 struct rec {
 	unsigned char header[14];
 	
@@ -13,15 +13,20 @@ struct rec1 {
 	unsigned char imginfo[40];	
 };
 
-FILE *in;
+FILE *in,*fp;
 char *fn;
+int *red, *green, *blue;
 char inchar;
 int i,bpp;
 long int offset,width,height;
 int loop, decomp, encode, mct;
 struct timeval currentTime,start,end;
-int pixels, size;
+int pixels, size, sz;
+int *databuffer;
 
+extern void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr);
+extern void yuv(int w,int *r,int *g,int *b,int *u,int *v,int *y);
+extern void invyuv(int w,int *r,int *g,int *b,int *u,int *v,int *y);
 
 int main(int argc, char **argv) {
 
@@ -52,6 +57,10 @@ Image data	The actual image, a variable number of bytes
   * Image size, bytes	4 bytes
   * X-resolution and y-resolution, pixels per meter	4 bytes each
   * Number of colors and "important colors," bytes	4 bytes each
+  * 3145850
+  * 14 40 54
+  * 3145728
+  * 68
   */
 	struct rec record;
 	struct rec1 record1;
@@ -101,9 +110,9 @@ Image data	The actual image, a variable number of bytes
 	size = pixels*3;
 	printf("pixels = %d size = %d \n",pixels,size);
 	char data[size];
-	int *databuffer;
+	
 	databuffer = &data[0];
-	printf("address 0x%x\n",*databuffer);
+	//printf("address 0x%x\n",*databuffer);
 	printf("buffer address 0x%x data address 0x%x  \n",databuffer,&data[0]);
 	
 	for(i=0; i<(122-54); i++) {
@@ -117,9 +126,47 @@ Image data	The actual image, a variable number of bytes
 		data[i] = inchar;
 		//printf("%c ",inchar);
 	}
-	printf("first byte %d \n ",data[0]);
+	printf("first byte 0x%x sixe/3 %d\n ",data[0],size/3);
+	/*
+	int data_red[size/3],data_green[size/3],data_blue[size/3];
+	red = &data_red[0];
+	green = &data_green[0];
+	blue = &data_blue[0];
+ 
+	
+	for(i=0; i<size-2; i++) {
+		
+		*red = data[i];
+		*green = data[i+1];
+		*blue = data[i+2];
+		red++;
+		green++;
+		blue++;
+		
+		printf("%d\n",i);
+	}
+		
+	red = &data_red[0];
+	green = &data_green[0];
+	blue = &data_blue[0];
+	
+	fp = fopen("red-out.32t","w");
+	if (NULL == fp) {
+		fprintf(stderr, "Could not open red for writing\n");
+		perror("RED-WR:");
+		exit(EXIT_FAILURE);
+	}
+		 
+	if (sz != (int)fwrite(red,  sizeof(int), sz, fp)) {
+		fprintf(stderr, "Write of red failed\n"); perror("RED:");
+		exit(EXIT_FAILURE);
+	}
+	fclose(fp);
+	*/
+
 	encode = 1;
 	decomp = 5;
 	mct = 1;
+	//printf("%d %d %d\n",encode,decomp,mct);
 	lift_config(decomp, encode, mct, bpp, size, databuffer);
 }
