@@ -5,9 +5,14 @@
 #include "lifting.h"
 #include "dwtlift.h"
 #include <stdlib.h>
+
+extern void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr);
+//extern void yuv(int w,int *r,int *g,int *b,int *u,int *v,int *y);
+//extern void invyuv(int w,int *r,int *g,int *b,int *u,int *v,int *y);
+
+int main(int argc, char **argv) {
 struct rec {
-	unsigned char header[14];
-	
+	unsigned char header[14];	
 };
 struct rec1 {
 	unsigned char imginfo[40];	
@@ -19,19 +24,15 @@ int *red, *green, *blue;
 char inchar;
 int i,bpp;
 long int offset,width,height;
-int loop, decomp, encode, mct;
-struct timeval currentTime,start,end;
 int pixels, size, sz;
 int *databuffer;
 
-extern void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr);
-extern void yuv(int w,int *r,int *g,int *b,int *u,int *v,int *y);
-extern void invyuv(int w,int *r,int *g,int *b,int *u,int *v,int *y);
+	encode = 1;
+	decomp = 5;
+	flgyuv = 1;
+	printf("enc %d decomp %d yuv %d\n",encode,decomp,flgyuv);
 
-int main(int argc, char **argv) {
-
-
-fn = argv[1];
+	fn = argv[1];
 /*
 Section	Description
 Header	Basic file information, 14 bytes
@@ -76,6 +77,7 @@ Image data	The actual image, a variable number of bytes
 	/* read header */
 	 
 	fread(&record,sizeof(struct rec),1,in);
+	i = 0;	
 	while(i<14) {
 	
 		printf("%i ",record.header[i]);
@@ -111,31 +113,34 @@ Image data	The actual image, a variable number of bytes
 	printf("pixels = %d size = %d \n",pixels,size);
 	char data[size];
 	
-	databuffer = &data[0];
-	//printf("address 0x%x\n",*databuffer);
-	printf("buffer address 0x%x data address 0x%x  \n",databuffer,&data[0]);
+	databuffer = (int*)(&data[0]);
 	
-	for(i=0; i<(122-54); i++) {
+	printf("databuffer address 0x%x data address 0x%x  \n",databuffer,&data[0]);
+	
+	for(i=0; i<(offset-54); i++) {
 		fread(&inchar,sizeof(inchar),1,in);
 		 
 		//printf("%c ",inchar);
 	}
-	
-	for(i=0; i<size; i++) {
-		fread(&inchar,sizeof(inchar),1,in);
-		data[i] = inchar;
-		//printf("%c ",inchar);
-	}
-	printf("first byte 0x%x sixe/3 %d\n ",data[0],size/3);
+	fread(&data[0],sizeof(data),1,in);
 	/*
+	for(i=0; i<size; i++) {
+		//fread(&inchar,sizeof(inchar),1,in);
+		//data[i] = inchar;
+		printf(" %d %d\n ",i,data[i]);
+	}
+	*/
+	printf("first byte 0x%x sixe/3 %d\n ",data[0],size/3);
+	
 	int data_red[size/3],data_green[size/3],data_blue[size/3];
+	
 	red = &data_red[0];
 	green = &data_green[0];
 	blue = &data_blue[0];
- 
+	/*
+	printf("splitting data to rgb\n");
 	
-	for(i=0; i<size-2; i++) {
-		
+	for(i=0; i<size-3; i=i+3) { 	
 		*red = data[i];
 		*green = data[i+1];
 		*blue = data[i+2];
@@ -143,9 +148,12 @@ Image data	The actual image, a variable number of bytes
 		green++;
 		blue++;
 		
-		printf("%d\n",i);
-	}
+		//printf("%d\n",i);
 		
+	}
+	printf("splitting data to rgb done \n");
+
+	/*	
 	red = &data_red[0];
 	green = &data_green[0];
 	blue = &data_blue[0];
@@ -163,10 +171,6 @@ Image data	The actual image, a variable number of bytes
 	}
 	fclose(fp);
 	*/
-
-	encode = 1;
-	decomp = 5;
-	mct = 1;
-	//printf("%d %d %d\n",encode,decomp,mct);
-	lift_config(decomp, encode, mct, bpp, size, databuffer);
+	//lift_config(decomp, encode, flgyuv, bpp, (long)size, databuffer);
+	return 0;
 }
