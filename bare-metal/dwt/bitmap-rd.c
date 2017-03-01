@@ -364,7 +364,7 @@ int bpp;
 long int offset,width,height;
 int pixels, size, sz;
 int *databuffer;
-int plot=0;
+int plot=1;
 	encode = 1;
 	decomp = 3;
 	flgyuv = 1;
@@ -497,11 +497,14 @@ Image data	The actual image, a variable number of bytes
 	yuv(ww, imgbm->m_red, imgbm->m_green, imgbm->m_blue, u, v, y);
 				printf("Calling lifting y\n");
 				lifting(ww, y, imgbm->m_tmp, decomp);
+				
 				printf("Calling lifting u\n");
 				lifting(ww, u, imgbm->m_tmp, decomp); 
 				printf("Calling lifting v\n");
 				lifting(ww, v, imgbm->m_tmp,decomp);
 				printf("lifting to Buffer\n");	
+				quantize(ww,y,u,v);
+				quantize(ww,y,u,v);
 	gettimeofday(&end, NULL);
  
 	seconds  = end.tv_sec  - start.tv_sec;
@@ -669,4 +672,26 @@ void invyuv(int w,int *r,int *g,int *b,int *u,int *v,int *y) {
 		aa4+=1;
 		
 	} 
+}
+
+void quantize(int w,int *y,int *u,int *v) {
+	int idx, lidx;
+	int *wy,*wu,*wv;
+	
+	wy = y;
+	wu = u;
+	wv = v;
+ 	
+	lidx = w * w;
+	
+	for(idx=0; idx<lidx; idx++) {
+		 
+		wy[0] = wy[0]>>1;
+		wu[0] = wu[0]>>1;
+		wv[0] = wv[0]>>1;
+		 
+		wy+=1;
+		wu+=1;
+		wv+=1;	
+	}		
 }
