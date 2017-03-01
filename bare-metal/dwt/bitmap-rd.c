@@ -368,7 +368,7 @@ int bpp;
 long int offset,width,height;
 int pixels, size, sz;
 int *databuffer;
-int plot=0;
+int plot=1;
 	encode = 1;
 	decomp = 3;
 	flgyuv = 1;
@@ -498,15 +498,15 @@ Image data	The actual image, a variable number of bytes
 	imgbm->m_green = &imgbm->data[ww*hh];
 	c1 = (OPJ_INT32*)imgbm->m_green;
 	imgbm->m_blue  = &imgbm->data[2*ww*hh];
-	c1 = (OPJ_INT32*)imgbm->m_blue;
+	c2 = (OPJ_INT32*)imgbm->m_blue;
 	printf("splitting data to rgb done \n");
 	opj_mct_encode(c0,c1,c2,ww*ww);
 				printf("Calling lifting y\n");
-				lifting(ww, y, imgbm->m_tmp, decomp);
+				lifting(ww, c0, imgbm->m_tmp, decomp);
 				printf("Calling lifting u\n");
-				lifting(ww, u, imgbm->m_tmp, decomp); 
+				lifting(ww, c1, imgbm->m_tmp, decomp); 
 				printf("Calling lifting v\n");
-				lifting(ww, v, imgbm->m_tmp,decomp);
+				lifting(ww, c2, imgbm->m_tmp,decomp);
 				printf("lifting to Buffer\n");	
 	gettimeofday(&end, NULL);
  
@@ -565,7 +565,7 @@ Image data	The actual image, a variable number of bytes
 		exit(EXIT_FAILURE);
 	}
 		 
-	if (sz != (int)fwrite(y,  sizeof(int), sz, fp)) {
+	if (sz != (int)fwrite(c0,  sizeof(int), sz, fp)) {
 		fprintf(stderr, "Write of red failed\n"); perror("RED:");
 		exit(EXIT_FAILURE);
 	}
@@ -578,7 +578,7 @@ Image data	The actual image, a variable number of bytes
 		exit(EXIT_FAILURE);
 	}
 		 
-	if (sz != (int)fwrite(u,  sizeof(int), sz, fp)) {
+	if (sz != (int)fwrite(c1,  sizeof(int), sz, fp)) {
 		fprintf(stderr, "Write of green failed\n"); perror("GREEN:");
 		exit(EXIT_FAILURE);
 	}
@@ -591,7 +591,7 @@ Image data	The actual image, a variable number of bytes
 		exit(EXIT_FAILURE);
 	}
 		 
-	if (sz != (int)fwrite(v,  sizeof(int), sz, fp)) {
+	if (sz != (int)fwrite(c2,  sizeof(int), sz, fp)) {
 		fprintf(stderr, "Write of green failed\n"); perror("BLUE:");
 		exit(EXIT_FAILURE);
 	}
