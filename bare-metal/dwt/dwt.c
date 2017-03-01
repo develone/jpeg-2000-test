@@ -653,7 +653,7 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* t
 		return OPJ_FALSE;
 	}
 	h_mem_size *= sizeof(OPJ_INT32);
-	h.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
+	//h.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
 	if (! h.mem){
 		/* FIXME event manager error callback */
 		return OPJ_FALSE;
@@ -718,7 +718,7 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* t
 				if( j == (num_jobs - 1U) ) { /* this will take care of the overflow */
 					job->max_j = rh;
 				}
-				job->h.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
+				//job->h.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
 				if (!job->h.mem)
 				{
 					/* FIXME event manager error callback */
@@ -782,7 +782,7 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* t
 				if( j == (num_jobs - 1U) ) { /* this will take care of the overflow */
 					job->max_j = rw;
 				}
-				job->v.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
+				//job->v.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
 				if (!job->v.mem)
 				{
 					/* FIXME event manager error callback */
@@ -1044,7 +1044,7 @@ OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec, OPJ_UINT32 
 		/* FIXME event manager error callback */
 		return OPJ_FALSE;
 	}
-	h.wavelet = (opj_v4_t*) opj_aligned_malloc(l_data_size * sizeof(opj_v4_t));
+	//h.wavelet = (opj_v4_t*) opj_aligned_malloc(l_data_size * sizeof(opj_v4_t));
 	if (!h.wavelet) {
 		/* FIXME event manager error callback */
 		return OPJ_FALSE;

@@ -44,7 +44,7 @@
    Standard includes used by the library
  ==========================================================
 */
-#include <memory.h>
+//#include <memory.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>

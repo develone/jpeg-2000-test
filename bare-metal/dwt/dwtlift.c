@@ -11,6 +11,7 @@
 #include <sys/time.h>
 #include <stdlib.h>
 #include <math.h>
+#include "openjpeg.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -363,6 +364,9 @@ void	invlifting(int w, int *ibuf, int *tmpbuf, int decomp) {
 
 void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr)
 {
+	OPJ_INT32* c0;
+	OPJ_INT32* c1;
+	OPJ_INT32* c2;
 	printf("in lift_config dec %d enc %d yuv %d \n", dec,enc,mct);
 	decomp = dec;
 	encode = enc;
@@ -443,15 +447,19 @@ void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr)
 		
 		printf("reseting pointers \n");
 		img->m_red   = img->data;
+		c0 = (OPJ_INT32*)img->m_red;
 		img->m_green = &img->data[ww*hh];
-		img->m_blue  = &img->data[2*ww*hh];	
+		c1 = (OPJ_INT32*)img->m_green;
+		img->m_blue  = &img->data[2*ww*hh];
+		c2 = (OPJ_INT32*)img->m_blue;	
 		lclip = (char *)*bufferptr;
 		printf("img->m_red 0x%x passed ptr 0x%x\n",img->m_red, &lclip[0]);
 		printf("img->m_green 0x%x \n",img->m_green);
 		printf("img->m_blue 0x%x \n",img->m_blue);
 		if(flgyuv == 1) {
 			printf("converting rgb to yuv\n");
-			yuv(ww, img->m_red, img->m_green, img->m_blue, u, v, v);
+			opj_mct_encode(c0,c1,c2,ww*ww);
+			//yuv(ww, img->m_red, img->m_green, img->m_blue, u, v, v);
 		}	
 	
 	} else if (bp == 8) {
@@ -472,11 +480,11 @@ void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr)
 		if (encode == 1) {
 			if(flgyuv ==1){
 				printf("Calling lifting y\n");
-				lifting(ww, y, img->m_tmp, decomp);
+				lifting(ww, c0, img->m_tmp, decomp);
 				printf("Calling lifting u\n");
-				lifting(ww, u, img->m_tmp, decomp); 
+				lifting(ww, c1, img->m_tmp, decomp); 
 				printf("Calling lifting v\n");
-				lifting(ww, v, img->m_tmp,decomp);
+				lifting(ww, c2, img->m_tmp,decomp);
 				printf("lifting to Buffer\n");
 			}
 			else {
@@ -501,15 +509,15 @@ void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr)
 		}
 		for (loop=0; loop < imgsz/3; loop++) {
 			if(flgyuv ==1){
-				lclip[0] = *y ;
+				lclip[0] = *c0 ;
 				lclip++;
-				y++;
-				lclip[0] = *u;
+				c0++;
+				lclip[0] = *c1;
 				lclip++;
-				u++;
-				lclip[0] = *v ;
+				c1++;
+				lclip[0] = *c2 ;
 				lclip++;
-				v++;
+				c2++;
 			}
 			else {
 				lclip[0] = *img->m_red ;
@@ -547,77 +555,4 @@ void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr)
 	free(img);	 
 }
  
-/*
-computes u  v using y.  b. and  r
-y = (r + (g * 2) + b) >> 2;
-u = b - g;
-v = r - g;
-*/
-void yuv(int w,int *r,int *g,int *b,int *u,int *v,int *y) {
-	int idx, lidx;
-	int *aa, *aa1, *aa2, *aa3, *aa4, *im;
-	
-	aa = r;
-	aa1 = g;
-	aa2 = b;
-	aa3 = u;
-	aa4 = v;
-	im = y;
-	
-	lidx = w * w;
-	
-	for(idx=0; idx<lidx; idx++) {
-
  
-		
-		im[0] = (aa[0] + aa1[0]*2 + aa2[0])>>2;
-		//u = b - g 
-		aa3[0] = aa2[0] - aa1[0];
-		//v = r - g
-		aa4[0] = aa[0] - aa1[0];
-		im+=1;
-		aa+=1;
-		aa2+=1;
-		aa3+=1;
-		aa4+=1;
-		
-	} 
-}
-/*computes r g b  from u v using y  u  v . 
-r  g , and  b.
-g = y - ((u + v) >> 2);
-r = v + g;
-b = u + g;
-*/
-void invyuv(int w,int *r,int *g,int *b,int *u,int *v,int *y) {
-	int idx, lidx;
-	int *aa, *aa1, *aa2, *aa3, *aa4, *im;
-	
-	aa = r;
-	aa1 =g;
-	aa2 = b;
-	aa3 = u;
-	aa4 = v;
-	im = y;
-	
-	lidx = w * w;
-	
-	for(idx=0; idx<lidx; idx++) {
-		
-		//g = y - ((u + v) >> 2);
-		aa1[0] = (im[0] - ((aa3[0] + aa4[0]) >> 2));
-		 
-		//r = v + g;
-		aa[0] = aa4[0] + aa1[0];
-		//b = u + g;
-		aa2[0] = aa3[0] + aa1[0];
-		
-		im+=1;
-		aa+=1;
-		aa1+=1;
-		aa2+=1;
-		aa3+=1;
-		aa4+=1;
-		
-	} 
-}

@@ -203,15 +203,17 @@ void * opj_calloc(size_t num, size_t size)
   return calloc(num, size);
 }
 
+/*
 void *opj_aligned_malloc(size_t size)
 {
   return opj_aligned_alloc_n(16U, size);
 }
+
 void * opj_aligned_realloc(void *ptr, size_t size)
 {
   return opj_aligned_realloc_n(ptr, 16U, size);
 }
-
+*/
 void opj_aligned_free(void* ptr)
 {
 #if defined(OPJ_HAVE_POSIX_MEMALIGN) || defined(OPJ_HAVE_MEMALIGN)
