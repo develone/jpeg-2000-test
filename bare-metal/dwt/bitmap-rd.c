@@ -5,6 +5,7 @@
 #include "lifting.h"
 #include "dwtlift.h"
 #include <stdlib.h>
+#include "openjpeg.h"
 
 extern void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr);
 //extern void yuv(int w,int *r,int *g,int *b,int *u,int *v,int *y);
@@ -349,6 +350,9 @@ void	invlifting(int w, int *ibuf, int *tmpbuf, int decomp) {
 }
 
 int main(int argc, char **argv) {
+	OPJ_INT32* c0;
+	OPJ_INT32* c1;
+	OPJ_INT32* c2;
 struct rec {
 	unsigned char header[14];	
 };
@@ -364,7 +368,7 @@ int bpp;
 long int offset,width,height;
 int pixels, size, sz;
 int *databuffer;
-int plot=1;
+int plot=0;
 	encode = 1;
 	decomp = 3;
 	flgyuv = 1;
@@ -490,21 +494,20 @@ Image data	The actual image, a variable number of bytes
 		imgbm->m_blue++;
 	}
 	imgbm->m_red   = imgbm->data;
+	c0 = (OPJ_INT32*)imgbm->m_red;
 	imgbm->m_green = &imgbm->data[ww*hh];
+	c1 = (OPJ_INT32*)imgbm->m_green;
 	imgbm->m_blue  = &imgbm->data[2*ww*hh];
- 
+	c1 = (OPJ_INT32*)imgbm->m_blue;
 	printf("splitting data to rgb done \n");
-	yuv(ww, imgbm->m_red, imgbm->m_green, imgbm->m_blue, u, v, y);
+	opj_mct_encode(c0,c1,c2,ww*ww);
 				printf("Calling lifting y\n");
 				lifting(ww, y, imgbm->m_tmp, decomp);
-				
 				printf("Calling lifting u\n");
 				lifting(ww, u, imgbm->m_tmp, decomp); 
 				printf("Calling lifting v\n");
 				lifting(ww, v, imgbm->m_tmp,decomp);
 				printf("lifting to Buffer\n");	
-				quantize(ww,y,u,v);
-				quantize(ww,y,u,v);
 	gettimeofday(&end, NULL);
  
 	seconds  = end.tv_sec  - start.tv_sec;
@@ -599,99 +602,4 @@ Image data	The actual image, a variable number of bytes
 	return 0;
 }
  
-/*
-computes u  v using y.  b. and  r
-y = (r + (g * 2) + b) >> 2;
-u = b - g;
-v = r - g;
-*/
-void yuv(int w,int *r,int *g,int *b,int *u,int *v,int *y) {
-	int idx, lidx;
-	int *aa, *aa1, *aa2, *aa3, *aa4, *im;
-	
-	aa = r;
-	aa1 = g;
-	aa2 = b;
-	aa3 = u;
-	aa4 = v;
-	im = y;
-	
-	lidx = w * w;
-	
-	for(idx=0; idx<lidx; idx++) {
-
  
-		
-		im[0] = (aa[0] + aa1[0]*2 + aa2[0])>>2;
-		//u = b - g 
-		aa3[0] = aa2[0] - aa1[0];
-		//v = r - g
-		aa4[0] = aa[0] - aa1[0];
-		im+=1;
-		aa+=1;
-		aa2+=1;
-		aa3+=1;
-		aa4+=1;
-		
-	} 
-}
-/*computes r g b  from u v using y  u  v . 
-r  g , and  b.
-g = y - ((u + v) >> 2);
-r = v + g;
-b = u + g;
-*/
-void invyuv(int w,int *r,int *g,int *b,int *u,int *v,int *y) {
-	int idx, lidx;
-	int *aa, *aa1, *aa2, *aa3, *aa4, *im;
-	
-	aa = r;
-	aa1 =g;
-	aa2 = b;
-	aa3 = u;
-	aa4 = v;
-	im = y;
-	
-	lidx = w * w;
-	
-	for(idx=0; idx<lidx; idx++) {
-		
-		//g = y - ((u + v) >> 2);
-		aa1[0] = (im[0] - ((aa3[0] + aa4[0]) >> 2));
-		 
-		//r = v + g;
-		aa[0] = aa4[0] + aa1[0];
-		//b = u + g;
-		aa2[0] = aa3[0] + aa1[0];
-		
-		im+=1;
-		aa+=1;
-		aa1+=1;
-		aa2+=1;
-		aa3+=1;
-		aa4+=1;
-		
-	} 
-}
-
-void quantize(int w,int *y,int *u,int *v) {
-	int idx, lidx;
-	int *wy,*wu,*wv;
-	
-	wy = y;
-	wu = u;
-	wv = v;
- 	
-	lidx = w * w;
-	
-	for(idx=0; idx<lidx; idx++) {
-		 
-		wy[0] = wy[0]>>1;
-		wu[0] = wu[0]>>1;
-		wv[0] = wv[0]>>1;
-		 
-		wy+=1;
-		wu+=1;
-		wv+=1;	
-	}		
-}
