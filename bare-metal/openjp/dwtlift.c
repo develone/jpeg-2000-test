@@ -193,7 +193,7 @@ void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr)
 		printf("Calling lifting red\n");
 	
 		//img->m_red   = img->data;
-		lifting(ww, img->m_red, img->m_tmp, decomp);
+		//lifting(ww, img->m_red, img->m_tmp, decomp);
 		img->m_tmp  = &img->data[3*ww*hh];
  		printf("lifting to Buffer\n");
 		for (loop=0; loop < imgsz; loop++) {
