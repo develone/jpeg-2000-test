@@ -114,7 +114,7 @@ begin
  WaitForSDDrive;
  IPAddress := WaitForIPComplete;
  {Wait a few seconds for all initialization (like filesystem and network) to be done}
- Sleep(3000);
+ Sleep(5000);
 
  {Create a graphics window to display our bitmap, let's use the new CONSOLE_POSITION_FULLSCREEN option}
  Window:=GraphicsWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMLEFT);
@@ -143,15 +143,15 @@ begin
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
- X:= 0;
- y:= 0;
- Width:= 1024;
- Height:= 1024;
-  if SaveBitmap(Window,'C:\MySavedBitmap.bmp',X,Y,Width,Height,24) then
-  begin
-   {Output a message when the file is saved}
-   GraphicsWindowDrawTextEx(Window,GraphicsWindowGetFont(Window),'Bitmap file saved successfully',260,100,COLOR_BLACK,COLOR_WHITE);
-  end;
+ //X:= 0;
+ //y:= 0;
+ //Width:= 1024;
+ //Height:= 1024;
+  //if SaveBitmap(Window,'C:\MySavedBitmap.bmp',X,Y,Width,Height,24) then
+  //begin
+   //{Output a message when the file is saved}
+   //GraphicsWindowDrawTextEx(Window,GraphicsWindowGetFont(Window),'Bitmap file saved successfully',260,100,COLOR_BLACK,COLOR_WHITE);
+  //end;
 
  ThreadHalt(0);
 end.
