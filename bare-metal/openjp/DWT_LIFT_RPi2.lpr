@@ -52,7 +52,7 @@ var
  DECOMP: Integer;
  ENCODE: Integer;
  TCP_DISTORATIO: Integer;
-
+ FILTER: Integer; 
 function WaitForIPComplete : string;
 
 var
@@ -146,8 +146,11 @@ begin
  //		58	6.0368784486
  //		60	5.5454244973
 
- TCP_DISTORATIO:=40;
- DrawBitmap(Window,'C:\MyBitmap.bmp',0,0,DECOMP,ENCODE,TCP_DISTORATIO);
+ TCP_DISTORATIO:=60;
+ //FILTER 0 5/3 DWT 
+ //FILTER 1 9/7 DWT
+ FILTER:= 0;
+ DrawBitmap(Window,'C:\MyBitmap.bmp',0,0,DECOMP,ENCODE,TCP_DISTORATIO,FILTER);
  
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);

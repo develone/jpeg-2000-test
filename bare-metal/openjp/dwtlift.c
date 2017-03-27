@@ -90,7 +90,7 @@ static void info_callback(const char *msg, void *client_data) {
 	fprintf(stdout, "[INFO] %s", msg);
 }
 
-void lift_config(int dec, int enc, int TCP_DISTORATIO, int bp, long imgsz,int *bufferptr)
+void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int bp, long imgsz,int *bufferptr)
 {
  
 	int height, width;
@@ -181,7 +181,7 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int bp, long imgsz,int *b
     tile_width = width;
     tile_height = height;
     comp_prec = 8;
-    irreversible = 0;
+    irreversible = FILTER;
     output_file = "test.j2k";
     
   if( num_comps > NUM_COMPS_MAX )
