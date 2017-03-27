@@ -90,17 +90,17 @@ static void info_callback(const char *msg, void *client_data) {
 	fprintf(stdout, "[INFO] %s", msg);
 }
 
-void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr)
+void lift_config(int dec, int enc, int TCP_DISTORATIO, int bp, long imgsz,int *bufferptr)
 {
  
 	int height, width;
 	int TopDown,plot;
 	TopDown = 0;
-	plot = 1;
-	printf("in lift_config dec %d enc %d yuv %d \n", dec,enc,mct);
+	plot = 0;
+	printf("in lift_config dec %d enc %d yuv %d \n", dec,enc,TCP_DISTORATIO);
 	decomp = dec;
 	encode = enc;
-	flgyuv = mct;
+	
  	
 	char *lclip = (char *)*bufferptr;
 	printf("In lift_config first byte 0x%x\n",lclip[0]);
@@ -117,11 +117,11 @@ void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr)
 	if(bp==8) memory = (double)imgsz;
 	else memory = (double)(imgsz/3.0);
 
-	ww = (int)sqrt(memory);
-	hh = ww;
-	width = ww;
-	height = ww;
-	printf("memory %lf sqrt memory %lf %d %d \n",memory,sqrt(memory),ww,hh);
+	width = (int)sqrt(memory);
+	
+	
+	height = width;
+	printf("memory %lf sqrt memory %lf %d %d \n",memory,sqrt(memory),width,height);
 	printf("local char ptr %x\n",&lclip[0]);
  
 	IMAGEP		img;
@@ -209,18 +209,18 @@ void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr)
 	b = malloc(sizeof(char)*height*width);
 	printf("allocating rgb 0x%x 0x%x 0x%x \n",r,g,b);	 
  
-	img = (IMAGEP)malloc(sizeof(IMAGE)+7*ww*hh*sizeof(int));
-	y = &img->data[4*ww*hh];
-	u = &img->data[5*ww*hh];
-	v = &img->data[6*ww*hh];
+	img = (IMAGEP)malloc(sizeof(IMAGE)+7*width*height*sizeof(int));
+	y = &img->data[4*width*height];
+	u = &img->data[5*width*height];
+	v = &img->data[6*width*height];
  
  
-	img->m_w = ww;
-	img->m_h = hh;
+	img->m_w = width;
+	img->m_h = height;
 	img->m_red   = img->data;
-	img->m_green = &img->data[ww*hh];
-	img->m_blue  = &img->data[2*ww*hh];
-	img->m_tmp  = &img->data[3*ww*hh];
+	img->m_green = &img->data[width*height];
+	img->m_blue  = &img->data[2*width*height];
+	img->m_tmp  = &img->data[3*width*height];
 
  
 		 
@@ -295,9 +295,9 @@ void lift_config(int dec, int enc, int mct, int bp, long imgsz,int *bufferptr)
 		}
 		img->m_red   = img->data;
  
-		img->m_green = &img->data[ww*hh];
+		img->m_green = &img->data[width*height];
  
-		img->m_blue  = &img->data[2*ww*hh];
+		img->m_blue  = &img->data[2*width*height];
  	
 		lclip = (char *)*bufferptr;
 		printf("img->m_red 0x%x passed ptr 0x%x\n",img->m_red, &lclip[0]);
@@ -312,7 +312,7 @@ opj_set_default_encoder_parameters(&l_param);
 	/** number of quality layers in the stream */
 	l_param.tcp_numlayers = 1;
 	l_param.cp_fixed_quality = 1;
-	//l_param.tcp_distoratio[0] = 20;
+	l_param.tcp_distoratio[0] = TCP_DISTORATIO;
 	/* is using others way of calculation */
 	/* l_param.cp_disto_alloc = 1 or l_param.cp_fixed_alloc = 1 */
 	/* l_param.tcp_rates[0] = ... */

@@ -1,6 +1,6 @@
-int ww, hh;
+
 double memory;
-int *y, *u, *v, flgyuv;
+int *y, *u, *v;
 int loop, decomp, encode;
 struct timeval currentTime,start,end;
  

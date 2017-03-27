@@ -51,7 +51,7 @@ var
  Height:LongWord;
  DECOMP: Integer;
  ENCODE: Integer;
- YUV: Integer;
+ TCP_DISTORATIO: Integer;
 
 function WaitForIPComplete : string;
 
@@ -136,9 +136,18 @@ begin
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
 
  DECOMP:=5;
- ENCODE:=1; 
- YUV:=1;
- DrawBitmap(Window,'C:\MyBitmap.bmp',0,0,DECOMP,ENCODE,YUV);
+ ENCODE:=1;
+ //should not be set lower than  30 which is compressiong over 1500
+ //
+ //		38	189.4093899116
+ //		44	44.058396563
+ //		50	15.9377967826
+ //		54	8.6079098426
+ //		58	6.0368784486
+ //		60	5.5454244973
+
+ TCP_DISTORATIO:=40;
+ DrawBitmap(Window,'C:\MyBitmap.bmp',0,0,DECOMP,ENCODE,TCP_DISTORATIO);
  
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
