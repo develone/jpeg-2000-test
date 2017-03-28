@@ -33,6 +33,7 @@
 #include "openjpeg.h"
 #include "opj_config.h"
 #include "openjpeg.h"
+#include <string.h>
 
 
 
