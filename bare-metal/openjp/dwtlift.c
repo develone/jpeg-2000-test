@@ -516,7 +516,7 @@ opj_set_default_encoder_parameters(&l_param);
  
 	mtime = seconds + useconds;
  
-	printf("Elapsed time: %ld microseconds seconds %ld useconds %ld \n", mtime,seconds, useconds);
+	printf("Elapsed time: %ld seconds %ld useconds %ld \n", mtime,seconds, useconds);
 	printf("FREE rgb 0x%x 0x%x 0x%x \n",r,g,b);
 	free(r);
 	free(g);
