@@ -7,7 +7,8 @@ rm -f kernel7.img
 rm -f libopenjp2.a
 
 cp ~/t_ultibo/src/lib/openjp2/libopenjp2.a .
-echo "Word count arm-none-eabi-ar -t libopenjp2.a copied from src/lib/openjp2"
+echo "Word count arm-none-eabi-ar -t libopenjp2.a"
+echo "copied from /home/pi/t_ultibo/src/lib/openjp2"
 arm-none-eabi-ar -t libopenjp2.a | wc
 arm-none-eabi-objdump -d libopenjp2.a > dis_orig_libopenjp2.txt
 
@@ -22,5 +23,6 @@ arm-none-eabi-objdump -d libopenjp2.a > dis_libopenjp2.txt
 fpc -vi -B -Tultibo -Parm -CpARMV7A -WpRPI2B @/home/pi/ultibo/core/fpc/bin/rpi2.cfg -O4 DWT_LIFT_RPi2.lpr
 ls -la dwtlift.o libdwtlift.a kernel7.img libopenjp2.a
 echo "when ./compile.sh is executed should be 23"
-echo "Word count libopenjp2_obj.txt in src/lib/openjp2"
+echo "Word count libopenjp2_obj.txt in /home/pi/t_ultibo/src/lib/openjp2"
+echo "plus dwtlift.o"
 wc libopenjp2_obj.txt
