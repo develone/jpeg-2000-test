@@ -33,6 +33,7 @@
 #include "openjpeg.h"
 #include "opj_config.h"
 #include "openjpeg.h"
+#include <string.h>
 
 
 
@@ -90,7 +91,7 @@ static void info_callback(const char *msg, void *client_data) {
 	fprintf(stdout, "[INFO] %s", msg);
 }
 
-void lift_config(int dec, int enc, int TCP_DISTORATIO, int bp, long imgsz,int *bufferptr)
+void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int bp, long imgsz,int *bufferptr)
 {
  
 	int height, width;
@@ -181,19 +182,21 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int bp, long imgsz,int *b
     tile_width = width;
     tile_height = height;
     comp_prec = 8;
-    irreversible = 0;
+    irreversible = FILTER;
     output_file = "test.j2k";
     
   if( num_comps > NUM_COMPS_MAX )
     {
-    return 1;
+	printf("num_comps > NUM_COMPS_MAX\n");	
+    //return 1;
     }
 	l_nb_tiles = (OPJ_UINT32)(image_width/tile_width) * (OPJ_UINT32)(image_height/tile_height);
 	l_data_size = (OPJ_UINT32)tile_width * (OPJ_UINT32)tile_height * (OPJ_UINT32)num_comps * (OPJ_UINT32)(comp_prec/8);
 	printf("l_nb_tiles %d l_data_size %d \n", l_nb_tiles, l_data_size);
 	l_data = (OPJ_BYTE*) malloc(l_data_size * sizeof(OPJ_BYTE));
 	if(l_data == NULL){
-		return 1;
+		printf("could not allocate the memory for l_data\n");
+		//return 1;
 	}	
 	
 	
@@ -410,7 +413,8 @@ opj_set_default_encoder_parameters(&l_param);
     }
 	if (!l_codec) {
 		free(l_data);
-		return 1;
+		printf("no l_codec\n");
+		//return 1;
 	}
 
 	/* catch events using our callbacks and give a local context */
@@ -422,7 +426,8 @@ opj_set_default_encoder_parameters(&l_param);
 	if (! l_image) {
 		free(l_data);
 		opj_destroy_codec(l_codec);
-		return 1;
+		printf("no l_image\n");
+		//return 1;
 	}
 
 	l_image->x0 = 0;
@@ -436,7 +441,8 @@ opj_set_default_encoder_parameters(&l_param);
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(l_image);
 		free(l_data);
-		return 1;
+		printf("no opj_setup_encoder\n");
+		//return 1;
 	}
 
     l_stream = opj_stream_create_default_file_stream(output_file, OPJ_FALSE);
@@ -445,7 +451,8 @@ opj_set_default_encoder_parameters(&l_param);
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(l_image);
 		free(l_data);
-		return 1;
+		printf("no l_stream\n");
+		//return 1;
 	}
 
 	if (! opj_start_compress(l_codec,l_image,l_stream)) {
@@ -454,7 +461,8 @@ opj_set_default_encoder_parameters(&l_param);
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(l_image);
 		free(l_data);
-		return 1;
+		printf("no opj_start_compress\n");
+		//return 1;
 	}
 
 	for (i=0;i<l_nb_tiles;++i) {
@@ -464,7 +472,8 @@ opj_set_default_encoder_parameters(&l_param);
 			opj_destroy_codec(l_codec);
 			opj_image_destroy(l_image);
 			free(l_data);
-			return 1;
+			printf("no opj_write_tile\nn");
+			//return 1;
 		}
 	}
 
@@ -474,7 +483,8 @@ opj_set_default_encoder_parameters(&l_param);
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(l_image);
 		free(l_data);
-		return 1;
+		printf("no opj_end_compress\n");
+		//return 1;
 	}
 
     opj_stream_destroy(l_stream);
@@ -506,7 +516,7 @@ opj_set_default_encoder_parameters(&l_param);
  
 	mtime = seconds + useconds;
  
-	printf("Elapsed time: %ld microseconds seconds %ld useconds %ld \n", mtime,seconds, useconds);
+	printf("Elapsed time: %ld seconds %ld useconds %ld \n", mtime,seconds, useconds);
 	printf("FREE rgb 0x%x 0x%x 0x%x \n",r,g,b);
 	free(r);
 	free(g);
