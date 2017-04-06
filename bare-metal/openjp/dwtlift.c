@@ -98,7 +98,7 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int bp, long 
 	int TopDown,plot;
 	TopDown = 0;
 	plot = 0;
-	printf("in lift_config dec %d enc %d yuv %d \n", dec,enc,TCP_DISTORATIO);
+	printf("in lift_config dec %d enc %d distoratio %d \n", dec,enc,TCP_DISTORATIO);
 	decomp = dec;
 	encode = enc;
 	
@@ -125,7 +125,7 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int bp, long 
 	printf("memory %lf sqrt memory %lf %d %d \n",memory,sqrt(memory),width,height);
 	printf("local char ptr %x\n",&lclip[0]);
  
-	IMAGEP		img;
+	
 
 	/*from test_tile_encoder*/
  
@@ -206,49 +206,25 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int bp, long 
 	/*from test_tile_encoder*/
 	
  
-	printf("allocating memory with malloc \n");
+ 
 	r = malloc(sizeof(char)*height*width);
 	g = malloc(sizeof(char)*height*width);
 	b = malloc(sizeof(char)*height*width);
 	printf("allocating rgb 0x%x 0x%x 0x%x \n",r,g,b);	 
  
-	img = (IMAGEP)malloc(sizeof(IMAGE)+7*width*height*sizeof(int));
-	y = &img->data[4*width*height];
-	u = &img->data[5*width*height];
-	v = &img->data[6*width*height];
- 
- 
-	img->m_w = width;
-	img->m_h = height;
-	img->m_red   = img->data;
-	img->m_green = &img->data[width*height];
-	img->m_blue  = &img->data[2*width*height];
-	img->m_tmp  = &img->data[3*width*height];
-
- 
-		 
-	  
-	
- 
-	 
-		printf("Copying RGB 8 bit char to 32 int \n");
+ 		printf("Copying RGB 8 bit char to 32 int \n");
 		/* the r g b data is sent to openjpeg */
-		printf(" rgb 0x%x 0x%x 0x%x \n",r,g,b);
+		printf("Copying to  rgb 0x%x 0x%x 0x%x \n",r,g,b);
 		for (loop=0; loop < imgsz/3; loop++) {
-			*img->m_red = lclip[0];
+			
 			*b = lclip[0];
 			lclip++;
-			img->m_red++;
 			b++;
-			*img->m_green = lclip[0];
 			*r = lclip[0];
 			lclip++;
-			img->m_green++;
 			r++;
-			*img->m_blue = lclip[0];
 			*g = lclip[0];
 			lclip++;
-			img->m_blue++;
 			g++;
 		}
 		 
@@ -261,19 +237,18 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int bp, long 
 			
 		}
 	
-		printf("%d \n",i);
+	
 		
 		for (i=0;i<((imgsz/3));i++)	{	
 			l_data[i+(imgsz/3)] = (OPJ_BYTE)r[i];
 			
 		}
 	 
-		printf("%d \n",i);
 		for (i=0;i<((imgsz/3));i++)	{	
 			l_data[i+(imgsz/3)*2] = (OPJ_BYTE)b[i];
 			
 		}
-		printf("%d \n",i);
+		
 		printf("before reset 0x%x 0x%x 0x%x \n",r,g,b); 
 		printf(" rgb 0x%x 0x%x 0x%x %d \n",r,g,b,plot);
 		if(plot == 1) {
@@ -296,16 +271,10 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int bp, long 
 			i = octave_write_byte(octave_output_file_3, b, width*height);
 			if(i == 0) printf("could not write file\n");
 		}
-		img->m_red   = img->data;
  
-		img->m_green = &img->data[width*height];
- 
-		img->m_blue  = &img->data[2*width*height];
  	
 		lclip = (char *)*bufferptr;
-		printf("img->m_red 0x%x passed ptr 0x%x\n",img->m_red, &lclip[0]);
-		printf("img->m_green 0x%x \n",img->m_green);
-		printf("img->m_blue 0x%x \n",img->m_blue);
+ 
  	
 		gettimeofday(&start, NULL);
 		/*from test_tile_encoder*/
@@ -494,7 +463,7 @@ opj_set_default_encoder_parameters(&l_param);
 		/*from test_tile_encoder*/
  
 	
-		 
+		/* 
 		for (loop=0; loop < imgsz/3; loop++) {
  
 				lclip[0] = *img->m_red ;
@@ -508,6 +477,7 @@ opj_set_default_encoder_parameters(&l_param);
 				img->m_blue++;
 			 
 		}
+		*/
 	 
 	gettimeofday(&end, NULL);
 
@@ -521,7 +491,7 @@ opj_set_default_encoder_parameters(&l_param);
 	free(r);
 	free(g);
 	free(b); 	
-	free(img);	 
+ 	 
 }
  
  

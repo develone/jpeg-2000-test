@@ -36,19 +36,15 @@ uses
  
 
 var
- IBPP: Integer;
+ 
  Handle:THandle;
  Handle1:THandle;
  {Handle2:THandle;}
  Window:TWindowHandle;
- Window1:TWindowHandle;
- //Handle3:THandle;
+ 
 
  IPAddress : string;
- X:LongWord;
- Y:LongWord;
- Width:LongWord;
- Height:LongWord;
+ 
  DECOMP: Integer;
  ENCODE: Integer;
  TCP_DISTORATIO: Integer;
@@ -109,7 +105,7 @@ end;
 
 begin
 
- ConsoleWindowWriteLn (Handle1, 'TFTP Demo.');
+
  // wait for IP address and SD Card to be initialised.
  WaitForSDDrive;
  IPAddress := WaitForIPComplete;
@@ -117,8 +113,8 @@ begin
  Sleep(5000);
 
  {Create a graphics window to display our bitmap, let's use the new CONSOLE_POSITION_FULLSCREEN option}
- Window:=GraphicsWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMLEFT);
- Window1:=GraphicsWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMRIGHT);
+ Window:=GraphicsWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOM);
+  
  {Call our bitmap drawing function and pass the name of our bitmap file on the SD card,
   we also pass the handle for our graphics console window and the X and Y locations to
   draw the bitmap.
@@ -128,6 +124,7 @@ begin
 
  Handle:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_TOPLEFT,True);
  Handle1:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_TOPRIGHT,True);
+ ConsoleWindowWriteLn (Handle1, 'TFTP Demo.');
  {Handle2:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMLEFT,True);}
  //Handle3:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMRIGHT,True);
  ConsoleWindowWriteLn(Handle1, 'writing top right handle1');
