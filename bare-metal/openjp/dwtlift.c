@@ -211,43 +211,31 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int bp, long 
 	g = malloc(sizeof(char)*height*width);
 	b = malloc(sizeof(char)*height*width);
 	printf("allocating rgb 0x%x 0x%x 0x%x \n",r,g,b);	 
- 
- 		printf("Copying RGB 8 bit char to 32 int \n");
-		/* the r g b data is sent to openjpeg */
-		printf("Copying to  rgb 0x%x 0x%x 0x%x \n",r,g,b);
-		for (loop=0; loop < imgsz/3; loop++) {
+	
+	for (loop=0; loop < imgsz/3; loop++) {
 			
-			*b = lclip[0];
-			lclip++;
-			b++;
-			*r = lclip[0];
-			lclip++;
-			r++;
-			*g = lclip[0];
-			lclip++;
-			g++;
-		}
+		*b = lclip[0];
+		lclip++;
+		b++;
+		*r = lclip[0];
+		lclip++;
+		r++;
+		*g = lclip[0];
+		lclip++;
+		g++;
+	}
 		 
-		printf("reseting pointers \n");
-		r = r - (imgsz/3);
-		g = g - (imgsz/3);
-		b = b - (imgsz/3);
-		for (i=0;i<((imgsz/3));i++)	{	
-			l_data[i] = (OPJ_BYTE)g[i];
-			
-		}
+	printf("reseting pointers \n");
+	r = r - (imgsz/3);
+	g = g - (imgsz/3);
+	b = b - (imgsz/3);
 	
-	
-		
-		for (i=0;i<((imgsz/3));i++)	{	
-			l_data[i+(imgsz/3)] = (OPJ_BYTE)r[i];
-			
-		}
-	 
-		for (i=0;i<((imgsz/3));i++)	{	
-			l_data[i+(imgsz/3)*2] = (OPJ_BYTE)b[i];
-			
-		}
+	for (i=0;i<((imgsz/3));i++)	{	
+		l_data[i] = (OPJ_BYTE)g[i];
+		l_data[i+(imgsz/3)] = (OPJ_BYTE)r[i];
+		l_data[i+(imgsz/3)*2] = (OPJ_BYTE)b[i];	
+	}
+
 		
 		printf("before reset 0x%x 0x%x 0x%x \n",r,g,b); 
 		printf(" rgb 0x%x 0x%x 0x%x %d \n",r,g,b,plot);
@@ -271,7 +259,10 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int bp, long 
 			i = octave_write_byte(octave_output_file_3, b, width*height);
 			if(i == 0) printf("could not write file\n");
 		}
- 
+		printf("FREE rgb 0x%x 0x%x 0x%x \n",r,g,b);
+		free(r);
+		free(g);
+		free(b); 	 
  	
 		lclip = (char *)*bufferptr;
  
@@ -487,10 +478,7 @@ opj_set_default_encoder_parameters(&l_param);
 	mtime = seconds + useconds;
  
 	printf("Elapsed time: %ld seconds %ld useconds %ld \n", mtime,seconds, useconds);
-	printf("FREE rgb 0x%x 0x%x 0x%x \n",r,g,b);
-	free(r);
-	free(g);
-	free(b); 	
+
  	 
 }
  
