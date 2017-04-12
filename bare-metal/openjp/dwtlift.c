@@ -424,7 +424,15 @@ opj_set_default_encoder_parameters(&l_param);
 		printf("no opj_start_compress\n");
 		//return 1;
 	}
+	gettimeofday(&end, NULL);
 
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+ 
+	mtime = seconds + useconds;
+ 
+	printf("Elapsed time: %ld seconds %ld useconds %ld starting openjpeg\n", mtime,seconds, useconds);
+	gettimeofday(&start, NULL);
 	for (i=0;i<l_nb_tiles;++i) {
 		if (! opj_write_tile(l_codec,i,l_data,l_data_size,l_stream)) {
 			fprintf(stderr, "ERROR -> test_tile_encoder: failed to write the tile %d!\n",i);
