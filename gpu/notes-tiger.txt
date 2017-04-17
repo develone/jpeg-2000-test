@@ -1,0 +1,20 @@
+
+GPU programing.
+
+forked https://github.com/raspberrypi/userland.git
+
+git clone https://github.com/develone/userland.git
+
+~/userland/host_applications/linux/apps/hello_pi/libs/ilclient $ make
+~/userland/host_applications/linux/apps/hello_pi/libs/vgfont $ make
+
+sudo mkdir -p /opt/vc/src/hello_pi/libs/vgfont
+sudo mkdir -p /opt/vc/src/hello_pi/libs/ilclient
+ 
+sudo cp -R /home/pi/userland/host_applications/linux/apps/hello_pi/libs/ilclient/* /opt/vc/src/hello_pi/libs/ilclient/
+sudo cp -R /home/pi/userland/host_applications/linux/apps/hello_pi/libs/vgfont/* /opt/vc/src/hello_pi/libs/vgfont/ 
+
+~/userland/host_applications/linux/apps/hello_pi/hello_tiger $ make
+
+~/userland/host_applications/linux/apps/hello_pi/hello_tiger $ sudo ./hello_tiger.bin
+This will rotate the tiger image in counter clockwise in about 20 sec.
