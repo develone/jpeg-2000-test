@@ -8,7 +8,7 @@ long mtime, seconds, useconds;
 
 double sqrt(double x);
  
-void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int bp, long imgsz,int *bufferptr);
+void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER,  int CR, int flg, int bp, long imgsz,int *bufferptr);
 
  
 

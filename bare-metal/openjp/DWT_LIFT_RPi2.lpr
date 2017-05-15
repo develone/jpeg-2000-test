@@ -26,9 +26,7 @@ uses
      ShellUpdate,
      RemoteShell,
   { needed for telnet }
- 
- 
- uLiftBitmap,
+ uLiftBitmap, 
  Syscalls;
 
 {$linklib dwtlift}
@@ -49,6 +47,8 @@ var
  ENCODE: Integer;
  TCP_DISTORATIO: Integer;
  FILTER: Integer; 
+ COMPRESSION_RATIO : Integer;
+ DIS_CR_FLG : Integer;
 function WaitForIPComplete : string;
 
 var
@@ -147,7 +147,11 @@ begin
  //FILTER 0 5/3 DWT 
  //FILTER 1 9/7 DWT
  FILTER:= 0;
- DrawBitmap(Window,'C:\MyBitmap.bmp',0,0,DECOMP,ENCODE,TCP_DISTORATIO,FILTER);
+ COMPRESSION_RATIO := 100;
+ //DIS_CR_FLG 0 COMPRESSION_RATIO
+ //DIS_CR_FLG 1 TCP_DISTORATIO
+ DIS_CR_FLG := 1;
+ DrawBitmap(Window,'C:\MyBitmap.bmp',0,0,DECOMP,ENCODE,TCP_DISTORATIO,FILTER, COMPRESSION_RATIO,DIS_CR_FLG);
  
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
@@ -161,6 +165,8 @@ begin
    //{Output a message when the file is saved}
    //GraphicsWindowDrawTextEx(Window,GraphicsWindowGetFont(Window),'Bitmap file saved successfully',260,100,COLOR_BLACK,COLOR_WHITE);
   //end;
+ 
+ 
 
  ThreadHalt(0);
 end.

@@ -90,9 +90,15 @@ static void info_callback(const char *msg, void *client_data) {
 	(void)client_data;
 	fprintf(stdout, "[INFO] %s", msg);
 }
-
-void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int bp, long imgsz,int *bufferptr)
+struct GPU_FFT_HOST {
+    unsigned mem_flg, mem_map, peri_addr, peri_size;
+};
+void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int flg, int bp, long imgsz,int *bufferptr)
 {
+	struct GPU_FFT_HOST host;
+	
+	printf ("Hello Ultibo from C!! Calling Pascal\n");
+	
  
 	int height, width;
 	int TopDown,plot;
@@ -287,8 +293,14 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int bp, long 
 	/* rate specifications */
 	/** number of quality layers in the stream */
 	l_param.tcp_numlayers = 1;
-	l_param.cp_fixed_quality = 1;
-	l_param.tcp_distoratio[0] = TCP_DISTORATIO;
+	if ( flg == 0 ) {
+		l_param.cp_disto_alloc = 1;
+		l_param.tcp_rates[0] = CR;
+	}
+	else {
+		l_param.cp_fixed_quality = 1;
+		l_param.tcp_distoratio[0] = TCP_DISTORATIO;
+	}
 	/* is using others way of calculation */
 	/* l_param.cp_disto_alloc = 1 or l_param.cp_fixed_alloc = 1 */
 	/* l_param.tcp_rates[0] = ... */
