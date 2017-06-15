@@ -9,11 +9,22 @@
  git merge upstream/master
  git push origin master
  
- commit 803949b0cb4345bd7077df57af0b61ede87ab883
+commit e7df6d4866852a614242df1ff7bf1c208d6ac7bc
 Author: Ultibo <admin@ultibo.org>
-Date:   Sat Jun 3 15:44:34 2017 +1000
+Date:   Tue Jun 6 14:18:32 2017 +1000
 
-    Latest commits (Ultibo core 1.3.327)
+    Fix for PS/2 Keyboard get scancode command
+commit 95a480b86dec1ac7aa5fdd9c71625e06544f02d3
+Author: Ultibo <admin@ultibo.org>
+Date:   Wed Dec 28 15:56:17 2016 +1100
+
+    Update for Ultibo core 1.3.077 release
+     Change default ABI for Ultibo target to EABIHF
+     Add support for linking static libraries in Ultibo target
+     Allow passing VFPV3_NEON or VFPV4_NEON for -Cf parameter (translated and passed to as.exe in -mfpu= parameter)
+     Enable sqlite package
+     Enable sqlite in fcl-db package
+     Enable freetype2 in fcl-image package
 
  cd ../Examples/
  less .git/config 
@@ -32,7 +43,13 @@ Build fpc for ultibo Raspbian RPi3
 
 jpeg-2000-test/bare-metal/build_ultibo_RPi/build_fpc_lazarus.sh
 Your Free Pascal 3.0 with Lazarus is now installed
-
+libgtk2.0-dev libcairo2-dev \
+  libpango1.0-dev libgdk-pixbuf2.0-dev libatk1.0-dev \
+  libghc-x11-dev
+  /home/pi/Development/FreePascal
+  y
+  After install do you want to shortcuts created in:
+/home/pi/.local/share/applications (y/n)?
 jpeg-2000-test/bare-metal/build_ultibo_RPi/build_ultibo_fpc.sh 
 Free Pascal Compiler version 3.1.1
 
