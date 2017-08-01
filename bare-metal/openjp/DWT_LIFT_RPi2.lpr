@@ -150,7 +150,7 @@ begin
  COMPRESSION_RATIO := 100;
  //DIS_CR_FLG 0 COMPRESSION_RATIO
  //DIS_CR_FLG 1 TCP_DISTORATIO
- DIS_CR_FLG := 1;
+ DIS_CR_FLG := 0;
  DrawBitmap(Window,'C:\MyBitmap.bmp',0,0,DECOMP,ENCODE,TCP_DISTORATIO,FILTER, COMPRESSION_RATIO,DIS_CR_FLG);
  
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
