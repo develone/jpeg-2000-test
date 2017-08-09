@@ -23,6 +23,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#define USE_OPJ_DEPRECATED
+/* set this macro to enable profiling for the given test */
+/* warning : in order to be effective, openjpeg must have been built with profiling enabled !! */
+/*#define _PROFILE*/
  
 #include <stdio.h>
  
@@ -36,6 +40,11 @@
 #include <string.h>
 
 #include "format_defs.h"
+/* -------------------------------------------------------------------------- */
+/* Declarations                                                               */ 
+int get_file_format(const char *filename);
+static int infile_format(const char *fname);
+static void info_callback(const char *msg, void *client_data); 
 #define JP2_RFC3745_MAGIC "\x00\x00\x00\x0c\x6a\x50\x20\x20\x0d\x0a\x87\x0a"
 #define JP2_MAGIC "\x0d\x0a\x87\x0a"
 /* position 45: "\xff\x52" */
@@ -43,19 +52,23 @@
 
 static int infile_format(const char *fname)
 {
+		
         FILE *reader;
         const char *s, *magic_s;
-        int ext_format, magic_format;
+        int ext_format, magic_format,ii;
         unsigned char buf[12];
         unsigned int l_nb_read;
 
         reader = fopen(fname, "rb");
-
+		printf("In infile_format %s reader 0x%x\n", fname,reader);
         if (reader == NULL)
                 return -1;
 
         memset(buf, 0, 12);
         l_nb_read = (unsigned int)fread(buf, 1, 12, reader);
+        printf("%s l_nb_read %d 0x%x ",fname,l_nb_read,reader);
+        for(ii = 0;ii < 12;ii++) printf("0x%x ",buf[ii]);
+        printf("\n");
         fclose(reader);
         if (l_nb_read != 12)
                 return -1;
@@ -125,10 +138,10 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
         OPJ_UINT32 l_nb_comps=0 ;
         OPJ_INT32 l_current_tile_x0,l_current_tile_y0,l_current_tile_x1,l_current_tile_y1;
 		
-		const char *lcl_input_file;
-		lcl_input_file = input_file;
-		printf("%d %d %d %d %s %s \n",da_x0,da_y0,da_x1,da_y1,input_file,lcl_input_file);
-		printf("%d 0x%x \n",l_max_data_size,l_data);
+		//const char *input_file;
+		//input_file = "dtest.j2k";
+		printf("%d %d %d %d %s l_data_size %d 0x%x\n",da_x0,da_y0,da_x1,da_y1,input_file,l_max_data_size,l_data);
+		
 		/*
         int da_x0=0;
         int da_y0=0;
@@ -162,7 +175,8 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
                 return EXIT_FAILURE;
         }
 
-        l_stream = opj_stream_create_default_file_stream(lcl_input_file,OPJ_TRUE);
+        l_stream = opj_stream_create_default_file_stream(input_file,OPJ_TRUE);
+        printf("l_stream 0x%x\n", l_stream);
         if (!l_stream){
                 free(l_data);
                 fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
@@ -184,8 +198,6 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
 
         /* to decode only a part of the image data */
         /*opj_restrict_decoding(&l_param,0,0,1000,1000);*/
-
-
         switch(l_param.decod_format) {
                 case J2K_CFMT:	/* JPEG-2000 codestream */
                         {
@@ -206,10 +218,12 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
                                 opj_stream_destroy(l_stream);
                                 return EXIT_FAILURE;
                         }
-        }
+        }        
+
+        
 
         /* catch events using our callbacks and give a local context */		
-        //opj_set_info_handler(l_codec, info_callback,00);
+        opj_set_info_handler(l_codec, info_callback,00);
         //opj_set_warning_handler(l_codec, warning_callback,00);
         //opj_set_error_handler(l_codec, error_callback,00);
 
@@ -371,29 +385,26 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
 {
 	struct GPU_FFT_HOST host;
 	
-	printf ("Hello Ultibo from C!! Calling Pascal\n");
+	printf ("Hello Ultibo from C!! Called by Pascal ");
 	
-    const char *input_file;
-    input_file = "deoomtest.j2k";
-    printf("Elapsed time: %ld seconds %ld useconds %ld \n", mtime,seconds, useconds);
-	printf("%s \n",input_file);
-	//sleep(20);
-	decompress(0, 0, 2048, 2048, input_file);
+
+	printf("Elapsed time: %ld seconds %ld useconds %ld \n", mtime,seconds, useconds);
 	int height, width;
 	int TopDown,plot;
 	TopDown = 0;
 	plot = 0;
-	printf("in lift_config dec %d enc %d distoratio %d \n", dec,enc,TCP_DISTORATIO);
+	if (flg==0) printf("in lift_config dec %d enc %d compression CR %d bpp %d flg %d \n", dec,enc,CR,bp,flg);
+	else printf("in lift_config dec %d enc %d distoratio %d bpp %d CR %d flg %d \n", dec,enc,TCP_DISTORATIO,bp,CR,flg);
 	decomp = dec;
 	encode = enc;
 	
  	
 	char *lclip = (char *)*bufferptr;
-	printf("In lift_config first byte 0x%x\n",lclip[0]);
-	printf("bpp %ld\n",bp);
+	//printf("In lift_config first byte 0x%x\n",lclip[0]);
+	//printf("bpp %ld\n",bp);
 
-	printf("size %ld\n",imgsz);
-	printf("pointer passed %x %x\n",*bufferptr,bufferptr);
+	printf("size %ld ",imgsz);
+	printf("pointer passed %x %x ",*bufferptr,bufferptr);
 
 
 	/* Need to determine the ww width & hh height 
@@ -408,7 +419,7 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
 	
 	height = width;
 	printf("memory %lf sqrt memory %lf %d %d \n",memory,sqrt(memory),width,height);
-	printf("local char ptr %x\n",&lclip[0]);
+	//printf("local char ptr %x ",&lclip[0]);
  
 	
 
@@ -671,7 +682,7 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
     }
   else
     {
-		printf("In test_tile_encoder\n");
+		printf("In test_tile_encoder ");
 		printf("creating J2k\n");
     l_codec = opj_create_compress(OPJ_CODEC_J2K);
     }
@@ -788,8 +799,13 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
 	useconds = end.tv_usec - start.tv_usec;
  
 	mtime = seconds + useconds;
+	printf("Elapsed time: %ld seconds %ld useconds %ld \n",mtime,seconds,useconds);
  
-
+    const char *input_file;
+    input_file = "dtest.j2k";
+    
+	printf("In lift_config %s \n",input_file);
+	decompress(0, 0, width, height, input_file);
  	 
 }
  
