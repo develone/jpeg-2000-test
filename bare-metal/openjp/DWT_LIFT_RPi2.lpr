@@ -132,7 +132,7 @@ begin
  //ConsoleWindowWriteLn(Handle3, 'writing bottom right handle3');
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
 
- DECOMP:=5;
+ DECOMP:=6;
  ENCODE:=1;
  //should not be set lower than  30 which is compressiong over 1500
  //
