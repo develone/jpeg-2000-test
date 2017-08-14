@@ -124,6 +124,11 @@ int get_file_format(const char *filename) {
 
 int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file)
 {
+		char *r_decompress,*g_decompress,*b_decompress;
+		const char *r_decompress_fn="red";
+		const char *g_decompress_fn="green";
+		const char *b_decompress_fn="blue";
+			
         opj_dparameters_t l_param;
         opj_codec_t * l_codec;
         opj_image_t * l_image;
@@ -171,6 +176,14 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
                 input_file = "test.j2k";
         }
 		*/
+	gettimeofday(&start, NULL);
+
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+ 
+	mtime = seconds + useconds;
+ 
+	printf("decompress: %ld seconds %ld useconds %ld starting openjpeg\n", mtime,seconds, useconds);
         if (! l_data) {
                 return EXIT_FAILURE;
         }
@@ -305,6 +318,14 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
                         /** now should inspect image to know the reduction factor and then how to behave with data */
                 }
         }
+		r_decompress = 	l_data;
+		octave_write_byte(r_decompress_fn,r_decompress,da_x1*da_y1);
+		g_decompress = 	l_data+da_x1*da_y1;
+		octave_write_byte(g_decompress_fn,g_decompress,da_x1*da_y1);
+		b_decompress = 	l_data+da_x1*da_y1+da_x1*da_y1;
+		octave_write_byte(b_decompress_fn,b_decompress,da_x1*da_y1);
+
+		
 
         if (! opj_end_decompress(l_codec,l_stream))
         {
@@ -323,7 +344,13 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
 
         /* Print profiling*/
         /*PROFPRINT();*/
+	gettimeofday(&end, NULL);
 
+	seconds  = end.tv_sec  - start.tv_sec;
+	useconds = end.tv_usec - start.tv_usec;
+ 
+	mtime = seconds + useconds;
+	printf("Elapsed time: %ld seconds %ld useconds %ld \n",mtime,seconds,useconds);
         return EXIT_SUCCESS;
 }
 
