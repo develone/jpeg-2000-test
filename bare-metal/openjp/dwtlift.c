@@ -318,9 +318,9 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
                         /** now should inspect image to know the reduction factor and then how to behave with data */
                 }
         }
-		r_decompress = 	l_data;
+		r_decompress = 	l_data+da_x1*da_y1;
 		octave_write_byte(r_decompress_fn,r_decompress,da_x1*da_y1);
-		g_decompress = 	l_data+da_x1*da_y1;
+		g_decompress = 	l_data;
 		octave_write_byte(g_decompress_fn,g_decompress,da_x1*da_y1);
 		b_decompress = 	l_data+da_x1*da_y1+da_x1*da_y1;
 		octave_write_byte(b_decompress_fn,b_decompress,da_x1*da_y1);
