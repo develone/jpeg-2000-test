@@ -183,7 +183,7 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
  
 	mtime = seconds + useconds;
  
-	printf("decompress: %ld seconds %ld useconds %ld starting openjpeg\n", mtime,seconds, useconds);
+	printf("Start decompression: %ld seconds %ld useconds %ld starting openjpeg\n", mtime,seconds, useconds);
         if (! l_data) {
                 return EXIT_FAILURE;
         }
@@ -318,13 +318,35 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
                         /** now should inspect image to know the reduction factor and then how to behave with data */
                 }
         }
+        gettimeofday(&end, NULL);
+
+		seconds  = end.tv_sec  - start.tv_sec;
+		useconds = end.tv_usec - start.tv_usec;
+ 
+		mtime = seconds + useconds;
+		printf("Decompression time: %ld seconds %ld useconds %ld \n",mtime,seconds,useconds);
+		gettimeofday(&start, NULL);
+
+		seconds  = end.tv_sec  - start.tv_sec;
+		useconds = end.tv_usec - start.tv_usec;
+ 
+		mtime = seconds + useconds;
+ 
+		printf("start writing: %ld seconds %ld useconds %ld starting openjpeg\n", mtime,seconds, useconds);		
 		r_decompress = 	l_data+da_x1*da_y1;
 		octave_write_byte(r_decompress_fn,r_decompress,da_x1*da_y1);
 		g_decompress = 	l_data;
 		octave_write_byte(g_decompress_fn,g_decompress,da_x1*da_y1);
 		b_decompress = 	l_data+da_x1*da_y1+da_x1*da_y1;
 		octave_write_byte(b_decompress_fn,b_decompress,da_x1*da_y1);
+		gettimeofday(&end, NULL);
 
+		seconds  = end.tv_sec  - start.tv_sec;
+		useconds = end.tv_usec - start.tv_usec;
+ 
+		mtime = seconds + useconds;
+ 
+		printf("File writes: %ld seconds %ld useconds %ld starting openjpeg\n", mtime,seconds, useconds);
 		
 
         if (! opj_end_decompress(l_codec,l_stream))
@@ -344,13 +366,7 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
 
         /* Print profiling*/
         /*PROFPRINT();*/
-	gettimeofday(&end, NULL);
-
-	seconds  = end.tv_sec  - start.tv_sec;
-	useconds = end.tv_usec - start.tv_usec;
  
-	mtime = seconds + useconds;
-	printf("Elapsed time: %ld seconds %ld useconds %ld \n",mtime,seconds,useconds);
         return EXIT_SUCCESS;
 }
 
@@ -415,7 +431,7 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
 	printf ("Hello Ultibo from C!! Called by Pascal ");
 	
 
-	printf("Elapsed time: %ld seconds %ld useconds %ld \n", mtime,seconds, useconds);
+	printf("starting compression: %ld seconds %ld useconds %ld \n", mtime,seconds, useconds);
 	int height, width;
 	int TopDown,plot;
 	TopDown = 0;
@@ -773,7 +789,7 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
  
 	mtime = seconds + useconds;
  
-	printf("Elapsed time: %ld seconds %ld useconds %ld starting openjpeg\n", mtime,seconds, useconds);
+	printf("Compression time: %ld seconds %ld useconds %ld starting openjpeg\n", mtime,seconds, useconds);
 	gettimeofday(&start, NULL);
 	for (i=0;i<l_nb_tiles;++i) {
 		if (! opj_write_tile(l_codec,i,l_data,l_data_size,l_stream)) {
@@ -826,7 +842,7 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
 	useconds = end.tv_usec - start.tv_usec;
  
 	mtime = seconds + useconds;
-	printf("Elapsed time: %ld seconds %ld useconds %ld \n",mtime,seconds,useconds);
+	printf("Compression time: %ld seconds %ld useconds %ld \n",mtime,seconds,useconds);
  
     const char *input_file;
     input_file = "dtest.j2k";
