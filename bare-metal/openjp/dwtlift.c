@@ -122,8 +122,9 @@ int get_file_format(const char *filename) {
 }
 
 
-int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file)
+int decompress(int *bufferptr, int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file)
 {
+		char lclip = (char *)*bufferptr;
 		char *r_decompress,*g_decompress,*b_decompress;
 		const char *r_decompress_fn="red";
 		const char *g_decompress_fn="green";
@@ -145,7 +146,7 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
 		
 		//const char *input_file;
 		//input_file = "dtest.j2k";
-		printf("%d %d %d %d %s l_data_size %d 0x%x\n",da_x0,da_y0,da_x1,da_y1,input_file,l_max_data_size,l_data);
+		printf("%d %d %d %d %s l_data_size %d 0x%x 0x%x\n",da_x0,da_y0,da_x1,da_y1,input_file,l_max_data_size,l_data,bufferptr);
 		
 		/*
         int da_x0=0;
@@ -339,6 +340,23 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
 		octave_write_byte(g_decompress_fn,g_decompress,da_x1*da_y1);
 		b_decompress = 	l_data+da_x1*da_y1+da_x1*da_y1;
 		octave_write_byte(b_decompress_fn,b_decompress,da_x1*da_y1);
+		/*
+		 *Writing the decompressed values 
+		 * 
+		 *  
+		*/
+		for (loop=0; loop < da_x1*da_y1/3; loop++) {
+				lclip = *r_decompress ;
+				lclip++;
+				r_decompress++;
+				lclip = *g_decompress ;
+				lclip++;
+				g_decompress++;
+				lclip = *b_decompress ;
+				lclip++;
+				b_decompress++;
+		}
+		
 		gettimeofday(&end, NULL);
 
 		seconds  = end.tv_sec  - start.tv_sec;
@@ -847,8 +865,8 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
     const char *input_file;
     input_file = "dtest.j2k";
     
-	printf("In lift_config %s \n",input_file);
-	decompress(0, 0, width, height, input_file);
+	printf("In lift_config %s 0x%x \n",input_file,bufferptr);
+	decompress(bufferptr, 0, 0, width, height, input_file);
  	 
 }
  

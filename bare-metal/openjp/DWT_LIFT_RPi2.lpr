@@ -49,6 +49,10 @@ var
  FILTER: Integer; 
  COMPRESSION_RATIO : Integer;
  DIS_CR_FLG : Integer;
+ X:LongWord;
+ Y:LongWord;
+ Width:LongWord;
+ Height:LongWord;
 function WaitForIPComplete : string;
 
 var
@@ -156,15 +160,15 @@ begin
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
- //X:= 0;
- //y:= 0;
- //Width:= 1024;
- //Height:= 1024;
-  //if SaveBitmap(Window,'C:\MySavedBitmap.bmp',X,Y,Width,Height,24) then
-  //begin
-   //{Output a message when the file is saved}
-   //GraphicsWindowDrawTextEx(Window,GraphicsWindowGetFont(Window),'Bitmap file saved successfully',260,100,COLOR_BLACK,COLOR_WHITE);
-  //end;
+ X:= 0;
+ y:= 0;
+ Width:= 1024;
+ Height:= 1024;
+  if SaveBitmap(Window,'C:\MySavedBitmap.bmp',X,Y,Width,Height,24) then
+  begin
+   {Output a message when the file is saved}
+   GraphicsWindowDrawTextEx(Window,GraphicsWindowGetFont(Window),'Bitmap file saved successfully',260,100,COLOR_BLACK,COLOR_WHITE);
+  end;
  
  
 
