@@ -49,7 +49,272 @@ static void info_callback(const char *msg, void *client_data);
 #define JP2_MAGIC "\x0d\x0a\x87\x0a"
 /* position 45: "\xff\x52" */
 #define J2K_CODESTREAM_MAGIC "\xff\x4f\xff\x51"
+int height, width;
+/* -------------------------------------------------------------------------- */
+typedef struct
+    {
+        unsigned char RGB[3];
+    }RGB;
+    
+    
+// ********** Create Matrix **********
+RGB** createMatrix(){
+    RGB** Matrix;
+    int i;
+    Matrix = (RGB **) malloc (sizeof (RGB*) * height);
+    if (Matrix == NULL){
+        perror("***** No memory available *****");
+        exit(0);
+    }
+    for (i=0;i<height;i++){
+        Matrix[i] = (RGB *) malloc (sizeof(RGB) * width);
+        if (Matrix[i] == NULL){
+        perror("***** No memory available *****");
+            exit(0);
+        }
+    }
+    return(Matrix);
+}
 
+RGB** loadImage(FILE *arq, RGB** Matrix){
+    int i,j;
+    RGB tmp;
+    long pos = 119;
+ 
+    fseek(arq,0,0);
+ 
+    for (i=0; i<height; i++){
+        for (j=0; j<width; j++){
+            pos+= 3;
+            fseek(arq,pos,0);
+            fread(&tmp,(sizeof(RGB)),1,arq);
+            Matrix[i][j] = tmp;
+        }
+    }
+    return(Matrix);
+}
+/*upside down data in bitmap*/
+void Wr_p_matrix(RGB** Matrix,char *r,char *g,char *b) {
+	int i,j;
+	RGB tmp;
+	for (i=height-1; i>-1; i--){
+		for (j=0; j<width; j++){
+			
+			//printf("%d %d 0x%x 0x%x 0x%x \n ",i,j,tmp.RGB[1],tmp.RGB[0],tmp.RGB[2]);
+			tmp.RGB[1] = g[0];
+			g++;
+			tmp.RGB[0] = r[0];
+			r++;			
+			tmp.RGB[2] = b[0];
+			b++;
+			//printf("0x%x 0x%x 0x%x \n",tmp.RGB[0],tmp.RGB[1],tmp.RGB[2]);	
+			Matrix[i][j] = tmp;		
+		}
+	}
+}
+
+/*upside down data in bitmap*/
+void p_matrix(RGB** Matrix,char *r,char *g,char *b) {
+	int i,j;
+	RGB tmp;
+	for (i=height-1; i>-1; i--){
+		for (j=0; j<width; j++){
+			tmp = Matrix[i][j];
+			//printf("%d %d 0x%x 0x%x 0x%x \n ",i,j,tmp.RGB[1],tmp.RGB[0],tmp.RGB[2]);
+			r[0] = tmp.RGB[1];
+			r++;
+			g[0] = tmp.RGB[0];
+			g++;			
+			b[0] = tmp.RGB[2];
+			b++;			
+		}
+	}
+}
+
+/*top down data in bitmap*/
+void pp_matrix(RGB** Matrix,char *r,char *g,char *b) {
+	int i,j;
+	RGB tmp;
+	for (i=0; i<height; i++){
+		for (j=0; j<width; j++){
+			tmp = Matrix[i][j];
+			//printf("%d %d 0x%x 0x%x 0x%x \n ",i,j,tmp.RGB[1],tmp.RGB[0],tmp.RGB[2]);
+			r[0] = tmp.RGB[1];
+			r++;
+			g[0] = tmp.RGB[0];
+			g++;			
+			b[0] = tmp.RGB[2];
+			b++;			
+		}
+	}
+}
+ 
+typedef struct
+    {
+        unsigned int size;
+        int width,height;
+        unsigned short int planes;
+        unsigned short int bpp;
+        unsigned int compression;
+        unsigned int imagesize;
+        int xresolution,yresolution;
+        unsigned int colours;
+        unsigned int impcolours;
+    }INFOHEADER;
+ 
+// ********** Read BMP info from file **********
+INFOHEADER readInfo(FILE *arq){
+    INFOHEADER info;
+ 
+    // Image Width in pixels
+    fseek(arq,18,0);
+    fread(&info.width,1,4,arq);
+ 
+    // Image Height in pixels
+    fseek(arq,22,0);
+    fread(&info.height,1,4,arq);
+
+    fseek(arq,26,0);
+    fread(&info.planes,1,2,arq); 
+    // Color depth, BPP (bits per pixel)
+    fseek(arq,28,0);
+    fread(&info.bpp,1,2,arq);
+ 
+    // Compression type
+    // 0 = Normmally
+    // 1 = 8 bits per pixel
+    // 2 = 4 bits per pixel
+    fseek(arq,30,0);
+    fread(&info.compression,1,4,arq);
+ 
+    // Image size in bytes
+    fseek(arq,34,0);
+    fread(&info.imagesize,1,4,arq);
+    
+    fseek(arq,38,0);
+    fread(&info.xresolution,1,4,arq); 
+    fseek(arq,42,0);
+    fread(&info.yresolution,1,4,arq);    
+    // Number of color used (NCL)
+    // vccalue = 0 for full color set
+    fseek(arq,46,0);
+    fread(&info.colours,1,4,arq);
+ 
+    // Number of important color (NIC)
+    // value = 0 means all collors important
+    fseek(arq,54,0);
+    fread(&info.impcolours,1,4,arq);
+ 
+    return(info);
+}
+void writeImage(FILE *arqw, RGB** Matrix){
+    int i,j;
+    RGB tmp;
+    long pos = 119;
+	//printf("height %d width %d \n", height,width);
+	//tmp = Matrix[0][0];
+	//printf("0x%x 0x%x 0x%x \n",tmp.RGB[0],tmp.RGB[1],tmp.RGB[2]);
+    //fseek(arqw,0,0);
+ 
+    for (i=0; i<height; i++){
+        for (j=0; j<width; j++){
+            pos+= 3;
+            fseek(arqw,pos,0);
+            //printf("%ld ",pos);
+            //printf("%d %d \n",i,j);
+            tmp = Matrix[i][j];
+            //printf("0x%x 0x%x 0x%x \n",tmp.RGB[0],tmp.RGB[1],tmp.RGB[2]);
+            fwrite(&tmp,(sizeof(RGB)),1,arqw);
+            //Matrix[i][j] = tmp;
+        }
+    }
+    //return(Matrix);
+    fclose(arqw);
+}
+// ********** Write BMP info from file **********
+void writeInfo(FILE *arqw,INFOHEADER infowrite){
+    //INFOHEADER info;
+    char type[3];
+    int hdr;
+    char offset=122,unknow=108;
+    
+    hdr = infowrite.height*infowrite.width*3+offset;
+    type[0] = 0x42;
+    type[1] = 0x4D;
+
+    
+    fseek(arqw,2,0);
+    fwrite(&hdr,1,4,arqw);
+
+    fseek(arqw,10,0);
+    fwrite(&offset,1,1,arqw);
+
+    fseek(arqw,14,0);
+    fwrite(&unknow,1,1,arqw);
+    	
+	fseek(arqw,0,0);
+    fwrite(type,1,2,arqw);
+    
+    // Image Width in pixels
+    fseek(arqw,18,0);
+    fwrite(&infowrite.width,1,4,arqw);
+ 
+    // Image Height in pixels
+    fseek(arqw,22,0);
+    fwrite(&infowrite.height,1,4,arqw);
+    
+    fseek(arqw,26,0);
+    fwrite(&infowrite.planes,1,2,arqw); 
+    
+    // Color depth, BPP (bits per pixel)
+    fseek(arqw,28,0);
+    fwrite(&infowrite.bpp,1,2,arqw);
+ 
+    // Compression type
+    // 0 = Normmally
+    // 1 = 8 bits per pixel
+    // 2 = 4 bits per pixel
+    fseek(arqw,30,0);
+    fwrite(&infowrite.compression,1,4,arqw);
+ 
+    // Image size in bytes
+    fseek(arqw,34,0);
+    fwrite(&infowrite.imagesize,1,4,arqw);
+
+    fseek(arqw,38,0);
+    fwrite(&infowrite.xresolution,1,4,arqw); 
+    fseek(arqw,42,0);
+    fwrite(&infowrite.yresolution,1,4,arqw);
+ 
+    // Number of color used (NCL)
+    // vccalue = 0 for full color set
+    fseek(arqw,46,0);
+    fwrite(&infowrite.colours,1,4,arqw);
+ 
+    // Number of important color (NIC)
+    // value = 0 means all collors important
+    fseek(arqw,54,0);
+    fwrite(&infowrite.impcolours,1,4,arqw);
+ 
+    //return(info);
+    //fclose(arqw);
+}
+// ********** Verify if the file is BMP *********
+void isBMP(FILE* arq, INFOHEADER info){
+    char type[3];
+    unsigned short int bpp;
+    fseek(arq,0,0);
+    fread(type,1,2,arq);
+    type[2] = '\0';
+ 
+    fseek(arq,28,0);
+    fread(&bpp,1,2,arq);
+	printf("testing if bitmap %c%c bpp = %d \n",type[0],type[1],bpp);
+    if (strcmp(type,"BM") || (bpp != 24)){
+        printf("\nThe file is not BMP format or is not 24 bits\n");
+            exit(0);
+    }
+}
 static int infile_format(const char *fname)
 {
 		
@@ -122,14 +387,16 @@ int get_file_format(const char *filename) {
 }
 
 
-int decompress(int *bufferptr, int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file)
+int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file)
 {
+		/*
 		char lclip = (char *)*bufferptr;
 		char *r_decompress,*g_decompress,*b_decompress;
 		const char *r_decompress_fn="red";
 		const char *g_decompress_fn="green";
 		const char *b_decompress_fn="blue";
-			
+		*/
+		char *r_decompress,*g_decompress,*b_decompress;	
         opj_dparameters_t l_param;
         opj_codec_t * l_codec;
         opj_image_t * l_image;
@@ -146,7 +413,7 @@ int decompress(int *bufferptr, int da_x0, int da_y0, int da_x1, int da_y1,const 
 		
 		//const char *input_file;
 		//input_file = "dtest.j2k";
-		printf("%d %d %d %d %s l_data_size %d 0x%x 0x%x\n",da_x0,da_y0,da_x1,da_y1,input_file,l_max_data_size,l_data,bufferptr);
+		printf("%d %d %d %d %s l_data_size %d 0x%x \n",da_x0,da_y0,da_x1,da_y1,input_file,l_max_data_size,l_data);
 		
 		/*
         int da_x0=0;
@@ -334,17 +601,18 @@ int decompress(int *bufferptr, int da_x0, int da_y0, int da_x1, int da_y1,const 
 		mtime = seconds + useconds;
  
 		printf("start writing: %ld seconds %ld useconds %ld starting openjpeg\n", mtime,seconds, useconds);		
-		r_decompress = 	l_data+da_x1*da_y1;
-		octave_write_byte(r_decompress_fn,r_decompress,da_x1*da_y1);
-		g_decompress = 	l_data;
-		octave_write_byte(g_decompress_fn,g_decompress,da_x1*da_y1);
+		r_decompress = 	l_data;
+		//octave_write_byte(r_decompress_fn,r_decompress,da_x1*da_y1);
+		g_decompress = 	l_data+da_x1*da_y1;
+		//octave_write_byte(g_decompress_fn,g_decompress,da_x1*da_y1);
 		b_decompress = 	l_data+da_x1*da_y1+da_x1*da_y1;
-		octave_write_byte(b_decompress_fn,b_decompress,da_x1*da_y1);
+		//octave_write_byte(b_decompress_fn,b_decompress,da_x1*da_y1);
 		/*
 		 *Writing the decompressed values 
 		 * 
 		 *  
 		*/
+		/*
 		for (loop=0; loop < da_x1*da_y1/3; loop++) {
 				lclip = *r_decompress ;
 				lclip++;
@@ -356,7 +624,7 @@ int decompress(int *bufferptr, int da_x0, int da_y0, int da_x1, int da_y1,const 
 				lclip++;
 				b_decompress++;
 		}
-		
+		*/
 		gettimeofday(&end, NULL);
 
 		seconds  = end.tv_sec  - start.tv_sec;
@@ -365,6 +633,43 @@ int decompress(int *bufferptr, int da_x0, int da_y0, int da_x1, int da_y1,const 
 		mtime = seconds + useconds;
  
 		printf("File writes: %ld seconds %ld useconds %ld starting openjpeg\n", mtime,seconds, useconds);
+			RGB** Matrix_aux_wr;
+	
+
+	//Matrix_aux_wr = Matrix;
+	int bpp;
+	FILE *oo;
+	height = da_y1;
+	width = da_x1;
+	Matrix_aux_wr = createMatrix();
+ 
+	
+	Wr_p_matrix(Matrix_aux_wr,b_decompress, g_decompress, r_decompress ); 
+	oo = fopen("test_wr.bmp","wb");
+	if (!oo) {
+			printf("Unable to open file for writing!");
+			return 1;
+	}
+	INFOHEADER infowr;	
+	infowr.height = height;
+	infowr.width = width;
+	
+	infowr.imagesize = height*width*3;
+	bpp = 24;
+	infowr.bpp = bpp;
+	infowr.planes = 1;
+	infowr.compression = 0;
+	infowr.impcolours = 0x73524742;
+	
+	printf("WR imagesc = 0x%x \n",infowr.imagesize);
+	printf("Wr bpp = %d \n",infowr.bpp);
+	//printf("Wr xresolution = %d yresolution %d \n",infowr.xresolution,infowr.yresolution);
+	printf("bpp = %d \n",infowr.bpp);
+	//printf("xresolution = %d yresolution %d \n",infowr.xresolution,infowr.yresolution);
+	printf("Ultibo writing files needs to be fixed before the bitmap can be written\n");
+	printf("fwrite(&tmp,(sizeof(RGB)),1,arqw); in writeImage only writes 3 bytes at time \n");
+	//writeInfo(oo,infowr);
+	//writeImage(oo,Matrix_aux_wr);
 		
 
         if (! opj_end_decompress(l_codec,l_stream))
@@ -865,8 +1170,8 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
     const char *input_file;
     input_file = "dtest.j2k";
     
-	printf("In lift_config %s 0x%x \n",input_file,bufferptr);
-	decompress(bufferptr, 0, 0, width, height, input_file);
+	printf("In lift_config %s  \n",input_file);
+	decompress(0, 0, 256, 256, input_file);
  	 
 }
  

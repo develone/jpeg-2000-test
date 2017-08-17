@@ -160,6 +160,7 @@ begin
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
+ {-----------------------------------
  X:= 0;
  y:= 0;
  Width:= 1024;
@@ -168,8 +169,9 @@ begin
   begin
    {Output a message when the file is saved}
    GraphicsWindowDrawTextEx(Window,GraphicsWindowGetFont(Window),'Bitmap file saved successfully',260,100,COLOR_BLACK,COLOR_WHITE);
+
   end;
- 
+ -------------------------------------------}
  
 
  ThreadHalt(0);
