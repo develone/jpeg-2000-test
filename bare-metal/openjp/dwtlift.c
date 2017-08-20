@@ -93,7 +93,7 @@ RGB** loadImage(FILE *arq, RGB** Matrix){
     }
     return(Matrix);
 }
-/*upside down data in bitmap*/
+/*upside down data in bitmap*Wr_p_matrix(Matrix_aux_wr,b_decompress, g_decompress, r_decompress );*/
 void Wr_p_matrix(RGB** Matrix,char *r,char *g,char *b) {
 	int i,j;
 	RGB tmp;
@@ -210,28 +210,43 @@ INFOHEADER readInfo(FILE *arq){
 void writeImage(FILE *arqw, RGB** Matrix){
     int i,j;
     RGB tmp;
-    long pos = 119;
+    //long pos = 119;
+    long pos = 122;
 	//printf("height %d width %d \n", height,width);
 	//tmp = Matrix[0][0];
 	//printf("0x%x 0x%x 0x%x \n",tmp.RGB[0],tmp.RGB[1],tmp.RGB[2]);
     //fseek(arqw,0,0);
- 
+    char *wrbuf;
+    wrbuf = (char *)malloc(height*width*3);
+    //printf("0x%x \n",wrbuf); 
     for (i=0; i<height; i++){
         for (j=0; j<width; j++){
-            pos+= 3;
-            fseek(arqw,pos,0);
+            //pos+= 3;
+            //fseek(arqw,pos,0);
             //printf("%ld ",pos);
             //printf("%d %d \n",i,j);
             tmp = Matrix[i][j];
             //printf("0x%x 0x%x 0x%x \n",tmp.RGB[0],tmp.RGB[1],tmp.RGB[2]);
-            fwrite(&tmp,(sizeof(RGB)),1,arqw);
+            //fwrite(&tmp,(sizeof(RGB)),1,arqw);
             //Matrix[i][j] = tmp;
+            wrbuf[0] = (char)tmp.RGB[0];
+            wrbuf++;
+            wrbuf[0] = (char)tmp.RGB[1];
+            wrbuf++;
+            wrbuf[0] = (char)tmp.RGB[2];
+            wrbuf++;            
         }
     }
+    fseek(arqw,pos,0);
+    //printf("0x%x \n",wrbuf);
+    wrbuf= wrbuf - height*width*3;
+    //printf("0x%x \n",wrbuf);
+    fwrite(wrbuf,(height*width*3),1,arqw);
+    free(wrbuf);    
     //return(Matrix);
     fclose(arqw);
 }
-// ********** Write BMP info from file **********
+// ********** Write BMP info from file **********61 73 63
 void writeInfo(FILE *arqw,INFOHEADER infowrite){
     //INFOHEADER info;
     char type[3];
@@ -298,6 +313,11 @@ void writeInfo(FILE *arqw,INFOHEADER infowrite){
  
     //return(info);
     //fclose(arqw);
+    type[0] = 0x00;
+    type[1] = 0x00;
+    type[1] = 0x00;
+	fseek(arqw,15,0);
+    fwrite(type,1,3,arqw);    
 }
 // ********** Verify if the file is BMP *********
 void isBMP(FILE* arq, INFOHEADER info){
@@ -396,6 +416,9 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
 		const char *g_decompress_fn="green";
 		const char *b_decompress_fn="blue";
 		*/
+		const char *r_decompress_fn="red";
+		const char *g_decompress_fn="green";
+		const char *b_decompress_fn="blue";		
 		char *r_decompress,*g_decompress,*b_decompress;	
         opj_dparameters_t l_param;
         opj_codec_t * l_codec;
@@ -625,14 +648,6 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
 				b_decompress++;
 		}
 		*/
-		gettimeofday(&end, NULL);
-
-		seconds  = end.tv_sec  - start.tv_sec;
-		useconds = end.tv_usec - start.tv_usec;
- 
-		mtime = seconds + useconds;
- 
-		printf("File writes: %ld seconds %ld useconds %ld starting openjpeg\n", mtime,seconds, useconds);
 			RGB** Matrix_aux_wr;
 	
 
@@ -663,14 +678,20 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
 	
 	printf("WR imagesc = 0x%x \n",infowr.imagesize);
 	printf("Wr bpp = %d \n",infowr.bpp);
-	//printf("Wr xresolution = %d yresolution %d \n",infowr.xresolution,infowr.yresolution);
+	printf("Wr xresolution = %d yresolution %d \n",infowr.xresolution,infowr.yresolution);
 	printf("bpp = %d \n",infowr.bpp);
-	//printf("xresolution = %d yresolution %d \n",infowr.xresolution,infowr.yresolution);
-	printf("Ultibo writing files needs to be fixed before the bitmap can be written\n");
-	printf("fwrite(&tmp,(sizeof(RGB)),1,arqw); in writeImage only writes 3 bytes at time \n");
-	//writeInfo(oo,infowr);
-	//writeImage(oo,Matrix_aux_wr);
-		
+	printf("xresolution = %d yresolution %d \n",infowr.xresolution,infowr.yresolution);
+	writeInfo(oo,infowr);
+	writeImage(oo,Matrix_aux_wr);
+	free(Matrix_aux_wr);
+		gettimeofday(&end, NULL);
+
+		seconds  = end.tv_sec  - start.tv_sec;
+		useconds = end.tv_usec - start.tv_usec;
+ 
+		mtime = seconds + useconds;
+ 
+		printf("File writes: %ld seconds %ld useconds %ld starting openjpeg\n", mtime,seconds, useconds);
 
         if (! opj_end_decompress(l_codec,l_stream))
         {
@@ -1167,12 +1188,16 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
 	mtime = seconds + useconds;
 	printf("Compression time: %ld seconds %ld useconds %ld \n",mtime,seconds,useconds);
  
+
+ 	 
+}
+
+void decom_test(int x0, int y0, int x1, int y1,char *ff_in) {
     const char *input_file;
     input_file = "dtest.j2k";
     
-	printf("In lift_config %s  \n",input_file);
-	decompress(0, 0, 256, 256, input_file);
- 	 
+	printf("In decom_test called by Pascal %s %d %d %d %d %s\n",input_file,x0,y0,x1,y1,ff_in);
+	decompress(x0, y0, x1, y1,ff_in);	
 }
  
  

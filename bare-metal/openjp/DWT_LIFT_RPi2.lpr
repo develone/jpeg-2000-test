@@ -32,7 +32,7 @@ uses
 {$linklib dwtlift}
 {$linklib libm}
  
-
+procedure decom_test(x0,y0,x1,y1:LongWord;fn:string); cdecl; external 'libdwtlift' name 'decom_test';
 var
  
  Handle:THandle;
@@ -53,6 +53,8 @@ var
  Y:LongWord;
  Width:LongWord;
  Height:LongWord;
+ da_x0,da_y0,da_x1,da_y1:LongWord;
+ ff:string;
 function WaitForIPComplete : string;
 
 var
@@ -155,8 +157,13 @@ begin
  //DIS_CR_FLG 0 COMPRESSION_RATIO
  //DIS_CR_FLG 1 TCP_DISTORATIO
  DIS_CR_FLG := 0;
- DrawBitmap(Window,'C:\MyBitmap.bmp',0,0,DECOMP,ENCODE,TCP_DISTORATIO,FILTER, COMPRESSION_RATIO,DIS_CR_FLG);
- 
+ //DrawBitmap(Window,'C:\MyBitmap.bmp',0,0,DECOMP,ENCODE,TCP_DISTORATIO,FILTER, COMPRESSION_RATIO,DIS_CR_FLG);
+ da_x0:=0;
+ da_y0:=0;
+ da_x1:=1024;
+ da_y1:=1024;
+ ff:='dtest_1024.j2k';
+ decom_test(da_x0,da_y0,da_x1,da_y1,ff);
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
