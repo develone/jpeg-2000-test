@@ -112,7 +112,24 @@ void Wr_p_matrix(RGB** Matrix,char *r,char *g,char *b) {
 		}
 	}
 }
-
+void Wr_pp_matrix(RGB** Matrix,char *r,char *g,char *b) {
+	int i,j;
+	RGB tmp;
+	for (i=0; i<height; i++){
+		for (j=0; j<width; j++){
+			
+			//printf("%d %d 0x%x 0x%x 0x%x \n ",i,j,tmp.RGB[1],tmp.RGB[0],tmp.RGB[2]);
+			tmp.RGB[1] = r[0];
+			r++;
+			tmp.RGB[0] = b[0];
+			b++;			
+			tmp.RGB[2] = g[0];
+			g++;
+			//printf("0x%x 0x%x 0x%x \n",tmp.RGB[0],tmp.RGB[1],tmp.RGB[2]);	
+			Matrix[i][j] = tmp;		
+		}
+	}
+}
 /*upside down data in bitmap*/
 void p_matrix(RGB** Matrix,char *r,char *g,char *b) {
 	int i,j;
@@ -228,7 +245,7 @@ void writeImage(FILE *arqw, RGB** Matrix){
             tmp = Matrix[i][j];
             //printf("0x%x 0x%x 0x%x \n",tmp.RGB[0],tmp.RGB[1],tmp.RGB[2]);
             //fwrite(&tmp,(sizeof(RGB)),1,arqw);
-            //Matrix[i][j] = tmp;
+            Matrix[i][j] = tmp;
             wrbuf[0] = (char)tmp.RGB[0];
             wrbuf++;
             wrbuf[0] = (char)tmp.RGB[1];
@@ -251,25 +268,40 @@ void writeInfo(FILE *arqw,INFOHEADER infowrite){
     //INFOHEADER info;
     char type[3];
     int hdr;
-    char offset=122,unknow=108;
+	char offset=122,unknow=108;
     
     hdr = infowrite.height*infowrite.width*3+offset;
     type[0] = 0x42;
     type[1] = 0x4D;
-
+    
+	fseek(arqw,0,0);
+    fwrite(type,1,2,arqw);
     
     fseek(arqw,2,0);
     fwrite(&hdr,1,4,arqw);
 
+    type[0] = 0x00;
+    type[1] = 0x00;
+    type[2] = 0x00;
+
+    fseek(arqw,6,0);
+	fwrite(type,1,3,arqw);
+	
+    fseek(arqw,9,0);
+	fwrite(type,1,1,arqw);	  
+	  
     fseek(arqw,10,0);
     fwrite(&offset,1,1,arqw);
 
+    fseek(arqw,11,0);
+	fwrite(type,1,3,arqw);
+	
     fseek(arqw,14,0);
     fwrite(&unknow,1,1,arqw);
-    	
-	fseek(arqw,0,0);
-    fwrite(type,1,2,arqw);
-    
+
+    fseek(arqw,15,0);
+	fwrite(type,1,3,arqw);
+	    	    
     // Image Width in pixels
     fseek(arqw,18,0);
     fwrite(&infowrite.width,1,4,arqw);
@@ -295,7 +327,7 @@ void writeInfo(FILE *arqw,INFOHEADER infowrite){
     // Image size in bytes
     fseek(arqw,34,0);
     fwrite(&infowrite.imagesize,1,4,arqw);
-
+		
     fseek(arqw,38,0);
     fwrite(&infowrite.xresolution,1,4,arqw); 
     fseek(arqw,42,0);
@@ -313,11 +345,9 @@ void writeInfo(FILE *arqw,INFOHEADER infowrite){
  
     //return(info);
     //fclose(arqw);
-    type[0] = 0x00;
-    type[1] = 0x00;
-    type[1] = 0x00;
-	fseek(arqw,15,0);
-    fwrite(type,1,3,arqw);    
+
+	//fseek(arqw,15,0);
+    //fwrite(type,1,3,arqw);    
 }
 // ********** Verify if the file is BMP *********
 void isBMP(FILE* arq, INFOHEADER info){
@@ -625,11 +655,11 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
  
 		printf("start writing: %ld seconds %ld useconds %ld starting openjpeg\n", mtime,seconds, useconds);		
 		r_decompress = 	l_data;
-		//octave_write_byte(r_decompress_fn,r_decompress,da_x1*da_y1);
-		g_decompress = 	l_data+da_x1*da_y1;
-		//octave_write_byte(g_decompress_fn,g_decompress,da_x1*da_y1);
-		b_decompress = 	l_data+da_x1*da_y1+da_x1*da_y1;
-		//octave_write_byte(b_decompress_fn,b_decompress,da_x1*da_y1);
+		octave_write_byte(r_decompress_fn,r_decompress,da_x1*da_y1);
+		g_decompress = 	l_data+da_x1*da_y1+da_x1*da_y1;
+		octave_write_byte(g_decompress_fn,g_decompress,da_x1*da_y1);
+		b_decompress = 	l_data+da_x1*da_y1;
+		octave_write_byte(b_decompress_fn,b_decompress,da_x1*da_y1);
 		/*
 		 *Writing the decompressed values 
 		 * 
@@ -659,7 +689,7 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
 	Matrix_aux_wr = createMatrix();
  
 	
-	Wr_p_matrix(Matrix_aux_wr,b_decompress, g_decompress, r_decompress ); 
+	Wr_p_matrix(Matrix_aux_wr,g_decompress, b_decompress, r_decompress ); 
 	oo = fopen("test_wr.bmp","wb");
 	if (!oo) {
 			printf("Unable to open file for writing!");
@@ -675,12 +705,13 @@ int decompress(int da_x0, int da_y0, int da_x1, int da_y1,const char *input_file
 	infowr.planes = 1;
 	infowr.compression = 0;
 	infowr.impcolours = 0x73524742;
+	infowr.xresolution = 2835;
+	infowr.yresolution = 2835;
 	
-	printf("WR imagesc = 0x%x \n",infowr.imagesize);
+	printf("WR imagesize = 0x%x \n",infowr.imagesize);
 	printf("Wr bpp = %d \n",infowr.bpp);
 	printf("Wr xresolution = %d yresolution %d \n",infowr.xresolution,infowr.yresolution);
-	printf("bpp = %d \n",infowr.bpp);
-	printf("xresolution = %d yresolution %d \n",infowr.xresolution,infowr.yresolution);
+ 
 	writeInfo(oo,infowr);
 	writeImage(oo,Matrix_aux_wr);
 	free(Matrix_aux_wr);
@@ -779,7 +810,7 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
 	int height, width;
 	int TopDown,plot;
 	TopDown = 0;
-	plot = 0;
+	plot = 1;
 	if (flg==0) printf("in lift_config dec %d enc %d compression CR %d bpp %d flg %d \n", dec,enc,CR,bp,flg);
 	else printf("in lift_config dec %d enc %d distoratio %d bpp %d CR %d flg %d \n", dec,enc,TCP_DISTORATIO,bp,CR,flg);
 	decomp = dec;
@@ -815,10 +846,10 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
  
 	TopDown = 0;
 	
- 	/*char *r,*g,*b;
+ 	char *r,*g,*b;
 	const char *octave_output_file_1;
 	const char *octave_output_file_2;
-	const char *octave_output_file_3;*/
+	const char *octave_output_file_3;
 	#define NUM_COMPS_MAX 4
 	opj_cparameters_t l_param;
 	opj_codec_t * l_codec;
@@ -919,18 +950,43 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
 		l_data[i+(imgsz/3)] = (OPJ_BYTE)r[i];
 		l_data[i+(imgsz/3)*2] = (OPJ_BYTE)b[i];	
 		*/
-		/*red to blue*/
-		l_data[i+(imgsz/3)*2] = (OPJ_BYTE)lclip[0];
+		if(i==0) printf("0x%x 0x%x 0x%x\n", lclip[0],lclip[1],lclip[2]);
+					
+		/*green from Pascal*/
+		l_data[i+(imgsz/3)*2]  = (OPJ_BYTE)lclip[0];
 		lclip++;
-		/*green to green*/
-		l_data[i+(imgsz/3)]  = (OPJ_BYTE)lclip[0];
-		lclip++;		
-		/*blue to red*/
+						
+		/*blue from Pascal*/
+		l_data[i+(imgsz/3)] = (OPJ_BYTE)lclip[0];
+		lclip++;
+
+		/*red from Pascal*/
 		l_data[i] = (OPJ_BYTE)lclip[0];
 		lclip++;
-
-
 	}
+	b = l_data+(imgsz/3);
+	g = l_data+(imgsz/3*2);
+	r = l_data;
+	if(plot == 1) {
+			
+		printf("write the files \n");
+		printf("red-out.32t, grn-out.32t, and blu-out.32t\n");
+		octave_output_file_1 = "red-out.32t";
+			 
+			
+		i = octave_write_byte(octave_output_file_1,r , width*height);
+		if(i == 0) printf("could not write file\n");
+	
+		octave_output_file_2 = "grn-out.32t";
+		//i = octave_write(octave_output_file_2, imgbm->m_green, sz);
+		i = octave_write_byte(octave_output_file_2, g, width*height);	
+		if(i == 0) printf("could not write file\n");
+	
+		octave_output_file_3 = "blu-out.32t";
+			 
+		i = octave_write_byte(octave_output_file_3, b, width*height);
+		if(i == 0) printf("could not write file\n");
+		}
 
 	/*
 	printf("before reset 0x%x 0x%x 0x%x \n",r,g,b); 

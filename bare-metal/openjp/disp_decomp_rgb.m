@@ -1,9 +1,9 @@
-fid = fopen('red','r'); im1 = fread(fid, [2048,inf], 'char'); fclose(fid);
-figure; imagesc(im1);colorbar;
-title 'RED DECOMPRESSED 2048 x 2048';
-fid = fopen('green','r'); im2 = fread(fid, [2048,inf], 'char'); fclose(fid);
-figure; imagesc(im2);colorbar
-title 'GREEN DECOMPRESSED 2048 x 2048';
-fid = fopen('blue','r'); im3 = fread(fid, [2048,inf], 'char'); fclose(fid);
-figure; imagesc(im3);colorbar
-title 'BLUE DECOMPRESSED 2048 x 2048';
+fid = fopen('red','r'); im4 = fread(fid, [256,inf], 'char'); fclose(fid);
+figure; imagesc(im4);colorbar; colormap 'gray';
+title 'RED DECOMPRESSED 256 x 256 bare metal';
+fid = fopen('green','r'); im5 = fread(fid, [256,inf], 'char'); fclose(fid);
+figure; imagesc(im5);colorbar; colormap 'gray';
+title 'GREEN DECOMPRESSED 256 x 256 bare metal';
+fid = fopen('blue','r'); im6 = fread(fid, [256,inf], 'char'); fclose(fid);
+figure; imagesc(im6);colorbar; colormap 'gray';
+title 'BLUE DECOMPRESSED 256 x 256 bare metal';

@@ -222,7 +222,7 @@ begin
      {Draw the entire image onto our graphics console window in one request}
      if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
  
-     lift_config(DECOMP,ENCODE,COMP1,COMP2,COMP3,COMP4,IBPP,Size,Buffer);
+     if(ENCODE=1) then lift_config(DECOMP,ENCODE,COMP1,COMP2,COMP3,COMP4,IBPP,Size,Buffer);
      //if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
      Result:=True;
     finally
