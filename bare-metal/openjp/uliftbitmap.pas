@@ -86,7 +86,8 @@ var
  FileStream:TFileStream;
  IBPP: Integer;
  FILTER: Integer;
- 
+ HImage:LongWord;
+ WImage:LongWord;
  BitMapFileHeader:TBitMapFileHeader;
  BitMapInfoHeader:TBitMapInfoHeader;
 begin
@@ -124,7 +125,8 @@ begin
     {Most Bitmaps are stored upside down in the file, but they can be right way up}
     TopDown:=(BitMapInfoHeader.Height < 0);
     BitMapInfoHeader.Height:=Abs(BitMapInfoHeader.Height);
-   
+    HImage:= BitMapInfoHeader.Height;
+    WImage:= BitMapInfoHeader.Width;
     {Check how many bits per pixel in this Bitmap, we only support 16, 24 and 32 in this function}
     if BitMapInfoHeader.BitCount = 16 then
      begin
@@ -222,7 +224,7 @@ begin
      {Draw the entire image onto our graphics console window in one request}
      if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
  
-     if(ENCODE=1) then lift_config(DECOMP,ENCODE,COMP1,COMP2,COMP3,COMP4,IBPP,Size,Buffer);
+     if(ENCODE=1) then lift_config(DECOMP,ENCODE,COMP1,COMP2,COMP3,COMP4,IBPP,Size,HImage,WImage,Buffer);
      //if GraphicsWindowDrawImage(Handle,X,Y,Buffer,BitMapInfoHeader.Width,BitMapInfoHeader.Height,Format) <> ERROR_SUCCESS then Exit;
      Result:=True;
     finally

@@ -799,7 +799,7 @@ static void info_callback(const char *msg, void *client_data) {
 struct GPU_FFT_HOST {
     unsigned mem_flg, mem_map, peri_addr, peri_size;
 };
-void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int flg, int bp, long imgsz,int *bufferptr)
+void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int flg, int bp, long imgsz,long him,long wim, int *bufferptr)
 {
 	struct GPU_FFT_HOST host;
 	
@@ -810,9 +810,11 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
 	int height, width;
 	int TopDown,plot;
 	TopDown = 0;
-	plot = 1;
-	if (flg==0) printf("in lift_config dec %d enc %d compression CR %d bpp %d flg %d \n", dec,enc,CR,bp,flg);
-	else printf("in lift_config dec %d enc %d distoratio %d bpp %d CR %d flg %d \n", dec,enc,TCP_DISTORATIO,bp,CR,flg);
+	plot = 0;
+	
+	if (flg==0) printf("in lift_config dec %d enc %d compression CR %d bpp %d flg %d him %d wim %d\n", dec,enc,CR,bp,flg,him,wim);
+	else printf("in lift_config dec %d enc %d distoratio %d bpp %d CR %d flg %d him wim %d%d\n", dec,enc,TCP_DISTORATIO,bp,CR,flg,him,wim);
+	
 	decomp = dec;
 	encode = enc;
 	
@@ -827,16 +829,18 @@ void lift_config(int dec, int enc, int TCP_DISTORATIO, int FILTER, int CR, int f
 
 	/* Need to determine the ww width & hh height 
  	* given the ss bpp BPP bits per pixel & Size
- 	*/   
+ 	*   
 
 	if(bp==8) memory = (double)imgsz;
-	else memory = (double)(imgsz/3.0);
+	else memory = (double)(imgsz/3.0);*/
 
-	width = (int)sqrt(memory);
+	//width = (int)sqrt(memory);
+	width = wim;
 	
-	
-	height = width;
-	printf("memory %lf sqrt memory %lf %d %d \n",memory,sqrt(memory),width,height);
+	//height = width;
+	height = him;
+	printf("width %d height %d \n",width,height);
+	//sleep(15);
 	//printf("local char ptr %x ",&lclip[0]);
  
 	

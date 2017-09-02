@@ -138,8 +138,8 @@ begin
  //ConsoleWindowWriteLn(Handle3, 'writing bottom right handle3');
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
 
- DECOMP:=4;
- ENCODE:=0;
+ DECOMP:=6;
+ ENCODE:=1;
  //should not be set lower than  30 which is compressiong over 1500
  //
  //		38	189.4093899116
@@ -153,7 +153,7 @@ begin
  //FILTER 0 5/3 DWT 
  //FILTER 1 9/7 DWT
  FILTER:= 0;
- COMPRESSION_RATIO := 4;
+ COMPRESSION_RATIO := 125;
  //DIS_CR_FLG 0 COMPRESSION_RATIO
  //DIS_CR_FLG 1 TCP_DISTORATIO
  DIS_CR_FLG := 0;
@@ -166,8 +166,8 @@ begin
  da_x0:=0;
  da_y0:=0;
  da_x1:=2048;
- da_y1:=2048;
- ff:='test_2048_100.j2k';
+ da_y1:=2038;
+ ff:='t_2048_400r.j2k';
  decom_test(da_x0,da_y0,da_x1,da_y1,ff);
  DrawBitmap(Window,'C:\test_wr.bmp',0,0,DECOMP,ENCODE,TCP_DISTORATIO,FILTER, COMPRESSION_RATIO,DIS_CR_FLG);
  end;
