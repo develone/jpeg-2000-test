@@ -1,4 +1,4 @@
-from add_mul_sim import *
+#from add_mul_sim import *
 
  
 '''
@@ -86,67 +86,46 @@ def fwt97(s, width, height):
         ''' Core 1D lifting process in this loop. '''
         ''' Lifting is done on the cols. '''
         # Predict 1. y1
-        sim_fixbv = Add_Mul_Sim()
+  
         for row in range(1, height-1, 2):
-			sim_fixbv.setSig_p(0)
-			sim_fixbv.setSig_even_odd(0)
-			sim_fixbv.setSig_fwd_inv(1)
-			sim_fixbv.setSig_left(s[row-1][col])
- 			sim_fixbv.setSig_right(s[row+1][col])
- 			even, odd = sim_fixbv.add_mul()
+ 
 			#print row, even, odd
- 			s[row][col] += float(odd)
+ 			 
 	 
 			#print float(d_instance[0]),s[row][col]
             #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
-        s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
+            s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
 
         # Update 1. y0
         for row in range(2, height, 2):
-			sim_fixbv.setSig_p(0)
-			sim_fixbv.setSig_even_odd(1)
-			sim_fixbv.setSig_fwd_inv(1)
-			sim_fixbv.setSig_left(s[row-1][col])
-			sim_fixbv.setSig_right(s[row+1][col])
  
-			even, odd = sim_fixbv.add_mul()
+ 
+ 
 			#print row, even, odd	
-			s[row][col] += float(even)
+			 
 	 
 			#print s[row][col]
             #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
-        s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
+            s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
         
         # Predict 2.
         for row in range(1, height-1, 2):
-			sim_fixbv.setSig_p(1)
-			sim_fixbv.setSig_even_odd(0)
-			sim_fixbv.setSig_fwd_inv(1)
-			sim_fixbv.setSig_left(s[row-1][col])
-			sim_fixbv.setSig_right(s[row+1][col])
  
-			even, odd = sim_fixbv.add_mul()
 			#print row, even, odd	
-			s[row][col] += float(odd)
+			 
 	 
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
-        s[height-1][col] += 2 * a3 * s[height-2][col]
+            s[height-1][col] += 2 * a3 * s[height-2][col]
         
         # Update 2.
         for row in range(2, height, 2):
-			sim_fixbv.setSig_p(1)
-			sim_fixbv.setSig_even_odd(1)
-			sim_fixbv.setSig_fwd_inv(1)
-			sim_fixbv.setSig_left(s[row-1][col])
-			sim_fixbv.setSig_right(s[row+1][col])
  
-			even, odd = sim_fixbv.add_mul()
 			#print row, even, odd	
-			s[row][col] += float(even)
+			 
  
  
             #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
-        s[0][col] += 2 * a4 * s[1][col]
+            s[0][col] += 2 * a4 * s[1][col]
                
     # de-interleave
     temp_bank = [[0]*width for i in range(height)]
@@ -197,65 +176,38 @@ def iwt97(s, width, height):
         for col in range(height):
             s[row][col] = temp_bank[row][col]
 
-    sim_fixbv = Add_Mul_Sim()            
+                
     for col in range(width): # Do the 1D transform on all cols:
         ''' Perform the inverse 1D transform. '''
         
         # Inverse update 2.
         for row in range(2, height, 2):
-			sim_fixbv.setSig_p(0)
-			sim_fixbv.setSig_even_odd(1)
-			sim_fixbv.setSig_fwd_inv(0)
-			sim_fixbv.setSig_left(s[row-1][col])
-			sim_fixbv.setSig_right(s[row+1][col])
  
-			even, odd = sim_fixbv.add_mul()			
-			s[row][col] += float(even)
 	 
             #s[row][col] += a4 * (s[row-1][col] + s[row+1][col])
-        s[0][col] += 2 * a4 * s[1][col]
+            s[0][col] += 2 * a4 * s[1][col]
         
         # Inverse predict 2.
         for row in range(1, height-1, 2):
-			sim_fixbv.setSig_p(0)
-			sim_fixbv.setSig_even_odd(0)
-			sim_fixbv.setSig_fwd_inv(0)
-			sim_fixbv.setSig_left(s[row-1][col])
-			sim_fixbv.setSig_right(s[row+1][col])
  
-			even, odd = sim_fixbv.add_mul()			
-			s[row][col] += float(odd)
 			#s[row+2][col] += float(odd1)
             #s[row][col] += a3 * (s[row-1][col] + s[row+1][col])
-        s[height-1][col] += 2 * a3 * s[height-2][col]
+            s[height-1][col] += 2 * a3 * s[height-2][col]
 
         # Inverse update 1.
         for row in range(2, height, 2):
-			sim_fixbv.setSig_p(1)
-			sim_fixbv.setSig_even_odd(1)
-			sim_fixbv.setSig_fwd_inv(0)
-			sim_fixbv.setSig_left(s[row-1][col])
-			sim_fixbv.setSig_right(s[row+1][col])
- 
-			even, odd = sim_fixbv.add_mul()			
-			s[row][col] += float(even)
+ 			
+			 
  
             #s[row][col] += a2 * (s[row-1][col] + s[row+1][col])
-        s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
+            s[0][col] +=  2 * a2 * s[1][col] # Symmetric extension
         
         # Inverse predict 1.
         for row in range(1, height-1, 2):
-			sim_fixbv.setSig_p(1)
-			sim_fixbv.setSig_even_odd(0)
-			sim_fixbv.setSig_fwd_inv(0)
-			sim_fixbv.setSig_left(s[row-1][col])
-			sim_fixbv.setSig_right(s[row+1][col])
  
-			even, odd = sim_fixbv.add_mul()			
-			s[row][col] += float(odd)
  
-            #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])   
-        s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
+            #s[row][col] += a1 * (s[row-1][col] + s[row+1][col])
+            s[height-1][col] += 2 * a1 * s[height-2][col] # Symmetric extension
                 
     return s
 
