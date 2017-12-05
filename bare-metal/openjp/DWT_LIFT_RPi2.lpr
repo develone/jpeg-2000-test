@@ -26,7 +26,8 @@ uses
      ShellUpdate,
      RemoteShell,
   { needed for telnet }
- uLiftBitmap, 
+ uLiftBitmap,
+ Logging, 
  Syscalls;
 
 {$linklib dwtlift}
@@ -110,6 +111,17 @@ end;
  
 
 begin
+
+{
+ The following 3 lines are logging to the console
+ CONSOLE_REGISTER_LOGGING:=True;
+ LoggingConsoleDeviceAdd(ConsoleDeviceGetDefault);
+ LoggingDeviceSetDefault(LoggingDeviceFindByType(LOGGING_TYPE_CONSOLE));
+ }
+
+ {The following 2 lines are logging to a file}
+ LoggingDeviceSetTarget(LoggingDeviceFindByType(LOGGING_TYPE_FILE),'c:\ultibologging.log');
+ LoggingDeviceSetDefault(LoggingDeviceFindByType(LOGGING_TYPE_FILE));
 
 
  // wait for IP address and SD Card to be initialised.
